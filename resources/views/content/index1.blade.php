@@ -3,4 +3,6 @@
 ?>
 
 @extends('master')
-<!--include('..inc.index_extra_content')-->
+
+
+@include('..inc.index_extra_content')
