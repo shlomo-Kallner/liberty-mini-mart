@@ -1,0 +1,105 @@
+{
+    "string": "vchar[255]",
+    "path": "vchar[255]",
+
+    "bare (primary_key?=true, auto_increment?=true)": {
+        "id": "int (primary_key, auto_increment) ",
+        "created_at": "datetime",
+        "updated_at": "datetime"
+    },
+
+    "basic (primary_key?=true, auto_increment?=true)": {
+        "__super__/@super": "bare(primary_key, auto_increment)",
+        "name": "string",
+        "image": "path/int{id}"
+    },
+
+    "pivot (component?='component',owner?='owner')": {
+        "__super__/@super": "bare(false,false)",
+        "__doc__": "connects between a _owned_ Component and a _owning_ owner..",
+        "$(component)_id": "int",
+        "$(owner)_id": "int"
+    },
+
+    "User : basic()": {
+        "email": "string (validated_email)",
+        "password": "vchar[255]"
+    },
+
+    "Image : basic()": {
+        "__doc__": "for image gallery sub-module choice..",
+        "alt": "string",
+        "image : @overide @alias('path')": "path",
+        "caption": "string/text"
+    },
+
+    "Role : basic()": {
+        "__doc__": "the definition of a User Role/Permision set."
+    },
+
+    "UserImages : pivot(image,user)": {},
+
+    "UserPermisions : pivot(role,user)": {
+        "__doc__ : @extend(@super)": "connects between a Role (component_id) and a user (owner_id) .."
+    },
+
+    "component (use_parent?=false,parent?='parent')": {
+        "__super__/@super": "basic()",
+        "$(parent)_id? @obsolete(!use_parent)": "int",
+        "title": "string",
+        "article": "longtext",
+        "url": "string",
+        "description": "string"
+    },
+
+    "ComplexStoreType": {
+
+        "__comment__": "Component Tables..",
+
+        "Stores : component()": {
+            "url @overide": "string(unique)"
+        },
+        "Catalogs : component(false,'store')": {},
+        "Departments : component(false,'catalog')": {},
+
+        "__comment__": "Pivot Tables..",
+
+        "StoreCatalogs : pivot()": {},
+        "CatalogDepartments : pivot()": {},
+        "DepartmentSections : pivot()": {},
+        "SectionProducts : pivot()": {}
+    },
+
+    "Sections : component(false,'department')": {
+        "__alias__": "Category"
+    },
+
+    "Products : component(true,'category')": {
+        "price": "float[10,2]"
+    },
+
+    "Orders": {
+        "__super__/@super": "bare()",
+        "user_id": "int",
+        "total": "float[10,2]",
+        "status": "string",
+        "comments": "text",
+        "notes": "text"
+    },
+
+    "OrderProducts : pivot(product,order)": {
+        "num": "int",
+        "subtotal": "float[10,2]"
+    },
+
+    "Pages : component()": {},
+
+    "": {},
+
+    "": {},
+    "": {},
+    "": {},
+    "": {},
+    "": {},
+    "": {}
+}

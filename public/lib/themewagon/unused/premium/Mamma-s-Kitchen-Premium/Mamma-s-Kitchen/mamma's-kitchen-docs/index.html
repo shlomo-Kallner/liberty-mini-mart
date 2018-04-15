@@ -1,0 +1,773 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>Mamma's Kitchen - Documentation</title>
+
+	<!-- CSS -->
+	<!-- Bootstrap core CSS -->
+	<link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Raleway:100,300,400">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:100,300,400">
+
+	<link href="assets/css/prettify.css" rel="stylesheet">
+
+	<!-- Custom styles CSS -->
+	<link href="assets/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+
+	<div class="container main">
+		<div class="row">
+
+			<div class="col-md-3">
+
+				<div class="sidebar hidden-print my_affix" role="complementary" data-spy="affix" data-offset-top="100" data-offset-bottom="200">
+					<ul class="nav sidenav">
+						<li class="active"><a href="#introduction">Introduction</a></li>
+						<li><a href="#feature">Template Features</a></li>
+						<li><a href="#start">Getting Started</a></li>
+						<li><a href="#navbar">Navigation Bar</a></li>
+						<li><a href="#about">About Us Section</a></li>
+						<li><a href="#pricing">Pricing Section</a></li>
+						<li><a href="#beer">Beer Section</a></li>
+                        <li><a href="#bread">Bread Section</a></li>
+						<li><a href="#featured-dish">Featured Dishes Menu</a></li>
+						<li><a href="#slider">Image Slider</a></li>
+						<li><a href="#reservation">Reservation Section</a></li>
+                        <li><a href="#g-map">Google Map Section</a></li>
+						<li><a href="#contact">Contact Section</a></li>
+						<li><a href="#contact-form">Working Contact form</a></li>
+						<li><a href="#plugins">Plugins settings</a></li>
+						<li><a href="#attribution">Attribution</a></li>
+						<li><a href="#changelog">Changelog</a></li>
+					</ul>
+				</div>
+
+			</div>
+
+			<div class="col-md-9">
+
+				<section class="header" id="introduction">
+					<h1>Mamma's Kitchen - Documentation</h1>
+				</section>
+				<br/><br/>
+				<section class="section">
+					<div class="well-lg alert alert-success">
+						<h4>Good Day!</h4>
+						<p>Thank you for choosing our template - Mamma's Kitchen . If you have any questions please feel free to submit a ticket in our website <a target="_blank" href="https://themewagon.com/wagon_tickets/">here</a>.</p>
+					</div>
+
+					<!-- Customization -->
+
+
+
+					<!-- template featurs -->
+
+					<h2 id="feature">Template Features</h2>
+
+					<ul>
+						<li><strong>One Page Template</strong></li>
+						<li><strong>Easy to customize:</strong> background, content</li>
+						<li>Fully responsive</li>
+						<li>Font Awesome Icons <strong>400+ icons</strong></li>
+						<li>Powered with Twitter Bootstrap</li>
+						<li>Smooth animation</li>
+						<li>Working <strong>Contact form</strong> with validation</li>
+						<li><strong>Well Documented</strong></li>
+						<li>Clear &amp; Neat Design</li>
+						<li><strong>Accurate HTML code</strong> with comments</li>
+					</ul>
+
+					<!-- end of template featurs -->
+
+
+
+
+
+
+					<!-- getting started -->
+
+					<h2 id="start">Getting Started</h2>
+						
+					<p>Unzip the downloaded folder and find out the <strong>Mamma's-Kitchen</strong>. There are all the template files in this folder. You can open the following files for viewing in browser.</p>
+					
+                    <ol>
+                        <li>
+                            <strong>assets/css</strong>&nbsp;&mdash; folder with css files.
+                        </li>
+                        <li>
+                            <strong>assets/fonts</strong>&nbsp;&mdash; folder with icon fonts.
+                        </li>
+                        <li>
+                            <strong>assets/images</strong>&nbsp;&mdash; folder with image files.
+                        </li>
+                        <li>
+                            <strong>assets/js</strong>&nbsp;&mdash; folder with Javascript files.
+                        </li>
+                        
+                        <li>
+                            <strong>index.html</strong>&nbsp;&mdash; the main template file.
+                        </li>
+                        <li>
+                            <strong>single_blog.html</strong>&nbsp;&mdash; template file of single blog page.
+                        </li>
+                        <li>
+                            <strong>contact-form.php</strong>&nbsp;&mdash; this is for the contact form section.
+                        </li>
+                        
+                    </ol>
+
+					<!-- end of getting started -->
+
+
+
+
+
+
+
+					<!-- navbar -->
+					<h2 id="navbar">Navigation Bar</h2>
+					<p>In <strong>index.html</strong> file from <strong>line 62-91</strong>. HTML structure of the navigation bar</p>
+
+					<pre class="prettyprint lang-basic">
+&lt;!--== 4. Navigation ==--&gt;
+&lt;nav id="template-navbar" class="navbar navbar-default custom-navbar-default navbar-fixed-top"&gt;
+    &lt;div class="container"&gt;
+        &lt;!-- Brand and toggle get grouped for better mobile display --&gt;
+        &lt;div class="navbar-header"&gt;
+            &lt;button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Food-fair-toggle"&gt;
+                &lt;span class="sr-only"&gt;Toggle navigation&lt;/span&gt;
+                &lt;span class="icon-bar"&gt;&lt;/span&gt;
+                &lt;span class="icon-bar"&gt;&lt;/span&gt;
+                &lt;span class="icon-bar"&gt;&lt;/span&gt;
+            &lt;/button&gt;
+            &lt;a class="navbar-brand" href="#"&gt;
+                &lt;img id="logo" src="images/Logo_main.png" class="logo img-responsive"&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Collect the nav links, forms, and other content for toggling --&gt;
+        &lt;div class="collapse navbar-collapse" id="Food-fair-toggle"&gt;
+            &lt;ul class="nav navbar-nav navbar-right"&gt;
+                &lt;li&gt;&lt;a href="#about"&gt;about&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#pricing"&gt;pricing&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#great-place-to-enjoy"&gt;beer&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#breakfast"&gt;bread&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#featured-dish"&gt;featured&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#reserve"&gt;reservation&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#contact"&gt;contact&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/div&gt;&lt;!-- /.navbar-collapse --&gt;
+    &lt;/div&gt;&lt;!-- /.row --&gt;
+&lt;/nav&gt;
+
+					</pre>
+
+					<!-- end of navbar -->
+
+
+
+
+
+
+
+
+					<!-- About us section -->
+
+					<h2 id="about">About Us Section</h2>
+					<p>In <strong>index.html</strong> file. HTML structure of the About Us section</p>
+					<pre class="prettyprint lang-basic">
+&lt;!--== 6. About us ==--&gt;
+&lt;section id="about" class="about"&gt;
+    &lt;img src="images/icons/about_color.png" class="img-responsive section-icon hidden-sm hidden-xs"&gt;
+    &lt;div class="wrapper"&gt;
+        &lt;div class="container-fluid"&gt;
+            &lt;div class="row dis-table"&gt;
+                &lt;div class="hidden-xs col-sm-6 section-bg about-bg dis-table-cell"&gt;
+
+                &lt;/div&gt;
+                &lt;div class="col-xs-12 col-sm-6 dis-table-cell"&gt;
+                    &lt;div class="section-content"&gt;
+                        &lt;h2 class="section-content-title"&gt;About us&lt;/h2&gt;
+                        &lt;p class="section-content-para"&gt;
+                            Astronomy compels the soul to look upward, and leads us from this world to another.  Curious that we spend more time congratulating people who have succeeded than encouraging people who have not. As we got further and further away, it [the Earth] diminished in size.
+                        &lt;/p&gt;
+                        &lt;p class="section-content-para"&gt;
+                            beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.  Where ignorance lurks, so too do the frontiers of discovery and imagination.
+                        &lt;/p&gt;
+                    &lt;/div&gt; &lt;!-- /.section-content --&gt;
+                &lt;/div&gt;
+            &lt;/div&gt; &lt;!-- /.row --&gt;
+        &lt;/div&gt; &lt;!-- /.container-fluid --&gt;
+    &lt;/div&gt; &lt;!-- /.wrapper --&gt;
+&lt;/section&gt; &lt;!-- /#about --&gt;				
+					</pre>
+
+					<!-- end of about us section -->
+
+
+
+
+
+
+
+
+					<!-- pricing section -->
+
+					<h2 id="pricing">Pricing Section</h2>
+					<p>In <strong>index.html</strong> file. Pricing section is expressed by <strong>Our Affordable Pricing</strong>. HTML structure of the Pricing section</p>
+					<pre class="prettyprint lang-basic">
+&lt;li class="item dinner"&gt;
+
+    &lt;a href="#"&gt;
+        &lt;img src="images/food1.jpg" class="img-responsive" alt="Food" &gt;
+        &lt;div class="menu-desc text-center"&gt;
+            &lt;span&gt;
+                &lt;h3&gt;Tomato Curry&lt;/h3&gt;
+                Natalie &amp; Justin Cleaning by Justin Younger
+            &lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/a&gt;
+        
+    &lt;h2 class="white"&gt;$20&lt;/h2&gt;
+&lt;/li&gt;
+
+					</pre>
+
+					<!-- end of pricing section -->
+
+
+
+
+
+
+					<!-- beer section -->
+
+					<h2 id="beer">Beer Section</h2>
+					<p>In <strong>index.html</strong> file.  HTML structure of Beer section.</p>
+					<pre class="prettyprint lang-basic">
+&lt;!--==  9. Our Beer  ==--&gt;
+&lt;section id="beer" class="beer"&gt;
+    &lt;img class="img-responsive section-icon hidden-sm hidden-xs" src="images/icons/beer_color.png"&gt;
+    &lt;div class="container-fluid"&gt;
+        &lt;div class="row dis-table"&gt;
+            &lt;div class="hidden-xs col-sm-6 dis-table-cell section-bg"&gt;
+
+            &lt;/div&gt;
+
+            &lt;div class="col-xs-12 col-sm-6 dis-table-cell"&gt;
+                &lt;div class="section-content"&gt;
+                    &lt;h2 class="section-content-title"&gt;Our Beer&lt;/h2&gt;
+                    &lt;div class="section-description"&gt;
+                        &lt;p class="section-content-para"&gt;
+                            Astronomy compels the soul to look upward, and leads us from this world to another.  Curious that we spend more time congratulating people who have succeeded than encouraging people who have not. As we got further and further away, it [the Earth] diminished in size.
+                        &lt;/p&gt;
+                        &lt;p class="section-content-para"&gt;
+                            beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.  Where ignorance lurks, so too do the frontiers of discovery and imagination.Astronomy compels the soul to look upward, and leads us from this world to another.  Curious that we spend more time congratulating people who have succeeded than encouraging people who have not. As we got further and further away, it [the Earth] diminished in size.
+                        &lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;
+					</pre>
+
+					<!-- end of beer section -->
+
+
+
+
+
+
+
+
+
+                    <!-- Bread section -->
+
+                    <h2 id="bread">Bread Section</h2>
+                    <p>In <strong>index.html</strong> file.  HTML structure of Bread section.</p>
+                    <pre class="prettyprint lang-basic">
+&lt;!--== 11. Our Bread ==--&gt;
+&lt;section id="bread" class="bread"&gt;
+    &lt;img class="img-responsive section-icon hidden-sm hidden-xs" src="images/icons/bread_color.png"&gt;
+    &lt;div class="container-fluid"&gt;
+        &lt;div class="row dis-table"&gt;
+            &lt;div class="hidden-xs col-sm-6 dis-table-cell section-bg"&gt;
+
+            &lt;/div&gt;
+            &lt;div class="col-xs-12 col-sm-6 dis-table-cell"&gt;
+                &lt;div class="section-content"&gt;
+                    &lt;h2 class="section-content-title"&gt;
+                        Our Bread
+                    &lt;/h2&gt;
+                    &lt;div class="section-description"&gt;
+                        &lt;p class="section-content-para"&gt;
+                            Astronomy compels the soul to look upward, and leads us from this world to another.  Curious that we spend more time congratulating people who have succeeded than encouraging people who have not. As we got further and further away, it [the Earth] diminished in size.
+                        &lt;/p&gt;
+                        &lt;p class="section-content-para"&gt;
+                            beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.  Where ignorance lurks, so too do the frontiers of discovery and imagination.
+                        &lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;
+
+                    </pre>
+
+                    <!-- end of Bread section -->
+
+
+
+
+
+
+
+
+
+
+					<!-- featured dish section -->
+
+					<h2 id="featured-dish">Featured Dishes Menu Section</h2>
+					<p>In <strong>index.html</strong> file. Featured Dishes Menu Section is following of <strong>Our Featured Dishes Menu</strong> section. HTML structure of the Featured Dishes Menu Section</p>
+					<pre class="prettyprint lang-basic">
+&lt;div class="col-md-3 col-sm-6 col-xs-12"&gt;
+    &lt;div class="row"&gt;
+        &lt;div class="menu-catagory"&gt;
+            &lt;h2&gt;Bread&lt;/h2&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;div class="menu-item"&gt;
+            &lt;h3 class="menu-title"&gt;French Bread&lt;/h3&gt;
+            &lt;p class="menu-about"&gt;Astronomy compels the soul&lt;/p&gt;
+
+            &lt;div class="menu-system"&gt;
+                &lt;div class="half"&gt;
+                    &lt;p class="per-head"&gt;
+                        &lt;span&gt;&lt;i class="fa fa-user"&gt;&lt;/i&gt;&lt;/span&gt;1:1
+                    &lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class="half"&gt;
+                    &lt;p class="price"&gt;$149.00&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;div class="menu-item"&gt;
+            &lt;h3 class="menu-title"&gt;Italian Bread&lt;/h3&gt;
+            &lt;p class="menu-about"&gt;Astronomy compels the soul&lt;/p&gt;
+
+            &lt;div class="menu-system"&gt;
+                &lt;div class="half"&gt;
+                    &lt;p class="per-head"&gt;
+                        &lt;span&gt;&lt;i class="fa fa-user"&gt;&lt;/i&gt;&lt;/span&gt;1:1
+                    &lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class="half"&gt;
+                    &lt;p class="price"&gt;$149.00&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;div class="menu-item"&gt;
+            &lt;h3 class="menu-title"&gt;Regular Bread&lt;/h3&gt;
+            &lt;p class="menu-about"&gt;Astronomy compels the soul&lt;/p&gt;
+
+            &lt;div class="menu-system"&gt;
+                &lt;div class="half"&gt;
+                    &lt;p class="per-head"&gt;
+                        &lt;span&gt;&lt;i class="fa fa-user"&gt;&lt;/i&gt;&lt;/span&gt;1:1
+                    &lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class="half"&gt;
+                    &lt;p class="price"&gt;$149.00&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+					</pre>
+
+					<!-- end of featured dish section -->
+
+
+
+
+
+
+
+
+
+					<!-- Image slider section -->
+
+					<h2 id="slider">Image Slider Section</h2>
+					<p>In <strong>index.html</strong> file. Image slider section is the slider part of the section called <strong>Have A Look To Our Dishes</strong> section. HTML structure of the Image Slider section</p>
+					<pre class="prettyprint lang-basic">
+&lt;!--== 14. Have a look to our dishes ==--&gt;
+
+&lt;section id="have-a-look" class="have-a-look hidden-xs"&gt;
+    &lt;img class="img-responsive section-icon hidden-sm hidden-xs" src="images/icons/food_color.png"&gt;
+    &lt;div class="wrapper"&gt;
+        &lt;div class="container-fluid"&gt;
+            &lt;div class="row"&gt;
+
+                &lt;div class="menu-gallery" style="width: 50%; float:left;"&gt;
+                    &lt;div class="flexslider-container"&gt;
+                        &lt;div class="flexslider"&gt;
+                            &lt;ul class="slides"&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu1.png" /&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu2.jpg" /&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu3.png" /&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu4.jpg" /&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu5.jpg" /&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu6.jpg" /&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu7.jpg" /&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu8.jpg" /&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu9.jpg" /&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu10.jpg" /&gt;
+                                &lt;/li&gt;
+                                &lt;li&gt;
+                                    &lt;img src="images/menu-gallery/menu11.jpg" /&gt;
+                                &lt;/li&gt;
+                            &lt;/ul&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;div class="gallery-heading hidden-xs color-bg" style="width: 50%; float:right;"&gt;
+                    &lt;h2 class="section-title"&gt;Have A Look To Our Dishes&lt;/h2&gt;
+                &lt;/div&gt;
+                
+
+            &lt;/div&gt; &lt;!-- /.row --&gt;
+        &lt;/div&gt; &lt;!-- /.container-fluid --&gt;
+    &lt;/div&gt; &lt;!-- /.wrapper --&gt;
+&lt;/section&gt;
+					</pre>
+
+					<!-- end of image slider section -->
+
+
+
+
+
+
+
+
+
+
+					<!-- reservation section -->
+
+					<h2 id="reservation">Reservation Section</h2>
+					<p>In <strong>index.html</strong> file. HTML structure of the Reservation section</p>
+					<pre class="prettyprint lang-basic">
+&lt;section class="reservation"&gt;
+    &lt;img class="img-responsive section-icon hidden-sm hidden-xs" src="images/icons/reserve_color.png"&gt;
+    &lt;div class="wrapper"&gt;
+        &lt;div class="container-fluid"&gt;
+            &lt;div class=" section-content"&gt;
+                &lt;div class="row"&gt;
+                    &lt;div class="col-md-5 col-sm-6"&gt;
+                        &lt;form class="reservation-form" method="post" action="reserve.php"&gt;
+                            &lt;div class="row"&gt;
+                                &lt;div class="col-md-6 col-sm-6"&gt;
+                                    &lt;div class="form-group"&gt;
+                                        &lt;input type="text" class="form-control reserve-form empty iconified" name="name" id="name" required="required" placeholder="  &#xf007;  Name"&gt;
+                                    &lt;/div&gt;
+                                    &lt;div class="form-group"&gt;
+                                        &lt;input type="email" name="email" class="form-control reserve-form empty iconified" id="email" required="required" placeholder="  &#xf1d8;  e-mail"&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+
+                                &lt;div class="col-md-6 col-sm-6"&gt;
+                                    &lt;div class="form-group"&gt;
+                                        &lt;input type="tel" class="form-control reserve-form empty iconified" name="phone" id="phone" required="required" placeholder="  &#xf095;  Phone"&gt;
+                                    &lt;/div&gt;
+                                    &lt;div class="form-group"&gt;
+                                        &lt;input type="text" class="form-control reserve-form empty iconified" name="datepicker" id="datepicker" required="required" placeholder="&#xf017;  Time"&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+
+                                &lt;div class="col-md-12 col-sm-12"&gt;
+                                    &lt;textarea type="text" name="message" class="form-control reserve-form empty iconified" id="message" rows="3" required="required" placeholder="  &#xf086;  We're listening"&gt;&lt;/textarea&gt;
+                                &lt;/div&gt;
+
+                                &lt;div class="col-md-12 col-sm-12"&gt;
+                                    &lt;button type="submit" id="submit" name="submit" class="btn btn-reservation"&gt;
+                                        &lt;span&gt;&lt;i class="fa fa-check-circle-o"&gt;&lt;/i&gt;&lt;/span&gt;
+                                        Make a reservation
+                                    &lt;/button&gt;
+                                &lt;/div&gt;
+                                    
+                            &lt;/div&gt;
+                        &lt;/form&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class="col-md-2 hidden-sm hidden-xs"&gt;&lt;/div&gt;
+
+                    &lt;div class="col-md-4 col-sm-6 col-xs-12"&gt;
+                        &lt;div class="opening-time"&gt;
+                            &lt;h3 class="opening-time-title"&gt;Hours&lt;/h3&gt;
+                            &lt;p&gt;Mon to Fri: 7:30 AM - 11:30 AM&lt;/p&gt;
+                            &lt;p&gt;Sat &amp; Sun: 8:00 AM - 9:00 AM&lt;/p&gt;
+
+                            &lt;div class="launch"&gt;
+                                &lt;h4&gt;Lunch&lt;/h4&gt;
+                                &lt;p&gt;Mon to Fri: 12:00 PM - 5:00 PM&lt;/p&gt;
+                            &lt;/div&gt;
+
+                            &lt;div class="dinner"&gt;
+                                &lt;h4&gt;Dinner&lt;/h4&gt;
+                                &lt;p&gt;Mon to Sat: 6:00 PM - 1:00 AM&lt;/p&gt;
+                                &lt;p&gt;Sun: 5:30 PM - 12:00 AM&lt;/p&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;
+					</pre>
+
+					<!-- end of pricing section -->
+
+
+
+
+
+
+
+
+
+					<!-- google map section -->
+
+					<h2 id="g-map">Google Map Settings</h2>
+					<p>In <strong>index.html</strong> file. In <strong>Line 40 &amp; 48</strong> change the Latitude and Longitude. 
+					<pre class="prettyprint lang-basic">
+&lt;script&gt;
+    function initialize() {
+        var mapCanvas = document.getElementById('map-canvas');
+        var mapOptions = {
+            center: new google.maps.LatLng(24.909439, 91.833800),
+            zoom: 16,
+            scrollwheel: false,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        var map = new google.maps.Map(mapCanvas, mapOptions)
+
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(24.909439, 91.833800),
+            title:"Mamma's Kitchen Restaurant"
+        });
+
+        // To add the marker to the map, call setMap();
+        marker.setMap(map);
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+&lt;/script&gt;
+					</pre>
+
+					<!-- end of google map section -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+					<!-- contact section -->
+
+					<h2 id="contact">Contact Section</h2>
+					<p>In <strong>index.html</strong> file.  HTML structure of Contact section</p>
+					<pre class="prettyprint lang-basic">
+&lt;section class="contact-form"&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="row"&gt;
+            &lt;div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1"&gt;
+                &lt;div class="row"&gt;
+                     &lt;form  id="contactForm" class="contact-form" method="post" action="contact.php"&gt;
+                        
+                        &lt;div class="col-md-6 col-sm-6"&gt;
+                            &lt;div class="form-group"&gt;
+                                &lt;input  name="name" type="text" class="form-control" id="name" required="required" placeholder="  Name"&gt;
+                            &lt;/div&gt;
+                            &lt;div class="form-group"&gt;
+                                &lt;input name="email" type="email" class="form-control" id="email" required="required" placeholder="  Email"&gt;
+                            &lt;/div&gt;
+                            &lt;div class="form-group"&gt;
+                                &lt;input name="subject" type="text" class="form-control" id="subject" required="required" placeholder="  Subject"&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="col-md-6 col-sm-6"&gt;
+                            &lt;textarea name="massage" type="text" class="form-control" id="message" rows="8" required="required" placeholder="  Message"&gt;&lt;/textarea&gt;
+                        &lt;/div&gt;
+                        &lt;div id="contactFormResponse"&gt;&lt;/div&gt;
+                        &lt;div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3"&gt;
+                            &lt;div class="text-center"&gt;
+                                &lt;input type="submit" id="cfsubmit" class="btn btn-send" value="Say Hello"&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/form&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;
+					</pre>
+
+					<!-- end of contact section -->
+
+
+
+
+
+
+
+					<!-- working contact form -->
+
+					<h2 id="contact-form">Working Contact form</h2>
+					
+					<h4>If Contact form form not working</h4>
+					<p>You need to check is PHP mail() function working.</p>
+<p>
+<textarea class="form-control" rows="4" style="widht:100%">
+<?php
+	mail('you@yourmail.com','Test mail','The mail function is working!');
+	echo 'Mail sent!';
+?>
+</textarea>
+</p>
+					<ul>
+					<li>Save this code as mailtest.php</li>
+						<li>change you@yourmail.com to your e-mail address</li>
+						<li>upload mailtest.php to your server</li>
+						<li>open mailtest.php in your browser (http://yourwebsite.com/mailtest.php)</li>
+						<li>check your inbox to see if a test message arrived.</li>
+					</ul>
+					<strong>If it works:</strong>
+
+					<ul>
+						<li>double-check your form script for errors (like e-mail address misspelling)</li>
+						<li>use the same e-mail address as your form recipient</li>
+						<li>double-check your SPAM filters and SPAM/Junk/Bulk mailboxes</li>
+					</ul>
+
+					<strong>If it not</strong>
+
+					<p>Contact your host and ask them to check PHP mail() setting.</p>
+
+					<!-- end of working contact form -->
+
+
+
+
+
+					<!-- plugin settings -->
+
+					<h2 id="plugins">Plugins settings</h2>
+					<p>All plugins setting is in file <strong>./assets/js/main.js</strong></p>
+					<ul>
+                        <li><a href="http://owlgraphic.com/owlcarousel/" target="_blank">Owlcarousel</a> - Header Carousel</li>
+                        <li><a target="_blank" href="https://github.com/woothemes/FlexSlider/wiki/FlexSlider-Properties">FlexSlider</a> - Image Slider</li>
+                        <li><a target="_blank" href="https://mixitup.kunkalabs.com/docs/">MixItUp</a> - Filterable Pricing Item Menu</li>
+                        <li><a target="_blank" href="http://tympanus.net/TipsTricks/DirectionAwareHoverEffect/">Hover DIrection</a> - Hover Direction Effect in Affordable Pricing section</li>
+                        <li><a target="_blank" href="https://github.com/nathco/jQuery.scrollSpeed">Smooth Scroll - Comfortable feel in scroll</a></li>
+                    </ul>
+					<p>If you have any questions please feel free to email here&nbsp;info@themewagon.com</p>
+
+					<!-- end of plugin settings -->
+
+
+
+					<!-- attributions -->
+
+					<h2 id="attribution">Attribution</h2>
+					<p>Following libraries and plugins are used in Mamma's Kitchen:</p>
+					<ul>
+                        <li><a href="https://jquery.com/" target="_blank">jQuery</a></li>
+                        <li><a href="http://getbootstrap.com" target="_blank">Bootstrap</a></li>
+                        <li><a href="https://github.com/nathco/jQuery.scrollSpeed" target="_blank">SmoothScroll</a></li>
+                        <li><a href="https://www.google.com/fonts" target="_blank">Google Fonts</a> </li>
+                        <li><a href="http://fontawesome.io/" target="_blank">Fontawesome</a></li>
+                        <li><a target="_blank" href="https://mixitup.kunkalabs.com/docs/">MixItUp</a> - Filterable Pricing Item Menu</li>
+                        <li><a href="https://github.com/woothemes/FlexSlider/" target="_blank">FlexSlider</a></li>
+                        <li><a href="http://owlgraphic.com/owlcarousel/" target="_blank">Owlcarousel</a></li>
+                    </ul>
+					<br/><br/>
+
+					<!-- end of attributions -->
+
+					<p>Images used in preview are taken from following websites:</p>
+				     <ul>
+				      <li><a href="https://pixabay.com/">Pixabay</a></li>
+				     </ul>
+
+
+
+					<!-- changelog -->
+
+					<h2 id="changelog">Changelog</h2>
+
+					<p> Version 1.0</p>
+					<pre class="prettyprint">- Initial Release</pre>
+
+					<!-- end of changelog -->
+						
+				</section>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Javascript files -->
+	<!-- jQuery -->
+	<script src="assets/js/jquery-1.11.0.min.js"></script>
+	<!-- Bootstrap JS -->
+	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+	<!--HL -->
+	<script src="assets/js/prettify/prettify.js"></script>
+	<!-- Custom scripts -->
+	<script src="assets/js/custom.js"></script>
+
+</body>
+</html>

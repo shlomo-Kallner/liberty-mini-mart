@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>Meat-King - Documentation</title>
+
+	<!-- CSS -->
+	<!-- Bootstrap core CSS -->
+	<link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Raleway:100,300,400">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:100,300,400">
+
+	<link href="assets/css/prettify.css" rel="stylesheet">
+
+	<!-- Custom styles CSS -->
+	<link href="assets/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+
+	<div class="container main">
+		<div class="row">
+
+			<div class="col-md-3">
+
+				<div class="sidebar hidden-print my_affix" role="complementary" data-spy="affix" data-offset-top="100" data-offset-bottom="200">
+					<ul class="nav sidenav">
+                        <li class="active"><a href="#introduction">Introduction</a></li>
+                        <li><a href="#feature">Template Features</a></li>
+                        <li><a href="#start">Getting Started</a></li>
+                        <li><a href="#navbar">Navbar</a></li>
+                        <li><a href="#header">Header</a></li>
+                        <li><a href="#aboutus">About  US(Story)</a></li>
+                        <li><a href="#fact">Fact</a></li>
+                        <li><a href="#foodmenu">Food Menu</a></li>
+                        <li><a href="#special">Special Offer</a></li>
+                        <li><a href="#reservation">Reservation</a></li>
+                        <li><a href="#contact-form">Working Contact form</a></li>
+                        <li><a href="#footer">Footer Section</a></li>
+                        <li><a href="#attribution">Attribution</a></li>
+                        <li><a href="#changelog">Changelog</a></li>
+                    </ul>
+				</div>
+
+			</div>
+
+			<div class="col-md-9">
+
+				<section class="header" id="introduction">
+					<h1><a href="../index.html" target="_blink">Meat-King</a> - Documentation</h1>
+				</section>
+				<br/><br/>
+				<section class="section">
+					<div class="well-lg alert alert-success">
+						<h4>Good Day!</h4>
+						<p>Thank you for choosing our template - Meat-King . If you have any questions please feel free to submit a ticket in our website <a target="_blank" href="https://themewagon.com/wagon_tickets/">here</a>.</p>
+					</div>
+
+					<!-- Customization -->
+
+
+
+					<!-- template featurs -->
+
+					<h2 id="feature">Template Features</h2>
+
+					<ul>
+						<li><strong>Single Page Template</strong></li>
+						<li><strong>Easy to customize:</strong> background, content</li>
+						<li>Fully responsive</li>
+						<li>Ionicons Icons <strong>400+ icons</strong></li>
+                        <li>Owl Carousel <strong>Slider</strong></li>
+						<li>Powered by Twitter Bootstrap</li>
+						<li>Smooth animation</li>
+						<li>Working <strong>Contact form</strong> with validation</li>
+						<li><strong>Well Documented</strong></li>
+						<li>Clear &amp; Neat Design</li>
+						<li><strong>Accurate HTML code</strong> with comments</li>
+					</ul>
+
+					<!-- end of template featurs -->
+
+
+
+
+
+
+					<!-- getting started -->
+
+					<h2 id="start">Getting Started</h2>
+						
+					<p>Unzip the downloaded folder and find out the <strong>assets</strong>. There are all the template files in this folder. You can open the following files for viewing in browser.</p>
+					
+                    <ol>
+                        <li>
+                            <strong>css</strong>&nbsp;&mdash; folder with css files.
+                        </li>
+                        <li>
+                            <strong>img</strong>&nbsp;&mdash; folder with image files and png Icon.
+                        </li>
+                        <li>
+                            <strong>js</strong>&nbsp;&mdash; folder with Javascript files.
+                        </li>
+                        
+                        <li>
+                            <strong>index.html</strong>&nbsp;&mdash;
+                        </li>
+                        
+                    </ol>
+
+					<!-- end of getting started -->
+
+					<!-- navbar -->
+					<h2 id="navbar">Navbar Section</h2>
+					<p>In <strong>index.html</strong> file . HTML structure of the Navbar Section</p>
+
+					<pre class="prettyprint lang-basic">
+&lt;div id="menu" class="navbar navbar-inverse navbar-fixed-top" role="navigation"&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="navbar-header visible-xs"&gt;
+            &lt;button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"&gt;
+                &lt;span class="sr-only"&gt;Toggle navigation&lt;/span&gt;
+                &lt;span class="icon-bar"&gt;&lt;/span&gt;
+                &lt;span class="icon-bar"&gt;&lt;/span&gt;
+                &lt;span class="icon-bar"&gt;&lt;/span&gt;
+            &lt;/button&gt;
+            &lt;a class="navbar-brand" href="#"&gt;&lt;h2&gt;Meat King&lt;/h2&gt;&lt;/a&gt;
+        &lt;/div&gt;&lt;!-- navbar-header --&gt;
+        &lt;div id="navbar" class="navbar-collapse collapse"&gt;
+            &lt;div class="hidden-xs" id="logo"&gt;&lt;a href="#header"&gt;
+                &lt;img src="img/logo.png" alt=""&gt;
+            &lt;/a&gt;&lt;/div&gt;
+
+            &lt;ul class="nav navbar-nav navbar-right"&gt;
+                &lt;li&gt;&lt;a href="#story"&gt;Story&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#reservation"&gt;Reservation&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#chefs"&gt;Our Chefs&lt;/a&gt;&lt;/li&gt;
+
+
+                &lt;li&gt;&lt;a href="#facts"&gt;Facts&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#food-menu"&gt;Food Menu&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#special-offser"&gt;Special Offers&lt;/a&gt;&lt;/li&gt;
+
+                &lt;!--fix for scroll spy active menu element--&gt;
+                &lt;li style="display:none;"&gt;&lt;a href="#header"&gt;&lt;/a&gt;&lt;/li&gt;
+
+            &lt;/ul&gt;
+        &lt;/div&gt;&lt;!--/.navbar-collapse --&gt;
+    &lt;/div&gt;&lt;!-- container --&gt;
+&lt;/div&gt;<!-- menu -->
+                    </pre>
+
+					<!-- end of Navbar -->
+
+
+					<!-- Slider -->
+
+					<h2 id="header">Header</h2>
+					<p>In <strong>index.html</strong> file. HTML structure of the Slider Section</p>
+					<pre class="prettyprint lang-basic">
+&lt;div id="header"&gt;
+    &lt;div class="bg-overlay"&gt;&lt;/div&gt;
+    &lt;div class="center text-center"&gt;
+        &lt;div class="banner"&gt;
+            &lt;h1 class=""&gt;Meat King&lt;/h1&gt;
+        &lt;/div&gt;
+        &lt;div class="subtitle"&gt;&lt;h4&gt;AWESOME RESTAURANT THEME&lt;/h4&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="bottom text-center"&gt;
+        &lt;a id="scrollDownArrow" href="#"&gt;&lt;i class="fa fa-chevron-down"&gt;&lt;/i&gt;&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+					</pre>
+
+					<!-- end of slider Section -->
+
+
+
+                    <!-- About Section -->
+
+                    <h2 id="aboutus">About Section</h2>
+                    <p>In <strong>index.html</strong> file.  HTML structure of About Section.</p>
+                    <pre class="prettyprint lang-basic">
+<!-- About Us Section Starts  -->
+&lt;div id="story" class="light-wrapper"&gt;
+    &lt;section class="ss-style-top"&gt;&lt;/section&gt;
+    &lt;div class="container inner"&gt;
+        &lt;h2 class="section-title text-center"&gt;Our Story&lt;/h2&gt;
+        &lt;p class="lead main text-center"&gt;We're cooking delecious foods since 1879&lt;/p&gt;
+        &lt;div class="row text-center story"&gt;
+            &lt;div class="col-sm-4"&gt;
+                &lt;div class="col-wrapper"&gt;
+                    &lt;div class="icon-wrapper"&gt; &lt;i class="fa fa-anchor"&gt;&lt;/i&gt; &lt;/div&gt;
+                    &lt;h3&gt;EST. 1879&lt;/h3&gt;
+                    &lt;p&gt;Vivamus sagittis lacuson augue laoreet rutrum faucibus dolor auctor. Cras mattis consectetur purus sit amet fermentum ultricies vehicula.&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-4"&gt;
+                &lt;div class="col-wrapper"&gt;
+                    &lt;div class="icon-wrapper"&gt; &lt;i class="fa  fa-cutlery"&gt;&lt;/i&gt; &lt;/div&gt;
+                    &lt;h3&gt;Cooking Traditions&lt;/h3&gt;
+                    &lt;p&gt;Nullam id dolor id nibh ultricies vehicula ut id elit. Cum sociis natoque penatibus et magnis dis parturient monte nascetur ultricies vehicula. &lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-4"&gt;
+                &lt;div class="col-wrapper"&gt;
+                    &lt;div class="icon-wrapper"&gt; &lt;i class="fa fa-coffee"&gt;&lt;/i&gt; &lt;/div&gt;
+                    &lt;h3&gt;Food Quality&lt;/h3&gt;
+                    &lt;p&gt;Curabitur blandit matti tempus porttitor. Donec id elit non mi porta ut gravida at eget metus. Consectetur adipiscing elit ultricies vehicula.&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;!-- /.services --&gt;
+    &lt;/div&gt;
+    &lt;!-- /.container --&gt;
+    &lt;section class="ss-style-bottom"&gt;&lt;/section&gt;
+&lt;/div&gt;<!-- #story -->
+<!-- About Us Section Ends-->
+                    </pre>
+
+                    <!-- end of about Section -->
+
+
+					<!-- Fact section -->
+
+					<h2 id="fact">Fact Section</h2>
+					<p>In <strong>index.html</strong> file. HTML structure of the Fact Section</p>
+					<pre class="prettyprint lang-basic">
+        <!-- Fact Section-->
+        
+&lt;div id="facts" class="parallax parallax2 facts"&gt;
+    &lt;div class="container inner"&gt;
+        &lt;div class="row text-center services-3"&gt;
+            &lt;div class="col-sm-3 single_service"&gt;
+                &lt;div class="col-wrapper"&gt;
+                    &lt;div class="icon-border bm10"&gt; &lt;i class="fa fa-beer"&gt;&lt;/i&gt; &lt;/div&gt;
+                    &lt;h4&gt;796518&lt;/h4&gt;
+                    &lt;p&gt;Mug of Beer Sold&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-3 single_service"&gt;
+                &lt;div class="col-wrapper"&gt;
+                    &lt;div class="icon-border bm10"&gt; &lt;i class="fa fa-play-circle-o"&gt;&lt;/i&gt; &lt;/div&gt;
+                    &lt;h4&gt;39472&lt;/h4&gt;
+                    &lt;p&gt;Movies Watched&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-3 single_service"&gt;
+                &lt;div class="col-wrapper"&gt;
+                    &lt;div class="icon-border bm10"&gt; &lt;i class="fa fa-truck"&gt;&lt;/i&gt; &lt;/div&gt;
+                    &lt;h4&gt;2188764&lt;/h4&gt;
+                    &lt;p&gt;Pizza Deleverd&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-3 single_service"&gt;
+                &lt;div class="col-wrapper"&gt;
+                    &lt;div class="icon-border bm10"&gt; &lt;i class="fa fa-users"&gt;&lt;/i&gt; &lt;/div&gt;
+                    &lt;h4&gt;480523&lt;/h4&gt;
+                    &lt;p&gt;Customers Worldwide&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;!-- /.container --&gt;
+&lt;/div&gt;<!-- #facts -->
+                    </pre> 
+
+
+					 <!-- ============ Food Menu Section ============= -->  
+
+                    <h2 id="foodmenu">Food Menu</h2>
+                    <p>In <strong>index.html</strong> file. HTML structure of the Food Menu Section</p>
+                    <pre class="prettyprint lang-basic">
+
+&lt;div id="food-menu" class="light-wrapper"&gt;
+    &lt;section class="ss-style-top"&gt;&lt;/section&gt;
+    &lt;div class="container inner"&gt;
+        &lt;h2 class="section-title text-center"&gt;Food Menu&lt;/h2&gt;
+        &lt;p class="lead main text-center"&gt;There is no sincerer love than the love of food!&lt;/p&gt;
+
+        &lt;div class="row"&gt;
+            &lt;div class="col-sm-3 col-md-3"&gt;
+                &lt;div class="menu-images "&gt;&lt;img src="img/menu/hot-drinks.png" alt="Hot Drinks"&gt;&lt;/div&gt;
+                &lt;div class="menu-titles"&gt;&lt;h1 class=""&gt;Hot drinks&lt;/h1&gt;&lt;/div&gt;
+                &lt;div class="menu-items "&gt;
+                    &lt;ul&gt;
+                        &lt;li&gt;Espresso&lt;/li&gt;
+                        &lt;li&gt;Americano&lt;/li&gt;
+                        &lt;li&gt;Capuccino&lt;/li&gt;
+                        &lt;li&gt;Latte&lt;/li&gt;
+                        &lt;li&gt;Mocha&lt;/li&gt;
+                        &lt;li&gt;Hot Chocolate&lt;/li&gt;
+                        &lt;li&gt;Yummie Cafee&lt;/li&gt;
+                        &lt;li&gt;Fruit Tea&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-3 col-md-3"&gt;
+                &lt;div class="menu-images "&gt;&lt;img src="img/menu/ice-drinks.png" alt="Ice Drinks"&gt;&lt;/div&gt;
+                &lt;div class="menu-titles"&gt;&lt;h1 class=""&gt;Ice drinks&lt;/h1&gt;&lt;/div&gt;
+                &lt;div class="menu-items "&gt;
+                    &lt;ul&gt;
+                        &lt;li&gt;Ice Coffee&lt;/li&gt;
+                        &lt;li&gt;Americano&lt;/li&gt;
+                        &lt;li&gt;Latte&lt;/li&gt;
+                        &lt;li&gt;Vanilla Frappe&lt;/li&gt;
+                        &lt;li&gt;Espresso Frappe&lt;/li&gt;
+                        &lt;li&gt;Choco Frappe&lt;/li&gt;
+                        &lt;li&gt;Iced Chai&lt;/li&gt;
+                        &lt;li&gt;Fruit Fresh&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-3 col-md-3"&gt;
+                &lt;div class="menu-images "&gt;&lt;img src="img/menu/smoothies.png" alt="Smoothies"&gt;&lt;/div&gt;
+                &lt;div class="menu-titles"&gt;&lt;h1 class=""&gt;Smoothies&lt;/h1&gt;&lt;/div&gt;
+                &lt;div class="menu-items "&gt;
+                    &lt;ul&gt;
+                        &lt;li&gt;Mango&lt;/li&gt;
+                        &lt;li&gt;Strawberry&lt;/li&gt;
+                        &lt;li&gt;Blue Berry&lt;/li&gt;
+                        &lt;li&gt;Peach&lt;/li&gt;
+                        &lt;li&gt;Pineapple&lt;/li&gt;
+                        &lt;li&gt;Banana&lt;/li&gt;
+                        &lt;li&gt;Milkshake&lt;/li&gt;
+                        &lt;li&gt;Greens&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-3 col-md-3"&gt;
+                &lt;div class="menu-images "&gt;&lt;img src="img/menu/deserts.png" alt="Deserts"&gt;&lt;/div&gt;
+                &lt;div class="menu-titles"&gt;&lt;h1 class=""&gt;Deserts&lt;/h1&gt;&lt;/div&gt;
+                &lt;div class="menu-items "&gt;
+                    &lt;ul&gt;
+                        &lt;li&gt;Cheesecake&lt;/li&gt;
+                        &lt;li&gt;Choco Pie&lt;/li&gt;
+                        &lt;li&gt;Pancakes&lt;/li&gt;
+                        &lt;li&gt;Muffins&lt;/li&gt;
+                        &lt;li&gt;Fruit Slices&lt;/li&gt;
+                        &lt;li&gt;Fruit Salad&lt;/li&gt;
+                        &lt;li&gt;Cream Cake&lt;/li&gt;
+                        &lt;li&gt;Ice Cream&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class="row"&gt;
+            &lt;div class="col-sm-3 col-md-3"&gt;
+                &lt;div class="menu-images "&gt;&lt;img src="img/menu/cocktails.png" alt="Hot Drinks"&gt;&lt;/div&gt;
+                &lt;div class="menu-titles"&gt;&lt;h1 class=""&gt;Cocktails&lt;/h1&gt;&lt;/div&gt;
+                &lt;div class="menu-items "&gt;
+                    &lt;ul&gt;
+                        &lt;li&gt;Black Velvet&lt;/li&gt;
+                        &lt;li&gt;Gin Sour&lt;/li&gt;
+                        &lt;li&gt;Mojito&lt;/li&gt;
+                        &lt;li&gt;Long Island&lt;/li&gt;
+                        &lt;li&gt;Orgasm&lt;/li&gt;
+                        &lt;li&gt;Bloody Mary&lt;/li&gt;
+                        &lt;li&gt;Earthquake&lt;/li&gt;
+                        &lt;li&gt;Whisky Mac&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-3 col-md-3"&gt;
+                &lt;div class="menu-images "&gt;&lt;img src="img/menu/beer.png" alt="Ice Drinks"&gt;&lt;/div&gt;
+                &lt;div class="menu-titles"&gt;&lt;h1 class=""&gt;Beer&lt;/h1&gt;&lt;/div&gt;
+                &lt;div class="menu-items "&gt;
+                    &lt;ul&gt;
+                        &lt;li&gt;Lager&lt;/li&gt;
+                        &lt;li&gt;Blonde Beer&lt;/li&gt;
+                        &lt;li&gt;Black Beer&lt;/li&gt;
+                        &lt;li&gt;Blonde Ale&lt;/li&gt;
+                        &lt;li&gt;Pilsner&lt;/li&gt;
+                        &lt;li&gt;Lemon Beer&lt;/li&gt;
+                        &lt;li&gt;Unfiltered Beer&lt;/li&gt;
+                        &lt;li&gt;Non-Alcoholic&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-3 col-md-3"&gt;
+                &lt;div class="menu-images "&gt;&lt;img src="img/menu/wine.png" alt="Smoothies"&gt;&lt;/div&gt;
+                &lt;div class="menu-titles"&gt;&lt;h1 class=""&gt;Wine&lt;/h1&gt;&lt;/div&gt;
+                &lt;div class="menu-items "&gt;
+                    &lt;ul&gt;
+                        &lt;li&gt;Sweet Red&lt;/li&gt;
+                        &lt;li&gt;Dry Red&lt;/li&gt;
+                        &lt;li&gt;Sweet White&lt;/li&gt;
+                        &lt;li&gt;Dry White&lt;/li&gt;
+                        &lt;li&gt;Rose&lt;/li&gt;
+                        &lt;li&gt;Sparkling Wine&lt;/li&gt;
+                        &lt;li&gt;Fortified Wine&lt;/li&gt;
+                        &lt;li&gt;Frutty Red&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-3 col-md-3"&gt;
+                &lt;div class="menu-images "&gt;&lt;img src="img/menu/sprites.png" alt="Deserts"&gt;&lt;/div&gt;
+                &lt;div class="menu-titles"&gt;&lt;h1 class=""&gt;Sprites&lt;/h1&gt;&lt;/div&gt;
+                &lt;div class="menu-items "&gt;
+                    &lt;ul&gt;
+                        &lt;li&gt;Whisky&lt;/li&gt;
+                        &lt;li&gt;Rum&lt;/li&gt;
+                        &lt;li&gt;Tequila&lt;/li&gt;
+                        &lt;li&gt;Gin&lt;/li&gt;
+                        &lt;li&gt;Champagne&lt;/li&gt;
+                        &lt;li&gt;Brandy&lt;/li&gt;
+                        &lt;li&gt;Absinthe&lt;/li&gt;
+                        &lt;li&gt;Liqueur&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/div&gt;
+    &lt;!-- /.container --&gt;
+    &lt;section class="ss-style-bottom"&gt;&lt;/section&gt;
+&lt;/div&gt;<!--/#food-menu-->
+					</pre>
+<!-- ============ Special Offer Section ============= -->  
+
+                    <h2 id="special">Special Offers</h2>
+                    <p>In <strong>index.html</strong> file. HTML structure of the Special Offers Section</p>
+                    <pre class="prettyprint lang-basic">
+
+&lt;div id="special-offser" class="parallax pricing"&gt;
+    &lt;div class="container inner"&gt;
+
+        &lt;h2 class="section-title text-center"&gt;Special Offers&lt;/h2&gt;
+        &lt;p class="lead main text-center"&gt;There is no sincerer love than the love of food!&lt;/p&gt;
+
+        &lt;div class="row"&gt;
+            &lt;div class="col-md-6 col-sm-6"&gt;
+
+                &lt;div class="pricing-item"&gt;
+
+                    &lt;a href="#"&gt;&lt;img class="img-responsive img-thumbnail" src="img/dish/dish3.jpg" alt=""&gt;&lt;/a&gt;
+
+                    &lt;div class="pricing-item-details"&gt;
+
+                        &lt;h3&gt;&lt;a href="#"&gt;Chicken Fried Rice&lt;/a&gt;&lt;/h3&gt;
+
+                        &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.&lt;/p&gt;
+
+                        &lt;a class="btn btn-danger" href="#"&gt;Order now&lt;/a&gt;
+                        &lt;div class="clearfix"&gt;&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;!--price tag--&gt;
+                    &lt;span class="hot-tag br-red"&gt;$26&lt;/span&gt;
+                    &lt;div class="clearfix"&gt;&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-md-6 col-sm-6"&gt;
+
+                &lt;div class="pricing-item"&gt;
+
+                    &lt;a href="#"&gt;&lt;img class="img-responsive img-thumbnail" src="img/dish/dish2.jpg" alt=""&gt;&lt;/a&gt;
+
+                    &lt;div class="pricing-item-details"&gt;
+
+                        &lt;h3&gt;&lt;a href="#"&gt;Hot Fried Chicken&lt;/a&gt;&lt;/h3&gt;
+
+                        &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.&lt;/p&gt;
+
+                        &lt;a class="btn btn-danger" href="#"&gt;Order now&lt;/a&gt;
+                        &lt;div class="clearfix"&gt;&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;!--price tag--&gt;
+                    &lt;span class="hot-tag br-lblue"&gt;$37&lt;/span&gt;
+                    &lt;div class="clearfix"&gt;&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="clearfix visible-md"&gt;&lt;/div&gt;
+            &lt;div class="col-md-6 col-sm-6"&gt;
+
+                &lt;div class="pricing-item"&gt;
+
+                    &lt;a href="#"&gt;&lt;img class="img-responsive img-thumbnail" src="img/dish/dish4.jpg" alt=""&gt;&lt;/a&gt;
+
+                    &lt;div class="pricing-item-details"&gt;
+
+                        &lt;h3&gt;&lt;a href="#"&gt;Thi Chicken Momo&lt;/a&gt;&lt;/h3&gt;
+
+                        &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.&lt;/p&gt;
+
+                        &lt;a class="btn btn-danger" href="#"&gt;Order now&lt;/a&gt;
+                        &lt;div class="clearfix"&gt;&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;!--price tag--&gt;
+                    &lt;span class="hot-tag br-green"&gt;$54&lt;/span&gt;
+                    &lt;div class="clearfix"&gt;&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-md-6 col-sm-6"&gt;
+
+                &lt;div class="pricing-item"&gt;
+
+                    &lt;a href="#"&gt;&lt;img class="img-responsive img-thumbnail" src="img/dish/dish1.jpg" alt=""&gt;&lt;/a&gt;
+
+                    &lt;div class="pricing-item-details"&gt;
+
+                        &lt;h3&gt;&lt;a href="#"&gt;Cocktail Sushi&lt;/a&gt;&lt;/h3&gt;
+
+                        &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.&lt;/p&gt;
+
+                        &lt;a class="btn btn-danger" href="#"&gt;Order now&lt;/a&gt;
+                        &lt;div class="clearfix"&gt;&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;!--price tag--&gt;
+                    &lt;span class="hot-tag br-red"&gt;$27&lt;/span&gt;
+                    &lt;div class="clearfix"&gt;&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/div&gt;
+    &lt;!-- /.container --&gt;
+&lt;/div&gt;<!-- /#special-offser -->
+                    </pre>
+
+<!-- ============ Reservation Section ============= -->  
+
+                    <h2 id="reservation">Reservation</h2>
+                    <p>In <strong>index.html</strong> file. HTML structure of the Reservation Section</p>
+                    <pre class="prettyprint lang-basic">
+
+&lt;div id="reservation" class="light-wrapper"&gt;
+    &lt;section class="ss-style-top"&gt;&lt;/section&gt;
+    &lt;div class="container inner"&gt;
+        &lt;h2 class="section-title text-center"&gt;Reservation&lt;/h2&gt;
+        &lt;p class="lead main text-center"&gt;Reserve your table &amp; enjoy lorem Ipsum&lt;/p&gt;
+        &lt;div class="row"&gt;
+            &lt;div class="col-md-6"&gt;
+                &lt;form id="reservation_form" class="form form-table" method="post" action="php/reservation.php"&gt;
+                    &lt;div id="response"&gt;&lt;/div&gt;
+                    &lt;div class="form-group"&gt;
+                        &lt;h4&gt;Fill the form for table reservation (all fields required)&lt;/h4&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class="row"&gt;
+                        &lt;div class="col-lg-6 col-md-6 form-group"&gt;
+                            &lt;label class="sr-only" for="first_name1"&gt;first name&lt;/label&gt;
+                            &lt;input class="form-control hint" type="text" id="first_name1" name="first_name" placeholder="First name" required=""&gt;
+                        &lt;/div&gt;
+                        &lt;div class="col-lg-6 col-md-6 form-group"&gt;
+                            &lt;label class="sr-only" for="last_name1"&gt;last name&lt;/label&gt;
+                            &lt;input class="form-control hint" type="text" id="last_name1" name="last_name" placeholder="Last name" required=""&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="row"&gt;
+                        &lt;div class="col-lg-6 col-md-6 form-group"&gt;
+                            &lt;label class="sr-only" for="email1"&gt;email&lt;/label&gt;
+                            &lt;input class="form-control hint" type="email" id="email1" name="email" placeholder="Email@domain.com" required=""&gt;
+                        &lt;/div&gt;
+                        &lt;div class="col-lg-6 col-md-6 form-group"&gt;
+                            &lt;label class="sr-only" for="phone1"&gt;phone&lt;/label&gt;
+                            &lt;input class="form-control hint" type="text" id="phone1" name="phone" placeholder="Phone" required=""&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="row"&gt;
+                        &lt;div class="col-lg-6 col-md-6 form-group"&gt;
+                            &lt;label class="sr-only" for="reserv_date1"&gt;reservation date&lt;/label&gt;
+                            &lt;input class="form-control datepicker hasDatepicker hint" type="date" id="reserv_date1" name="reserv_date" placeholder="Reservation date" required=""&gt;
+                        &lt;/div&gt;
+                        &lt;div class="col-lg-6 col-md-6 form-group"&gt;
+                            &lt;label class="sr-only" for="numb_guests1"&gt;number of guests&lt;/label&gt;
+                            &lt;input class="form-control hint" type="text" id="numb_guests1" name="numb_guests" placeholder="Number of guests" required=""&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="row"&gt;
+                        &lt;div class="col-lg-6 col-md-6 form-group"&gt;
+                            &lt;label class="sr-only" for="alt_reserv_date1"&gt;time from&lt;/label&gt;
+                            &lt;input class="form-control datepicker hasDatepicker hint" type="text" id="alt_reserv_date1" name="alt_reserv_date" placeholder="Time from" required=""&gt;
+                        &lt;/div&gt;
+                        &lt;div class="col-lg-6 col-md-6 form-group"&gt;
+                            &lt;label class="sr-only" for="time1"&gt;time&lt;/label&gt;
+                            &lt;input class="form-control timepicker ui-timepicker-input hint" type="text" id="time1" name="time" placeholder="Time to" required="" autocomplete="off"&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="row"&gt;
+                        &lt;div class="col-lg-12 col-md-12"&gt;
+                            &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse.&lt;/p&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="row"&gt;
+                        &lt;div class="col-lg-12 col-md-12"&gt;
+                            &lt;button type="submit" id="submit" class="btn btn-danger btn-lg"&gt;Reserve!&lt;/button&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/form&gt;
+                
+            &lt;/div&gt;&lt;!-- col-md-6 --&gt;
+            &lt;div class="opening_hours col-md-5 col-md-offset-1"&gt;
+
+                &lt;h3&gt;&lt;i class="fa fa-clock-o fa-fw"&gt;&lt;/i&gt;Hours&lt;/h3&gt;
+                &lt;h4&gt;Breakfast&lt;/h4&gt;
+                &lt;p&gt;Mon to Fri: 7:30 AM - 11:30 AM&lt;br&gt;Sat &amp; Sun: 8:00 AM - 9:00 AM&lt;/p&gt;
+                &lt;h4&gt;Lunch&lt;/h4&gt;
+                &lt;p&gt;Mon to Fri: 12:00 PM - 5:00 PM&lt;/p&gt;
+                &lt;h4&gt;Dinner&lt;/h4&gt;
+                &lt;p&gt;Mon to Sat: 6:00 PM -  1:00 AM&lt;br&gt;Sun: 5:30 PM - 12:00 AM&lt;/p&gt;
+
+                &lt;h3&gt;&lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;Directions&lt;/h3&gt;
+                &lt;p&gt;4120 Lenox Avenue, New York, NY, 10035 76 Saint Nicholas Avenue&lt;/p&gt;
+
+                &lt;h3&gt;&lt;i class="fa fa-mobile fa-fw"&gt;&lt;/i&gt;Contacts&lt;/h3&gt;
+                &lt;p&gt;Email: &lt;a href="mailto:yourname@meatking.com"&gt;yourname@meatking.com&lt;/a&gt;&lt;/p&gt;
+                &lt;p&gt;Phone: +234 3456 678&lt;/p&gt;
+
+            &lt;/div&gt;&lt;!-- col-md-6 --&gt;
+        &lt;/div&gt;
+        &lt;!-- /.services --&gt;
+    &lt;/div&gt;
+    &lt;!-- /.container --&gt;
+    &lt;section class="ss-style-bottom"&gt;&lt;/section&gt;
+&lt;/div&gt;<!-- #reservation -->
+                    </pre>
+
+
+
+<!-- ============ Chef Section ============= -->  
+
+                    <h2 id="chef">Chef</h2>
+                    <p>In <strong>index.html</strong> file. HTML structure of the Chef Section</p>
+                    <pre class="prettyprint lang-basic">
+
+&lt;div id="chefs" class="parallax pricing"&gt;
+    &lt;div class="container inner"&gt;
+
+        &lt;h2 class="section-title text-center"&gt;Our Chefs&lt;/h2&gt;
+        &lt;p class="lead main text-center"&gt;There is no sincerer love than the love of food!&lt;/p&gt;
+
+        &lt;div class="row text-center chefs"&gt;
+            &lt;div class="col-sm-4"&gt;
+                &lt;div class="col-wrapper"&gt;
+                    &lt;div class="icon-wrapper"&gt;
+                        &lt;img src="img/chefs/1.jpg"&gt;
+                    &lt;/div&gt;
+                    &lt;h3&gt;Saransh Goila&lt;/h3&gt;
+                    &lt;p&gt;Vivamus sagittis lacuson augue laoreet rutrum faucibus dolor auctor. Cras mattis consectetur purus sit amet fermentum ultricies vehicula.&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-4"&gt;
+                &lt;div class="col-wrapper"&gt;
+                    &lt;div class="icon-wrapper"&gt;
+                        &lt;img src="img/chefs/3.jpg"&gt;
+                    &lt;/div&gt;
+                    &lt;h3&gt;Jane Doe&lt;/h3&gt;
+                    &lt;p&gt;Nullam id dolor id nibh ultricies vehicula ut id elit. Cum sociis natoque penatibus et magnis dis parturient monte nascetur ultricies vehicula. &lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-4"&gt;
+                &lt;div class="col-wrapper"&gt;
+                    &lt;div class="icon-wrapper"&gt;
+                        &lt;img src="img/chefs/2.jpg"&gt;
+                    &lt;/div&gt;
+                    &lt;h3&gt;Anton Mosimann&lt;/h3&gt;
+                    &lt;p&gt;Curabitur blandit matti tempus porttitor. Donec id elit non mi porta ut gravida at eget metus. Consectetur adipiscing elit ultricies vehicula.&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/div&gt;
+    &lt;!-- /.container --&gt;
+&lt;/div&gt;&lt;!-- /#chefs --&gt;
+
+<!-- ============ Footer Section ============= -->  
+
+                    <h2 id="footer">Footer</h2>
+                    <p>In <strong>index.html</strong> file. HTML structure of the Footer Section</p>
+                    <pre class="prettyprint lang-basic">
+&lt;footer id="footer" class="dark-wrapper"&gt;
+    &lt;section class="ss-style-top"&gt;&lt;/section&gt;
+    &lt;div class="container inner"&gt;
+        &lt;div class="row"&gt;
+            &lt;div class="col-sm-6"&gt;
+                &copy; Copyright MeatKing 2014
+                &lt;br/&gt;Theme By &lt;a class="themeBy" href="http://www.Themewagon.com"&gt;ThemeWagon&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div class="col-sm-6"&gt;
+                &lt;div class="social-bar"&gt;
+                    &lt;a href="#" class="fa fa-instagram tooltipped" title=""&gt;&lt;/a&gt;
+                    &lt;a href="#" class="fa fa-youtube-square tooltipped" title=""&gt;&lt;/a&gt;
+                    &lt;a href="#" class="fa fa-facebook-square tooltipped" title=""&gt;&lt;/a&gt;
+                    &lt;a href="#" class="fa fa-pinterest-square tooltipped" title=""&gt;&lt;/a&gt;
+                    &lt;a href="#" class="fa fa-google-plus-square tooltipped" title=""&gt;&lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;!-- /.container --&gt;
+&lt;/footer&gt;
+        <!-- Footer Section Ends-->
+        
+        
+    
+                     </pre>
+                    <!-- end of Footer widget Section -->
+					<!-- working reservation form -->
+
+                    <h2 id="contact-form">Working reservation form</h2>
+                    <p>Open the file php/<strong>reservation.php</strong> and in <strong>line 46 and 47</strong> enter your data: We have made a sile line email for reservation but if you use your personal database customize on that php file or change your email to get reservation email.</p>
+
+                    <pre class="prettyprint lang-basic">
+// Your email
+$to = 'info@themewagon.com';
+$subject = 'Contact Form : Women Entrepreneur -  Youtube Marketer Responsive HTML5 Template';
+                    </pre>
+<br/>
+                    <h4>If Contact form form not working</h4>
+                    <p>You need to check is PHP mail() function working.</p>
+<p>
+<textarea class="form-control" rows="4" style="widht:100%">
+<?php
+    mail('you@yourmail.com','Test mail','The mail function is working!');
+    echo 'Mail sent!';
+?>
+</textarea>
+</p>
+                    <ul>
+                    <li>Save this code as mailtest.php</li>
+                        <li>change you@yourmail.com to your e-mail address</li>
+                        <li>upload mailtest.php to your server</li>
+                        <li>open mailtest.php in your browser (http://yourwebsite.com/mailtest.php)</li>
+                        <li>check your inbox to see if a test message arrived.</li>
+                    </ul>
+                    <strong>If it works:</strong>
+
+                    <ul>
+                        <li>double-check your form script for errors (like e-mail address misspelling)</li>
+                        <li>use the same e-mail address as your form recipient</li>
+                        <li>double-check your SPAM filters and SPAM/Junk/Bulk mailboxes</li>
+                    </ul>
+
+                    <strong>If it not</strong>
+
+                    <p>Contact your host and ask them to check PHP mail() setting.</p>
+
+                    <!-- end of working contact form -->
+
+
+					<!-- attributions -->
+
+					<h2 id="attribution">Attribution</h2>
+					<p>Following libraries and plugins are used in Women Entrepreneur template:</p>
+					<ul>
+                        <li><a href="https://jquery.com/" target="_blank">jQuery</a></li>
+                        <li><a href="http://getbootstrap.com" target="_blank">Bootstrap</a></li>
+                        <li><a href="https://www.google.com/fonts" target="_blank">Google Fonts</a> </li>
+                        <li><a href="http://ionicons.com/" target="_blank">ionicons</a></li>
+                        <li><a href="http://www.owlcarousel.owlgraphic.com/index.html" target="_blank">Owl Carousel 2</a></li>
+                    </ul>
+
+					<!-- end of attributions -->
+
+
+
+
+
+					<!-- changelog -->
+
+					<h2 id="changelog">Changelog</h2>
+
+					<p> Version 1.0</p>
+					<pre class="prettyprint">- Initial Release</pre>
+
+					<!-- end of changelog -->
+						
+				</section>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Javascript files -->
+	<!-- jQuery -->
+	<script src="assets/js/jquery-1.11.0.min.js"></script>
+	<!-- Bootstrap JS -->
+	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+	<!--HL -->
+	<script src="assets/js/prettify/prettify.js"></script>
+	<!-- Custom scripts -->
+	<script src="assets/js/custom.js"></script>
+
+</body>
+</html>
