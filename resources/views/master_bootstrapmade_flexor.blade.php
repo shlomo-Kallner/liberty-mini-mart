@@ -23,25 +23,25 @@
         <meta name="twitter:image" content="">
 
         <!-- Fav and touch icons -->
-        <link rel="shortcut icon" href="img/icons/favicon.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/icons/114x114.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/icons/72x72.png">
-        <link rel="apple-touch-icon-precomposed" href="img/icons/default.png">
+        <link rel="shortcut icon" href="{{ asset('lib/bootstrapmade/flexor/img/icons/favicon.png') }}">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ asset('lib/bootstrapmade/flexor/img/icons/114x114.png') }}">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ asset('lib/bootstrapmade/flexor/img/icons/72x72.png') }}">
+        <link rel="apple-touch-icon-precomposed" href="{{ asset('lib/bootstrapmade/flexor/img/icons/default.png') }}">
 
         <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900" rel="stylesheet">
 
         <!-- Bootstrap CSS File -->
-        <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ asset('lib/bootstrapmade/flexor/lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 
         <!-- Libraries CSS Files -->
-        <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-        <link href="lib/owlcarousel/owl.carousel.min.css" rel="stylesheet">
-        <link href="lib/owlcarousel/owl.theme.min.css" rel="stylesheet">
-        <link href="lib/owlcarousel/owl.transitions.min.css" rel="stylesheet">
+        <link href="{{ asset('lib/bootstrapmade/flexor/lib/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('lib/bootstrapmade/flexor/lib/owlcarousel/owl.carousel.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('lib/bootstrapmade/flexor/lib/owlcarousel/owl.theme.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('lib/bootstrapmade/flexor/lib/owlcarousel/owl.transitions.min.css') }}" rel="stylesheet">
 
         <!-- Main Stylesheet File -->
-        <link href="css/style.css" rel="stylesheet">
+        <link href="{{ asset('lib/bootstrapmade/flexor/css/style.css') }}" rel="stylesheet">
 
         <!--Your custom colour override - predefined colours are: colour-blue.css, colour-green.css, colour-lavander.css, orange is default-->
         <link href="#" id="colour-scheme" rel="stylesheet">
@@ -69,7 +69,7 @@
                                     About Us
                                 </h3>
                                 <p>Flexor is a super flexible responsive theme with a modest design touch.</p>
-                                <a href="about.html" class="btn btn-more"><i class="fa fa-plus"></i> Learn more</a>
+                                <a href="{{ url('lib/bootstrapmade/flexor/about.html') }}" class="btn btn-more"><i class="fa fa-plus"></i> Learn more</a>
                             </div>
                             <div class="col-md-3">
                                 <!--@todo: replace with company contact details-->
@@ -121,9 +121,9 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <!--navbar-branding/logo - hidden image tag & site name so things like Facebook to pick up, actual logo set via CSS for flexibility -->
-                                <a class="navbar-brand" href="index.html" title="Home">
+                                <a class="navbar-brand" href="{{ url('lib/bootstrapmade/flexor/index.html') }}" title="Home">
                                     <h1 class="hidden">
-                                        <img src="img/logo.png" alt="Flexor Logo">
+                                        <img src="{{ asset('lib/bootstrapmade/flexor/img/logo.png') }}" alt="Flexor Logo">
                                         Flexor
                                     </h1>
                                 </a>
@@ -139,8 +139,8 @@
                                     <li class="user-button"><a class="btn btn-primary btn-hh-trigger" role="button" data-toggle="collapse" data-target=".header-hidden">Open</a></li>
                                 </ul>
                                 <ul class="list-inline user-menu pull-right">
-                                    <li class="user-register"><i class="fa fa-edit text-primary "></i> <a href="register.html" class="text-uppercase">Register</a></li>
-                                    <li class="user-login"><i class="fa fa-sign-in text-primary"></i> <a href="login.html" class="text-uppercase">Login</a></li>
+                                    <li class="user-register"><i class="fa fa-edit text-primary "></i> <a href="{{ url('lib/bootstrapmade/flexor/register.html') }}" class="text-uppercase">Register</a></li>
+                                    <li class="user-login"><i class="fa fa-sign-in text-primary"></i> <a href="{{ url('lib/bootstrapmade/flexor/login.html') }}" class="text-uppercase">Login</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -162,17 +162,17 @@
                         <div class="navbar-collapse collapse">
                             <ul class="nav navbar-nav" id="main-menu">
                                 <li class="icon-link">
-                                    <a href="index.html"><i class="fa fa-home"></i></a>
+                                    <a href="{{ url('lib/bootstrapmade/flexor/index.html') }}"><i class="fa fa-home"></i></a>
                                 </li>
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pages<b class="caret"></b></a>
                                     <!-- Dropdown Menu -->
                                     <ul class="dropdown-menu">
                                         <li class="dropdown-header">Flexor Version Pages</li>
-                                        <li><a href="elements.html" tabindex="-1" class="menu-item">Elements</a></li>
-                                        <li><a href="about.html" tabindex="-1" class="menu-item">About / Inner Page</a></li>
-                                        <li><a href="login.html" tabindex="-1" class="menu-item">Login</a></li>
-                                        <li><a href="register.html" tabindex="-1" class="menu-item">Sign-Up</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/flexor/elements.html') }}" tabindex="-1" class="menu-item">Elements</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/flexor/about.html') }}" tabindex="-1" class="menu-item">About / Inner Page</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/flexor/login.html') }}" tabindex="-1" class="menu-item">Login</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/flexor/register.html') }}" tabindex="-1" class="menu-item">Sign-Up</a></li>
                                         <li class="dropdown-footer">Dropdown footer</li>
                                     </ul>
                                 </li>
@@ -232,7 +232,7 @@
                                         <a href="https://bootstrapmade.com" class="btn btn-more btn-lg i-right">Buy Now <i class="fa fa-plus"></i></a>
                                     </div>
                                     <div class="col-md-6 col-md-pull-6 hidden-xs">
-                                        <img src="img/slides/slide1.png" alt="Slide 1" class="center-block img-responsive">
+                                        <img src="{{ asset('lib/bootstrapmade/flexor/img/slides/slide1.png') }}" alt="Slide 1" class="center-block img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -250,7 +250,7 @@
                                         <a href="https://bootstrapmade.com" class="btn btn-more btn-lg"><i class="fa fa-plus"></i> Learn More</a>
                                     </div>
                                     <div class="col-md-6 hidden-xs">
-                                        <img src="img/slides/slide2.png" alt="Slide 2" class="center-block img-responsive">
+                                        <img src="{{ asset('lib/bootstrapmade/flexor/img/slides/slide2.png') }}" alt="Slide 2" class="center-block img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -267,7 +267,7 @@
                 <div class="container">
                     <h2 class="text-shadow-white">
                         We are a full digital agency based in London. We are experienced professionals in building websites, applications, mobile solutions.
-                        <a href="about.html" class="btn btn-more"><i class="fa fa-plus"></i>Read more</a>
+                        <a href="{{ url('lib/bootstrapmade/flexor/about.html') }}" class="btn btn-more"><i class="fa fa-plus"></i>Read more</a>
                     </h2>
                 </div>
             </div>
@@ -282,7 +282,7 @@
                     <div class="item-carousel" data-toggle="owlcarousel" data-owlcarousel-settings='{"items":4, "pagination":false, "navigation":true, "itemsScaleUp":true}'>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project1.png" alt="Project 1 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project1.png') }}" alt="Project 1 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 1</span> </span>
                                 </span>
@@ -296,7 +296,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project2.png" alt="Project 2 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project2.png') }}" alt="Project 2 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 2</span> </span>
                                 </span>
@@ -310,7 +310,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project3.png" alt="Project 3 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project3.png') }}" alt="Project 3 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 3</span> </span>
                                 </span>
@@ -324,7 +324,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project4.png" alt="Project 4 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project4.png') }}" alt="Project 4 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 4</span> </span>
                                 </span>
@@ -338,7 +338,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project5.png" alt="Project 5 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project5.png') }}" alt="Project 5 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 5</span> </span>
                                 </span>
@@ -352,7 +352,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project6.png" alt="Project 6 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project6.png') }}" alt="Project 6 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 6</span> </span>
                                 </span>
@@ -366,7 +366,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project7.png" alt="Project 7 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project7.png') }}" alt="Project 7 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 7</span> </span>
                                 </span>
@@ -380,7 +380,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project8.png" alt="Project 8 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project8.png') }}" alt="Project 8 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 8</span> </span>
                                 </span>
@@ -394,7 +394,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project9.png" alt="Project 9 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project9.png') }}" alt="Project 9 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 9</span> </span>
                                 </span>
@@ -408,7 +408,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project10.png" alt="Project 10 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project10.png') }}" alt="Project 10 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 10</span> </span>
                                 </span>
@@ -422,7 +422,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project11.png" alt="Project 11 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project11.png') }}" alt="Project 11 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 11</span> </span>
                                 </span>
@@ -436,7 +436,7 @@
                         </div>
                         <div class="item">
                             <a href="#" class="overlay-wrapper">
-                                <img src="img/showcase/project12.png" alt="Project 12 image" class="img-responsive underlay">
+                                <img src="{{ asset('lib/bootstrapmade/flexor/img/showcase/project12.png') }}" alt="Project 12 image" class="img-responsive underlay">
                                 <span class="overlay">
                                     <span class="overlay-content"> <span class="h4">Project 12</span> </span>
                                 </span>
@@ -611,7 +611,7 @@
                         </h3>
                         <blockquote>
                             <p>Our productivity &amp; sales are up! Customers are happy &amp; we couldn't be happier with this product!</p>
-                            <img src="img/misc/charles-quote.png" alt="Charles Spencer Chaplin">
+                            <img src="{{ asset('lib/bootstrapmade/flexor/img/misc/charles-quote.png') }}" alt="Charles Spencer Chaplin">
                             <small>
                                 <strong>Charles Chaplin</strong>
                                 <br>
@@ -683,32 +683,32 @@
                             <!--Client logos should be within a 120px wide by 60px height image canvas-->
                             <div class="col-xs-6 col-md-2">
                                 <a href="https://bootstrapmade.com" title="Client 1">
-                                    <img src="img/clients/client1.png" alt="Client 1 logo" class="img-responsive">
+                                    <img src="{{ asset('lib/bootstrapmade/flexor/img/clients/client1.png') }}" alt="Client 1 logo" class="img-responsive">
                                 </a>
                             </div>
                             <div class="col-xs-6 col-md-2">
                                 <a href="https://bootstrapmade.com" title="Client 2">
-                                    <img src="img/clients/client2.png" alt="Client 2 logo" class="img-responsive">
+                                    <img src="{{ asset('lib/bootstrapmade/flexor/img/clients/client2.png') }}" alt="Client 2 logo" class="img-responsive">
                                 </a>
                             </div>
                             <div class="col-xs-6 col-md-2">
                                 <a href="https://bootstrapmade.com" title="Client 3">
-                                    <img src="img/clients/client3.png" alt="Client 3 logo" class="img-responsive">
+                                    <img src="{{ asset('lib/bootstrapmade/flexor/img/clients/client3.png') }}" alt="Client 3 logo" class="img-responsive">
                                 </a>
                             </div>
                             <div class="col-xs-6 col-md-2">
                                 <a href="https://bootstrapmade.com" title="Client 4">
-                                    <img src="img/clients/client4.png" alt="Client 4 logo" class="img-responsive">
+                                    <img src="{{ asset('lib/bootstrapmade/flexor/img/clients/client4.png') }}" alt="Client 4 logo" class="img-responsive">
                                 </a>
                             </div>
                             <div class="col-xs-6 col-md-2">
                                 <a href="https://bootstrapmade.com" title="Client 5">
-                                    <img src="img/clients/client5.png" alt="Client 5 logo" class="img-responsive">
+                                    <img src="{{ asset('lib/bootstrapmade/flexor/img/clients/client5.png') }}" alt="Client 5 logo" class="img-responsive">
                                 </a>
                             </div>
                             <div class="col-xs-6 col-md-2">
                                 <a href="https://bootstrapmade.com" title="Client 6">
-                                    <img src="img/clients/client6.png" alt="Client 6 logo" class="img-responsive">
+                                    <img src="{{ asset('lib/bootstrapmade/flexor/img/clients/client6.png') }}" alt="Client 6 logo" class="img-responsive">
                                 </a>
                             </div>
                         </div>
@@ -718,7 +718,7 @@
         </div>
 
         <!-- ======== @Region: #footer ======== -->
-        <footer id="footer" class="block block-bg-grey-dark" data-block-bg-img="img/bg_footer-map.png" data-stellar-background-ratio="0.4">
+        <footer id="footer" class="block block-bg-grey-dark" data-block-bg-img="{{ asset('lib/bootstrapmade/flexor/img/bg_footer-map.png') }}" data-stellar-background-ratio="0.4">
             <div class="container">
 
                 <div class="row" id="contact">
@@ -810,22 +810,22 @@
         </footer>
 
         <!-- Required JavaScript Libraries -->
-        <script src="lib/jquery/jquery.min.js"></script>
-        <script src="lib/bootstrap/js/bootstrap.min.js"></script>
-        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-        <script src="lib/stellar/stellar.min.js"></script>
-        <script src="lib/waypoints/waypoints.min.js"></script>
-        <script src="lib/counterup/counterup.min.js"></script>
-        <script src="contactform/contactform.js"></script>
+        <script src="{{ asset('lib/bootstrapmade/flexor/lib/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/flexor/lib/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/flexor/lib/owlcarousel/owl.carousel.min.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/flexor/lib/stellar/stellar.min.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/flexor/lib/waypoints/waypoints.min.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/flexor/lib/counterup/counterup.min.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/flexor/contactform/contactform.js') }}"></script>
 
         <!-- Template Specisifc Custom Javascript File -->
-        <script src="js/custom.js"></script>
+        <script src="{{ asset('lib/bootstrapmade/flexor/js/custom.js') }}"></script>
 
         <!--Custom scripts demo background & colour switcher - OPTIONAL -->
-        <script src="js/color-switcher.js"></script>
+        <script src="{{ asset('lib/bootstrapmade/flexor/js/color-switcher.js') }}"></script>
 
         <!--Contactform script -->
-        <script src="contactform/contactform.js"></script>
+        <script src="{{ asset('lib/bootstrapmade/flexor/contactform/contactform.js') }}"></script>
 
     </body>
 

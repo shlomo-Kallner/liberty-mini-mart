@@ -1,6 +1,6 @@
 <?php
 // setting the version and fileName fields manually for testing purposes only..
-$version = 2;
+$version = 3;
 $fileName = 'master_';
 
 if ($version === 0) {
