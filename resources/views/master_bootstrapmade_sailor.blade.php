@@ -7,16 +7,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="Bootstrap 3 template for corporate business" />
         <!-- css -->
-        <link href="css/bootstrap.min.css" rel="stylesheet" />
-        <link href="plugins/flexslider/flexslider.css" rel="stylesheet" media="screen" />
-        <link href="css/cubeportfolio.min.css" rel="stylesheet" />
-        <link href="css/style.css" rel="stylesheet" />
+        <link href="{{ asset('lib/bootstrapmade/sailor/css/bootstrap.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('lib/bootstrapmade/sailor/plugins/flexslider/flexslider.css') }}" rel="stylesheet" media="screen" />
+        <link href="{{ asset('lib/bootstrapmade/sailor/css/cubeportfolio.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('lib/bootstrapmade/sailor/css/style.css') }}" rel="stylesheet" />
 
         <!-- Theme skin -->
-        <link id="t-colors" href="skins/default.css" rel="stylesheet" />
+        <link id="t-colors" href="{{ asset('lib/bootstrapmade/sailor/skins/default.css') }}" rel="stylesheet" />
 
         <!-- boxed bg -->
-        <link id="bodybg" href="bodybg/bg1.css" rel="stylesheet" type="text/css" />
+        <link id="bodybg" href="{{ asset('lib/bootstrapmade/sailor/bodybg/bg1.css') }}" rel="stylesheet" type="text/css" />
 
         <!-- =======================================================
     Theme Name: Sailor
@@ -65,15 +65,15 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="index.html"><img src="img/logo.png" alt="" width="199" height="52" /></a>
+                            <a class="navbar-brand" href="{{ url('lib/bootstrapmade/sailor/index.html') }}"><img src="{{ asset('lib/bootstrapmade/sailor/img/logo.png') }}" alt="" width="199" height="52" /></a>
                         </div>
                         <div class="navbar-collapse collapse ">
                             <ul class="nav navbar-nav">
                                 <li class="dropdown active">
                                     <a href="#" class="dropdown-toggle " data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false">Home <i class="fa fa-angle-down"></i></a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="index.html">Home slider 1</a></li>
-                                        <li><a href="index2.html">Home slider 2</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/sailor/index.html') }}">Home slider 1</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/sailor/index2.html') }}">Home slider 2</a></li>
 
                                     </ul>
 
@@ -81,34 +81,34 @@
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle " data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false">Features <i class="fa fa-angle-down"></i></a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="typography.html">Typography</a></li>
-                                        <li><a href="components.html">Components</a></li>
-                                        <li><a href="pricing-box.html">Pricing box</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/sailor/typography.html') }}">Typography</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/sailor/components.html') }}">Components</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/sailor/pricing-box.html') }}">Pricing box</a></li>
                                         <li class="dropdown-submenu">
                                             <a href="#" class="dropdown-toggle " data-toggle="dropdown" data-hover="dropdown">Pages</a>
                                             <ul class="dropdown-menu">
-                                                <li><a href="fullwidth.html">Full width</a></li>
-                                                <li><a href="right-sidebar.html">Right sidebar</a></li>
-                                                <li><a href="left-sidebar.html">Left sidebar</a></li>
-                                                <li><a href="comingsoon.html">Coming soon</a></li>
-                                                <li><a href="search-result.html">Search result</a></li>
-                                                <li><a href="404.html">404</a></li>
-                                                <li><a href="register.html">Register</a></li>
-                                                <li><a href="login.html">Login</a></li>
+                                                <li><a href="{{ url('lib/bootstrapmade/sailor/fullwidth.html') }}">Full width</a></li>
+                                                <li><a href="{{ url('lib/bootstrapmade/sailor/right-sidebar.html') }}">Right sidebar</a></li>
+                                                <li><a href="{{ url('lib/bootstrapmade/sailor/left-sidebar.html') }}">Left sidebar</a></li>
+                                                <li><a href="{{ url('lib/bootstrapmade/sailor/comingsoon.html') }}">Coming soon</a></li>
+                                                <li><a href="{{ url('lib/bootstrapmade/sailor/search-result.html') }}">Search result</a></li>
+                                                <li><a href="{{ url('lib/bootstrapmade/sailor/404.html') }}">404</a></li>
+                                                <li><a href="{{ url('lib/bootstrapmade/sailor/register.html') }}">Register</a></li>
+                                                <li><a href="{{ url('lib/bootstrapmade/sailor/login.html') }}">Login</a></li>
                                             </ul>
                                         </li>
                                     </ul>
                                 </li>
-                                <li><a href="portfolio.html">Portfolio</a></li>
+                                <li><a href="{{ url('lib/bootstrapmade/sailor/portfolio.html') }}">Portfolio</a></li>
                                 <li class="dropdown"><a href="#" class="dropdown-toggle " data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false">Blog <i class="fa fa-angle-down"></i></a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="blog-rightsidebar.html">Blog right sidebar</a></li>
-                                        <li><a href="blog-leftsidebar.html">Blog left sidebar</a></li>
-                                        <li><a href="post-rightsidebar.html">Post right sidebar</a></li>
-                                        <li><a href="post-leftsidebar.html">Post left sidebar</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/sailor/blog-rightsidebar.html') }}">Blog right sidebar</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/sailor/blog-leftsidebar.html') }}">Blog left sidebar</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/sailor/post-rightsidebar.html') }}">Post right sidebar</a></li>
+                                        <li><a href="{{ url('lib/bootstrapmade/sailor/post-leftsidebar.html') }}">Post left sidebar</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="{{ url('lib/bootstrapmade/sailor/contact.html') }}">Contact</a></li>
                             </ul>
                         </div>
                     </div>
@@ -127,7 +127,7 @@
                             <div id="main-slider" class="main-slider flexslider">
                                 <ul class="slides">
                                     <li>
-                                        <img src="img/slides/flexslider/1.jpg" alt="" />
+                                        <img src="{{ asset('lib/bootstrapmade/sailor/img/slides/flexslider/1.jpg') }}" alt="" />
                                         <div class="flex-caption">
                                             <h3>Modern Design</h3>
                                             <p>Duis fermentum auctor ligula ac malesuada. Mauris et metus odio, in pulvinar urna</p>
@@ -135,7 +135,7 @@
                                         </div>
                                     </li>
                                     <li>
-                                        <img src="img/slides/flexslider/2.jpg" alt="" />
+                                        <img src="{{ asset('lib/bootstrapmade/sailor/img/slides/flexslider/2.jpg') }}" alt="" />
                                         <div class="flex-caption">
                                             <h3>Fully Responsive</h3>
                                             <p>Sodales neque vitae justo sollicitudin aliquet sit amet diam curabitur sed fermentum.</p>
@@ -143,7 +143,7 @@
                                         </div>
                                     </li>
                                     <li>
-                                        <img src="img/slides/flexslider/3.jpg" alt="" />
+                                        <img src="{{ asset('lib/bootstrapmade/sailor/img/slides/flexslider/3.jpg') }}" alt="" />
                                         <div class="flex-caption">
                                             <h3>Clean & Fast</h3>
                                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit donec mer lacinia.</p>
@@ -378,7 +378,7 @@
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="one">
-                                            <p><img src="img/dummy1.jpg" class="pull-left" alt="" />
+                                            <p><img src="{{ asset('lib/bootstrapmade/sailor/img/dummy1.jpg') }}" class="pull-left" alt="" />
                                                 <strong>Augue iriure</strong> dolorum per ex, ne iisque ornatus veritus duo. Ex nobis integre lucilius sit, pri ea falli ludus appareat. Eum quodsi fuisset id, nostro patrioque qui id. Nominati eloquentiam in mea.
                                             </p>
                                             <p>
@@ -386,7 +386,7 @@
                                             </p>
                                         </div>
                                         <div class="tab-pane" id="two">
-                                            <p><img src="img/dummy1.jpg" class="pull-right" alt="" /> Tale dolor mea ex, te enim assum suscipit cum, vix aliquid omittantur in. Duo eu cibo dolorum menandri, nam sumo dicit admodum ei. Ne mazim commune honestatis cum, mentitum phaedrum sit
+                                            <p><img src="{{ asset('lib/bootstrapmade/sailor/img/dummy1.jpg') }}" class="pull-right" alt="" /> Tale dolor mea ex, te enim assum suscipit cum, vix aliquid omittantur in. Duo eu cibo dolorum menandri, nam sumo dicit admodum ei. Ne mazim commune honestatis cum, mentitum phaedrum sit
                                                 et.
                                             </p>
                                             <p>Lorem ipsum dolor sit amet, vel laoreet pertinacia at, nam ea ornatus ocurreret gubergren. Per facete graecis eu.</p>
@@ -445,12 +445,12 @@
                                     <li class="cbp-item graphic">
                                         <div class="cbp-caption">
                                             <div class="cbp-caption-defaultWrap">
-                                                <img src="img/works/1.jpg" alt="" />
+                                                <img src="{{ asset('lib/bootstrapmade/sailor/img/works/1.jpg') }}" alt="" />
                                             </div>
                                             <div class="cbp-caption-activeWrap">
                                                 <div class="cbp-l-caption-alignCenter">
                                                     <div class="cbp-l-caption-body">
-                                                        <a href="img/works/1big.jpg" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="Dashboard<br>by Paul Flavius Nechita">view larger</a>
+                                                        <a href="{{ asset('lib/bootstrapmade/sailor/img/works/1big.jpg') }}" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="Dashboard<br>by Paul Flavius Nechita">view larger</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -461,12 +461,12 @@
                                     <li class="cbp-item web-design logo">
                                         <div class="cbp-caption">
                                             <div class="cbp-caption-defaultWrap">
-                                                <img src="img/works/2.jpg" alt="" />
+                                                <img src="{{ asset('lib/bootstrapmade/sailor/img/works/2.jpg') }}" alt="" />
                                             </div>
                                             <div class="cbp-caption-activeWrap">
                                                 <div class="cbp-l-caption-alignCenter">
                                                     <div class="cbp-l-caption-body">
-                                                        <a href="img/works/2big.jpg" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="World Clock Widget<br>by Paul Flavius Nechita">view larger</a>
+                                                        <a href="{{ url('lib/bootstrapmade/sailor/img/works/2big.jpg') }}" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="World Clock Widget<br>by Paul Flavius Nechita">view larger</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -477,7 +477,7 @@
                                     <li class="cbp-item graphic logo">
                                         <div class="cbp-caption">
                                             <div class="cbp-caption-defaultWrap">
-                                                <img src="img/works/3.jpg" alt="" />
+                                                <img src="{{ asset('lib/bootstrapmade/sailor/img/works/3.jpg') }}" alt="" />
                                             </div>
                                             <div class="cbp-caption-activeWrap">
                                                 <div class="cbp-l-caption-alignCenter">
@@ -494,13 +494,13 @@
                                     <li class="cbp-item web-design graphic">
                                         <div class="cbp-caption">
                                             <div class="cbp-caption-defaultWrap">
-                                                <img src="img/works/4.jpg" alt="" />
+                                                <img src="{{ asset('lib/bootstrapmade/sailor/img/works/4.jpg') }}" alt="" />
                                             </div>
                                             <div class="cbp-caption-activeWrap">
                                                 <div class="cbp-l-caption-alignCenter">
                                                     <div class="cbp-l-caption-body">
 
-                                                        <a href="img/works/4big.jpg" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="Events and  More<br>by Tiberiu Neamu">view larger</a>
+                                                        <a href="{{ url('lib/bootstrapmade/sailor/img/works/4big.jpg') }}" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="Events and  More<br>by Tiberiu Neamu">view larger</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -511,13 +511,13 @@
                                     <li class="cbp-item identity web-design">
                                         <div class="cbp-caption">
                                             <div class="cbp-caption-defaultWrap">
-                                                <img src="img/works/5.jpg" alt="" />
+                                                <img src="{{ asset('lib/bootstrapmade/sailor/img/works/5.jpg') }}" alt="" />
                                             </div>
                                             <div class="cbp-caption-activeWrap">
                                                 <div class="cbp-l-caption-alignCenter">
                                                     <div class="cbp-l-caption-body">
 
-                                                        <a href="img/works/5big.jpg" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="WhereTO App<br>by Tiberiu Neamu">view larger</a>
+                                                        <a href="{{ url('lib/bootstrapmade/sailor/img/works/5big.jpg') }}" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="WhereTO App<br>by Tiberiu Neamu">view larger</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -528,13 +528,13 @@
                                     <li class="cbp-item identity web-design">
                                         <div class="cbp-caption">
                                             <div class="cbp-caption-defaultWrap">
-                                                <img src="img/works/6.jpg" alt="" />
+                                                <img src="{{ asset('lib/bootstrapmade/sailor/img/works/6.jpg') }}" alt="" />
                                             </div>
                                             <div class="cbp-caption-activeWrap">
                                                 <div class="cbp-l-caption-alignCenter">
                                                     <div class="cbp-l-caption-body">
 
-                                                        <a href="img/works/6big.jpg" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="Ski * Buddy<br>by Tiberiu Neamu">view larger</a>
+                                                        <a href="{{ url('lib/bootstrapmade/sailor/img/works/6big.jpg') }}" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="Ski * Buddy<br>by Tiberiu Neamu">view larger</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -545,13 +545,13 @@
                                     <li class="cbp-item graphic logo">
                                         <div class="cbp-caption">
                                             <div class="cbp-caption-defaultWrap">
-                                                <img src="img/works/7.jpg" alt="" />
+                                                <img src="{{ asset('lib/bootstrapmade/sailor/img/works/7.jpg') }}" alt="" />
                                             </div>
                                             <div class="cbp-caption-activeWrap">
                                                 <div class="cbp-l-caption-alignCenter">
                                                     <div class="cbp-l-caption-body">
 
-                                                        <a href="img/works/7big.jpg" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="Seemple* Music for iPad<br>by Tiberiu Neamu">view larger</a>
+                                                        <a href="{{ url('lib/bootstrapmade/sailor/img/works/7big.jpg') }}" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="Seemple* Music for iPad<br>by Tiberiu Neamu">view larger</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -562,13 +562,13 @@
                                     <li class="cbp-item graphic logo">
                                         <div class="cbp-caption">
                                             <div class="cbp-caption-defaultWrap">
-                                                <img src="img/works/8.jpg" alt="" />
+                                                <img src="{{ asset('lib/bootstrapmade/sailor/img/works/8.jpg') }}" alt="" />
                                             </div>
                                             <div class="cbp-caption-activeWrap">
                                                 <div class="cbp-l-caption-alignCenter">
                                                     <div class="cbp-l-caption-body">
 
-                                                        <a href="img/works/8big.jpg" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="Seemple* Music for iPad<br>by Tiberiu Neamu">view larger</a>
+                                                        <a href="{{ url('lib/bootstrapmade/sailor/img/works/8big.jpg') }}" class="cbp-lightbox cbp-l-caption-buttonRight" data-title="Seemple* Music for iPad<br>by Tiberiu Neamu">view larger</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -580,7 +580,7 @@
                             </div>
 
                             <div class="cbp-l-loadMore-button">
-                                <a href="ajax/loadMore.html" class="cbp-l-loadMore-button-link">LOAD MORE</a>
+                                <a href="{{ url('lib/bootstrapmade/sailor/ajax/loadMore.html') }}" class="cbp-l-loadMore-button-link">LOAD MORE</a>
                             </div>
 
                         </div>
@@ -603,26 +603,26 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-xs-6 col-md-2 aligncenter client">
-                            <img alt="logo" src="img/clients/logo1.png" class="img-responsive" />
+                            <img alt="logo" src="{{ asset('lib/bootstrapmade/sailor/img/clients/logo1.png') }}" class="img-responsive" />
                         </div>
 
                         <div class="col-xs-6 col-md-2 aligncenter client">
-                            <img alt="logo" src="img/clients/logo2.png" class="img-responsive" />
+                            <img alt="logo" src="{{ asset('lib/bootstrapmade/sailor/img/clients/logo2.png') }}" class="img-responsive" />
                         </div>
 
                         <div class="col-xs-6 col-md-2 aligncenter client">
-                            <img alt="logo" src="img/clients/logo3.png" class="img-responsive" />
+                            <img alt="logo" src="{{ asset('lib/bootstrapmade/sailor/img/clients/logo3.png') }}" class="img-responsive" />
                         </div>
 
                         <div class="col-xs-6 col-md-2 aligncenter client">
-                            <img alt="logo" src="img/clients/logo4.png" class="img-responsive" />
+                            <img alt="logo" src="{{ asset('lib/bootstrapmade/sailor/img/clients/logo4.png') }}" class="img-responsive" />
                         </div>
 
                         <div class="col-xs-6 col-md-2 aligncenter client">
-                            <img alt="logo" src="img/clients/logo5.png" class="img-responsive" />
+                            <img alt="logo" src="{{ asset('lib/bootstrapmade/sailor/img/clients/logo5.png') }}" class="img-responsive" />
                         </div>
                         <div class="col-xs-6 col-md-2 aligncenter client">
-                            <img alt="logo" src="img/clients/logo6.png" class="img-responsive" />
+                            <img alt="logo" src="{{ asset('lib/bootstrapmade/sailor/img/clients/logo6.png') }}" class="img-responsive" />
                         </div>
 
                     </div>
@@ -719,20 +719,20 @@ Purchase the pro version with working PHP/AJAX contact form: https://bootstrapma
         <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
 
         <!-- Placed at the end of the document so the pages load faster -->
-        <script src="js/jquery.min.js"></script>
-        <script src="js/modernizr.custom.js"></script>
-        <script src="js/jquery.easing.1.3.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="plugins/flexslider/jquery.flexslider-min.js"></script>
-        <script src="plugins/flexslider/flexslider.config.js"></script>
-        <script src="js/jquery.appear.js"></script>
-        <script src="js/stellar.js"></script>
-        <script src="js/classie.js"></script>
-        <script src="js/uisearch.js"></script>
-        <script src="js/jquery.cubeportfolio.min.js"></script>
-        <script src="js/google-code-prettify/prettify.js"></script>
-        <script src="js/animate.js"></script>
-        <script src="js/custom.js"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/modernizr.custom.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/jquery.easing.1.3.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/plugins/flexslider/jquery.flexslider-min.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/plugins/flexslider/flexslider.config.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/jquery.appear.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/stellar.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/classie.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/uisearch.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/jquery.cubeportfolio.min.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/google-code-prettify/prettify.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/animate.js') }}"></script>
+        <script src="{{ asset('lib/bootstrapmade/sailor/js/custom.js') }}"></script>
 
 
     </body>

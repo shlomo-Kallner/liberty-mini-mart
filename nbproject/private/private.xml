@@ -3,20 +3,26 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Page.php</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/metronicShopUI/theme/shop-index-header-fix.html</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/UserController.php</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/metronicShopUI/theme/shop-account.html</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/bootstrapious/universal/shop-category-left.html</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/metronicShopUI/theme/shop-about.html</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/metronicShopUI/theme/shop-checkout.html</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/my_docs/my_db_scemas.json</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/master_bootstrapmade_sailor.blade.php</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/bootstrapmade/sailor/index.html</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/MainController.php</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/metronicShopUI/theme/shop-item.html</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/metronicShopUI/theme/shop-index.html</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/CmsController.php</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/metronicShopUI/theme/shop-contacts.html</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/PageController.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/ShopController.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/lib/themewagon/css.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/routes/web.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/master.blade.php</file>
-            <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/inc/header_content.blade.php</file>
-            <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Product.php</file>
-            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/Metronic-Shop-UI-master/theme/shop-index.html</file>
-            <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/inc/footer_content.blade.php</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/metronicShopUI/theme/shop-product-list.html</file>
         </group>
     </open-files>
 </project-private>
