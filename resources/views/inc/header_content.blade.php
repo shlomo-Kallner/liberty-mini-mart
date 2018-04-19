@@ -14,6 +14,7 @@ if (!isset($navbar)) {
         ],
     ];
 }
+$useDefaultNavbar = true;
 ?>
-@include('..inc.nav.default')
+@includeWhen($useDefaultNavbar,'..inc.nav.default')
 

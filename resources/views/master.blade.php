@@ -1,6 +1,6 @@
 <?php
 // setting the version and fileName fields manually for testing purposes only..
-$version = 3;
+$version = 5;
 $fileName = 'master_';
 
 if ($version === 0) {
@@ -13,6 +13,8 @@ if ($version === 0) {
     $fileName .= 'bootstrapmade_flexor';
 } elseif ($version == 4) {
     $fileName .= 'bootstrapmade_sailor';
+} elseif ($version == 5) {
+    $fileName .= 'test';
 }
 //dd($fileName);
 ?>

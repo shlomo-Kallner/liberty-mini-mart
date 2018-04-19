@@ -64,7 +64,7 @@ class MainController extends Controller {
     }
 
     public function getTemplateView(string $title = '', array $content = []) {
-        return getView('content.template', $title, $content);
+        return $this->getView('content.template', $title, $content);
     }
 
     /// End Utility Functions

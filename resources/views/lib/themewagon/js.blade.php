@@ -1,14 +1,16 @@
-<?php
-// put your code here
-?>
-<!-- BEGIN SECTION:  JS Content From Metronic Shop UI -->
 
-<!-- 
-jQuery (necessary for Bootstrap's JavaScript plugins).
-Note: using IE compatability comments 
-(https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/compatibility/ms537512(v=vs.85)) 
-to detect IE8 and previous for bootstrap 3 support..
--->
+
+@section('js-defered')
+
+<!-- BEGIN SECTION:  JS Content From Metronic Shop UI -->
+{{-- 
+ was using PHP comments to "hide" dev-comments form end-user... switched to laravel's ..
+ jQuery (necessary for Bootstrap's JavaScript plugins).
+  Note: using IE compatability comments
+  (https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/compatibility/ms537512(v=vs.85))
+  to detect IE8 and previous for bootstrap 3 support..
+
+--}}
 <!--[if lt IE 9]>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <![endif]-->
@@ -24,3 +26,5 @@ to detect IE8 and previous for bootstrap 3 support..
 
 
 <!-- END SECTION:  JS Content From Metronic Shop UI -->
+@parent
+@endsection

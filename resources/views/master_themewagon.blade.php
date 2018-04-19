@@ -2,7 +2,7 @@
 // put your code here
 ?>
 <!DOCTYPE html>
-@include('inc.license')
+<!--include('inc.license')-->
 <!--
 Template: Metronic Frontend Freebie - Responsive HTML Template Based On Twitter Bootstrap 3.3.4
 Version: 1.0.0
@@ -42,10 +42,10 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
 
         <!-- Fonts START -->
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|PT+Sans+Narrow|Source+Sans+Pro:200,300,400,600,700,900&amp;subset=all" rel="stylesheet" type="text/css">
-        <script>console.log("Before yeild");</script>
+<!--        <script>console.log("Before yeild");</script>
         @yield('extra-fonts-section')
 
-        <script>console.log("After yeild");</script>
+        <script>console.log("After yeild");</script>-->
         <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900&amp;subset=all" rel="stylesheet" type="text/css"><!--- fonts for slider on the index page -->  
         <!-- Fonts END -->
 
@@ -1183,13 +1183,13 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
         <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/corporate/scripts/layout.js') }}" type="text/javascript"></script>
         <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/scripts/bs-carousel.js') }}" type="text/javascript"></script>
         <script type="text/javascript">
-            jQuery(document).ready(function () {
-                Layout.init();
-                Layout.initOWL();
-                Layout.initImageZoom();
-                Layout.initTouchspin();
-                Layout.initTwitter();
-            });
+jQuery(document).ready(function () {
+    Layout.init();
+    Layout.initOWL();
+    Layout.initImageZoom();
+    Layout.initTouchspin();
+    Layout.initTwitter();
+});
         </script>
         <!-- END PAGE LEVEL JAVASCRIPTS -->
     </body>

@@ -1,5 +1,5 @@
 
-@include('..lib.themewagon.license')
+<!--@include('..lib.themewagon.license')-->
 
 
 
