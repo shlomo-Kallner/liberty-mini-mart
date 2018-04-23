@@ -21,7 +21,7 @@ Route::prefix('store')->group(function() {
     Route::get('all-products', 'ShopController@products');
     //Route::get('{page}', 'PageController@test');
 });
-Route::get('{page}', 'PageController@test');
+Route::get('{page}', 'PageController@index1');
 
 //Route::resource('user', 'UserController');
 //

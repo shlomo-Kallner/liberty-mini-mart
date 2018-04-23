@@ -1,5 +1,5 @@
 <?php
-if (!isset($navbar)) {
+if (!isset($navbar) || empty($navbar)) {
     // some demo code.. 
     // to be replaced with 404 and 503 page 
     // navbar retrieval code
@@ -16,5 +16,6 @@ if (!isset($navbar)) {
 }
 $useDefaultNavbar = true;
 ?>
+@section('header-navbar')
 @includeWhen($useDefaultNavbar,'..inc.nav.default')
-
+@show

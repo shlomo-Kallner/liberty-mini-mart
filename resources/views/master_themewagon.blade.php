@@ -2,7 +2,7 @@
 // put your code here
 ?>
 <!DOCTYPE html>
-<!--include('inc.license')-->
+{{-- @include('inc.license') --}}
 <!--
 Template: Metronic Frontend Freebie - Responsive HTML Template Based On Twitter Bootstrap 3.3.4
 Version: 1.0.0
@@ -74,6 +74,8 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
 
     <!-- Body BEGIN -->
     <body class="ecommerce">
+
+
         <!-- BEGIN STYLE CUSTOMIZER -->
         <div class="color-panel hidden-sm">
             <div class="color-mode-icons icon-color"></div>

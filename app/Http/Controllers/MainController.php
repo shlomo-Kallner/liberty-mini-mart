@@ -8,12 +8,14 @@ use HTMLPurifier;
 class MainController extends Controller {
 
     static public $data = [
-        'title' => '',
+        'title' => '', // 'tab' title
         'siteName' => '',
-        'nav' => [],
+        'navbar' => [], // the header navbar data...
+        'sidebar' => [], // the side[navigation]bar data...
+        'preheader' => [], // the preheader navigation bar data..
         'page' => [
-            'header' => '',
-            'article' => '',
+            'header' => '', // 'h1' page article content
+            'article' => '', // 'div' page article content
         //'name' => '',
         ],
     ];
@@ -75,7 +77,7 @@ class MainController extends Controller {
         self::$data['requestedPage'] = !empty($request->page) ? $request->page : 'index';
         $this->setTitle('test ' . self::$data['requestedPage'] . ' page');
         //dd($request);
-        return view('content.test', self::$data);
+        return view('content.tests.test', self::$data);
     }
 
     public function test1(Request $request) {
@@ -84,7 +86,7 @@ class MainController extends Controller {
         //dd($request);
         self::$data['page']['name'] = $requestedPage;
         $this->setPageContent('article', "<p><i>HEllloo WORLD!!</i></p>");
-        return view('content.test1', self::$data);
+        return view('content.tests.test1', self::$data);
     }
 
     public function test2(Request $request) {
@@ -94,7 +96,8 @@ class MainController extends Controller {
             'header' => "<b>$requestedPage</b>",
             'article' => "<p><i>HEllloo WORLD!!</i></p>"
         ];
-        return $this->getTemplateView($title, $content);
+        //return $this->getTemplateView($title, $content);
+        return $this->getView('content.tests.test1', $title, $content);
     }
 
 }

@@ -25,8 +25,6 @@ $title .= '-- dummy Title -- blahhh';
 <meta property="og:type" content="website">
 <meta property="og:image" content="-CUSTOMER VALUE-"><!-- link to image for socio -->
 <meta property="og:url" content="-CUSTOMER VALUE-">
-
-
 @endsection
 
 <!-- Fonts START -->
@@ -36,7 +34,7 @@ $title .= '-- dummy Title -- blahhh';
 
 <!-- CSS START -->
 @section('css-preloaded')
-@parent
+
 @include('lib.themewagon.css') 
 
 @yield('css-preloaded-global')
@@ -45,6 +43,7 @@ $title .= '-- dummy Title -- blahhh';
 
 @yield('css-themes')
 
+@parent
 @endsection
 
 <!-- CSS END -->

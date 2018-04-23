@@ -1,7 +1,7 @@
 <?php
 // put your code here
 ?>
-@include('...lib.themewagon.css')
+{{-- @include('...lib.themewagon.css') --}}
 
 
 <!-- include summernote css/js -->
