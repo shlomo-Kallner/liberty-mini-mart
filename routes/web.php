@@ -11,7 +11,7 @@
   |
  */
 
-Route::get('/', 'PageController@test');
+Route::get('/', 'PageController@test2');
 
 Route::prefix('user')->group(function() {
     Route::get('{page}', 'PageController@index1');

@@ -4,7 +4,15 @@
 
 @extends('master_test2')
 
+@include('lib.themewagon.css') 
 
+
+@section('body-tags')
+class="ecommerce"
+@endsection
+
+
+@include('inc.header_content')
 
 @section('main-content')
 @parent
@@ -47,3 +55,8 @@
     <p class="text-center">{{ $siteName }} &copy; {{ date('Y') }}</p>
 </div>
 @endsection
+
+
+{{-- BEGIN SECTION:  JS Content From Metronic Shop UI --}}
+@include('lib.themewagon.js')
+{{-- END SECTION:  JS Content From Metronic Shop UI --}}

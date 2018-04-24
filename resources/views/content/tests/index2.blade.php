@@ -1,18 +1,16 @@
 <?php
-// put your code here
+// Will be placing our "index" or "Home" page content in this view/file.
 ?>
 
-@extends('master_test2')
+@extends('content.tests.template')
 
 @section('css-extra-fonts')
 @parent
-<script>console.log("Entering extra-fonts-section");</script>
 
 {{-- the font to be placed in a yield or in a child (extending) view.. --}}
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900&amp;subset=all" rel="stylesheet" type="text/css">
 <!--- fonts for slider on the index page -->  
 
-<script>console.log("Leaving extra-fonts-section");</script>
 @endsection
 
 
@@ -48,26 +46,3 @@
 
 
 
-@section('footer-content')
-@parent
-<div class="container">
-    <hr>
-    <div class="row">
-        <div class="col-md-3">
-            <a class="powered" href="https://github.com/technext/Metronic-Shop-UI/">
-                <img src="{{ asset('images/site/metronic-logo.png') }}" alt="Powered by Metronic Shop UI">
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="http://htmlpurifier.org/">
-                <img
-                    src="http://htmlpurifier.org/live/art/powered.png"
-                    alt="Powered by HTML Purifier" border="0" />
-            </a>
-        </div>
-    </div>
-
-    <hr>
-    <p class="text-center">{{ $siteName }} &copy; {{ date('Y') }}</p>
-</div>
-@endsection

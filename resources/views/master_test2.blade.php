@@ -14,7 +14,7 @@ My license header.
 Copyright 2018 Shlomo Kallner , shlomo.kallner@gmail.com
 
 -->
-@include('lib.themewagon.license')
+@include('lib.themewagon.license'){{--  <-- This file is OK, its pure HTML. --}}
 @show
 
 
@@ -54,19 +54,24 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
 
         <title>{{ $title }}</title>
 
-        @include('inc.js.compatibility') <!-- <== from bootstrap and others...-->
+        @include('inc.js.compatibility') {{-- <== from bootstrap and others...
+                                                its all in its own file in case
+                                                of possible 'growth'...
+                                                p.s. its just some IE Conditionals
+                                                     and a Blade comment..
+                                          --}}
 
         <!-- CSS START -->
         <!-- Fonts START -->
         @section('css-fonts')
-        {{-- @include('inc.css.fonts') --}}
+        {{-- This @Section was copied from 'lib.themewagon.fonts'
+            instead @Including it here or in a child view. --}}
         {{-- 
             These "_Section ... _Include ... _Show" bother me.
             I dont think that I should be writing code blocks 
             like this...
             So, the plan is to phase them out..
-            (though just the '_Include' part..),
-            moving the content of the _Include to the _Extending
+            by moving the content of the _Include to the _Extending
             Views..
         --}}
         <!-- Global Fonts from Metronic Shop UI START -->
@@ -80,21 +85,32 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
         @show
 
         @section('css-preloaded')
-        @include('inc.css.preloaded')
+
+        @yield('css-preloaded-global')
+
+        @yield('css-preloaded-local')
+
+        @yield('css-themes')
+
+
+        {{-- In the _Extending views place the @Parent directive LAST!! --}}
+        <link rel="stylesheet" href="{{ asset('css/styles.css') }}" type="text/css">
         @show
         <!-- CSS END -->
 
 
         <!-- Preloaded JS START... -->
         @section('js-preloaded')
-        @include('inc.js.preloaded')
+        @include('inc.js.preloaded'){{--  <-- This file is pure HTML.. --}}
         @show
         <!-- Preloaded JS END -->
     </head>
-    <body @yield('body-tags') >{{-- note: only Metronic uses this taging.. --}}
-           <header>
+    <body class="ecommerce"> {{-- " @yield('body-tags')" note: only Metronic uses this taging.. --}}
+        <header>
             @section('header-content')
-            @include('inc.header_content')
+
+            @yield('header-navbar')
+
             @show
         </header>
         <br><br><br>
@@ -110,11 +126,15 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
             @show
         </footer>
         @section('css-defered')
-        @include('inc.css.defered')
         @show
 
         @section('js-defered')
-        @include('inc.js.defered')
+        <script src="{{ asset('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
+        <!-- 
+            this one is ours.. so it should come last.. 
+            In the @Extending View - call @Parent last! 
+        -->
+        <script src="{{ asset('js/script.js') }}" type="text/javascript"></script>
         @show
     </body>
 </html>

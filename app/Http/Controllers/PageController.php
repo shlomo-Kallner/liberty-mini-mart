@@ -76,6 +76,8 @@ class PageController extends MainController {
         //
     }
 
+    /// Testing Functions Start:
+
     public function index1(Request $request) {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         $title = 'test ' . $requestedPage . ' page';
@@ -84,7 +86,7 @@ class PageController extends MainController {
             'article' => "<p><i>HEllloo WORLD!!</i></p>"
         ];
 
-        return $this->getView('content.tests.index1', $title, $content);
+        return $this->getView('content.tests.index2', $title, $content);
     }
 
 }

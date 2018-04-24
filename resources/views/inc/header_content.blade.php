@@ -16,6 +16,10 @@ if (!isset($navbar) || empty($navbar)) {
 }
 $useDefaultNavbar = true;
 ?>
+@if($useDefaultNavbar)
+@include('inc.nav.default')
+@else
 @section('header-navbar')
-@includeWhen($useDefaultNavbar,'..inc.nav.default')
-@show
+<script> console.log('in else!');</script>
+@endsection
+@endif

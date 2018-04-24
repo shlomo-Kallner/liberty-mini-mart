@@ -1,4 +1,5 @@
 @section('header-navbar')
+<script> console.log('before include of inc.nav.default');</script>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -26,4 +27,5 @@
         </div>
     </div>
 </nav>
-@show
+<script> console.log('after include of inc.nav.default');</script>
+@endsection

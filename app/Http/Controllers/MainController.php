@@ -97,7 +97,7 @@ class MainController extends Controller {
             'article' => "<p><i>HEllloo WORLD!!</i></p>"
         ];
         //return $this->getTemplateView($title, $content);
-        return $this->getView('content.tests.test1', $title, $content);
+        return $this->getView('content.tests.test2', $title, $content);
     }
 
 }

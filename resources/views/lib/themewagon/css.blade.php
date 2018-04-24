@@ -1,6 +1,6 @@
 
 
-<!-- BEGIN SECTION:  CSS Content From Metronic Shop UI -->
+{{-- BEGIN SECTION:  CSS Content From Metronic Shop UI --}}
 @section('css-preloaded-global')
 
 <!-- Global styles START -->          
@@ -44,4 +44,4 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.3/assets/owl.carousel.min.css" integrity="sha256-gT8TmL8VMbIMNlQU2BDnXyroZ6cDkXlMoo61fhgRfGY=" crossorigin="anonymous" />
 @endsection
 
-<!-- END SECTION:  CSS Content From Metronic Shop UI -->
+{{-- END SECTION:  CSS Content From Metronic Shop UI --}}

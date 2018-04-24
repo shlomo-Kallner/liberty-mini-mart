@@ -26,5 +26,9 @@
 
 
 <!-- END SECTION:  JS Content From Metronic Shop UI -->
+{{-- 
+    From Master-test2.blade.php: 
+    In the @extending View - call @Parent last!  
+--}}
 @parent
 @endsection
