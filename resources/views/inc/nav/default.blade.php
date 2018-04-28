@@ -13,8 +13,8 @@
                 {{ $siteName }}
             </a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
+        <div id="navbar" class="navbar-collapse collapse header-navigation">
+            <ul class="nav navbar-nav navbar-left">
                 @foreach($navbar as $nav)
                 <li><a href="{{ url($nav['url']) }}">{{ $nav['name'] }}</a></li>
                 @endforeach

@@ -1,0 +1,3 @@
+[submodule "public/lib/codrops/ExpandingSearchBar"]
+	path = public/lib/codrops/ExpandingSearchBar
+	url = https://github.com/codrops/ExpandingSearchBar.git

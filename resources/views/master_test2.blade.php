@@ -106,7 +106,10 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
         <!-- Preloaded JS END -->
     </head>
     <body class="ecommerce"> {{-- " @yield('body-tags')" note: only Metronic uses this taging.. --}}
-        <header>
+        @section('pre-header')
+        @yield('pre-header-navbar')
+        @show
+        <header class="header">
             @section('header-content')
 
             @yield('header-navbar')

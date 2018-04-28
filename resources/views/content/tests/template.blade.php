@@ -13,6 +13,7 @@ class="ecommerce"
 
 
 @include('inc.header_content')
+@include('lib.themewagon.mainnav')
 
 @section('main-content')
 @parent
@@ -22,6 +23,7 @@ class="ecommerce"
         <div>
             {!! $page['article'] !!}
         </div>
+        <i class="fa fa-search" style="font-size: 16px;"></i>
     </div>
     <div class="col-md-5">
         <p>

@@ -20,6 +20,5 @@ $useDefaultNavbar = true;
 @include('inc.nav.default')
 @else
 @section('header-navbar')
-<script> console.log('in else!');</script>
 @endsection
 @endif
