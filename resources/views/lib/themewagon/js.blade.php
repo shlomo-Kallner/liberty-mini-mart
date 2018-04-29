@@ -4,7 +4,7 @@
 
 <!-- BEGIN SECTION:  JS Content From Metronic Shop UI -->
 {{-- 
- was using PHP comments to "hide" dev-comments form end-user... switched to laravel's ..
+ was using PHP comments to "hide" dev-comments from end-user... switched to laravel's ..
  jQuery (necessary for Bootstrap's JavaScript plugins).
   Note: using IE compatability comments
   (https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/compatibility/ms537512(v=vs.85))
