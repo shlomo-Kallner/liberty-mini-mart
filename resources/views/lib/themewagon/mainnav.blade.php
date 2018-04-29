@@ -318,9 +318,18 @@
                     <li><i class="fa fa-phone"></i><span>+1 456 6717</span></li>
                     <!-- BEGIN CURRENCIES -->
                     <li class="shop-currencies">
-                        <a href="javascript:void(0);">€</a>
-                        <a href="javascript:void(0);">£</a>
-                        <a href="javascript:void(0);" class="current">$</a>
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-eur"></i>
+                        </a>
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-gbp"></i>
+                        </a>
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-ils"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="current">
+                            <i class="fa fa-usd"></i>
+                        </a>
                     </li>
                     <!-- END CURRENCIES -->
                     <!-- BEGIN LANGS -->

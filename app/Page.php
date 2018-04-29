@@ -48,6 +48,10 @@ class Page extends Model {
                     'url' => 'store',
                     'name' => 'Store',
                 ],
+                [
+                    'url' => 'user/template',
+                    'name' => 'My Template'
+                ],
             ];
         }
         return $navbar;

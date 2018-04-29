@@ -22,7 +22,7 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
     <!-- Head BEGIN -->
     <head>
         <meta charset="utf-8">
-        <title>{{ $title . '-- blahhh' }}</title>
+        <title>Metronic Shop UI</title>
 
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -140,7 +140,9 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
         <!-- BEGIN HEADER -->
         <div class="header">
             <div class="container">
-                <a class="site-logo" href="{{ url('lib/themewagon/metronicShopUI/theme/shop-index.html') }}"><img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/corporate/img/logos/logo-shop-red.png') }}" alt="Metronic Shop UI"></a>
+                <a class="site-logo" href="{{ url('lib/themewagon/metronicShopUI/theme/shop-index.html') }}">
+                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/corporate/img/logos/logo-shop-red.png') }}" alt="Metronic Shop UI">
+                </a> 
 
                 <a href="javascript:void(0);" class="mobi-toggler"><i class="fa fa-bars"></i></a>
 
@@ -1191,6 +1193,9 @@ jQuery(document).ready(function () {
     Layout.initImageZoom();
     Layout.initTouchspin();
     Layout.initTwitter();
+
+    Layout.initFixHeaderWithPreHeader();
+    Layout.initNavScrolling();
 });
         </script>
         <!-- END PAGE LEVEL JAVASCRIPTS -->

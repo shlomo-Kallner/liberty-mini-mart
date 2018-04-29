@@ -14,8 +14,14 @@
 Route::get('/', 'PageController@test2');
 
 Route::prefix('user')->group(function() {
+
+    Route::get('template', function () {
+        return view('master_themewagon');
+    });
+
     Route::get('{page}', 'PageController@index1');
 });
+
 Route::prefix('store')->group(function() {
     Route::get('/', 'ShopController@categories');
     Route::get('all-products', 'ShopController@products');
