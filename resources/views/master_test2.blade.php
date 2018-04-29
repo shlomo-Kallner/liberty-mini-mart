@@ -106,53 +106,43 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
         <!-- Preloaded JS END -->
     </head>
     <body class="ecommerce"> {{-- " @yield('body-tags')" note: only Metronic uses this taging.. --}}
-        <?php
-        // for my older code..
-        $sepparatePreHeader = true;
-        // the newer code may wrap both in the header tag..
-        ?>
-        @if($sepparatePreHeader)
-        @section('pre-header')
-        @yield('pre-header-navbar')
+        <header>
+
+            @section('pre-header')
+
+            @yield('pre-header-navbar')
+
+            @show
+
+            @section('header-content')
+
+            @yield('header-navbar')
+
+            @show
+
+        </header>
+        <br><br><br>
+        <main>
+            <div class="container">
+                @section('main-content')
+                @show
+            </div>  
+        </main>
+        <br><br><br>
+        <footer>
+            @section('footer-content')
+            @show
+        </footer>
+        @section('css-defered')
         @show
-        <header class="header">
-            @else
-            <header>
 
-                @section('pre-header')
-                @yield('pre-header-navbar')
-                @show
-
-                @endif
-
-                @section('header-content')
-
-                @yield('header-navbar')
-
-                @show
-            </header>
-            <br><br><br>
-            <main>
-                <div class="container">
-                    @section('main-content')
-                    @show
-                </div>  
-            </main>
-            <br><br><br>
-            <footer>
-                @section('footer-content')
-                @show
-            </footer>
-            @section('css-defered')
-            @show
-
-            @section('js-defered')
-            <script src="{{ asset('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
-            <!-- 
-                this one is ours.. so it should come last.. 
-                In the @Extending View - call @Parent last! 
-            -->
-            <script src="{{ asset('js/script.js') }}" type="text/javascript"></script>
-            @show
+        @section('js-defered')
+        <script src="{{ asset('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
+        <!-- 
+            this one is ours.. so it should come last.. 
+            In the @Extending View - call @Parent last! 
+        -->
+        <script src="{{ asset('js/script.js') }}" type="text/javascript"></script>
+        @show
     </body>
 </html>

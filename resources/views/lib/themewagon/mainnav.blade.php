@@ -275,8 +275,11 @@
                 </li>
 
 
-                {{-- removing the link to the Premium Admin Theme at keenthemes or at http://themeforest.net where we got the Metronic Template.. --}}
-                <!-- <li><a href="http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes&amp;utm_source=download&amp;utm_medium=banner&amp;utm_campaign=metronic_frontend_freebie" target="_blank">Admin theme</a></li> -->
+                {{-- 
+                    REMOVED: the link to the Premium Admin Theme at 
+                    keenthemes or at 'http://themeforest.net' where 
+                    we got the Metronic Shop UI Template.. 
+                --}}
 
                 <!-- BEGIN TOP SEARCH -->
                 <li class="menu-search">
@@ -315,7 +318,7 @@
             <!-- BEGIN TOP BAR LEFT PART -->
             <div class="col-md-6 col-sm-6 additional-shop-info">
                 <ul class="list-unstyled list-inline">
-                    <li><i class="fa fa-phone"></i><span>+1 456 6717</span></li>
+                    {{-- REMOVED: Phone link from template was removed. --}}
                     <!-- BEGIN CURRENCIES -->
                     <li class="shop-currencies">
                         <a href="javascript:void(0);">
@@ -351,7 +354,10 @@
                     <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-account.html') }}">My Account</a></li>
                     <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-wishlist.html') }}">My Wishlist</a></li>
                     <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-checkout.html') }}">Checkout</a></li>
-                    <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/page-login.html') }}">Log In</a></li>
+                    {{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
+                    <li><a href="{{ url('user/signin') }}">Log In</a></li>
+                    {{-- UPDATE: adding 'Sign Up' url to TOP BAR. --}}
+                    <li><a href="{{ url('user/signup') }}">Sign up</a></li>
                 </ul>
             </div>
             <!-- END TOP BAR MENU -->
