@@ -81,6 +81,8 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
 
         @yield('css-preloaded-global')
 
+        @yield('css-cdn-files')
+
         @yield('css-preloaded-local')
 
         @yield('css-themes')
@@ -94,7 +96,8 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
 
         <!-- Preloaded JS START... -->
         @section('js-preloaded')
-        @include('inc.js.preloaded'){{--  <-- This file is pure HTML.. --}}
+        {{-- Not using Font Awesome v5! --}}
+        {{-- Include('inc.js.preloaded') --}}{{--  <-- This file is pure HTML.. --}}
         @show
         <!-- Preloaded JS END -->
     </head>
@@ -114,6 +117,7 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
             @show
 
         </header>
+        @yield('login-modal')
         <br><br><br>
         <main>
             <div class="container">

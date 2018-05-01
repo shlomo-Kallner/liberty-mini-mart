@@ -29,6 +29,7 @@ Route::prefix('store')->group(function() {
     //Route::get('{page}', 'PageController@test');
     //Route::get('{page}/{page}', 'PageController@test');
 });
+//Route::get('checkout', 'ShopController');
 Route::resource('cart', 'CartController');
 Route::resource('wishlist', 'WishlistController');
 //Route::get('user', 'UserController');

@@ -93,7 +93,22 @@ class UserController extends MainController {
     }
 
     public function signin(Request $request) {
-        return parent::getView('content.tests.test2', 'User Logged In Successfull!!');
+        $email = !empty($request->email) ? $request->email : '[blank]';
+        $password = !empty($request->password) ? $request->password : '[empty-string]';
+        $content = [];
+        $content['header'] = 'Welcome Back!';
+        $content['article'] = 'Hello ' . $email .
+                ' !! Your Password is: ' . $password;
+        $request->session(['user.loggedin' => true]);
+        self::$data['user']['loggedin'] = true;
+        return parent::getView('content.tests.test2', 'User Logged In Successfull!!', $content);
+    }
+
+    public function signout(Request $request) {
+        $request->session()->forget('user.loggedin');
+        self::$data['user']['loggedin'] = false;
+        //session(['user.loggedin' => false]);
+        return redirect('/');
     }
 
 }

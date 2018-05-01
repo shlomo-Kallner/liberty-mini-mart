@@ -1,3 +1,7 @@
+<?php
+$useTimesIcon = true;
+?>
+
 @section('login-modal')
 <!-- Based on Bootstrapious/Universal-1-0 and Bootstrap v3.X docs.. -->
 <!-- *** LOGIN MODAL ***
@@ -8,20 +12,38 @@
 
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="Login">Customer login</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    @if($useTimesIcon)
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                    @else
+                    <i class="fa fa-window-close" aria-hidden="true"></i>
+                    @endif
+                </button>
+                <h4 class="modal-title" id="Login">Customer Sign In</h4>
             </div>
             <div class="modal-body">
-                <form action="{{ url('lib/bootstrapious/universal/customer-orders.html') }}" method="post">
+                <form action="{{ url('signin') }}" method="post" novalidate="novalidate">
+                    {{ csrf_field() }}
                     <div class="form-group">
-                        <input type="text" class="form-control" id="email_modal" placeholder="email">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-at" aria-hidden="true"></i>
+                            </span>
+                            <input type="email" class="form-control" id="email_modal" placeholder="email" name="email">
+                        </div>
+
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control" id="password_modal" placeholder="password">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-key" aria-hidden="true"></i>
+                            </span>
+                            <input type="password" class="form-control" id="password_modal" placeholder="password" name="password">
+                        </div>
                     </div>
 
                     <p class="text-center">
-                        <button class="btn btn-template-main"><i class="fa fa-sign-in"></i> Log in</button>
+                        <button class="btn btn-template-main"><i class="fa fa-sign-in"></i> Sign In</button>
                     </p>
 
                 </form>

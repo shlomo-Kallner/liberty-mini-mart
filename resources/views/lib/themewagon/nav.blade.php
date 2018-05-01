@@ -71,9 +71,26 @@ if (!isset($preheader) || empty($preheader)) {
             <div class="col-md-6 col-sm-6 additional-nav">
                 <ul class="list-unstyled list-inline pull-right">
                     <?php
-                    // for testing ...
-                    $user['loggedin'] = true;
+                    // for testing ... $user['loggedin'] = false;
                     ?>
+                    @if($preheader)
+                    @foreach($preheader as $prenav)
+                    <li>
+                        @if( isset($prenav['isModal']) && $prenav['isModal'] === true )
+                        <a href="#" data-toggle="modal" data-target="{{ $prenav['target'] }}">
+                            @else
+                            <a href="{{ url($prenav['url']) }}">
+                                @endif
+                                @if($prenav['icon'])
+                                <i class="fa {{ $prenav['icon'] }}" aria-hidden="true"></i>
+                                @endif
+                                <span class="hidden-xs text-uppercase">{{ $prenav['name'] }}</span>
+                            </a>
+                    </li>
+                    @endforeach
+                    {{-- End single "main level" menu --}}
+                    @else
+
                     @if($user['loggedin'])
                     <li>
                         <a href="{{ url('user') }}">
@@ -83,12 +100,12 @@ if (!isset($preheader) || empty($preheader)) {
                     </li>
                     <li>
                         <a href="{{ url('wishlist') }}">
-                            <i class="fa fa-list-alt" aria-hidden="true"></i>
+                            <i class="fa fa-calendar-o" aria-hidden="true"></i>
                             <span class="hidden-xs text-uppercase">My Wishlist</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-checkout.html') }}">
+                        <a href="{{ url('checkout') }}">
                             <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                             <span class="hidden-xs text-uppercase">Checkout</span>
                         </a>
@@ -107,7 +124,7 @@ if (!isset($preheader) || empty($preheader)) {
                                  couple of links...
                      --}}
                     <li>
-                        <a href="{{ url('signin') }}">
+                        <a href="#" data-toggle="modal" data-target="#login-modal">
                             <i class="fa fa-sign-in" aria-hidden="true"></i> 
                             <span class="hidden-xs text-uppercase">Sign in</span>
                         </a>
@@ -120,6 +137,9 @@ if (!isset($preheader) || empty($preheader)) {
                         </a>
                     </li>
                     @endif
+
+                    @endif
+
                 </ul>
             </div>
             <!-- END TOP BAR MENU -->

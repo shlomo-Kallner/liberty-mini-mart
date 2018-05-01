@@ -6,7 +6,11 @@
 
 */
 .top-cart-block .fa-shopping-cart {
-    font-size: 30px;
+    /*
+     no need to overide font-size!
+      font-size: 30px;
+    */ 
+
 }
 /*
 

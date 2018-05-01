@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use HTMLPurifier,
-    \App\Page;
+    \App\Page,
+    Session;
 
 class MainController extends Controller {
 
@@ -49,14 +50,8 @@ class MainController extends Controller {
     public function __construct($name = '', $titleNameSep = ' | ') {
         self::setSiteName($name, $titleNameSep);
         self::$data['navbar'] = Page::getNavBar();
-        self::$data['preheader'] = [
-            [
-                // a template for preheader/topbar stuff..
-                'icon' => '', // the Font Awesome icon class.
-                'name' => '', // the name to fill in the Link.
-                'url' => '', // the URL of the link. 
-            ],
-        ];
+        self::$data['preheader'] = Page::getPreHeader();
+        //dd(self::$data['preheader']);
     }
 
     /// Begin Utility Functions
