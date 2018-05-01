@@ -49,7 +49,7 @@ class Page extends Model {
                     'name' => 'Store',
                 ],
                 [
-                    'url' => 'user/template',
+                    'url' => 'template',
                     'name' => 'My Template'
                 ],
             ];

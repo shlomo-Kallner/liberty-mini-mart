@@ -1,14 +1,105 @@
 
+<?php
+/*
+ *  404 and 503 page navbar retrieval code
+ */
+
+use \App\Page;
+
+if (!isset($navbar) || empty($navbar)) {
+    $navbar = Page::getNavBar();
+}
+
+/// For testing, dump&die the $navbar variable.
+//dd($navbar);
+?>
+
 @section('cut-and-paste=>my-cookie-cutter')
 
+@endsection
 
+@section('pre-header-navbar')
+@parent
 
+<!-- BEGIN TOP BAR -->
+<div class="pre-header">
+    <div class="container">
+        <div class="row">
+            <!-- BEGIN TOP BAR LEFT PART -->
+            <div class="col-md-6 col-sm-6 additional-shop-info">
+                <ul class="list-unstyled list-inline">
+                    {{-- REMOVED: Phone link from template was removed. --}}
+                    <!-- BEGIN CURRENCIES -->
+                    <li class="shop-currencies">
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-eur"></i>
+                        </a>
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-gbp"></i>
+                        </a>
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-ils"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="current">
+                            <i class="fa fa-usd"></i>
+                        </a>
+                    </li>
+                    <!-- END CURRENCIES -->
+                    <!-- BEGIN LANGS -->
+                    <li class="langs-block">
+                        <a href="javascript:void(0);" class="current">English </a>
+                        <div class="langs-block-others-wrapper"><div class="langs-block-others">
+                                <a href="javascript:void(0);">French</a>
+                                <a href="javascript:void(0);">Germany</a>
+                                <a href="javascript:void(0);">Turkish</a>
+                            </div></div>
+                    </li>
+                    <!-- END LANGS -->
+                </ul>
+            </div>
+            <!-- END TOP BAR LEFT PART -->
+            <!-- BEGIN TOP BAR MENU -->
+            <div class="col-md-6 col-sm-6 additional-nav">
+                <ul class="list-unstyled list-inline pull-right">
+                    <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-account.html') }}">My Account</a></li>
+                    <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-wishlist.html') }}">My Wishlist</a></li>
+                    <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-checkout.html') }}">Checkout</a></li>
+                    {{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
+                    {{-- UPDATE: Copying FA icon and span tag link from 
+                                 master_bootstrapious.blade.php  TOP BAR Section
+                                 to replace the 'simple' text content of these 
+                                 couple of links...
+                     --}}
+                    <li>
+                        <a href="{{ url('user/signin') }}">
+                            <i class="fa fa-sign-in"></i> 
+                            <span class="hidden-xs text-uppercase">Sign in</span>
+                        </a>
+                    </li>
+                    {{-- UPDATE: adding 'Sign Up' url to TOP BAR. --}}
+                    <li>
+                        <a href="{{ url('user/signup') }}">
+                            <i class="fa fa-user"></i> 
+                            <span class="hidden-xs text-uppercase">Sign up</span></a>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- END TOP BAR MENU -->
+        </div>
+    </div>        
+</div>
+<!-- END TOP BAR -->
 
+@endsection
 
+@section('header-navbar')
 <!-- BEGIN HEADER -->
 <div class="header">
     <div class="container">
-        <a class="site-logo" href="{{ url('lib/themewagon/metronicShopUI/theme/shop-index.html') }}"><img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/corporate/img/logos/logo-shop-red.png') }}" alt="Metronic Shop UI"></a>
+        <a class="site-logo" href="{{ url('') }}">
+            <img src="{{ asset('images/site/Liberty-Logo.png') }}" alt="Liberty Mini-Mart">
+        </a>
 
         <a href="javascript:void(0);" class="mobi-toggler"><i class="fa fa-bars"></i></a>
 
@@ -24,7 +115,9 @@
                 <div class="top-cart-content">
                     <ul class="scroller" style="height: 250px;">
                         <li>
-                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}"><img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34"></a>
+                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">
+                                <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34">
+                            </a>
                             <span class="cart-content-count">x 1</span>
                             <strong><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Rolex Classic Watch</a></strong>
                             <em>$1230</em>
@@ -190,8 +283,14 @@
                     {{-- END MEGAMENU --}}
                 </li>
                 {{-- BEGIN single "main level" menu --}}
+                {{-- Replacing Original 'Kids' menu Item with 
+                     our Blade Foreach loop...  --}}
                 <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Kids</a></li>
+                @foreach($navbar as $nav)
+                <li><a href="{{ url($nav['url']) }}">{{ $nav['name'] }}</a></li>
+                @endforeach
                 {{-- End single "main level" menu --}}
+
                 <li class="dropdown dropdown100 nav-catalogue">
                     <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
                         New
@@ -303,68 +402,6 @@
     </div>
 </div>
 <!-- Header END -->
-
-
-
-@endsection
-
-@section('pre-header-navbar')
-@parent
-
-<!-- BEGIN TOP BAR -->
-<div class="pre-header">
-    <div class="container">
-        <div class="row">
-            <!-- BEGIN TOP BAR LEFT PART -->
-            <div class="col-md-6 col-sm-6 additional-shop-info">
-                <ul class="list-unstyled list-inline">
-                    {{-- REMOVED: Phone link from template was removed. --}}
-                    <!-- BEGIN CURRENCIES -->
-                    <li class="shop-currencies">
-                        <a href="javascript:void(0);">
-                            <i class="fa fa-eur"></i>
-                        </a>
-                        <a href="javascript:void(0);">
-                            <i class="fa fa-gbp"></i>
-                        </a>
-                        <a href="javascript:void(0);">
-                            <i class="fa fa-ils"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="current">
-                            <i class="fa fa-usd"></i>
-                        </a>
-                    </li>
-                    <!-- END CURRENCIES -->
-                    <!-- BEGIN LANGS -->
-                    <li class="langs-block">
-                        <a href="javascript:void(0);" class="current">English </a>
-                        <div class="langs-block-others-wrapper"><div class="langs-block-others">
-                                <a href="javascript:void(0);">French</a>
-                                <a href="javascript:void(0);">Germany</a>
-                                <a href="javascript:void(0);">Turkish</a>
-                            </div></div>
-                    </li>
-                    <!-- END LANGS -->
-                </ul>
-            </div>
-            <!-- END TOP BAR LEFT PART -->
-            <!-- BEGIN TOP BAR MENU -->
-            <div class="col-md-6 col-sm-6 additional-nav">
-                <ul class="list-unstyled list-inline pull-right">
-                    <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-account.html') }}">My Account</a></li>
-                    <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-wishlist.html') }}">My Wishlist</a></li>
-                    <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-checkout.html') }}">Checkout</a></li>
-                    {{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
-                    <li><a href="{{ url('user/signin') }}">Log In</a></li>
-                    {{-- UPDATE: adding 'Sign Up' url to TOP BAR. --}}
-                    <li><a href="{{ url('user/signup') }}">Sign up</a></li>
-                </ul>
-            </div>
-            <!-- END TOP BAR MENU -->
-        </div>
-    </div>        
-</div>
-<!-- END TOP BAR -->
 
 
 @endsection

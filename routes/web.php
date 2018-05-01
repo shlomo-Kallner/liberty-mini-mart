@@ -13,11 +13,13 @@
 
 Route::get('/', 'PageController@test2');
 
+Route::get('template', function () {
+    return view('master_themewagon');
+});
+
 Route::prefix('user')->group(function() {
 
-    Route::get('template', function () {
-        return view('master_themewagon');
-    });
+
 
     Route::get('{page}', 'PageController@index1');
 });
@@ -27,6 +29,7 @@ Route::prefix('store')->group(function() {
     Route::get('all-products', 'ShopController@products');
     //Route::get('{page}', 'PageController@test');
 });
+Route::resource('cart', 'CartController');
 Route::get('{page}', 'PageController@index1');
 
 //Route::resource('user', 'UserController');

@@ -8,13 +8,12 @@ if (!isset($navbar) || empty($navbar)) {
     // navbar retrieval code
     $navbar = Page::getNavBar();
 }
-$useDefaultNavbar = true;
+$useDefaultNavbar = false;
 /// For testing, dump&die the $navbar variable.
 //dd($navbar);
 ?>
 @if($useDefaultNavbar)
 @include('inc.nav.default')
-@else
 @section('header-navbar')
 @endsection
 @endif

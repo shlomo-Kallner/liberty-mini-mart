@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use HTMLPurifier;
+use HTMLPurifier,
+    \App\Page;
 
 class MainController extends Controller {
 
@@ -26,6 +27,7 @@ class MainController extends Controller {
 
     public function __construct($name = '', $titleNameSep = '') {
         $this->setSiteName($name, $titleNameSep);
+        self::$data['navbar'] = Page::getNavBar();
     }
 
     /// Begin Utility Functions

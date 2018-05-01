@@ -73,8 +73,13 @@
                                 </div>
 
                                 <div class="login">
-                                    <a href="#" data-toggle="modal" data-target="#login-modal"><i class="fa fa-sign-in"></i> <span class="hidden-xs text-uppercase">Sign in</span></a>
-                                    <a href="{{ url('lib/bootstrapious/universal/customer-register.html') }}"><i class="fa fa-user"></i> <span class="hidden-xs text-uppercase">Sign up</span></a>
+                                    <a href="#" data-toggle="modal" data-target="#login-modal">
+                                        <i class="fa fa-sign-in"></i> 
+                                        <span class="hidden-xs text-uppercase">Sign in</span>
+                                    </a>
+                                    <a href="{{ url('lib/bootstrapious/universal/customer-register.html') }}">
+                                        <i class="fa fa-user"></i> 
+                                        <span class="hidden-xs text-uppercase">Sign up</span></a>
                                 </div>
 
                             </div>
