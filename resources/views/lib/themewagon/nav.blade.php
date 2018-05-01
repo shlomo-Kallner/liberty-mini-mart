@@ -9,6 +9,9 @@ use \App\Page;
 if (!isset($navbar) || empty($navbar)) {
     $navbar = Page::getNavBar();
 }
+if (!isset($preheader) || empty($preheader)) {
+    $preheader = [];
+}
 
 /// For testing, dump&die the $navbar variable.
 //dd($navbar);
@@ -59,6 +62,12 @@ if (!isset($navbar) || empty($navbar)) {
             </div>
             <!-- END TOP BAR LEFT PART -->
             <!-- BEGIN TOP BAR MENU -->
+            <!-- 
+                 While the Primary/Main template for this TOP BAR MENU 
+                 is Metronic Shop UI, the Internal Styling of individual
+                 menu items is inspired by/copied from 
+                 'bootstrapious/universal-1-0' TOP BAR MENU.
+            -->
             <div class="col-md-6 col-sm-6 additional-nav">
                 <ul class="list-unstyled list-inline pull-right">
                     <?php
@@ -67,13 +76,13 @@ if (!isset($navbar) || empty($navbar)) {
                     ?>
                     @if($user['loggedin'])
                     <li>
-                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-account.html') }}">
+                        <a href="{{ url('user') }}">
                             <i class="fa fa-id-card" aria-hidden="true"></i>
                             <span class="hidden-xs text-uppercase">My Account</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-wishlist.html') }}">
+                        <a href="{{ url('wishlist') }}">
                             <i class="fa fa-list-alt" aria-hidden="true"></i>
                             <span class="hidden-xs text-uppercase">My Wishlist</span>
                         </a>
@@ -85,7 +94,7 @@ if (!isset($navbar) || empty($navbar)) {
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-checkout.html') }}">
+                        <a href="{{ url('signout') }}">
                             <i class="fa fa-sign-out" aria-hidden="true"></i>
                             <span class="hidden-xs text-uppercase">Sign Out</span>
                         </a>
@@ -98,14 +107,14 @@ if (!isset($navbar) || empty($navbar)) {
                                  couple of links...
                      --}}
                     <li>
-                        <a href="{{ url('user/signin') }}">
+                        <a href="{{ url('signin') }}">
                             <i class="fa fa-sign-in" aria-hidden="true"></i> 
                             <span class="hidden-xs text-uppercase">Sign in</span>
                         </a>
                     </li>
                     {{-- UPDATE: adding 'Sign Up' url to TOP BAR. --}}
                     <li>
-                        <a href="{{ url('user/signup') }}">
+                        <a href="{{ url('signup') }}">
                             <i class="fa fa-user" aria-hidden="true"></i> 
                             <span class="hidden-xs text-uppercase">Sign up</span></a>
                         </a>

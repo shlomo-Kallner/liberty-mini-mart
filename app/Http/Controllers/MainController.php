@@ -18,6 +18,7 @@ class MainController extends Controller {
             'name' => 'Liberty MiniMart',
             'titleNameSep' => ' | ',
         ],
+        'preheader' => [],
         'navbar' => [], // the header navbar data...
         'sidebar' => [], // the side[navigation]bar data...
         'footer' => [], // the footer navigation bar data..
@@ -48,6 +49,14 @@ class MainController extends Controller {
     public function __construct($name = '', $titleNameSep = ' | ') {
         self::setSiteName($name, $titleNameSep);
         self::$data['navbar'] = Page::getNavBar();
+        self::$data['preheader'] = [
+            [
+                // a template for preheader/topbar stuff..
+                'icon' => '', // the Font Awesome icon class.
+                'name' => '', // the name to fill in the Link.
+                'url' => '', // the URL of the link. 
+            ],
+        ];
     }
 
     /// Begin Utility Functions

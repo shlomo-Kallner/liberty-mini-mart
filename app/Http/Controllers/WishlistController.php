@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
 use Illuminate\Http\Request;
 
-class UserController extends MainController {
+class WishlistController extends MainController {
 
     public function __construct($name = '', $titleNameSep = '') {
         parent::__construct($name, $titleNameSep);
@@ -42,20 +41,20 @@ class UserController extends MainController {
     /**
      * Display the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user) {
+    public function show($id) {
         //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user) {
+    public function edit($id) {
         //
     }
 
@@ -63,37 +62,21 @@ class UserController extends MainController {
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user) {
+    public function update(Request $request, $id) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\User  $user
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user) {
+    public function destroy($id) {
         //
-    }
-
-    /*
-     *  USER SIGNIN, SIGNOUT and REGISTRATION:
-     */
-
-    public function signup() {
-        return parent::getView('content.tests.test2', 'New User Registeration Page');
-    }
-
-    public function register(Request $request) {
-        return parent::getView('content.tests.test2', 'New User Registeration Successfull!!');
-    }
-
-    public function signin(Request $request) {
-        return parent::getView('content.tests.test2', 'User Logged In Successfull!!');
     }
 
 }

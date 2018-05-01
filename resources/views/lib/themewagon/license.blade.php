@@ -1,6 +1,6 @@
 
 <!-- BEGIN Metronic License -->
-<!-- Using Metronic Shop UI as our Template. -->
+<!-- Using Metronic Shop UI as our Primary/Main Template. -->
 
 <!-- The following is the license text from "[path]/theme/shop-index.html": -->
 <!-- 

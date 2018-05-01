@@ -17,10 +17,9 @@ Route::get('template', function () {
     return view('master_themewagon');
 });
 
+//Route::resource('user', 'UserController');
 Route::prefix('user')->group(function() {
-
-
-
+    Route::get('/', 'PageController@index1');
     Route::get('{page}', 'PageController@index1');
 });
 
@@ -28,11 +27,25 @@ Route::prefix('store')->group(function() {
     Route::get('/', 'ShopController@categories');
     Route::get('all-products', 'ShopController@products');
     //Route::get('{page}', 'PageController@test');
+    //Route::get('{page}/{page}', 'PageController@test');
 });
 Route::resource('cart', 'CartController');
+Route::resource('wishlist', 'WishlistController');
+//Route::get('user', 'UserController');
+//Route::post('user', 'UserController');
+//Route::resource('user', 'UserController');
+//Route::get('user', 'UserController');
+
+
+Route::get('signup', 'UserController@signup');
+Route::post('signup', 'UserController@register');
+
+Route::post('signin', 'UserController@signin');
+Route::get('signout', 'UserController@signout');
+
 Route::get('{page}', 'PageController@index1');
 
-//Route::resource('user', 'UserController');
+
 //
 //
 //Route::prefix('store')->group(function() {
@@ -71,4 +84,4 @@ Route::get('{page}', 'PageController@index1');
 //    //    Route::resource('catalog/{catalog}/department/{department}/section/{section}/product', 'ProductController');
 //});
 //
-//Route::resource('/{page}', 'PagesController');
+//Route::resource('{page}', 'PagesController');
