@@ -26,8 +26,8 @@ Route::prefix('user')->group(function() {
 Route::prefix('store')->group(function() {
     Route::get('/', 'ShopController@categories');
     Route::get('all-products', 'ShopController@products');
-    //Route::get('{page}', 'PageController@test');
-    //Route::get('{page}/{page}', 'PageController@test');
+    //Route::get('{page}', 'PageController@test2');
+    //Route::get('{page}/{page}', 'PageController@test2');
 });
 //Route::get('checkout', 'ShopController');
 Route::resource('cart', 'CartController');
@@ -42,6 +42,7 @@ Route::get('signup', 'UserController@signup');
 Route::post('signup', 'UserController@register');
 
 Route::post('signin', 'UserController@signin');
+
 Route::get('signout', 'UserController@signout');
 
 Route::get('{page}', 'PageController@index1');

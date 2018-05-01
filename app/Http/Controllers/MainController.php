@@ -33,7 +33,7 @@ class MainController extends Controller {
         //'name' => '',
         ],
         'user' => [
-            'loggedin' => false,
+            //'loggedin' => false,
             'name' => '',
             'email' => ''
         ],
@@ -49,9 +49,10 @@ class MainController extends Controller {
 
     public function __construct($name = '', $titleNameSep = ' | ') {
         self::setSiteName($name, $titleNameSep);
-        self::$data['navbar'] = Page::getNavBar();
-        self::$data['preheader'] = Page::getPreHeader();
-        //dd(self::$data['preheader']);
+//        self::$data['navbar'] = Page::getNavBar();
+//        //dd(session()->all());
+//        self::$data['preheader'] = Page::getPreHeader();
+//        //dd(self::$data['preheader']);
     }
 
     /// Begin Utility Functions
@@ -114,6 +115,14 @@ class MainController extends Controller {
     static public function getView(string $viewName = 'content.template', string $title = '', array $content = []) {
         self::setTitle($title);
         self::setPageContent($content);
+        //
+
+        self::$data['navbar'] = Page::getNavBar();
+        //dd(session()->all());
+        self::$data['preheader'] = Page::getPreHeader();
+        //dd(session()->all());
+        //dd(self::$data['preheader']); 
+        //
         return view($viewName, self::$data);
     }
 
@@ -148,7 +157,10 @@ class MainController extends Controller {
             'header' => "<b>$requestedPage</b>",
             'article' => "<p><i>HEllloo WORLD!!</i></p>"
         ];
+
         //return $this->getTemplateView($title, $content);
+        //dd($request->session()->all());
+        //dd(session()->all());
         return self::getView('content.tests.test2', $title, $content);
     }
 

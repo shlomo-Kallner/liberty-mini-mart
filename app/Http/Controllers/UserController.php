@@ -93,20 +93,27 @@ class UserController extends MainController {
     }
 
     public function signin(Request $request) {
-        $email = !empty($request->email) ? $request->email : '[blank]';
-        $password = !empty($request->password) ? $request->password : '[empty-string]';
-        $content = [];
-        $content['header'] = 'Welcome Back!';
-        $content['article'] = 'Hello ' . $email .
-                ' !! Your Password is: ' . $password;
-        $request->session(['user.loggedin' => true]);
-        self::$data['user']['loggedin'] = true;
-        return parent::getView('content.tests.test2', 'User Logged In Successfull!!', $content);
+//        $email = !empty($request->email) ? $request->email : '[blank]';
+//        $password = !empty($request->password) ? $request->password : '[empty-string]';
+//        $content = [];
+//        $content['header'] = 'Welcome Back!';
+//        $content['article'] = 'Hello ' . $email .
+//                ' !! Your Password is: ' . $password;
+        //dd(session()->all());
+        $request->session()->put('user', 'hello');
+        //// the Laravel Session appears to HATE being 
+        //   assigned ANYTHING other than strings!
+        //dd(session()->all());
+        //self::$data['user']['loggedin'] = true;
+        //return parent::getView('content.tests.test2', 'User Logged In Successfull!!', $content);
+        return redirect('/');
     }
 
     public function signout(Request $request) {
-        $request->session()->forget('user.loggedin');
-        self::$data['user']['loggedin'] = false;
+        //dd(session()->all());
+        $request->session()->forget('user');
+        //dd(session()->all());
+        //self::$data['user']['loggedin'] = false;
         //session(['user.loggedin' => false]);
         return redirect('/');
     }

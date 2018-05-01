@@ -95,7 +95,8 @@ class Page extends Model {
     static public function getPreHeader() {
         $testing = true;
         $preheader = [];
-        $loggedin = Session::has('user.loggedin') ? true : false;
+        //dd(session()->all());
+        $loggedin = session()->has('user') ? true : false;
 
         if (!$testing) {
             
