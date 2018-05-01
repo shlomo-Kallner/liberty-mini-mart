@@ -1,9 +1,5 @@
 <?php
-// put your code here
-/// load 50X and 404 page's dynamic menu here...
-/// Don't forget to pass the variable to the sub-view!!
-//use App\Page;
-//$nav = Page::getNavBar();
+// put any special code here..
 $title .= '-- dummy Title -- for testing Master Page 2';
 ?>
 <!DOCTYPE html>
@@ -42,7 +38,7 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
         <meta content="Metronic Shop UI keywords" name="keywords">
         <meta content="Shlomo Kallner" name="author">
 
-        <meta property="og:site_name" content="{{ $siteName }}">
+        <meta property="og:site_name" content="{{ $site['name'] }}">
         <meta property="og:title" content="-CUSTOMER VALUE-">
         <meta property="og:description" content="-CUSTOMER VALUE-">
         <meta property="og:type" content="website">

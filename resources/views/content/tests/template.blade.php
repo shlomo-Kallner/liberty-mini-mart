@@ -11,9 +11,12 @@
 class="ecommerce"
 @endsection
 
-
-@include('inc.header_content')
-@include('lib.themewagon.mainnav')
+{{-- 
+    UPDATE: Removing the @Include of 'inc.header_content'. 
+            Moving fully over to 'lib.themewagon.nav' for 
+            Navigational, Header & Footer Content.
+--}}
+@include('lib.themewagon.nav')
 
 @section('main-content')
 @parent

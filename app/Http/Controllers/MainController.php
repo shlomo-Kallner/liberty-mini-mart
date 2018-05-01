@@ -10,43 +10,89 @@ class MainController extends Controller {
 
     static public $data = [
         'title' => '', // 'tab' title
-        'siteName' => '',
+        'siteName' => '', // still here for compatibility..
+        'site' => [
+            /// UPDATE: Moving the $site variable's data into
+            ///         $data so Blade will to be able to
+            ///         access it directly..
+            'name' => 'Liberty MiniMart',
+            'titleNameSep' => ' | ',
+        ],
         'navbar' => [], // the header navbar data...
         'sidebar' => [], // the side[navigation]bar data...
-        'preheader' => [], // the preheader navigation bar data..
+        'footer' => [], // the footer navigation bar data..
+        /// UPDATE: Replaced 'Preheader' with 'footer'
+        ///         as - currently - the preheader bar's 
+        ///         content is pre-determined, and not for 
+        ///         CMS editing..
         'page' => [
             'header' => '', // 'h1' page article content
             'article' => '', // 'div' page article content
         //'name' => '',
         ],
-    ];
-    protected $site = [
-        'name' => 'Liberty MiniMart',
-        'titleNameSep' => ' | ',
+        'user' => [
+            'loggedin' => false,
+            'name' => '',
+            'email' => ''
+        ],
     ];
 
-    public function __construct($name = '', $titleNameSep = '') {
-        $this->setSiteName($name, $titleNameSep);
+    /* OLD CODE... kept in case of problems..
+     * 
+      protected $site = [
+      'name' => 'Liberty MiniMart',
+      'titleNameSep' => ' | ',
+      ];
+     */
+
+    public function __construct($name = '', $titleNameSep = ' | ') {
+        self::setSiteName($name, $titleNameSep);
         self::$data['navbar'] = Page::getNavBar();
     }
 
     /// Begin Utility Functions
+    /// UPDATE: converting all Utility functions to static functions...
 
-    public function setSiteName($name = '', $titleNameSep = '') {
-        $this->site['name'] = !empty($name) ? $name : $this->site['name'];
-        self::$data['siteName'] = $this->site['name'];
-        $this->site['titleNameSep'] = !empty($titleNameSep) ? $titleNameSep : $this->site['titleNameSep'];
+    static public function setSiteName($name = '', $titleNameSep = ' | ') {
+        self::$data['site']['name'] = !empty($name) ?
+                $name :
+                self::$data['site']['name'];
+        self::$data['siteName'] = self::$data['site']['name'];
+        self::$data['site']['titleNameSep'] = !empty($titleNameSep) ?
+                $titleNameSep :
+                self::$data['site']['titleNameSep'];
     }
 
-    public function setTitle($title = '') {
+    /*
+     * a helper function for setting members of the 'site'
+     * member of the static data variable...
+     * without necessarily overwriting presets...
+     * 
+     */
+
+    static public function setSiteData($content, $val = null) {
+        if (!empty($content)) {
+            if (is_string($content)) {
+                if (!empty($val)) {
+                    self::$data['site'][$content] = $val;
+                }
+            } elseif (is_array($content)) {
+                foreach ($content as $key => $value) {
+                    self::$data['site'][$key] = $value;
+                }
+            }
+        }
+    }
+
+    static public function setTitle($title = '') {
         if (!empty($title)) {
-            self::$data['title'] = $this->site['name'];
-            self::$data['title'] .= $this->site['titleNameSep'];
+            self::$data['title'] = self::$data['site']['name'];
+            self::$data['title'] .= self::$data['site']['titleNameSep'];
             self::$data['title'] .= $title;
         }
     }
 
-    public function setPageContent($content, string $val = '') {
+    static public function setPageContent($content, string $val = '') {
         if (!empty($content)) {
             $purifier = new HTMLPurifier();
             if (is_string($content)) {
@@ -61,14 +107,14 @@ class MainController extends Controller {
         }
     }
 
-    public function getView(string $viewName = 'content.template', string $title = '', array $content = []) {
-        $this->setTitle($title);
-        $this->setPageContent($content);
+    static public function getView(string $viewName = 'content.template', string $title = '', array $content = []) {
+        self::setTitle($title);
+        self::setPageContent($content);
         return view($viewName, self::$data);
     }
 
-    public function getTemplateView(string $title = '', array $content = []) {
-        return $this->getView('content.template', $title, $content);
+    static public function getTemplateView(string $title = '', array $content = []) {
+        return self::getView('content.template', $title, $content);
     }
 
     /// End Utility Functions
@@ -77,17 +123,17 @@ class MainController extends Controller {
 
     public function test(Request $request) {
         self::$data['requestedPage'] = !empty($request->page) ? $request->page : 'index';
-        $this->setTitle('test ' . self::$data['requestedPage'] . ' page');
+        self::setTitle('test ' . self::$data['requestedPage'] . ' page');
         //dd($request);
         return view('content.tests.test', self::$data);
     }
 
     public function test1(Request $request) {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
-        $this->setTitle('test ' . $requestedPage . ' page');
+        self::setTitle('test ' . $requestedPage . ' page');
         //dd($request);
         self::$data['page']['name'] = $requestedPage;
-        $this->setPageContent('article', "<p><i>HEllloo WORLD!!</i></p>");
+        self::setPageContent('article', "<p><i>HEllloo WORLD!!</i></p>");
         return view('content.tests.test1', self::$data);
     }
 
@@ -99,7 +145,7 @@ class MainController extends Controller {
             'article' => "<p><i>HEllloo WORLD!!</i></p>"
         ];
         //return $this->getTemplateView($title, $content);
-        return $this->getView('content.tests.test2', $title, $content);
+        return self::getView('content.tests.test2', $title, $content);
     }
 
 }

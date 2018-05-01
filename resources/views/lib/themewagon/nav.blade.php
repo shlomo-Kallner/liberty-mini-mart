@@ -61,9 +61,36 @@ if (!isset($navbar) || empty($navbar)) {
             <!-- BEGIN TOP BAR MENU -->
             <div class="col-md-6 col-sm-6 additional-nav">
                 <ul class="list-unstyled list-inline pull-right">
-                    <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-account.html') }}">My Account</a></li>
-                    <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-wishlist.html') }}">My Wishlist</a></li>
-                    <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-checkout.html') }}">Checkout</a></li>
+                    <?php
+                    // for testing ...
+                    $user['loggedin'] = true;
+                    ?>
+                    @if($user['loggedin'])
+                    <li>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-account.html') }}">
+                            <i class="fa fa-id-card" aria-hidden="true"></i>
+                            <span class="hidden-xs text-uppercase">My Account</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-wishlist.html') }}">
+                            <i class="fa fa-list-alt" aria-hidden="true"></i>
+                            <span class="hidden-xs text-uppercase">My Wishlist</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-checkout.html') }}">
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                            <span class="hidden-xs text-uppercase">Checkout</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-checkout.html') }}">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i>
+                            <span class="hidden-xs text-uppercase">Sign Out</span>
+                        </a>
+                    </li>
+                    @else
                     {{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
                     {{-- UPDATE: Copying FA icon and span tag link from 
                                  master_bootstrapious.blade.php  TOP BAR Section
@@ -72,17 +99,18 @@ if (!isset($navbar) || empty($navbar)) {
                      --}}
                     <li>
                         <a href="{{ url('user/signin') }}">
-                            <i class="fa fa-sign-in"></i> 
+                            <i class="fa fa-sign-in" aria-hidden="true"></i> 
                             <span class="hidden-xs text-uppercase">Sign in</span>
                         </a>
                     </li>
                     {{-- UPDATE: adding 'Sign Up' url to TOP BAR. --}}
                     <li>
                         <a href="{{ url('user/signup') }}">
-                            <i class="fa fa-user"></i> 
+                            <i class="fa fa-user" aria-hidden="true"></i> 
                             <span class="hidden-xs text-uppercase">Sign up</span></a>
                         </a>
                     </li>
+                    @endif
                 </ul>
             </div>
             <!-- END TOP BAR MENU -->

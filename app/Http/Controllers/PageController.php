@@ -86,7 +86,7 @@ class PageController extends MainController {
             'article' => "<p><i>HEllloo WORLD!!</i></p>"
         ];
 
-        return $this->getView('content.tests.index2', $title, $content);
+        return self::getView('content.tests.index2', $title, $content);
     }
 
 }

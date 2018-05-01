@@ -1,10 +1,15 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
-/* 
-    Created on : Apr 2, 2018, 10:16:29 PM
-    Author     : DELL
-*/
 
+
+/**
+
+ BEGIN METRONIC SHOP UI OVERIDE CSS SECTION
+
+*/
+.top-cart-block .fa-shopping-cart {
+    font-size: 30px;
+}
+/*
+
+ END METRONIC SHOP UI OVERIDE CSS SECTION
+
+*/
