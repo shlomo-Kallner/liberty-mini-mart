@@ -102,6 +102,7 @@ class Page extends Model {
             
         } else {
             if (!$loggedin) {
+                // {{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
                 $preheader[] = self::genPreHeaderModal('Sign In', '#login-modal', 'fa-sign-in');
                 $preheader[] = self::genPreHeaderURL('signup', 'Sign up', 'fa-user');
             } else {

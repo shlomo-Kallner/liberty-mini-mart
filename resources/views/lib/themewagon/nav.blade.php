@@ -10,11 +10,13 @@ if (!isset($navbar) || empty($navbar)) {
     $navbar = Page::getNavBar();
 }
 if (!isset($preheader) || empty($preheader)) {
-    $preheader = [];
+    $preheader = Page::getPreHeader();
 }
 
 /// For testing, dump&die the $navbar variable.
 //dd($navbar);
+// And the $preheader variable.
+//dd($preheader);
 ?>
 
 @section('cut-and-paste=>my-cookie-cutter')
@@ -70,11 +72,14 @@ if (!isset($preheader) || empty($preheader)) {
             -->
             <div class="col-md-6 col-sm-6 additional-nav">
                 <ul class="list-unstyled list-inline pull-right">
-                    <?php
-                    // for testing ... $user['loggedin'] = false;
-                    ?>
                     @if($preheader)
                     @foreach($preheader as $prenav)
+                    {{-- UPDATE: Copying FA icon and span tag link from 
+                                 master_bootstrapious.blade.php  TOP BAR Section
+                                 to replace the 'simple' text content of these 
+                                 couple of links...
+                     --}}
+
                     <li>
                         @if( isset($prenav['isModal']) && $prenav['isModal'] === true )
                         <a href="#" data-toggle="modal" data-target="{{ $prenav['target'] }}">
@@ -88,56 +93,7 @@ if (!isset($preheader) || empty($preheader)) {
                             </a>
                     </li>
                     @endforeach
-                    {{-- End single "main level" menu --}}
-                    @else
-
-                    @if($user['loggedin'])
-                    <li>
-                        <a href="{{ url('user') }}">
-                            <i class="fa fa-id-card" aria-hidden="true"></i>
-                            <span class="hidden-xs text-uppercase">My Account</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('wishlist') }}">
-                            <i class="fa fa-calendar-o" aria-hidden="true"></i>
-                            <span class="hidden-xs text-uppercase">My Wishlist</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('checkout') }}">
-                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                            <span class="hidden-xs text-uppercase">Checkout</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('signout') }}">
-                            <i class="fa fa-sign-out" aria-hidden="true"></i>
-                            <span class="hidden-xs text-uppercase">Sign Out</span>
-                        </a>
-                    </li>
-                    @else
-                    {{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
-                    {{-- UPDATE: Copying FA icon and span tag link from 
-                                 master_bootstrapious.blade.php  TOP BAR Section
-                                 to replace the 'simple' text content of these 
-                                 couple of links...
-                     --}}
-                    <li>
-                        <a href="#" data-toggle="modal" data-target="#login-modal">
-                            <i class="fa fa-sign-in" aria-hidden="true"></i> 
-                            <span class="hidden-xs text-uppercase">Sign in</span>
-                        </a>
-                    </li>
-                    {{-- UPDATE: adding 'Sign Up' url to TOP BAR. --}}
-                    <li>
-                        <a href="{{ url('signup') }}">
-                            <i class="fa fa-user" aria-hidden="true"></i> 
-                            <span class="hidden-xs text-uppercase">Sign up</span></a>
-                        </a>
-                    </li>
-                    @endif
-
+                    {{-- End dynamicly generated "main level" topbar menu --}}
                     @endif
 
                 </ul>
@@ -149,6 +105,60 @@ if (!isset($preheader) || empty($preheader)) {
 <!-- END TOP BAR -->
 
 @endsection
+
+
+@section('old-static-topbar-content')
+
+@if($user['loggedin'])
+<li>
+    <a href="{{ url('user') }}">
+        <i class="fa fa-id-card" aria-hidden="true"></i>
+        <span class="hidden-xs text-uppercase">My Account</span>
+    </a>
+</li>
+<li>
+    <a href="{{ url('wishlist') }}">
+        <i class="fa fa-calendar-o" aria-hidden="true"></i>
+        <span class="hidden-xs text-uppercase">My Wishlist</span>
+    </a>
+</li>
+<li>
+    <a href="{{ url('checkout') }}">
+        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+        <span class="hidden-xs text-uppercase">Checkout</span>
+    </a>
+</li>
+<li>
+    <a href="{{ url('signout') }}">
+        <i class="fa fa-sign-out" aria-hidden="true"></i>
+        <span class="hidden-xs text-uppercase">Sign Out</span>
+    </a>
+</li>
+@else
+{{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
+{{-- UPDATE: Copying FA icon and span tag link from 
+                                 master_bootstrapious.blade.php  TOP BAR Section
+                                 to replace the 'simple' text content of these 
+                                 couple of links...
+                     --}}
+<li>
+    <a href="#" data-toggle="modal" data-target="#login-modal">
+        <i class="fa fa-sign-in" aria-hidden="true"></i> 
+        <span class="hidden-xs text-uppercase">Sign in</span>
+    </a>
+</li>
+{{-- UPDATE: adding 'Sign Up' url to TOP BAR. --}}
+<li>
+    <a href="{{ url('signup') }}">
+        <i class="fa fa-user" aria-hidden="true"></i> 
+        <span class="hidden-xs text-uppercase">Sign up</span></a>
+</a>
+</li>
+@endif
+
+
+@endsection
+
 
 @section('header-navbar')
 <!-- BEGIN HEADER -->
