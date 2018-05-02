@@ -73,13 +73,13 @@ if (!isset($preheader) || empty($preheader)) {
             <div class="col-md-6 col-sm-6 additional-nav">
                 <ul class="list-unstyled list-inline pull-right">
                     @if($preheader)
-                    @foreach($preheader as $prenav)
                     {{-- UPDATE: Copying FA icon and span tag link from 
                                  master_bootstrapious.blade.php  TOP BAR Section
                                  to replace the 'simple' text content of these 
                                  couple of links...
                      --}}
 
+                    @foreach($preheader as $prenav)
                     <li>
                         @if( isset($prenav['isModal']) && $prenav['isModal'] === true )
                         <a href="#" data-toggle="modal" data-target="{{ $prenav['target'] }}">
@@ -107,57 +107,6 @@ if (!isset($preheader) || empty($preheader)) {
 @endsection
 
 
-@section('old-static-topbar-content')
-
-@if($user['loggedin'])
-<li>
-    <a href="{{ url('user') }}">
-        <i class="fa fa-id-card" aria-hidden="true"></i>
-        <span class="hidden-xs text-uppercase">My Account</span>
-    </a>
-</li>
-<li>
-    <a href="{{ url('wishlist') }}">
-        <i class="fa fa-calendar-o" aria-hidden="true"></i>
-        <span class="hidden-xs text-uppercase">My Wishlist</span>
-    </a>
-</li>
-<li>
-    <a href="{{ url('checkout') }}">
-        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-        <span class="hidden-xs text-uppercase">Checkout</span>
-    </a>
-</li>
-<li>
-    <a href="{{ url('signout') }}">
-        <i class="fa fa-sign-out" aria-hidden="true"></i>
-        <span class="hidden-xs text-uppercase">Sign Out</span>
-    </a>
-</li>
-@else
-{{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
-{{-- UPDATE: Copying FA icon and span tag link from 
-                                 master_bootstrapious.blade.php  TOP BAR Section
-                                 to replace the 'simple' text content of these 
-                                 couple of links...
-                     --}}
-<li>
-    <a href="#" data-toggle="modal" data-target="#login-modal">
-        <i class="fa fa-sign-in" aria-hidden="true"></i> 
-        <span class="hidden-xs text-uppercase">Sign in</span>
-    </a>
-</li>
-{{-- UPDATE: adding 'Sign Up' url to TOP BAR. --}}
-<li>
-    <a href="{{ url('signup') }}">
-        <i class="fa fa-user" aria-hidden="true"></i> 
-        <span class="hidden-xs text-uppercase">Sign up</span></a>
-</a>
-</li>
-@endif
-
-
-@endsection
 
 
 @section('header-navbar')
@@ -171,16 +120,59 @@ if (!isset($preheader) || empty($preheader)) {
         <a href="javascript:void(0);" class="mobi-toggler"><i class="fa fa-bars"></i></a>
 
         <!-- BEGIN CART -->
+        <?php
+        $usingDynamicCart = false;
+        $dynCart = [
+            'items' => [],
+            'currency-icon' => 'USD',
+            'sub-total' => 0.0,
+            'total-items' => 0,
+        ];
+        ?>
         <div class="top-cart-block">
             <div class="top-cart-info">
+                @if($usingDynamicCart)
+                <a href="javascript:void(0);" class="top-cart-info-count">
+                    {{ $dynCart['total-items'] }} items
+                </a>
+                <a href="javascript:void(0);" class="top-cart-info-value">
+                    <i class="fa {{ $dynCart['currency-icon'] }}"></i>{{ $dynCart['sub-total'] }}</a>
+                @else
                 <a href="javascript:void(0);" class="top-cart-info-count">3 items</a>
                 <a href="javascript:void(0);" class="top-cart-info-value">$1260</a>
+                @endif
             </div>
             <i class="fa fa-shopping-cart"></i>
 
             <div class="top-cart-content-wrapper">
                 <div class="top-cart-content">
                     <ul class="scroller" style="height: 250px;">
+                        @if($usingDynamicCart)
+                        @foreach($dynCart['items'] as $item)
+                        <li>
+                            <a href="{{ url($item->attributes['url']) }}">
+                                <img src="{{ asset($item->attributes['img']) }}" alt="{{ $item->attributes['description'] }}" width="37" height="34">
+                            </a>
+                            <span class="cart-content-count">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                                <input type="number" value="{{ $item->quantity }}" 
+                                       min="0" max="100" step="1">
+                            </span>
+                            <strong>
+                                <a href="{{ url($item->attributes['url']) }}">
+                                    {{ $item->name }}
+                                </a>
+                            </strong>
+                            <em>
+                                <i class="fa {{ $dynCart['currency-icon'] }}"></i>
+                                <span>{{ $item->getPriceSumWithConditions() }}</span>
+                            </em>
+                            <a href="javascript:void(0);" class="del-goods">
+                                <i class="fa fa-times-circle"></i>
+                            </a>
+                        </li>
+                        @endforeach
+                        @else
                         <li>
                             <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">
                                 <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34">
@@ -240,9 +232,15 @@ if (!isset($preheader) || empty($preheader)) {
                             <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
                         </li>
                     </ul>
+                    @endif
                     <div class="text-right">
-                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-shopping-cart.html') }}" class="btn btn-default">View Cart</a>
-                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-checkout.html') }}" class="btn btn-primary">Checkout</a>
+
+                        <a href="{{ url('cart') }}" class="btn btn-default">
+                            View Cart
+                        </a>
+                        <a href="{{ url('checkout') }}" class="btn btn-primary">
+                            Checkout
+                        </a>
                     </div>
                 </div>
             </div>            
@@ -254,7 +252,7 @@ if (!isset($preheader) || empty($preheader)) {
             <ul>
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
-                        Woman 
+                        Pages 
 
                     </a>
 
@@ -286,7 +284,7 @@ if (!isset($preheader) || empty($preheader)) {
 
                 <li class="dropdown dropdown-megamenu">
                     <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
-                        Man
+                        Shop
 
                     </a>
                     {{-- BEGIN MEGAMENU --}}
@@ -473,6 +471,3 @@ if (!isset($preheader) || empty($preheader)) {
 
 @endsection
 
-@section('header-navbar')
-
-@endsection
