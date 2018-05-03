@@ -84,20 +84,8 @@ class Page extends Model {
             // for pre-database testing:
             $navbar = [
                 self::genURLMenuItem('about', 'About'),
-//                [
-//                    'url' => 'about',
-//                    'name' => 'About',
-//                ],
                 self::genURLMenuItem('store', 'Store'),
-//                [
-//                    'url' => 'store',
-//                    'name' => 'Store',
-//                ],
                 self::genURLMenuItem('template', 'My Template'),
-//                [
-//                    'url' => 'template',
-//                    'name' => 'My Template'
-//                ],
             ];
         }
         return $navbar;

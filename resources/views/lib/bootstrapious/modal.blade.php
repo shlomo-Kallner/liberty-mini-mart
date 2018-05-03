@@ -1,9 +1,18 @@
 <?php
-$useTimesIcon = true;
+//$useTimesIcon = true;
+/* THE OLD IF USE TIMES ICON OR USE CLOSE ICON FOR MODAL CLOSE..
+ * 
+ * @if($useTimesIcon)
+  <i class="fa fa-times"></i>
+  @else
+  <i class="fa fa-window-close"></i>
+  @endif
+ * 
+ *  */
 ?>
 
 @section('login-modal')
-<!-- Based on Bootstrapious/Universal-1-0 and Bootstrap v3.X docs.. -->
+{{-- Based on Bootstrapious/Universal-1-0 and Bootstrap v3.X docs.. --}}
 <!-- *** LOGIN MODAL ***
     _________________________________________________________ -->
 
@@ -13,13 +22,9 @@ $useTimesIcon = true;
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">
-                    @if($useTimesIcon)
                     <i class="fa fa-times"></i>
-                    @else
-                    <i class="fa fa-window-close"></i>
-                    @endif
                 </button>
-                <h4 class="modal-title" id="Login">Customer Sign In</h4>
+                <h4 class="modal-title" id="Login">Sign In</h4>
             </div>
             <div class="modal-body">
                 <form action="{{ url('signin') }}" method="post" novalidate="novalidate">
@@ -52,6 +57,5 @@ $useTimesIcon = true;
         </div>
     </div>
 </div>
-
 <!-- *** LOGIN MODAL END *** -->
 @endsection

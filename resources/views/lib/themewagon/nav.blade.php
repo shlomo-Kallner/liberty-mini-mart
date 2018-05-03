@@ -34,7 +34,6 @@ if (!isset($link)) {
 
 @endsection
 
-@include('lib.themewagon.link-helpers')
 
 
 @section('pre-header-navbar')
@@ -97,8 +96,6 @@ if (!isset($link)) {
 
                     @foreach($preheader as $nav)
 
-                    @if(true)
-
                     @component('lib.themewagon.helpers.normal-link')
                     @slot('url')
                     {{$nav['url']}}
@@ -120,20 +117,6 @@ if (!isset($link)) {
                     @endslot
                     @endcomponent
 
-                    @else
-                    <li>
-                        @if( isset($nav['type']) && $nav['type'] == 'modal' )
-                        <a href="#" data-toggle="modal" data-target="{{ $nav['target'] }}">
-                            @else
-                            <a href="{{ url($nav['url']) }}">
-                                @endif
-                                @if($nav['icon'])
-                                <i class="fa {{ $nav['icon'] }}" aria-hidden="true"></i>
-                                @endif
-                                <span class="hidden-xs text-uppercase">{{ $nav['name'] }}</span>
-                            </a>
-                    </li>
-                    @endif
                     @endforeach
                     {{-- End dynamicly generated "main level" topbar menu --}}
                     @endif
@@ -349,8 +332,28 @@ if (!isset($link)) {
                         </li>
                         @endif
                         @if(false)
-                        @foreach($submenus as $link)
+                        @foreach($submenus as $menu)
+                        @if(false)
                         @yield('normal-link-helper')
+                        @else
+                        @component('lib.themewagon.helpers.normal-link')
+                        @slot('type')
+                        {{$nav['type']}}
+                        @endslot
+                        @slot('url')
+                        {{$nav['url']}}
+                        @endslot
+                        @slot('name')
+                        {{$nav['name']}}
+                        @endslot
+                        @slot('icon')
+                        {{$nav['icon']}}
+                        @endslot
+                        @slot('transform')
+                        {{$nav['transform']}}
+                        @endslot
+                        @endcomponent
+                        @endif
                         @endforeach
                         @endif
                         <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Running Shoes</a></li>
