@@ -19,7 +19,14 @@ if (!isset($preheader) || empty($preheader)) {
 //dd($preheader);
 // this just so Blade does not *BARF* on our links helpers below..
 if (!isset($link)) {
-    $link = [];
+    $link = [
+        'icon' => '', // the Font Awesome 4 icon class without the 'fa'.
+        'name' => '', // the name to fill in the Link.
+        'url' => '', // the URL of the link.
+        'isModal' => false, // a Boolean, Is this a Modal or a URL?
+        'target' => '', // the data-target attribute's data value (of a modal)
+        'transform' => '', // Bootstrap 3 text-transform css class.
+    ];
 }
 ?>
 
@@ -27,20 +34,8 @@ if (!isset($link)) {
 
 @endsection
 
-@section('menu-links-helper')
-{{--
-    A helper section for doing menu links
-    where the menu link takes a certain 'standard' form
-    of 'li>a' (ordinary link), 'li>(a+(ul>li>a))' (dropdown link) 
-    or 'li>(a+(ul>li>div>div>div))' (megamenu link)..
-    To be embeded in a Blade @Foreach Loop, with a item
-    variable named 'link'.
---}}
-@if($link)
-@endif
+@include('lib.themewagon.link-helpers')
 
-
-@endsection
 
 @section('pre-header-navbar')
 @parent
@@ -100,6 +95,8 @@ if (!isset($link)) {
                                  couple of links...
                      --}}
 
+                    @if(false)
+                    @else
                     @foreach($preheader as $prenav)
                     <li>
                         @if( isset($prenav['isModal']) && $prenav['isModal'] === true )
@@ -114,6 +111,7 @@ if (!isset($link)) {
                             </a>
                     </li>
                     @endforeach
+                    @endif
                     {{-- End dynamicly generated "main level" topbar menu --}}
                     @endif
 
@@ -138,7 +136,9 @@ if (!isset($link)) {
             <img src="{{ asset('images/site/Liberty-Logo.png') }}" alt="Liberty Mini-Mart">
         </a>
 
-        <a href="javascript:void(0);" class="mobi-toggler"><i class="fa fa-bars"></i></a>
+        <a href="javascript:void(0);" class="mobi-toggler">
+            <i class="fa fa-bars"></i>
+        </a>
 
         <!-- BEGIN CART -->
         <?php
@@ -157,7 +157,9 @@ if (!isset($link)) {
                     {{ $dynCart['total-items'] }} items
                 </a>
                 <a href="javascript:void(0);" class="top-cart-info-value">
-                    <i class="fa {{ $dynCart['currency-icon'] }}"></i>{{ $dynCart['sub-total'] }}</a>
+                    <i class="fa {{ $dynCart['currency-icon'] }}"></i>
+                    {{ $dynCart['sub-total'] }}
+                </a>
                 @else
                 <a href="javascript:void(0);" class="top-cart-info-count">3 items</a>
                 <a href="javascript:void(0);" class="top-cart-info-value">$1260</a>
@@ -276,9 +278,22 @@ if (!isset($link)) {
                 {{-- Replacing Original 'Kids' menu Item with 
                      our Blade Foreach loop...  --}}
                 {{-- Moving our "main level" items to the 'front'.. --}}
+                @if(false)
                 @foreach($navbar as $nav)
                 <li><a href="{{ url($nav['url']) }}">{{ $nav['name'] }}</a></li>
                 @endforeach
+                @else
+                @php
+                dd($navbar);
+                $oldLink = $link;
+                @endphp
+                @foreach($navbar as $link)
+                @yield('normal-link-helper')
+                @endforeach
+                @php
+                $link = $oldLink;
+                @endphp
+                @endif
                 {{-- End single "main level" menu --}}
 
                 {{-- begin dropdown menu top-level link --}}
@@ -309,6 +324,11 @@ if (!isset($link)) {
                                 </li>
                             </ul>
                         </li>
+                        @endif
+                        @if(false)
+                        @foreach($submenus as $link)
+                        @yield('normal-link-helper')
+                        @endforeach
                         @endif
                         <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Running Shoes</a></li>
                         <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Jackets and Coats</a></li>

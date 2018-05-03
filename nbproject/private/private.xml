@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="3">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="6">
         <file>
             <url>resources/views/master_bootstrapious.blade.php</url>
             <bookmark id="1">
@@ -16,6 +16,19 @@
             <bookmark id="2">
                 <name/>
                 <line>1074</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>resources/views/lib/themewagon/nav.blade.php</url>
+            <bookmark id="6">
+                <name/>
+                <line>67</line>
+                <key/>
+            </bookmark>
+            <bookmark id="5">
+                <name/>
+                <line>362</line>
                 <key/>
             </bookmark>
         </file>
@@ -41,7 +54,6 @@
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/metronicShopUI/theme/assets/corporate/scripts/layout.js</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/master_themewagon.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/lib/bootstrapious/css.blade.php</file>
-            <file>file:/C:/xampp/htdocs/liberty-mini-mart/config/session.php</file>
         </group>
     </open-files>
 </project-private>

@@ -66,28 +66,31 @@ class Page extends Model {
       'url' => '', // the URL of the link.
       'isModal' => false, // a Boolean, Is this a Modal or a URL?
       'target' => '', // the data-target attribute's data value (of a modal)
+      'transform' => '', // Bootstrap 3 text-transform css class.
       ];
      * 
      */
 
-    static public function genPreHeaderURL(string $url, string $name, string $icon = '') {
+    static public function genPreHeaderURL(string $url, string $name, string $icon = '', string $textTransform = '') {
         $template = [
             'icon' => $icon, // the Font Awesome 4 icon class without the lone 'fa'.
             'name' => $name, // the name to fill in the Link.
             'url' => $url, // the URL of the link. 
             'isModal' => false, // a Boolean, Is this a Modal or a URL?
             'target' => '', // the data-target attribute's data value (of a modal)
+            'transform' => $textTransform, // Bootstrap 3 text-transform css class.
         ];
         return $template;
     }
 
-    static public function genPreHeaderModal(string $name, string $target, string $icon = '') {
+    static public function genPreHeaderModal(string $name, string $target, string $icon = '', string $textTransform = '') {
         $template = [
             'icon' => $icon, // the Font Awesome 4 icon class without the lone 'fa'.
             'name' => $name, // the name to fill in the Link.
             'url' => '#', // the URL of the link. 
             'isModal' => true, // a Boolean, Is this a Modal or a URL?
             'target' => $target, // the data-target attribute's data value (of a modal)
+            'transform' => $textTransform, // Bootstrap 3 text-transform css class.
         ];
         return $template;
     }
@@ -103,13 +106,13 @@ class Page extends Model {
         } else {
             if (!$loggedin) {
                 // {{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
-                $preheader[] = self::genPreHeaderModal('Sign In', '#login-modal', 'fa-sign-in');
-                $preheader[] = self::genPreHeaderURL('signup', 'Sign up', 'fa-user');
+                $preheader[] = self::genPreHeaderModal('Sign In', '#login-modal', 'fa-sign-in', 'text-uppercase');
+                $preheader[] = self::genPreHeaderURL('signup', 'Sign up', 'fa-user', 'text-uppercase');
             } else {
-                $preheader[] = self::genPreHeaderURL('user', 'My Account', 'fa-id-card');
-                $preheader[] = self::genPreHeaderURL('wishlist', 'My Wishlist', 'fa-calendar-o');
-                $preheader[] = self::genPreHeaderURL('checkout', 'Checkout', 'fa-shopping-cart');
-                $preheader[] = self::genPreHeaderURL('signout', 'Sign out', 'fa-sign-out');
+                $preheader[] = self::genPreHeaderURL('user', 'My Account', 'fa-id-card', 'text-uppercase');
+                $preheader[] = self::genPreHeaderURL('wishlist', 'My Wishlist', 'fa-calendar-o', 'text-uppercase');
+                $preheader[] = self::genPreHeaderURL('checkout', 'Checkout', 'fa-shopping-cart', 'text-uppercase');
+                $preheader[] = self::genPreHeaderURL('signout', 'Sign out', 'fa-sign-out', 'text-uppercase');
             }
         }
         return $preheader;
