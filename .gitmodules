@@ -1,3 +1,6 @@
 [submodule "public/lib/codrops/ExpandingSearchBar"]
 	path = public/lib/codrops/ExpandingSearchBar
 	url = https://github.com/codrops/ExpandingSearchBar.git
+[submodule "public/lib/bootstrap-dropdown-hover"]
+	path = public/lib/bootstrap-dropdown-hover
+	url = https://github.com/kybarg/bootstrap-dropdown-hover.git

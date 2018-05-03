@@ -17,9 +17,28 @@ if (!isset($preheader) || empty($preheader)) {
 //dd($navbar);
 // And the $preheader variable.
 //dd($preheader);
+// this just so Blade does not *BARF* on our links helpers below..
+if (!isset($link)) {
+    $link = [];
+}
 ?>
 
 @section('cut-and-paste=>my-cookie-cutter')
+
+@endsection
+
+@section('menu-links-helper')
+{{--
+    A helper section for doing menu links
+    where the menu link takes a certain 'standard' form
+    of 'li>a' (ordinary link), 'li>(a+(ul>li>a))' (dropdown link) 
+    or 'li>(a+(ul>li>div>div>div))' (megamenu link)..
+    To be embeded in a Blade @Foreach Loop, with a item
+    variable named 'link'.
+--}}
+@if($link)
+@endif
+
 
 @endsection
 
@@ -33,7 +52,8 @@ if (!isset($preheader) || empty($preheader)) {
             <!-- BEGIN TOP BAR LEFT PART -->
             <div class="col-md-6 col-sm-6 additional-shop-info">
                 <ul class="list-unstyled list-inline">
-                    {{-- REMOVED: Phone link from template was removed. --}}
+                    {{-- REMOVED: the Phone link from 
+                        the template was removed. --}}
                     <!-- BEGIN CURRENCIES -->
                     <li class="shop-currencies">
                         <a href="javascript:void(0);">
@@ -54,6 +74,7 @@ if (!isset($preheader) || empty($preheader)) {
                     <li class="langs-block">
                         <a href="javascript:void(0);" class="current">English </a>
                         <div class="langs-block-others-wrapper"><div class="langs-block-others">
+                                <a href="javascript:void(0);">Hebrew</a>
                                 <a href="javascript:void(0);">French</a>
                                 <a href="javascript:void(0);">Germany</a>
                                 <a href="javascript:void(0);">Turkish</a>
@@ -250,14 +271,26 @@ if (!isset($preheader) || empty($preheader)) {
         <!-- BEGIN NAVIGATION -->
         <div class="header-navigation">
             <ul>
+
+                {{-- BEGIN single "main level" menu --}}
+                {{-- Replacing Original 'Kids' menu Item with 
+                     our Blade Foreach loop...  --}}
+                {{-- Moving our "main level" items to the 'front'.. --}}
+                @foreach($navbar as $nav)
+                <li><a href="{{ url($nav['url']) }}">{{ $nav['name'] }}</a></li>
+                @endforeach
+                {{-- End single "main level" menu --}}
+
+                {{-- begin dropdown menu top-level link --}}
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
+                    <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;" role="button">
                         Pages 
 
                     </a>
 
                     <!-- BEGIN DROPDOWN MENU -->
                     <ul class="dropdown-menu">
+                        @if(false)
                         <li class="dropdown-submenu">
                             <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Hi Tops <i class="fa fa-angle-right"></i></a>
                             <ul class="dropdown-menu" role="menu">
@@ -276,12 +309,15 @@ if (!isset($preheader) || empty($preheader)) {
                                 </li>
                             </ul>
                         </li>
+                        @endif
                         <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Running Shoes</a></li>
                         <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Jackets and Coats</a></li>
                     </ul>
                     <!-- END DROPDOWN MENU -->
                 </li>
+                {{-- end dropdown menu top-level link --}}
 
+                {{-- begin megamenu top-level link --}}
                 <li class="dropdown dropdown-megamenu">
                     <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
                         Shop
@@ -347,15 +383,11 @@ if (!isset($preheader) || empty($preheader)) {
                     </ul>
                     {{-- END MEGAMENU --}}
                 </li>
-                {{-- BEGIN single "main level" menu --}}
-                {{-- Replacing Original 'Kids' menu Item with 
-                     our Blade Foreach loop...  --}}
-                <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Kids</a></li>
-                @foreach($navbar as $nav)
-                <li><a href="{{ url($nav['url']) }}">{{ $nav['name'] }}</a></li>
-                @endforeach
-                {{-- End single "main level" menu --}}
+                {{-- end megamenu top-level link --}}
 
+                {{-- NAV-CATALOGUE - will be implemented 
+                     in the Advanced level! --}}
+                @if(false)
                 <li class="dropdown dropdown100 nav-catalogue">
                     <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
                         New
@@ -410,6 +442,9 @@ if (!isset($preheader) || empty($preheader)) {
                         </li>
                     </ul>
                 </li>
+                @endif
+                {{-- Removing template/`s 'pages' dropdown menu.. --}}
+                @if(false)
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
                         Pages 
@@ -437,6 +472,7 @@ if (!isset($preheader) || empty($preheader)) {
                         <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-terms-conditions-page.html') }}">Terms &amp; Conditions</a></li>
                     </ul>
                 </li>
+                @endif
 
 
                 {{-- 
