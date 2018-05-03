@@ -95,23 +95,46 @@ if (!isset($link)) {
                                  couple of links...
                      --}}
 
-                    @if(false)
+                    @foreach($preheader as $nav)
+
+                    @if(true)
+
+                    @component('lib.themewagon.helpers.normal-link')
+                    @slot('url')
+                    {{$nav['url']}}
+                    @endslot
+                    @slot('name')
+                    {{$nav['name']}}
+                    @endslot
+                    @slot('target')
+                    {{$nav['target']}}
+                    @endslot
+                    @slot('type')
+                    {{$nav['type']}}
+                    @endslot
+                    @slot('icon')
+                    {{$nav['icon']}}
+                    @endslot
+                    @slot('transform')
+                    {{$nav['transform']}}
+                    @endslot
+                    @endcomponent
+
                     @else
-                    @foreach($preheader as $prenav)
                     <li>
-                        @if( isset($prenav['isModal']) && $prenav['isModal'] === true )
-                        <a href="#" data-toggle="modal" data-target="{{ $prenav['target'] }}">
+                        @if( isset($nav['type']) && $nav['type'] == 'modal' )
+                        <a href="#" data-toggle="modal" data-target="{{ $nav['target'] }}">
                             @else
-                            <a href="{{ url($prenav['url']) }}">
+                            <a href="{{ url($nav['url']) }}">
                                 @endif
-                                @if($prenav['icon'])
-                                <i class="fa {{ $prenav['icon'] }}" aria-hidden="true"></i>
+                                @if($nav['icon'])
+                                <i class="fa {{ $nav['icon'] }}" aria-hidden="true"></i>
                                 @endif
-                                <span class="hidden-xs text-uppercase">{{ $prenav['name'] }}</span>
+                                <span class="hidden-xs text-uppercase">{{ $nav['name'] }}</span>
                             </a>
                     </li>
-                    @endforeach
                     @endif
+                    @endforeach
                     {{-- End dynamicly generated "main level" topbar menu --}}
                     @endif
 
@@ -278,18 +301,7 @@ if (!isset($link)) {
                 {{-- Replacing Original 'Kids' menu Item with 
                      our Blade Foreach loop...  --}}
                 {{-- Moving our "main level" items to the 'front'.. --}}
-                @if(false)
                 @foreach($navbar as $nav)
-                <li><a href="{{ url($nav['url']) }}">{{ $nav['name'] }}</a></li>
-                @endforeach
-                @else
-                @php
-                //dd($navbar);
-                $oldLink = $link;
-                //dd($oldLink);
-                @endphp
-                @foreach($navbar as $nav)
-                <?php //dd($link); ?>
                 @component('lib.themewagon.helpers.normal-link')
                 @slot('url')
                 {{$nav['url']}}
@@ -305,11 +317,6 @@ if (!isset($link)) {
                 @endslot
                 @endcomponent
                 @endforeach
-                @php
-                //dd($link);
-                $link = $oldLink;
-                @endphp
-                @endif
                 {{-- End single "main level" menu --}}
 
                 {{-- begin dropdown menu top-level link --}}

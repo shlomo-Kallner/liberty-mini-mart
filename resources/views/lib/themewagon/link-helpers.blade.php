@@ -6,7 +6,9 @@ $link = [
 'icon' => '', // the Font Awesome 4 icon class without the 'fa'.
 'name' => '', // the name to fill in the Link.
 'url' => '', // the URL of the link.
-'isModal' => false, // a Boolean, Is this a Modal or a URL?
+//'isModal' => false, // a Boolean, Is this a Modal or a URL? -@OBSOLETE!!
+'type' => 'url', // 'url' for a url link, 'modal' for a modal button link.. -@NEW!
+// 'type' replaces 'isModal'!
 'target' => '', // the data-target attribute's data value (of a modal)
 'transform' => '', // Bootstrap 3 text-transform css class.
 ];
@@ -29,7 +31,7 @@ $link = [
 @section('normal-link-helper')
 <?php //dd($link); ?>
 <li>
-    @if( isset($link['isModal']) && $link['isModal'] === true )
+    @if( isset($link['type']) && $link['type'] == 'modal' )
     <a href="#" data-toggle="modal" data-target="{{ $link['target'] }}">
         @else
         <a href="{{ url($link['url']) }}">
