@@ -284,13 +284,29 @@ if (!isset($link)) {
                 @endforeach
                 @else
                 @php
-                dd($navbar);
+                //dd($navbar);
                 $oldLink = $link;
+                //dd($oldLink);
                 @endphp
-                @foreach($navbar as $link)
-                @yield('normal-link-helper')
+                @foreach($navbar as $nav)
+                <?php //dd($link); ?>
+                @component('lib.themewagon.helpers.normal-link')
+                @slot('url')
+                {{$nav['url']}}
+                @endslot
+                @slot('name')
+                {{$nav['name']}}
+                @endslot
+                @slot('icon')
+                {{$nav['icon']}}
+                @endslot
+                @slot('transform')
+                {{$nav['transform']}}
+                @endslot
+                @endcomponent
                 @endforeach
                 @php
+                //dd($link);
                 $link = $oldLink;
                 @endphp
                 @endif

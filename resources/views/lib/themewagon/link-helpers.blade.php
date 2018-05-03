@@ -27,6 +27,7 @@ $link = [
 
 
 @section('normal-link-helper')
+<?php //dd($link); ?>
 <li>
     @if( isset($link['isModal']) && $link['isModal'] === true )
     <a href="#" data-toggle="modal" data-target="{{ $link['target'] }}">
