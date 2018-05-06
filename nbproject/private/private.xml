@@ -38,12 +38,12 @@
             </bookmark>
             <bookmark id="7">
                 <name/>
-                <line>286</line>
+                <line>321</line>
                 <key/>
             </bookmark>
             <bookmark id="5">
                 <name/>
-                <line>372</line>
+                <line>407</line>
                 <key/>
             </bookmark>
         </file>
@@ -54,7 +54,6 @@
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/master_startbootstrap.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/lib/themewagon/js.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Page.php</file>
-            <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/lib/themewagon/helpers/normal-link.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/bootstrapious/universal/index5.html</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/codrops/ExpandingSearchBar/js/uisearch.js</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/lib/themewagon/nav.blade.php</file>
@@ -64,6 +63,7 @@
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/bootstrapious/universal/js/owl.carousel.js</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/CartController.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/MainController.php</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/lib/themewagon/cartItem.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/content/tests/template.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/PageController.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/ShopController.php</file>

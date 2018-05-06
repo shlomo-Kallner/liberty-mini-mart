@@ -148,12 +148,23 @@ if (!isset($link)) {
 
         <!-- BEGIN CART -->
         <?php
-        $usingDynamicCart = false;
+
+        use Darryldecode\Cart;
+
+$usingDynamicCart = false;
+        $fakeID = 'MyFAKESEssionID123';
+        Cart::session($fakeID);
+        Cart::session->add(123, 'Rolex Classic Watch', 1230.5, 1, [
+            'url' => '',
+            'img' => '',
+            'description' => '',
+        ]);
+        $cartContent = Cart::getContent();
         $dynCart = [
-            'items' => [],
-            'currency-icon' => 'USD',
-            'sub-total' => 0.0,
-            'total-items' => 0,
+            'items' => $cartContent->toArray(),
+            'currency-icon' => 'fa-usd',
+            'sub-total' => 1260.0,
+            'total-items' => $cartContent->count(), // or use getTotalQuantity() ...
         ];
         ?>
         <div class="top-cart-block">
@@ -200,6 +211,29 @@ if (!isset($link)) {
                                 <i class="fa fa-times-circle"></i>
                             </a>
                         </li>
+                        @component('lib.themewagon.cartItem')
+                        @slot('url')
+                        {{$item->attributes['url']}}
+                        @endslot
+                        @slot('img')
+                        {{ $item->attributes['img'] }}
+                        @endslot
+                        @slot('description')
+                        {{ $item->attributes['description'] }}
+                        @endslot
+                        @slot('quantity')
+                        {{ $item->quantity }}
+                        @endslot
+                        @slot('name')
+                        {{ $item->name }}
+                        @endslot
+                        @slot('currencyIcon')
+                        {{ $dynCart['currency-icon'] }}
+                        @endslot
+                        @slot('priceSum')
+                        {{ $item->getPriceSumWithConditions() }}
+                        @endslot
+                        @endcomponent
                         @endforeach
                         @else
                         <li>
@@ -260,6 +294,7 @@ if (!isset($link)) {
                             <em>$1230</em>
                             <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
                         </li>
+                        @endif
                     </ul>
                     @endif
                     <div class="text-right">
@@ -285,7 +320,7 @@ if (!isset($link)) {
                      our Blade Foreach loop...  --}}
                 {{-- Moving our "main level" items to the 'front'.. --}}
                 @foreach($navbar as $nav)
-                @component('lib.themewagon.helpers.normal-link')
+                @component('lib.themewagon.links')
                 @slot('url')
                 {{$nav['url']}}
                 @endslot
@@ -336,7 +371,7 @@ if (!isset($link)) {
                         @if(false)
                         @yield('normal-link-helper')
                         @else
-                        @component('lib.themewagon.helpers.normal-link')
+                        @component('lib.themewagon.links')
                         @slot('type')
                         {{$nav['type']}}
                         @endslot
