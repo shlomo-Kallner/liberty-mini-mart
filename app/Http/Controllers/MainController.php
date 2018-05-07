@@ -37,6 +37,8 @@ class MainController extends Controller {
             'name' => '',
             'email' => ''
         ],
+        'cart' => [
+        ],
     ];
 
     /* OLD CODE... kept in case of problems..

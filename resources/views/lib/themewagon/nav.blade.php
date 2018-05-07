@@ -151,71 +151,43 @@ if (!isset($link)) {
 
         use Darryldecode\Cart\Cart;
 
-$usingDynamicCart = true;
-        $fakeID = 'MyFAKESEssionID123';
-        //$myCart = new Cart();
-        \Cart::session($fakeID);
-        \Cart::session($fakeID)->add(123, 'Rolex Classic Watch', 230.5, 5, [
-            'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
-            'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg',
-            'description' => 'Rolex Classic Watch',
-        ]);
-        //$cartContent = \Cart::session($fakeID)->getContent();
-        $dynCart = [
-            'items' => \Cart::session($fakeID)->getContent(),
-            'currency-icon' => 'fa-usd',
-            'sub-total' => \Cart::session($fakeID)->getSubTotal(),
-            'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
-        ];
+if (!isset($cart) || emptyArray($cart)) {
+
+            $fakeID = 'MyFAKESEssionID123';
+            //$myCart = new Cart();
+            \Cart::session($fakeID);
+            \Cart::session($fakeID)->add(123, 'Rolex Classic Watch', 230.5, 5, [
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg',
+                'description' => 'Rolex Classic Watch',
+            ]);
+            //$cartContent = \Cart::session($fakeID)->getContent();
+            $cart = [
+                'items' => \Cart::session($fakeID)->getContent(),
+                'currency-icon' => 'fa-usd',
+                'sub-total' => \Cart::session($fakeID)->getSubTotal(),
+                'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
+            ];
+        }
         ?>
         <div class="top-cart-block">
             <div class="top-cart-info">
-                @if($usingDynamicCart)
                 <a href="javascript:void(0);" class="top-cart-info-count">
-                    {{ $dynCart['total-items'] }} 
-                    {{ $dynCart['total-items'] == 0 || $dynCart['total-items'] > 1 ? 'items' : 'item' }}
+                    {{ $cart['total-items'] }} 
+                    {{ $cart['total-items'] == 0 || $cart['total-items'] > 1 ? 'items' : 'item' }}
                 </a>
                 <a href="javascript:void(0);" class="top-cart-info-value">
-                    <i class="fa {{ $dynCart['currency-icon'] }}"></i>
-                    {{ $dynCart['sub-total'] }}
+                    <i class="fa {{ $cart['currency-icon'] }}"></i>
+                    {{ $cart['sub-total'] }}
                 </a>
-                @else
-                <a href="javascript:void(0);" class="top-cart-info-count">3 items</a>
-                <a href="javascript:void(0);" class="top-cart-info-value">$1260</a>
-                @endif
             </div>
             <i class="fa fa-shopping-cart"></i>
 
             <div class="top-cart-content-wrapper">
                 <div class="top-cart-content">
                     <ul class="scroller" style="height: 250px;">
-                        @if($usingDynamicCart)
-                        @foreach($dynCart['items'] as $item)
-                        <?php //dd($item); ?>
-                        @if(false)
-                        <li>
-                            <a href="{{ url($item->attributes['url']) }}">
-                                <img src="{{ asset($item->attributes['img']) }}" alt="{{ $item->attributes['description'] }}" width="37" height="34">
-                            </a>
-                            <span class="cart-content-count">
-                                <i class="fa fa-times" aria-hidden="true"></i>
-                                <input type="number" value="{{ $item->quantity }}" 
-                                       min="0" max="100" step="1">
-                            </span>
-                            <strong>
-                                <a href="{{ url($item->attributes['url']) }}">
-                                    {{ $item->name }}
-                                </a>
-                            </strong>
-                            <em>
-                                <i class="fa {{ $dynCart['currency-icon'] }}"></i>
-                                <span>{{ $item->getPriceSumWithConditions() }}</span>
-                            </em>
-                            <a href="javascript:void(0);" class="del-goods">
-                                <i class="fa fa-times-circle"></i>
-                            </a>
-                        </li>
-                        @else
+                        @foreach($cart['items'] as $item)
+                        <?php //dd($item);     ?>
                         @component('lib.themewagon.cartItem')
                         @slot('url')
                         {{$item->attributes['url']}}
@@ -233,74 +205,13 @@ $usingDynamicCart = true;
                         {{ $item->name }}
                         @endslot
                         @slot('currencyIcon')
-                        {{ $dynCart['currency-icon'] }}
+                        {{ $cart['currency-icon'] }}
                         @endslot
                         @slot('priceSum')
                         {{ $item->getPriceSumWithConditions() }}
                         @endslot
                         @endcomponent
-                        @endif
                         @endforeach
-                        @else
-                        <li>
-                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">
-                                <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34">
-                            </a>
-                            <span class="cart-content-count">x 1</span>
-                            <strong><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Rolex Classic Watch</a></strong>
-                            <em>$1230</em>
-                            <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}"><img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                            <span class="cart-content-count">x 1</span>
-                            <strong><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Rolex Classic Watch</a></strong>
-                            <em>$1230</em>
-                            <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}"><img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                            <span class="cart-content-count">x 1</span>
-                            <strong><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Rolex Classic Watch</a></strong>
-                            <em>$1230</em>
-                            <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}"><img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                            <span class="cart-content-count">x 1</span>
-                            <strong><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Rolex Classic Watch</a></strong>
-                            <em>$1230</em>
-                            <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}"><img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                            <span class="cart-content-count">x 1</span>
-                            <strong><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Rolex Classic Watch</a></strong>
-                            <em>$1230</em>
-                            <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}"><img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                            <span class="cart-content-count">x 1</span>
-                            <strong><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Rolex Classic Watch</a></strong>
-                            <em>$1230</em>
-                            <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}"><img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                            <span class="cart-content-count">x 1</span>
-                            <strong><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Rolex Classic Watch</a></strong>
-                            <em>$1230</em>
-                            <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}"><img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg') }}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                            <span class="cart-content-count">x 1</span>
-                            <strong><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Rolex Classic Watch</a></strong>
-                            <em>$1230</em>
-                            <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                        </li>
-                        @endif
                     </ul>
                     <div class="text-right">
 
