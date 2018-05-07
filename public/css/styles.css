@@ -5,13 +5,81 @@
  BEGIN METRONIC SHOP UI OVERIDE CSS SECTION
 
 */
-.top-cart-block .fa-shopping-cart {
-    /*
-     no need to overide font-size!
-      font-size: 30px;
-    */ 
 
+.del-goods {
+    background: #d7dde3 50% 50%;
 }
+.del-goods:hover {
+    background: #E94D1C 50% 50%;
+}
+.add-goods {
+    background: #7bdd00 50% 50%;
+}
+.add-goods:hover {
+    background: #E94D1C 50% 50%;
+}
+
+
+
+
+.top-cart-content {
+    /* width: 364px; */ 
+    width: 550px;
+}
+.top-cart-content span {
+    /* width: 26px; */
+    width: 150px;
+}
+
+.top-cart-content .btn, 
+.top-cart-content .btn:hover,
+.top-cart-content .btn-default,
+.top-cart-content .btn-default:hover,
+.top-cart-content span span {
+    /*     
+        padding: 8px 12px 7px; 
+    font-size: 10px;
+    */
+    width: 15px;
+    height: 15px;
+    padding: 10px 25px 25px 10px !important;
+    margin: 0px 5px 5px 5px !important;
+    font-size: 1em;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.8;
+    float: left;
+}
+
+
+.top-cart-content .btn .fa i, 
+.top-cart-content .btn:hover .fa i,
+.top-cart-content .btn-default .fa i,
+.top-cart-content .btn-default:hover .fa i {
+    /* 
+        font-size: 14px !important;
+    */
+    font-size: 1em !important;
+}
+
+.top-cart-content .btn, 
+.top-cart-content .btn-default,
+.top-cart-content .btn:hover,
+.top-cart-content .btn-default:hover {
+    /* from without ':hover'
+    border: 1px solid #c1cad3; 
+    from with ':hover'
+    border: 1px solid #A8AEB3; 
+    */
+    border: none;
+}
+
+.top-cart-content em {
+    /* width: 55px; */
+    width: 80px;
+    font-size: 1em !important;
+}
+
 /*
 
  END METRONIC SHOP UI OVERIDE CSS SECTION

@@ -89,8 +89,8 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
 
 
         {{-- In the _Extending views place the @Parent directive LAST!! --}}
-        <link rel="stylesheet" href="{{ asset('css/styles.css') }}" type="text/css">
         @show
+        <link rel="stylesheet" href="{{ asset('css/styles.css') }}" type="text/css">
         <!-- CSS END -->
 
 

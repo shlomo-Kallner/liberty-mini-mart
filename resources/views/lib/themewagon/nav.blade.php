@@ -149,29 +149,31 @@ if (!isset($link)) {
         <!-- BEGIN CART -->
         <?php
 
-        use Darryldecode\Cart;
+        use Darryldecode\Cart\Cart;
 
-$usingDynamicCart = false;
+$usingDynamicCart = true;
         $fakeID = 'MyFAKESEssionID123';
-        Cart::session($fakeID);
-        Cart::session->add(123, 'Rolex Classic Watch', 1230.5, 1, [
-            'url' => '',
-            'img' => '',
-            'description' => '',
+        //$myCart = new Cart();
+        \Cart::session($fakeID);
+        \Cart::session($fakeID)->add(123, 'Rolex Classic Watch', 230.5, 5, [
+            'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+            'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg',
+            'description' => 'Rolex Classic Watch',
         ]);
-        $cartContent = Cart::getContent();
+        //$cartContent = \Cart::session($fakeID)->getContent();
         $dynCart = [
-            'items' => $cartContent->toArray(),
+            'items' => \Cart::session($fakeID)->getContent(),
             'currency-icon' => 'fa-usd',
-            'sub-total' => 1260.0,
-            'total-items' => $cartContent->count(), // or use getTotalQuantity() ...
+            'sub-total' => \Cart::session($fakeID)->getSubTotal(),
+            'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
         ];
         ?>
         <div class="top-cart-block">
             <div class="top-cart-info">
                 @if($usingDynamicCart)
                 <a href="javascript:void(0);" class="top-cart-info-count">
-                    {{ $dynCart['total-items'] }} items
+                    {{ $dynCart['total-items'] }} 
+                    {{ $dynCart['total-items'] == 0 || $dynCart['total-items'] > 1 ? 'items' : 'item' }}
                 </a>
                 <a href="javascript:void(0);" class="top-cart-info-value">
                     <i class="fa {{ $dynCart['currency-icon'] }}"></i>
@@ -189,6 +191,8 @@ $usingDynamicCart = false;
                     <ul class="scroller" style="height: 250px;">
                         @if($usingDynamicCart)
                         @foreach($dynCart['items'] as $item)
+                        <?php //dd($item); ?>
+                        @if(false)
                         <li>
                             <a href="{{ url($item->attributes['url']) }}">
                                 <img src="{{ asset($item->attributes['img']) }}" alt="{{ $item->attributes['description'] }}" width="37" height="34">
@@ -211,6 +215,7 @@ $usingDynamicCart = false;
                                 <i class="fa fa-times-circle"></i>
                             </a>
                         </li>
+                        @else
                         @component('lib.themewagon.cartItem')
                         @slot('url')
                         {{$item->attributes['url']}}
@@ -234,6 +239,7 @@ $usingDynamicCart = false;
                         {{ $item->getPriceSumWithConditions() }}
                         @endslot
                         @endcomponent
+                        @endif
                         @endforeach
                         @else
                         <li>
@@ -296,7 +302,6 @@ $usingDynamicCart = false;
                         </li>
                         @endif
                     </ul>
-                    @endif
                     <div class="text-right">
 
                         <a href="{{ url('cart') }}" class="btn btn-default">

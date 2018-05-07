@@ -6,15 +6,14 @@
     </a>
     <span class="cart-content-count">
         @if(false)
-        <i class="fa fa-times" aria-hidden="true"></i>
-        <input type="number" value="{{ $quantity }}" 
-               min="0" max="100" step="1" class="">
+        <i class="fa fa-times"></i>
+        {{ $quantity }}
         @else
-        <div class="btn-group" role="group">
+        <div class="btn-group btn-group-justified" role="group">
             <button type="button" class="btn btn-warning">
                 <i class="fa fa-minus-square-o"></i>
             </button>
-            <div class="well well-sm">{{ $quantity }}</div>
+            <span class="label label-default text-center">{{ $quantity }}</span>
             <button type="button" class="btn btn-warning">
                 <i class="fa fa-plus-square-o"></i>
             </button>
@@ -28,7 +27,7 @@
     </strong>
     <em>
         <i class="fa {{ $currencyIcon }}"></i>
-        <span>{{ $priceSum }}</span>
+        {{ $priceSum }}
     </em>
     <a href="javascript:void(0);" class="del-goods">
         <i class="fa fa-times-circle"></i>
