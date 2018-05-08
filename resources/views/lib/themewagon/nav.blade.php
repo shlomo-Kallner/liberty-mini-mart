@@ -277,6 +277,7 @@ $submenus = serialize( $temp );
                             @if(isset($submenus))
                             <?php //dd(unserialize($submenus)); ?>
                             @foreach(unserialize($submenus) as $menu)
+                            <?php //var_dump($menu['icon']); ?>
                             @component('lib.themewagon.links')
                             @slot('type')
                             {{ $menu['type'] }}

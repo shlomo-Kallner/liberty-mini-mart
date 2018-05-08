@@ -18,39 +18,50 @@
 ?>
 <li>
     <?php //dd($isModal); ?>
-    @if(isset($type) )
-    @if( $type == 'modal' )
-    <a href="#" data-toggle="modal" data-target="{{ $target }}">
+    @php
+    //dd($type);
+    @endphp
+
+    @if( isset($type) && ($type != 'url') )
+        @if( $type == 'modal' )
+            <a href="#" data-toggle="modal" data-target="{{ $target }}">
         @elseif( $type == 'dropdown' || $type == 'dropdown-submenu' )
         
-        {{-- DROPDOWNS ARE AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
-        {{-- DROPDOWN-SUBMENUS ARE A WISHLIST-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+            {{-- DROPDOWNS ARE AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+            {{-- DROPDOWN-SUBMENUS ARE A WISHLIST-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
 
         @endif
-        @else
+    @else
         <a href="{{ url($url) }}">
-            @endif
+    @endif
 
-            @if($icon)
+            @if( isset($icon) && (mb_strlen($icon) !== 0) )
             <i class="fa {{ $icon }}" aria-hidden="true"></i>
             @endif
 
-            @if($transform and $name)
-            <span class="hidden-xs {{ $transform }}">{{ $name }}</span>
-            @elseif($name)
-            {{ $name }}
-            @endif
+            @php 
+            //dd($transform); 
+            @endphp
 
-            @if( isset($type) )
-        
-            {{-- DROPDOWNS ARE AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
-            @if ($type == 'dropdown')
-              
-            @elseif ($type == 'dropdown-submenu')
-            {{-- DROPDOWN-SUBMENUS ARE A WISHLIST-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
-                
+            
+            @if ( isset($name) && (mb_strlen($name) !== 0)  ) 
+                @if(mb_strlen($transform) !== 0)
+                    <span class="hidden-xs {{ $transform }}">{{ $name }}</span> 
+                @else 
+                    {{ $name }} 
+                @endif 
             @endif
             
+            @if( isset($type) )
+        
+                @if ($type == 'dropdown')
+                    {{-- DROPDOWNS ARE AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+                
+                @elseif ($type == 'dropdown-submenu')
+                    {{-- DROPDOWN-SUBMENUS ARE A WISHLIST-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+                    
+                @endif
+                
             
             @endif
             
