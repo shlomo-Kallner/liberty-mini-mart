@@ -233,31 +233,79 @@ $submenus = serialize( $temp );
         <div class="header-navigation">
             <ul>
 
-                {{-- BEGIN single "main level" menu --}}
                 {{-- Replacing Original 'Kids' menu Item with 
                      our Blade Foreach loop...  --}}
                 {{-- Moving our "main level" items to the 'front'.. --}}
                 @foreach($navbar as $nav)
+
+                {{-- BEGIN single "main level" menu --}}
+                @if ($nav['type'] == 'url' || $nav['type'] == 'modal')
+
                 @component('lib.themewagon.links')
+                @slot('type')
+                    {{ $nav['type'] }}
+                @endslot
+                @slot('target')
+                    {{ $nav['target'] }}
+                @endslot
                 @slot('url')
-                {{$nav['url']}}
+                    {{$nav['url']}}
                 @endslot
                 @slot('name')
-                {{$nav['name']}}
+                    {{$nav['name']}}
                 @endslot
                 @slot('icon')
-                {{$nav['icon']}}
+                    {{$nav['icon']}}
                 @endslot
                 @slot('transform')
-                {{$nav['transform']}}
-                @endslot
-                @slot('submenus')
+                    {{$nav['transform']}}
                 @endslot
                 @endcomponent
-                @endforeach
                 {{-- End single "main level" menu --}}
-
+                
+                    
                 {{-- begin dropdown menu top-level link --}}
+                @elseif ($nav['type'] == 'dropdown')
+                    {{-- DROPDOWNS ARE AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+
+                    @if(false)
+                        @component('lib.themewagon.dropdowns')
+                        @slot('submenus')
+                        {{ 
+                            isset($menu['submenus']) 
+                            ? ( is_array($menu['submenus']) ? serialize($menu['submenus']) 
+                                : ( is_string($menu['submenus']) ? $menu['submenus'] : '' )
+                            )
+                            : '' 
+                        }}
+                        @endslot
+                        @endcomponent
+                    @endif
+                
+                @elseif ($nav['type'] == 'dropdown-megamenu')
+                    {{-- DROPDOWN-MEGAMENUS ARE A ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+                    
+                    @if(false)
+                        @component('lib.themewagon.megamenus') 
+                        {{-- the file of this component does not exist! --}}
+                        
+                        @slot('submenus')
+                        {{ 
+                            isset($menu['submenus']) 
+                            ? ( is_array($menu['submenus']) ? serialize($menu['submenus']) 
+                                : ( is_string($menu['submenus']) ? $menu['submenus'] : '' )
+                            )
+                            : '' 
+                        }}
+                        @endslot
+                        @endcomponent
+                    @endif
+                
+                @endif
+                
+
+                @endforeach
+
                 
                 @if (false)
                     
@@ -294,11 +342,7 @@ $submenus = serialize( $temp );
                             @slot('transform')
                             {{ $menu['transform'] }}
                             @endslot
-                            @slot('submenus')
-                            {{ isset($menu['submenus']) ? (is_array($menu['submenus']) 
-                            ? serialize($menu['submenus']) 
-                            : ( is_string($menu['submenus']) ? $menu['submenus'] : '' )): '' }}
-                            @endslot
+                            
                             @endcomponent
                             @endforeach
                             @else

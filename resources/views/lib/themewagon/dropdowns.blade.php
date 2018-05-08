@@ -16,33 +16,29 @@
         @if($submenus)
         @foreach(unserialize($submenus) as $nav)
         @if( $nav['type'] == 'url' || $nav['type'] == 'modal' )
+
         @component('lib.themewagon.links')
-        @slot('type')
-        {{$nav['type']}}
-        @endslot
-        @slot('url')
-        {{$nav['url']}}
-        @endslot
-        @slot('name')
-        {{$nav['name']}}
-        @endslot
-        @slot('icon')
-        {{$nav['icon']}}
-        @endslot
-        @slot('transform')
-        {{$nav['transform']}}
-        @endslot
-        
-        @if (false)
-        {{-- DROPDOWN-SUBMENUS ARE A WISHLIST-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
-        @slot('submenus')
-        {{ $nav['submenus'] }}
-        @endslot
-        
-        @endif
-        
+            @slot('type')
+                {{ $nav['type'] }}
+            @endslot
+            @slot('target')
+                {{ $nav['target'] }}
+            @endslot
+            @slot('url')
+                {{$nav['url']}}
+            @endslot
+            @slot('name')
+                {{$nav['name']}}
+            @endslot
+            @slot('icon')
+                {{$nav['icon']}}
+            @endslot
+            @slot('transform')
+                {{$nav['transform']}}
+            @endslot
         @endcomponent
-        @elseif($nav['type'] == 'dropdown' || $nav['type'] == 'dropdown-submenu')
+
+        @elseif($nav['type'] == 'dropdown-submenu')
         {{-- Begin submenu.. --}}
         
         {{-- DROPDOWN-SUBMENUS ARE A WISHLIST-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
