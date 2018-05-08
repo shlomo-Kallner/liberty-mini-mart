@@ -40,12 +40,6 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
             'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
         ];
 }
-// to be removed.. -> submenus, dropdow
-$temp = []; 
-$temp[] = Page::genURLMenuItem('about', 'ABOUT' ); 
-$temp[] = Page::genURLMenuItem('store', 'STORE' ); 
-$submenus = serialize( $temp );
-
 ?>
 
 @section('pre-header-navbar')
@@ -121,27 +115,16 @@ $submenus = serialize( $temp );
 
                     @foreach($preheader as $nav)
 
-                    @component('lib.themewagon.links')
-                    @slot('url')
-                    {{$nav['url']}}
-                    @endslot
-                    @slot('name')
-                    {{$nav['name']}}
-                    @endslot
-                    @slot('target')
-                    {{$nav['target']}}
-                    @endslot
-                    @slot('type')
-                    {{$nav['type']}}
-                    @endslot
-                    @slot('icon')
-                    {{$nav['icon']}}
-                    @endslot
-                    @slot('transform')
-                    {{$nav['transform']}}
-                    @endslot
-                    @endcomponent
+                        @component('lib.themewagon.links')
+                            @foreach ($nav as $key => $value)
 
+                                @slot($key)
+                                    {{ $value }}
+                                @endslot
+                                
+                            @endforeach
+                        @endcomponent
+                    
                     @endforeach
                     {{-- End dynamicly generated "main level" topbar menu --}}
                     @endif
@@ -242,24 +225,13 @@ $submenus = serialize( $temp );
                 @if ($nav['type'] == 'url' || $nav['type'] == 'modal')
 
                 @component('lib.themewagon.links')
-                @slot('type')
-                    {{ $nav['type'] }}
-                @endslot
-                @slot('target')
-                    {{ $nav['target'] }}
-                @endslot
-                @slot('url')
-                    {{$nav['url']}}
-                @endslot
-                @slot('name')
-                    {{$nav['name']}}
-                @endslot
-                @slot('icon')
-                    {{$nav['icon']}}
-                @endslot
-                @slot('transform')
-                    {{$nav['transform']}}
-                @endslot
+                @foreach ($nav as $key => $value)
+
+                    @slot($key)
+                        {{ $value }}
+                    @endslot
+                     
+                @endforeach
                 @endcomponent
                 {{-- End single "main level" menu --}}
                 

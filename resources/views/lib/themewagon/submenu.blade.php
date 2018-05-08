@@ -15,24 +15,13 @@
         @if( $nav['type'] == 'url' || $nav['type'] == 'modal' )
 
         @component('lib.themewagon.links')
-            @slot('type')
-                {{ $nav['type'] }}
-            @endslot
-            @slot('target')
-                {{ $nav['target'] }}
-            @endslot
-            @slot('url')
-                {{$nav['url']}}
-            @endslot
-            @slot('name')
-                {{$nav['name']}}
-            @endslot
-            @slot('icon')
-                {{$nav['icon']}}
-            @endslot
-            @slot('transform')
-                {{$nav['transform']}}
-            @endslot
+            @foreach ($nav as $key => $value)
+
+                @slot($key)
+                    {{ $value }}
+                @endslot
+                    
+            @endforeach
         @endcomponent
 
         @endif

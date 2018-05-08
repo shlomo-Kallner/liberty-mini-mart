@@ -13,29 +13,19 @@
 
     <!-- BEGIN DROPDOWN MENU -->
     <ul class="dropdown-menu">
-        @if($submenus)
+        
         @foreach(unserialize($submenus) as $nav)
+
         @if( $nav['type'] == 'url' || $nav['type'] == 'modal' )
 
         @component('lib.themewagon.links')
-            @slot('type')
-                {{ $nav['type'] }}
-            @endslot
-            @slot('target')
-                {{ $nav['target'] }}
-            @endslot
-            @slot('url')
-                {{$nav['url']}}
-            @endslot
-            @slot('name')
-                {{$nav['name']}}
-            @endslot
-            @slot('icon')
-                {{$nav['icon']}}
-            @endslot
-            @slot('transform')
-                {{$nav['transform']}}
-            @endslot
+            @foreach ($nav as $key => $value)
+
+                @slot($key)
+                    {{ $value }}
+                @endslot
+                    
+            @endforeach
         @endcomponent
 
         @elseif($nav['type'] == 'dropdown-submenu')
@@ -45,13 +35,9 @@
         
         {{-- End submenu.. --}}
 
-        
         @endif
         @endforeach
-        @else
-        <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Running Shoes</a></li>
-        <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Jackets and Coats</a></li>
-        @endif
+
     </ul>
     <!-- END DROPDOWN MENU -->
 </li>
