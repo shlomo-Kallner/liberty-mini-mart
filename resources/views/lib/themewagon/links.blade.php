@@ -18,19 +18,42 @@
 ?>
 <li>
     <?php //dd($isModal); ?>
-    @if( isset($type) && $type == 'modal' )
+    @if(isset($type) )
+    @if( $type == 'modal' )
     <a href="#" data-toggle="modal" data-target="{{ $target }}">
+        @elseif( $type == 'dropdown' || $type == 'dropdown-submenu' )
+        
+        {{-- DROPDOWNS ARE AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+        {{-- DROPDOWN-SUBMENUS ARE A WISHLIST-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+
+        @endif
         @else
         <a href="{{ url($url) }}">
             @endif
+
             @if($icon)
             <i class="fa {{ $icon }}" aria-hidden="true"></i>
             @endif
-            @if($transform)
+
+            @if($transform and $name)
             <span class="hidden-xs {{ $transform }}">{{ $name }}</span>
-            @else
+            @elseif($name)
             {{ $name }}
             @endif
+
+            @if( isset($type) )
+        
+            {{-- DROPDOWNS ARE AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+            @if ($type == 'dropdown')
+              
+            @elseif ($type == 'dropdown-submenu')
+            {{-- DROPDOWN-SUBMENUS ARE A WISHLIST-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+                
+            @endif
+            
+            
+            @endif
+            
         </a>
 </li>
 

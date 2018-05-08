@@ -27,6 +27,10 @@ class MainController extends Controller {
         ///         as - currently - the preheader bar's 
         ///         content is pre-determined, and not for 
         ///         CMS editing..
+        /// Further Update: 'preheader' restored (above)
+        ///                 as the preheader bar is now a  
+        ///                 dynamically generated component
+        ///                 and Blade Foreach using code block.
         'page' => [
             'header' => '', // 'h1' page article content
             'article' => '', // 'div' page article content
@@ -35,9 +39,15 @@ class MainController extends Controller {
         'user' => [
             //'loggedin' => false,
             'name' => '',
-            'email' => ''
+            'email' => '',
+            'id' => '',
+            'agent' => '',
         ],
         'cart' => [
+            'items' => null,
+            'currency-icon' => 'fa-usd',
+            'sub-total' => 0,
+            'total-items' => 0,
         ],
     ];
 
@@ -55,6 +65,9 @@ class MainController extends Controller {
 //        //dd(session()->all());
 //        self::$data['preheader'] = Page::getPreHeader();
 //        //dd(self::$data['preheader']);
+//        // a proposal for using the UserController or the User model..
+//        self::$data['user'] = User::getUser();
+//        self::$data['cart'] = User::getCart();
     }
 
     /// Begin Utility Functions
@@ -64,7 +77,7 @@ class MainController extends Controller {
         self::$data['site']['name'] = !empty($name) ?
                 $name :
                 self::$data['site']['name'];
-        self::$data['siteName'] = self::$data['site']['name'];
+        self::$data['siteName'] = & self::$data['site']['name'];
         self::$data['site']['titleNameSep'] = !empty($titleNameSep) ?
                 $titleNameSep :
                 self::$data['site']['titleNameSep'];

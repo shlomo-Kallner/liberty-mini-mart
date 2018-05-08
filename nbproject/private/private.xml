@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="9">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="10">
         <file>
             <url>resources/views/master_bootstrapious.blade.php</url>
             <bookmark id="1">
@@ -38,12 +38,20 @@
             </bookmark>
             <bookmark id="7">
                 <name/>
-                <line>321</line>
+                <line>237</line>
                 <key/>
             </bookmark>
             <bookmark id="5">
                 <name/>
-                <line>407</line>
+                <line>323</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>public/lib/themewagon/metronicShopUI/theme/assets/corporate/css/style-responsive.css</url>
+            <bookmark id="10">
+                <name/>
+                <line>781</line>
                 <key/>
             </bookmark>
         </file>
@@ -56,11 +64,9 @@
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Page.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/bootstrapious/universal/index5.html</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/codrops/ExpandingSearchBar/js/uisearch.js</file>
-            <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/lib/themewagon/nav.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/lib/bootstrapious/modal.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/master_test2.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/UserController.php</file>
-            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/bootstrapious/universal/js/owl.carousel.js</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/CartController.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/MainController.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/lib/themewagon/cartItem.blade.php</file>
@@ -68,6 +74,7 @@
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/PageController.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/app/Http/Controllers/ShopController.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/lib/themewagon/css.blade.php</file>
+            <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/css/styles.css</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/inc/header_content.blade.php</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/public/lib/themewagon/metronicShopUI/theme/assets/corporate/scripts/layout.js</file>
             <file>file:/C:/xampp/htdocs/liberty-mini-mart/resources/views/master_themewagon.blade.php</file>

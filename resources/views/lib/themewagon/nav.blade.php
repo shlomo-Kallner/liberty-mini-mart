@@ -17,24 +17,36 @@ if (!isset($preheader) || empty($preheader)) {
 //dd($navbar);
 // And the $preheader variable.
 //dd($preheader);
-// this just so Blade does not *BARF* on our links helpers below..
-if (!isset($link)) {
-    $link = [
-        'icon' => '', // the Font Awesome 4 icon class without the 'fa'.
-        'name' => '', // the name to fill in the Link.
-        'url' => '', // the URL of the link.
-        'isModal' => false, // a Boolean, Is this a Modal or a URL?
-        'target' => '', // the data-target attribute's data value (of a modal)
-        'transform' => '', // Bootstrap 3 text-transform css class.
-    ];
+
+use Darryldecode\Cart\Cart;
+$testing = true;
+    
+if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
+ // place some $cart initializing code here..
+} elseif($testing){
+    $fakeID = 'MyFAKESEssionID123';
+        //$myCart = new Cart();
+        \Cart::session($fakeID);
+        \Cart::session($fakeID)->add(123, 'Rolex Classic Watch', 230.5, 5, [
+            'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+            'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg',
+            'description' => 'Rolex Classic Watch',
+        ]);
+        //$cartContent = \Cart::session($fakeID)->getContent();
+        $cart = [
+            'items' => \Cart::session($fakeID)->getContent(),
+            'currency-icon' => 'fa-usd',
+            'sub-total' => \Cart::session($fakeID)->getSubTotal(),
+            'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
+        ];
 }
+// to be removed.. -> submenus, dropdow
+$temp = []; 
+$temp[] = Page::genURLMenuItem('about', 'ABOUT' ); 
+$temp[] = Page::genURLMenuItem('store', 'STORE' ); 
+$submenus = serialize( $temp );
+
 ?>
-
-@section('cut-and-paste=>my-cookie-cutter')
-
-@endsection
-
-
 
 @section('pre-header-navbar')
 @parent
@@ -45,20 +57,33 @@ if (!isset($link)) {
         <div class="row">
             <!-- BEGIN TOP BAR LEFT PART -->
             <div class="col-md-6 col-sm-6 additional-shop-info">
+                
+                {{-- 
+                     TO DO: Convert CURRENCIES LIST to a dynamic menu 
+                     list using our links component. 
+                --}}
                 <ul class="list-unstyled list-inline">
                     {{-- REMOVED: the Phone link from 
                         the template was removed. --}}
                     <!-- BEGIN CURRENCIES -->
                     <li class="shop-currencies">
+                        
+                        {{-- Euro --}}                        
                         <a href="javascript:void(0);">
                             <i class="fa fa-eur"></i>
                         </a>
+                        
+                        {{-- British Pounds --}}
                         <a href="javascript:void(0);">
                             <i class="fa fa-gbp"></i>
                         </a>
+                        
+                        {{-- Israeli Shekels --}}
                         <a href="javascript:void(0);">
                             <i class="fa fa-ils"></i>
                         </a>
+
+                        {{-- USA Dollars - the default --}}
                         <a href="javascript:void(0);" class="current">
                             <i class="fa fa-usd"></i>
                         </a>
@@ -96,7 +121,7 @@ if (!isset($link)) {
 
                     @foreach($preheader as $nav)
 
-                    @component('lib.themewagon.helpers.normal-link')
+                    @component('lib.themewagon.links')
                     @slot('url')
                     {{$nav['url']}}
                     @endslot
@@ -147,29 +172,6 @@ if (!isset($link)) {
         </a>
 
         <!-- BEGIN CART -->
-        <?php
-
-        use Darryldecode\Cart\Cart;
-
-if (!isset($cart) || emptyArray($cart)) {
-
-            $fakeID = 'MyFAKESEssionID123';
-            //$myCart = new Cart();
-            \Cart::session($fakeID);
-            \Cart::session($fakeID)->add(123, 'Rolex Classic Watch', 230.5, 5, [
-                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
-                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg',
-                'description' => 'Rolex Classic Watch',
-            ]);
-            //$cartContent = \Cart::session($fakeID)->getContent();
-            $cart = [
-                'items' => \Cart::session($fakeID)->getContent(),
-                'currency-icon' => 'fa-usd',
-                'sub-total' => \Cart::session($fakeID)->getSubTotal(),
-                'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
-            ];
-        }
-        ?>
         <div class="top-cart-block">
             <div class="top-cart-info">
                 <a href="javascript:void(0);" class="top-cart-info-count">
@@ -249,71 +251,68 @@ if (!isset($cart) || emptyArray($cart)) {
                 @slot('transform')
                 {{$nav['transform']}}
                 @endslot
+                @slot('submenus')
+                @endslot
                 @endcomponent
                 @endforeach
                 {{-- End single "main level" menu --}}
 
                 {{-- begin dropdown menu top-level link --}}
+                
+                @if (false)
+                    
+                @else
+
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;" role="button">
-                        Pages 
-
-                    </a>
-
-                    <!-- BEGIN DROPDOWN MENU -->
-                    <ul class="dropdown-menu">
-                        @if(false)
-                        <li class="dropdown-submenu">
-                            <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Hi Tops <i class="fa fa-angle-right"></i></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Second Level Link</a></li>
-                                <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Second Level Link</a></li>
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
-                                        Second Level Link 
-                                        <i class="fa fa-angle-right"></i>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Third Level Link</a></li>
-                                        <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Third Level Link</a></li>
-                                        <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Third Level Link</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        @endif
-                        @if(false)
-                        @foreach($submenus as $menu)
-                        @if(false)
-                        @yield('normal-link-helper')
-                        @else
-                        @component('lib.themewagon.links')
-                        @slot('type')
-                        {{$nav['type']}}
-                        @endslot
-                        @slot('url')
-                        {{$nav['url']}}
-                        @endslot
-                        @slot('name')
-                        {{$nav['name']}}
-                        @endslot
-                        @slot('icon')
-                        {{$nav['icon']}}
-                        @endslot
-                        @slot('transform')
-                        {{$nav['transform']}}
-                        @endslot
-                        @endcomponent
-                        @endif
-                        @endforeach
-                        @endif
-                        <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Running Shoes</a></li>
-                        <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Jackets and Coats</a></li>
-                    </ul>
-                    <!-- END DROPDOWN MENU -->
-                </li>
-                {{-- end dropdown menu top-level link --}}
-
+                        <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;" role="button">
+                            Pages 
+    
+                        </a>
+    
+                        <!-- BEGIN DROPDOWN MENU -->
+                        <ul class="dropdown-menu">
+                            
+                            {{-- REMOVED: Static dropdown-submenu from our template. --}}
+                            
+                            @if(isset($submenus))
+                            <?php //dd(unserialize($submenus)); ?>
+                            @foreach(unserialize($submenus) as $menu)
+                            @component('lib.themewagon.links')
+                            @slot('type')
+                            {{ $menu['type'] }}
+                            @endslot
+                            @slot('url')
+                            {{ $menu['url'] }}
+                            @endslot
+                            @slot('name')
+                            {{ $menu['name'] }}
+                            @endslot
+                            @slot('icon')
+                            {{ $menu['icon'] }}
+                            @endslot
+                            @slot('transform')
+                            {{ $menu['transform'] }}
+                            @endslot
+                            @slot('submenus')
+                            {{ isset($menu['submenus']) ? (is_array($menu['submenus']) 
+                            ? serialize($menu['submenus']) 
+                            : ( is_string($menu['submenus']) ? $menu['submenus'] : '' )): '' }}
+                            @endslot
+                            @endcomponent
+                            @endforeach
+                            @else
+                            <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Running Shoes</a></li>
+                            <li><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-product-list.html') }}">Jackets and Coats</a></li>
+                            @endif
+                        </ul>
+                        <!-- END DROPDOWN MENU -->
+                    </li>
+                    {{-- end dropdown menu top-level link --}}
+    
+                    
+                @endif
+                
+                
                 {{-- begin megamenu top-level link --}}
                 <li class="dropdown dropdown-megamenu">
                     <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
