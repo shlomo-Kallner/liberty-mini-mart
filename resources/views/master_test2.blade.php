@@ -16,10 +16,12 @@ Copyright 2018 Shlomo Kallner , shlomo.kallner@gmail.com
 
 {{--
 "lifting" some IE conditional comments from Metronic...
-Although i'm not quite sure if it will effect material from other templates... 
+Although im not quite sure if it will effect material 
+from other templates... 
 and anyways, who still uses IE8?
 ******
-UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css class for IE9 and below as well.
+UPDATE(23/04/2018): discovered that the other template pages 
+use the 'no-js' css class for IE9 and below as well.
 --}}
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
@@ -118,6 +120,7 @@ UPDATE(23/04/2018): discovered that the other template pages use the 'no-js' css
 
         </header>
         @yield('login-modal')
+        @yield('search-modal')
         <br><br><br>
         <main>
             <div class="container">

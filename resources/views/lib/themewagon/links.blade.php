@@ -24,7 +24,11 @@
 @endif
 
             @if( isset($icon) && (mb_strlen($icon) !== 0) )
-            <i class="fa {{ $icon }}" aria-hidden="true"></i>
+                @if ( !isset($name) || (mb_strlen($name) === 0)  )
+                <i class="fa {{ $icon }}"></i>    
+                @else
+                <i class="fa {{ $icon }}" aria-hidden="true"></i>
+                @endif
             @endif
 
             @if ( isset($name) && (mb_strlen($name) !== 0)  ) 
