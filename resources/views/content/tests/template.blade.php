@@ -24,7 +24,8 @@ class="ecommerce"
 --}}
 @include('lib.themewagon.nav')
 
-@include('lib.bootstrapious.modal')
+@include('lib.bootstrapious.modals.login')
+@include('lib.bootstrapious.modals.search')
 
 @section('main-content')
 @parent

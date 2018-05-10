@@ -11,6 +11,7 @@
  *  */
 ?>
 
+
 @section('login-modal')
 {{-- Based on Bootstrapious/Universal-1-0 and Bootstrap v3.X docs.. --}}
 <!-- *** LOGIN MODAL ***
@@ -70,7 +71,7 @@
 <!-- *** SEARCH MODAL ***
     _________________________________________________________ -->
 
-<div class="modal fade" id="search-modal" tabindex="-1" role="dialog" aria-labelledby="Search-label" aria-hidden="true">
+<div class="modal fade" id="search-modal" tabindex="-1" role="dialog" aria-labelledby="SearchLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
 
         <div class="modal-content">
@@ -78,19 +79,20 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i class="fa fa-times"></i>
                 </button>
-                <h4 class="modal-title" id="Search-label">Search</h4>
+                <h4 class="modal-title" id="SearchLabel">Search</h4>
             </div>
             <div class="modal-body">
-                <div class="input-group">
-                    <span class="input-group-addon">
-                        <i class="fa fa-search"></i>
-                    </span>
-                    <input type="text" class="form-control" id="search" name="search"  data-search="{{ csrf_token() }}" placeholder="Search for...">
-                    <span class="input-group-btn">
-                        <button class="btn btn-primary" type="button" name="submit" id="search-btn">Search!</button>
-                    </span>
-                </div><!-- /input-group -->
-
+                <div class="row">
+                        <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control" id="search" name="search"  data-search="{{ csrf_token() }}" placeholder="Search for...">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="button" name="submit" id="search-btn">Search!</button>
+                                </span>
+                        </div><!-- /input-group -->
+                </div>
                 <div id="search-results-box">
 
                     @for($idx = 0; $idx < 4; $idx++)
