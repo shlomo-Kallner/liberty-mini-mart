@@ -109,6 +109,14 @@ class UserController extends MainController {
         return redirect('/');
     }
 
+    public function signinRedirect(Request $request){
+        $token = str_random(40);
+        $request->session()->flash('redirectToken', $token );
+        self::$data['page']['redirectToken'] = $token;
+        self::$data['page']['redirectPage'] = $request->page;
+        return parent::getView('forms.redirect', self::$data );
+    }
+
     public function signout(Request $request) {
         //dd(session()->all());
         $request->session()->forget('user');
