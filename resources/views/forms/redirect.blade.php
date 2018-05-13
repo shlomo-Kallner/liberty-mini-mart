@@ -5,7 +5,7 @@
 
 @extends('content.tests.template')
 
-@section('js-defered')
+@section('js-extra')
 @parent
 
 <script>

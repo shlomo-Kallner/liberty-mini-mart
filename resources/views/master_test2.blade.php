@@ -11,6 +11,8 @@ Copyright 2018 Shlomo Kallner , shlomo.kallner@gmail.com
 
 -->
 @include('lib.themewagon.license'){{--  <-- This file is OK, its pure HTML. --}}
+@include('lib.bootstrapious.license')
+
 @show
 
 
@@ -142,7 +144,10 @@ use the 'no-js' css class for IE9 and below as well.
             this one is ours.. so it should come last.. 
             In the @Extending View - call @Parent last! 
         -->
+        @show
         <script src="{{ asset('js/script.js') }}" type="text/javascript"></script>
+        @section('js-extra')
+            
         @show
     </body>
 </html>
