@@ -92,6 +92,16 @@ class UserController extends MainController {
         return parent::getView('content.tests.test2', 'New User Registeration Successfull!!');
     }
 
+    public static function pagePathSplit(string $str){
+        $tmp1 = str_replace( '-', '/', $str );
+        return str_replace( '_', '-', $tmp1 );
+    }
+
+    public static function pagePathJoin(string $str){
+        $tmp1 = str_replace('-', '_', $str);
+        return str_replace( '/', '-', $tmp1);
+    }
+
     public function signin(Request $request) {
 //        $email = !empty($request->email) ? $request->email : '[blank]';
 //        $password = !empty($request->password) ? $request->password : '[empty-string]';
@@ -100,21 +110,52 @@ class UserController extends MainController {
 //        $content['article'] = 'Hello ' . $email .
 //                ' !! Your Password is: ' . $password;
         //dd(session()->all());
+
+        // for testing..
         $request->session()->put('user', 'hello');
+
+        // redirection stuff..
+        $redirect = '/';
         //// the Laravel Session appears to HATE being 
         //   assigned ANYTHING other than strings!
         //dd(session()->all());
         //self::$data['user']['loggedin'] = true;
         //return parent::getView('content.tests.test2', 'User Logged In Successfull!!', $content);
-        return redirect('/');
+        if($request->session()->has('redirectPage')){
+            $redirect = self::pagePathSplit( $request->session()->pull('redirectPage') ) ;
+        }
+
+        return redirect($redirect);
     }
 
     public function signinRedirect(Request $request){
-        $token = str_random(40);
-        $request->session()->flash('redirectToken', $token );
-        self::$data['page']['redirectToken'] = $token;
-        self::$data['page']['redirectPage'] = $request->page;
-        return parent::getView('forms.redirect', self::$data );
+        // the old @param string $page ... was REMOVED as 
+        //  it IS BEING PASSED THROUGH THE Request @param 
+        //  ANYWAYS...
+
+        $request->session()->reflash();
+
+        $redirectData = [
+            'redirectToken'=> str_random(40),
+            'redirectPage' => isset($request->page)?$request->page: '',
+        ];
+
+        $request->session()->put($redirectData);
+
+        //$request->session()->put('redirectToken', $token );
+        //self::$data['page']['redirectToken'] = $token;
+        //if(!empty($page) && $page === $request->page){
+        //    $request->session()->put('redirectPage', $page );
+            //self::$data['page']['redirectPage'] = $page;
+        //}else{
+        //    $request->session()->put('redirectPage', $request->page );
+            //self::$data['page']['redirectPage'] = $request->page;
+        //}
+
+        // THE redirect view will have to retrieve the $redirect* data 
+        //  from the Session directly.. 
+
+        return parent::getView('forms.redirect', self::$data);
     }
 
     public function signout(Request $request) {

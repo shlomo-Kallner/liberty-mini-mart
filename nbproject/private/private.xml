@@ -2,22 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="14">
         <file>
-            <url>public/lib/themewagon/metronicShopUI/theme/shop-index-header-fix.html</url>
-            <bookmark id="11">
-                <name/>
-                <line>116</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>public/lib/themewagon/metronicShopUI/theme/assets/corporate/css/style-responsive.css</url>
-            <bookmark id="10">
-                <name/>
-                <line>781</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>resources/views/master_bootstrapious.blade.php</url>
             <bookmark id="1">
                 <name/>
@@ -32,6 +16,22 @@
             <bookmark id="2">
                 <name/>
                 <line>1074</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>public/lib/themewagon/metronicShopUI/theme/shop-index-header-fix.html</url>
+            <bookmark id="11">
+                <name/>
+                <line>116</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>public/lib/themewagon/metronicShopUI/theme/assets/corporate/css/style-responsive.css</url>
+            <bookmark id="10">
+                <name/>
+                <line>781</line>
                 <key/>
             </bookmark>
         </file>

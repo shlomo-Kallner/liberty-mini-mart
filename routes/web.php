@@ -42,7 +42,7 @@ Route::get('signup', 'UserController@signup');
 Route::post('signup', 'UserController@register');
 
 Route::get('signin/{page?}', 'UserController@signinRedirect');
-Route::post('signin', 'UserController@signin');
+Route::post('signin/{page?}', 'UserController@signin');
 
 Route::get('signout', 'UserController@signout');
 
