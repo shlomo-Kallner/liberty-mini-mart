@@ -10,8 +10,9 @@ My license header.
 Copyright 2018 Shlomo Kallner , shlomo.kallner@gmail.com
 
 -->
-@include('lib.themewagon.license'){{--  <-- This file is OK, its pure HTML. --}}
-@include('lib.bootstrapious.license')
+
+@include('inc.licenses')
+
 
 @show
 
@@ -105,7 +106,8 @@ use the 'no-js' css class for IE9 and below as well.
         @show
         <!-- Preloaded JS END -->
     </head>
-    <body class="ecommerce"> {{-- " @yield('body-tags')" note: only Metronic uses this taging.. --}}
+    <body class="ecommerce"> 
+        {{-- " @yield('body-tags')" note: only Metronic uses this ['ecommerce'] taging.. --}}
         <header>
 
             @section('pre-header')

@@ -277,7 +277,7 @@
                     <h2 class="block-title">
                         Showcase
                     </h2>
-                    <p>This is Photoshop's version of Lorem Ipsum. Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet nibh vulputate cursus a
+                    <p>This is Photoshop''s version of Lorem Ipsum. Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet nibh vulputate cursus a
                         sit amet mauris.</p>
                     <div class="item-carousel" data-toggle="owlcarousel" data-owlcarousel-settings='{"items":4, "pagination":false, "navigation":true, "itemsScaleUp":true}'>
                         <div class="item">
@@ -610,7 +610,7 @@
                             Testimonials
                         </h3>
                         <blockquote>
-                            <p>Our productivity &amp; sales are up! Customers are happy &amp; we couldn't be happier with this product!</p>
+                            <p>Our productivity &amp; sales are up! Customers are happy &amp; we couldn&apos;t be happier with this product!</p>
                             <img src="{{ asset('lib/bootstrapmade/flexor/img/misc/charles-quote.png') }}" alt="Charles Spencer Chaplin">
                             <small>
                                 <strong>Charles Chaplin</strong>

@@ -61,13 +61,13 @@ class MainController extends Controller {
 
     public function __construct($name = '', $titleNameSep = ' | ') {
         self::setSiteName($name, $titleNameSep);
-//        self::$data['navbar'] = Page::getNavBar();
-//        //dd(session()->all());
-//        self::$data['preheader'] = Page::getPreHeader();
-//        //dd(self::$data['preheader']);
-//        // a proposal for using the UserController or the User model..
-//        self::$data['user'] = User::getUser();
-//        self::$data['cart'] = User::getCart();
+        //        self::$data['navbar'] = Page::getNavBar();
+        //        //dd(session()->all());
+        //        self::$data['preheader'] = Page::getPreHeader();
+        //        //dd(self::$data['preheader']);
+        //        // a proposal for using the UserController or the User model..
+        //        self::$data['user'] = User::getUser();
+        //        self::$data['cart'] = User::getCart();
     }
 
     /// Begin Utility Functions
@@ -83,13 +83,12 @@ class MainController extends Controller {
                 self::$data['site']['titleNameSep'];
     }
 
-    /*
-     * a helper function for setting members of the 'site'
+    /**
+     * A helper function for setting members of the 'site'
      * member of the static data variable...
      * without necessarily overwriting presets...
      * 
      */
-
     static public function setSiteData($content, $val = null) {
         if (!empty($content)) {
             if (is_string($content)) {

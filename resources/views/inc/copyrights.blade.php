@@ -10,6 +10,7 @@
 
             @include('lib.themewagon.copyright')
             @include('lib.bootstrapious.copyright')
+            @include('lib.bootstrapmade.copyright')
 
             <div class="col-md-3">
                 <a href="http://htmlpurifier.org/">
