@@ -84,9 +84,9 @@ use the 'no-js' css class for IE9 and below as well.
 
         @section('css-preloaded')
 
-        @yield('css-preloaded-global')
-
         @yield('css-cdn-files')
+
+        @yield('css-preloaded-global')
 
         @yield('css-preloaded-local')
 

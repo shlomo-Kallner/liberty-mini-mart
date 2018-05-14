@@ -1,11 +1,10 @@
-
-<hr>
  
 <!-- *** COPYRIGHT ***
     _________________________________________________________ -->
 
 <div id="copyright">
     <div class="container">
+        <hr>
         <div class="row">
 
             @include('lib.themewagon.copyright')
@@ -13,11 +12,13 @@
             @include('lib.bootstrapmade.copyright')
 
             <div class="col-md-3">
-                <a href="http://htmlpurifier.org/">
-                    <img
-                        src="http://htmlpurifier.org/live/art/powered.png"
-                        alt="Powered by HTML Purifier" border="0" />
-                </a>
+                <p class="powered">
+                    Powered by: &nbsp;
+                    <a class="powered" href="http://htmlpurifier.org/">
+                        <img src="http://htmlpurifier.org/live/art/powered.png"
+                            alt="Powered by HTML Purifier" border="0" />
+                    </a>
+                </p>
             </div>
         </div>
         <hr>

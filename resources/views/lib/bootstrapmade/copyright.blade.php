@@ -9,7 +9,7 @@
   ======================================================= -->
 
   
-<div class="col-md-3 pull-right" style="background-color:black; color: #fff;" >
+<div class="col-md-3 pull-right">
     <p>
         <a href="https://bootstrapmade.com/flexor-free-multipurpose-bootstrap-template/">
             Pricing Box
@@ -19,6 +19,7 @@
         </a> <br> From:
         <a href="https://bootstrapmade.com">
             BootstrapMade.com
+        </a> 
     </p>
 </div>
     

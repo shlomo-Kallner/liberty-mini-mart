@@ -5,13 +5,11 @@
 
 @section('css-extra-fonts')
 @parent
-<script>console.log("Entering extra-fonts-section");</script>
 
 {{-- the font to be placed in a yield or in a child (extending) view.. --}}
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900&amp;subset=all" rel="stylesheet" type="text/css">
 <!--- fonts for slider on the index page -->  
 
-<script>console.log("Leaving extra-fonts-section");</script>
 @endsection
 
 

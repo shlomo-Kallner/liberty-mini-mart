@@ -3,6 +3,8 @@
 {{-- BEGIN SECTION:  CSS Content From Metronic Shop UI --}}
 @section('css-preloaded-global')
 
+@parent
+
 <!-- Global styles START -->          
 <link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet">
 <link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -13,6 +15,7 @@
 @section('css-preloaded-local')
 {{-- page local css --}}
 @parent
+
 @endsection
 
 @section('css-themes')

@@ -37,7 +37,7 @@
 .top-cart-content .btn-default:hover,
 .top-cart-content span span {
     /*     
-        padding: 8px 12px 7px; 
+    padding: 8px 12px 7px; 
     font-size: 10px;
     */
     width: 15px;
@@ -85,3 +85,33 @@
  END METRONIC SHOP UI OVERIDE CSS SECTION
 
 */
+
+
+/*
+ BEGIN HEADER STYLING
+*/
+
+.header a:not(.btn){
+    color: #595f65;
+}
+
+/*
+ END HEADER STYLING
+*/
+
+
+
+/*
+ BEGIN FOOTER STYLING
+*/
+
+footer #copyright {
+    padding-top:30px;
+    background-color: #272626; /* old:  #313030*/
+    color: #fff;
+}
+
+/*
+ END FOOTER STYLING
+*/
+

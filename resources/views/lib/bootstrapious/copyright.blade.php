@@ -6,6 +6,9 @@
         <a href="https://bootstrapious.com/p/universal-business-e-commerce-template">
             Login Modal
         </a> inspired by: <br>
+        <a href="https://bootstrapious.com/p/universal-business-e-commerce-template">
+            <img src="{{ asset('lib/bootstrapious/universal/img/logo.png') }}" alt="Universal logo">
+        </a> <br> From: 
         <a href="https://bootstrapious.com">
             Bootstrapious
         </a> & 
