@@ -21,6 +21,7 @@ class="ecommerce"
             Moving fully over to 'lib.themewagon.nav' for 
             Navigational, Header & Footer Content.
 --}}
+
 @include('lib.themewagon.nav')
 
 @include('lib.bootstrapious.modals.login')

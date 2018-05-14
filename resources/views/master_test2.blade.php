@@ -108,19 +108,24 @@ use the 'no-js' css class for IE9 and below as well.
     </head>
     <body class="ecommerce"> 
         {{-- " @yield('body-tags')" note: only Metronic uses this ['ecommerce'] taging.. --}}
+
         <header>
 
-            @section('pre-header')
+            <nav class="navbar navbar-default">
 
-            @yield('pre-header-navbar')
+                @section('pre-header')
 
-            @show
-
-            @section('header-content')
-
-            @yield('header-navbar')
-
-            @show
+                @yield('pre-header-navbar')
+    
+                @show
+    
+                @section('header-content')
+    
+                @yield('header-navbar')
+    
+                @show
+        
+            </nav>
 
         </header>
         @yield('login-modal')

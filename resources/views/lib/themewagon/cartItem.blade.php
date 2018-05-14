@@ -8,6 +8,14 @@
         @if(false)
         <i class="fa fa-times"></i>
         {{ $quantity }}
+        
+        @elseif (true)
+
+        <div class="product-quantity">
+            <i class="fa fa-times"></i>
+            <input id="product-quantity" type="text" value="{{ $quantity }}" readonly name="product-quantity" class="form-control input-sm">
+        </div>
+            
         @else
         <div class="btn-group btn-group-justified" role="group">
             <button type="button" class="btn btn-warning">
