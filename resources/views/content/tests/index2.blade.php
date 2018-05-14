@@ -29,6 +29,20 @@
 
 @section('main-content')
 @parent
+
+@component('lib.bootstrapmade.pricing')
+    @if(isset($pricing))
+
+        @foreach ($pricing as $key => $item)
+            @slot($key)
+                {{$item}}
+            @endslot    
+        @endforeach
+    
+    @endif
+@endcomponent
+
+@if(false)
 <div class="row">
     <div class="col-md-5">
         <h1>{!! $page['header'] !!} </h1>
@@ -42,6 +56,7 @@
         </p>
     </div>
 </div>
+@endif
 @endsection
 
 

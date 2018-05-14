@@ -1,11 +1,12 @@
 <?php
 // Will be placing our "index" or "Home" page content in this view/file.
+// UPDATE: this file is now OBSOLETE!
 ?>
 
 @extends('master')
 
 @section('css-extra-fonts')
-@include('..inc.index_extra_content')
+@include('inc.index_extra_content')
 @endsection
 
 {{--
