@@ -18,17 +18,21 @@ Route::get('template', function () {
 });
 
 //Route::resource('user', 'UserController');
-Route::prefix('user')->group(function() {
-    Route::get('/', 'PageController@index1');
-    Route::get('{page}', 'PageController@index1');
-});
+Route::prefix('user')->group(
+    function () {
+        Route::get('/', 'PageController@index1');
+        Route::get('{page}', 'PageController@index1');
+    }
+);
 
-Route::prefix('store')->group(function() {
-    Route::get('/', 'ShopController@categories');
-    Route::get('all-products', 'ShopController@products');
-    //Route::get('{page}', 'PageController@test2');
-    //Route::get('{page}/{page}', 'PageController@test2');
-});
+Route::prefix('store')->group( 
+    function () {
+        Route::get('/', 'ShopController@categories');
+        Route::get('all-products', 'ShopController@products');
+        //Route::get('{page}', 'PageController@test2');
+        //Route::get('{page}/{page}', 'PageController@test2');
+    }
+);
 //Route::get('checkout', 'ShopController');
 Route::resource('cart', 'CartController');
 Route::resource('wishlist', 'WishlistController');

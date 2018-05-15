@@ -19,7 +19,12 @@
     background: #E94D1C 50% 50%;
 }
 
-
+.sticker-sale {
+	background: url(../lib/themewagon/metronicShopUI/theme/assets/pages/img/sale.png) no-repeat;
+}
+.sticker-new {
+	background: url(../lib/themewagon/metronicShopUI/theme/assets/pages/img/new.png) no-repeat;
+}
 
 
 .top-cart-content {

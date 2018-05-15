@@ -111,7 +111,7 @@ use the 'no-js' css class for IE9 and below as well.
 
         <header>
 
-            <nav class="navbar navbar-default">
+            <nav class="navbar navbar-default navbar-fixed-top">
 
                 @section('pre-header')
 
