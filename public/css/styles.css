@@ -55,7 +55,147 @@
  END HEADER STYLING
 */
 
+/*
 
+BEGIN USERS Scrolled Links Panel Styling
+
+From Styler Panel in 
+'..\lib\themewagon\metronicShopUI\theme\assets\corporate\css\style.css'
+***/
+  .users-links-panel {
+    z-index: 9999;
+    position: fixed;
+    top: 120px;
+    right: 0;
+  }
+  body.page-header-fixed .users-links-panel {
+      display: block;
+  }
+  body:not(.page-header-fixed) .users-links-panel {
+      display: none;
+  }
+  .users-links-panel .users-links-icons {
+    top: 0;
+    right: 0;
+    padding: 20px;
+    cursor: pointer;
+    position: absolute;
+    margin: 0;
+  }
+  .users-links-panel .icon-users-links {
+    background: #c9c9c9 url(../lib/themewagon/metronicShopUI/theme/assets/pages/img/icon-color.png) center no-repeat;
+  }
+  .users-links-panel .icon-users-links:hover {
+    background-color: #3d3d3d;
+  }
+  .users-links-panel .icon-users-links-close {
+    display: none;
+    background: #3d3d3d url(../lib/themewagon/metronicShopUI/theme/assets/pages/img/icon-color-close.png) center no-repeat;
+  }
+  .users-links-panel .icon-users-links-close:hover {
+    background-color: #222;
+  }
+  .users-links {
+    top: 0;
+    right: 40px;
+    width: 200px;
+    display: none;
+    padding: 20px 10px 10px;
+    position: absolute;
+    background: #3d3d3d;
+  }
+  .users-links p {
+    color: #cfcfcf;
+    padding: 0 15px;
+    font-size: 15px;
+  }
+  .users-links ul {
+    list-style: none;
+    padding: 4px 11px 5px;
+    display: block;
+    margin-bottom: 1px !important;
+  }
+  .users-links li {
+    width: 28px;
+    height: 28px;
+    margin: 4px;
+    cursor: pointer;
+    list-style: none;
+    border: solid 1px #707070;
+    display: inline-block;
+    padding: 0 5px;
+  }
+  .users-links li:hover,
+  .users-links li.current {
+    border: solid 1px #ebebeb;
+  }
+  .users-links li.current {
+    border: solid 2px #ebebeb;
+  }
+
+  .users-links li a {
+	color: #616b76;
+  }
+  .users-links li a:hover {
+	color: #E02222;
+  }
+  .users-links li a:focus {
+	text-decoration: none;
+  }
+  
+  .users-links li.color-blue {
+    background: #64aed9;
+  }
+  .users-links li.color-red {
+    background: #e84d1c;
+  }
+  .users-links li.color-green {
+    background: #67bd3c;
+  }
+  .users-links li.color-orange {
+    background: #e18604;
+  }
+  .color-gray {
+      background: #798b97;
+  }
+  .color-turquoise {
+      background: #44b1c1;
+  }
+  .users-links label {
+    color: #cfcfcf;
+    border-top: 1px solid #585858;
+    padding: 10px 10px 0;
+    margin: 0 5px;
+    display: block;
+  }
+  .users-links label span {  
+    text-transform: uppercase;
+  }
+  .users-links label > span {
+    display: inline-block;
+    width: 85px;
+  }
+  .users-links label > select {
+    margin-top: 5px;
+    text-transform: lowercase;
+  }
+  .users-links label  span.users-links-label {
+    top: 2px;
+    position: relative;
+  }
+  
+
+/*
+
+END USERS Scrolled Links Panel Styling
+
+*/
+
+/*  
+
+BEGIN TOP CART OVERLOADS
+ 
+*/
 
 .top-cart-content {
     /* width: 364px; */ 
@@ -115,6 +255,10 @@
     width: 80px;
     font-size: 1em !important;
 }
+
+/*
+END TOP CART OVERLOADS
+*/
 
 /*
 

@@ -20,7 +20,8 @@ class ShopController extends MainController {
     }
 
     static public function genProduct(){
-
+        $product = [];
+        return $product;
     }
 
     static public function genProductGallery($name, array &$products, 
@@ -54,6 +55,11 @@ class ShopController extends MainController {
             // others?... 
         ];
         return self::genProductGallery($name,$products,$cssClasses);
+    }
+
+    public function index(Request $request){
+
+        return parent::getView('content.store');
     }
 
 }

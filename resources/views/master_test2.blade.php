@@ -130,6 +130,7 @@ use the 'no-js' css class for IE9 and below as well.
         </header>
         @yield('login-modal')
         @yield('search-modal')
+        @yield('user-links-panel')
         <br><br><br>
         <main>
             <div class="container">

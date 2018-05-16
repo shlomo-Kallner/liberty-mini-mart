@@ -42,6 +42,19 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
 }
 ?>
 
+
+
+@section('user-links-panel')
+{{-- the users-links panel replaces the topbar when scrolled down.. --}}
+
+    @component('lib.themewagon.users_panel')
+        @slot('navbar')
+            {!! serialize($preheader) !!}
+        @endslot
+    @endcomponent
+@endsection
+
+
 @section('pre-header-navbar')
 @parent
 

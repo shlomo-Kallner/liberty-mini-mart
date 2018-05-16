@@ -27,15 +27,26 @@ Route::prefix('user')->group(
 
 Route::prefix('store')->group( 
     function () {
-        Route::get('/', 'ShopController@categories');
-        Route::get('all-products', 'ShopController@products');
-        //Route::get('{page}', 'PageController@test2');
+        Route::get('/', 'ShopController@index');
+        Route::get('all', 'ShopController@products');
+
+        Route::resource('section', 'SectionController');
+        // 'section/' goes to 'index()' which returns 'all-sections' of the store..
+        Route::resource('section/{section}/category', 'CategorieController');
+        // 'category/' goes to 'index()' which returns 'all-categories' of the store..
+        Route::resource('section/{section}/category/{category}/product', 'ProductController');
+        // 'product/' goes to 'index()' which returns 'all-products' of the category..
+        // a category 'all' should return all products in the catalog/store..
+
+        Route::get('{page}', 'PageController@test2');
         //Route::get('{page}/{page}', 'PageController@test2');
     }
 );
-//Route::get('checkout', 'ShopController');
+
 Route::resource('cart', 'CartController');
 Route::resource('wishlist', 'WishlistController');
+Route::get('checkout', 'ShopController@checkout');
+
 //Route::get('user', 'UserController');
 //Route::post('user', 'UserController');
 //Route::resource('user', 'UserController');

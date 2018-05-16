@@ -8,14 +8,30 @@ $(function () {
     //put your code here..
     //console.log("Ready To Code with jQuery!!");
 
+    // from 
+    /*
+
+   BEGIN USERS Scrolled Links Panel Scripting
+
+   Inspired From Styler Panel in 
+   '..\lib\themewagon\metronicShopUI\theme\assets\corporate\scripts\layout.js'
+***/
+
+    var handleUsersLinks = function () {
     
-    $('#topcontrol img').on('scroll resize', function(){
-        alert('picture loading!');
-        var picPath = '../lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png';
-        if($(this).attr('src') != picPath){
-            alert('changing picture!');
-            $(this).attr('src', picPath);
-        }
-        
-    });
+        var panel = $('.users-links-panel');
+    
+        $('.icon-users-links', panel).click(function () {
+            $('.users-links').show();
+            $('.icon-users-links-close').show();
+        });
+
+        $('.icon-users-links-close', panel).click(function () {
+            $('.users-links').hide();
+            $('.icon-users-links-close').hide();
+        });
+
+    };
+    handleUsersLinks();
+    
 });
