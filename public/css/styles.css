@@ -26,6 +26,36 @@
 	background: url(../lib/themewagon/metronicShopUI/theme/assets/pages/img/new.png) no-repeat;
 }
 
+#topcontrol {
+    background: url(../lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png) no-repeat;
+}
+
+/*
+ BEGIN HEADER STYLING (of Metronic UI ...)
+*/
+
+.header a:not(.btn){
+    color: #595f65;
+}
+
+
+.header .mobi-toggler {
+    background: #fff url(../lib/themewagon/metronicShopUI/theme/assets/corporate/img/icons/toggler.png) no-repeat 6px 8px;
+  }
+
+.header .mobi-toggler:hover {
+    background: #e34f00 url(../lib/themewagon/metronicShopUI/theme/assets/corporate/img/icons/toggler.png) no-repeat 6px -28px;
+}
+
+.header .header-navigation {
+    
+}
+
+/*
+ END HEADER STYLING
+*/
+
+
 
 .top-cart-content {
     /* width: 364px; */ 
@@ -93,17 +123,6 @@
 */
 
 
-/*
- BEGIN HEADER STYLING
-*/
-
-.header a:not(.btn){
-    color: #595f65;
-}
-
-/*
- END HEADER STYLING
-*/
 
 
 

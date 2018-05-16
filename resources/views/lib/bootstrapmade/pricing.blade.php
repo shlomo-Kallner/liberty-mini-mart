@@ -14,7 +14,11 @@ Author URL: https://bootstrapmade.com
     <!-- Pricing -->
     <div class="block-contained">
         <h2 class="block-title">
-            Our Plans
+            @isset($title)
+                {{ $title }}
+            @else
+                Our Plans
+            @endisset
         </h2>
         <div class="row">
 

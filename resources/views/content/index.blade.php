@@ -71,5 +71,10 @@
 @endif
 @endsection
 
+@section('js-defered')
+    @parent
+    
+@endsection
+
 
 

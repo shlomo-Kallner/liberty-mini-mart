@@ -19,4 +19,41 @@ class ShopController extends MainController {
         return __METHOD__;
     }
 
+    static public function genProduct(){
+
+    }
+
+    static public function genProductGallery($name, array &$products, 
+        array &$cssClasses = [] )
+    {
+        $res = [
+            // the gallery's name..
+            'title' => $name,
+            // the actual products..
+            'products' => serialize($products),
+        ];
+
+        foreach($cssClasses as $key => $value){
+            if($key !== 'title' || $key !== 'products')
+            {
+                $res[$key] = $value;
+            }
+        }
+        return $res;
+    }
+
+    static public function getNewProducts() {
+        $products = [];
+        // the gallery's name..
+        $name = 'New Arrivals';
+        $cssClasses = [
+            // some CSS classes ...
+            'sizeClass' => 'col-md-12', // some (can be multiple) Bootstrap Column Size classes.
+            'owlClass' => 'owl-carousel5', // a [required] Metronic CSS Class name for items-per-view..
+            'productClass' => 'sale-product', // some extra Metronic CSS class .. can be blank.
+            // others?... 
+        ];
+        return self::genProductGallery($name,$products,$cssClasses);
+    }
+
 }

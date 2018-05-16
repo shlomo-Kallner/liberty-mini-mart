@@ -12,13 +12,19 @@
                 @endif
             </h4>
         </div>
-        <div class="panel-pricing-price">
-            @if(!is_numeric($price))
-            <i class="fa fa-thumbs-up"></i> FREE!!
-            @else
-                <i class="fa {{ $currency }}"></i> 
-                <span class="digits">{{ $price }}</span> /mo.</div>
-            @endif
+
+        @isset($price)
+            <div class="panel-pricing-price">
+                    <i class="fa {{ $currency }}"></i>
+                @if(!is_numeric($price))
+                    {{-- <i class="fa fa-thumbs-up"></i> FREE!! --}}
+                    {{ $price }}
+                @else 
+                    <span class="digits">{{ $price }}</span> /mo.
+                @endif
+            </div>
+        @endisset
+        
         <div class="panel-body">
             <ul class="list-dotted">
                 

@@ -111,7 +111,7 @@ use the 'no-js' css class for IE9 and below as well.
 
         <header>
 
-            <nav class="navbar navbar-default navbar-fixed-top">
+            <nav class="navbar navbar-default">
 
                 @section('pre-header')
 
@@ -146,15 +146,38 @@ use the 'no-js' css class for IE9 and below as well.
         @show
 
         @section('js-defered')
-        <script src="{{ asset('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
-        <!-- 
-            this one is ours.. so it should come last.. 
-            In the @Extending View - call @Parent last! 
-        -->
         @show
+
+        {{-- 
+            For now not using CDN, but when doing so will use the minified version...
+            not minified version here for fallback..
+        --}}
+        @if (false)
+            @if (true)
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/bundled/html4+html5/jquery.history.min.js"></script> 
+            @else
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/bundled/html4+html5/jquery.history.js"></script>
+            @endif
+        @else
+            <script src="{{ asset('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
+        @endif
+
+        {{-- 
+            this stuff is ours.. so it should come last.. 
+            In the @Extending View - call @Parent last!
+            UPDATE:
+            No need to worry about the position of the 
+            _Blade:_Parent Directive,
+            As it is OUTSIDE the 'js-defered' _Blade:_Section!
+        --}}
         <script src="{{ asset('js/script.js') }}" type="text/javascript"></script>
+
+        {{-- 
+            Some views need an extra script tag or more,
+             put them in this ('js-extra') _Blade:_Section 
+             in the extending view. 
+        --}}
         @section('js-extra')
-            
         @show
     </body>
 </html>
