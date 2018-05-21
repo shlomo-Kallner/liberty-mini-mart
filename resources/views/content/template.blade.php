@@ -32,15 +32,21 @@ class="ecommerce"
 <div class="row">
     <div class="col-md-5">
         <h1>{!! $page['header'] !!} </h1>
+        <h2>
+        {!! $page['subheading'] !!}
+        </h2>
+        
+        @if (isset($page['img']))
+            <img src="{{ $page['img'] }}" alt="{{ $page['imgAlt'] }}">
+        @endif
+        
+        {{-- <i class="fa fa-search" style="font-size: 16px;"></i> --}}
+        
+    </div>
+    <div class="col-md-5">
         <div>
             {!! $page['article'] !!}
         </div>
-        <i class="fa fa-search" style="font-size: 16px;"></i>
-    </div>
-    <div class="col-md-5">
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi, nulla, porro facilis officiis sequi natus eum nemo totam eius deserunt reprehenderit ducimus quia et itaque animi nostrum adipisci accusantium. Quaerat, eos ipsum expedita totam dolorem rem reiciendis voluptatibus quia dolor quam natus id ipsam aliquam fugiat ullam quibusdam unde corporis minima debitis odit laborum numquam repellat illo ea aut mollitia alias? Ut, facere, inventore, mollitia consectetur cum repellat quidem qui itaque modi quam laudantium cupiditate a nemo officia deserunt laboriosam temporibus unde voluptate suscipit labore voluptates cumque quas natus non in maiores dicta delectus omnis aut commodi animi molestiae amet fugit? Tenetur, eligendi, a pariatur laboriosam aliquid cum voluptate nisi laudantium officiis in voluptatum nihil libero consequatur tempora sunt dolorum beatae dicta quod illo impedit!
-        </p>
     </div>
 </div>
 
@@ -51,7 +57,9 @@ class="ecommerce"
 @parent
 @include('lib.themewagon.prefooter')
 @include('inc.copyrights')
-
+@component('lib.themewagon.product_fast_view')
+    
+@endcomponent
 @endsection
 
 

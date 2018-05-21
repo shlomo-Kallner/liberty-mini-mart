@@ -144,6 +144,27 @@ class MainController extends Controller {
         return self::getView('content.template', $title, $content);
     }
 
+    static public function getLoremIpsum(){
+        return 'Lorem ipsum dolor sit amet, 
+        consectetur adipisicing elit. Modi, nulla, 
+        porro facilis officiis sequi natus eum nemo 
+        totam eius deserunt reprehenderit ducimus quia et 
+        itaque animi nostrum adipisci accusantium. 
+        Quaerat, eos ipsum expedita totam dolorem rem 
+        reiciendis voluptatibus quia dolor quam natus 
+        id ipsam aliquam fugiat ullam quibusdam unde 
+        corporis minima debitis odit laborum numquam 
+        repellat illo ea aut mollitia alias? Ut, facere, 
+        inventore, mollitia consectetur cum repellat quidem 
+        qui itaque modi quam laudantium cupiditate a nemo officia 
+        deserunt laboriosam temporibus unde voluptate suscipit labore 
+        voluptates cumque quas natus non in maiores dicta delectus omnis 
+        aut commodi animi molestiae amet fugit? Tenetur, eligendi, 
+        a pariatur laboriosam aliquid cum voluptate nisi 
+        laudantium officiis in voluptatum nihil libero consequatur 
+        tempora sunt dolorum beatae dicta quod illo impedit!';
+    }
+
     /// End Utility Functions
     //  
     /// Begin Test Views Functions
@@ -169,7 +190,10 @@ class MainController extends Controller {
         $title = 'test ' . $requestedPage . ' page';
         $content = [
             'header' => "<b>$requestedPage</b>",
-            'article' => "<p><i>HEllloo WORLD!!</i></p>"
+            'subheading' => "<p>'Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'</p>",
+            'article'=> "<p>" . e('World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919') . "</p>",
+            'img' => "images/site/ring_it_liberty_bell.jpg",
+            'imgAlt' => 'Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan',
         ];
 
         //return $this->getTemplateView($title, $content);

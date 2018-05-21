@@ -22,14 +22,18 @@ $(function () {
         var panel = $('.users-links-panel');
     
         $('.icon-users-links', panel).click(function () {
+            panel.addClass('icon-users-links-panel-open');
             $('.users-links').show();
             $('.icon-users-links-close').show();
         });
 
         $('.icon-users-links-close', panel).click(function () {
+            panel.removeClass('icon-users-links-panel-open');
             $('.users-links').hide();
             $('.icon-users-links-close').hide();
         });
+
+        //$('body:not(.page-header-fixed) .icon-users-links-panel-open');
 
     };
     handleUsersLinks();

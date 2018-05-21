@@ -58,7 +58,7 @@ class ShopController extends MainController {
     }
 
     public function index(Request $request){
-
+        
         return parent::getView('content.store');
     }
 

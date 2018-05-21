@@ -1,10 +1,62 @@
 
 
+/***
+Begin Bootstrap 3 Overrides...
+*/
+
+.modal.in {
+    z-index: 999999 !important;
+}
+
+/*
+End Bootstrap 3 Overides
+***/
+
 /**
 
  BEGIN METRONIC SHOP UI OVERIDE CSS SECTION
 
 */
+.margin-top-0 {
+	margin-top: 0 !important;
+}
+.margin-top-5 {
+	margin-top: 5px !important;
+}
+/* --- ALREADY EXISTS!S
+.margin-top-10 {
+	margin-bottom: 10px !important;
+}
+*/
+.margin-top-15 {
+	margin-top: 15px !important;
+}
+.margin-top-20 {
+	margin-top: 20px !important;
+}
+.margin-top-25 {
+	margin-top: 25px !important;
+}
+.margin-top-30 {
+	margin-top: 30px !important;
+}
+.margin-top-35 {
+	margin-top: 35px !important;
+}
+.margin-top-40 {
+	margin-top: 40px !important;
+}
+.margin-top-50 {
+	margin-top: 50px !important;
+}
+.margin-top-60 {
+	margin-top: 60px !important;
+}
+.margin-top-65 {
+	margin-top: 65px !important;
+}
+
+
 
 .del-goods {
     background: #d7dde3 50% 50%;
@@ -49,6 +101,20 @@
 
 .header .header-navigation {
     
+}
+
+.header .header-navigation li.menu-search {
+    width: 72px;
+    height: inherit;
+    top: 0;
+    float: left;
+}
+
+.header-navigation li.menu-search i {
+    top: 0;
+}
+.header-navigation li.menu-search a {
+    margin-left: 40px;
 }
 
 /*

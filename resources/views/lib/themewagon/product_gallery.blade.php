@@ -1,13 +1,13 @@
 
 
 <!-- BEGIN PRODUCT GALLERY -->
-<div class="row margin-bottom-40">
+<div class="row margin-bottom-40 margin-top-30">
     <div class="{{ $sizeClass }} {{ $productClass }}">
         <h2>{{ $title }}</h2>
         <div class="owl-carousel {{ $owlClass }}">
             @if(false)
             @component('lib.themewagon.product_mini')
-                @foreach (unserialize($products) as $product)
+                @foreach (unserialize(html_entity_decode( $products ) ) as $product)
                     @foreach ($product as $key => $item)
                         @slot($key)
                             {{$item}}

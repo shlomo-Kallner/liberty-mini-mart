@@ -292,15 +292,21 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
                             </div>
                         </form>
                     </div>
-                    @else
+                @else
+                    {{--  --}}
+                    @if(false)
                     <li role="separator" class="divider">
                         <span class="sep"></span>
                     </li>
-                    <span class="sep"></span>
-                    <li>
-                    <a href="#" data-toggle="modal" data-target="#search-modal">
+                    {{-- <span class="sep"></span> --}}
+                    @endif
+                    <li class="menu-search">
+                        @if(false)
+                        <span class="sep"></span>
+                        @endif
+                        <a class="clearfix" href="#" data-toggle="modal" data-target="#search-modal">
                             <i class="fa fa-search"></i>
-                    </a>
+                        </a>
                     @endif 
                 </li>
                 <!-- END TOP SEARCH -->

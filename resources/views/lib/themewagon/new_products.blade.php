@@ -2,7 +2,7 @@
 
 
 <!-- BEGIN SALE PRODUCT & NEW ARRIVALS -->
-<div class="row margin-bottom-40">
+<div class="row margin-bottom-40 margin-top-30">
     <!-- BEGIN SALE PRODUCT -->
     <div class="col-md-12 sale-product">
         <h2>New Arrivals</h2>
