@@ -1,6 +1,10 @@
 
+@if (isset($extraOuterCss))
+    <div class="{{$extraOuterCss}}">
+@else
+    <div>    
+@endif
 
-<div>
     <div class="product-item">
         <div class="pi-img-wrapper">
             <img src="{{ asset($img) }}" class="img-responsive" alt="{{ $name }}">
