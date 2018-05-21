@@ -29,6 +29,11 @@ class="ecommerce"
 
 @section('main-content')
 @parent
+@component('lib.themewagon.breadcrumbs')
+    @slot('breadcrumbs')
+        {{serialize($page['breadcrumbs'])}}
+    @endslot
+@endcomponent
 <div class="row">
     <div class="col-md-5">
         <h1>{!! $page['header'] !!} </h1>

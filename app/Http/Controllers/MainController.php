@@ -19,7 +19,7 @@ class MainController extends Controller {
             'name' => 'Liberty MiniMart',
             'titleNameSep' => ' | ',
         ],
-        'preheader' => [],
+        'preheader' => [], // the preheader navbar data...
         'navbar' => [], // the header navbar data...
         'sidebar' => [], // the side[navigation]bar data...
         'footer' => [], // the footer navigation bar data..
@@ -33,11 +33,24 @@ class MainController extends Controller {
         ///                 and Blade Foreach using code block.
         'page' => [
             'header' => '', // 'h1' page article content
+            'subheading' => '', // 'h2' page article content
             'article' => '', // 'div' page article content
-        //'name' => '',
+            'img' => '', // page article img content
+            'imgAlt' => '', // page img alt content
+            'breadcrumbs' => [
+                'links' => [
+                    [
+                        'name' => '',
+                        'url' => '',
+                    ],
+                ],
+                'current'=> [
+                    'name' => '',
+                    'url' => '',
+                ],
+            ],
         ],
         'user' => [
-            //'loggedin' => false,
             'name' => '',
             'email' => '',
             'id' => '',
@@ -194,6 +207,7 @@ class MainController extends Controller {
             'article'=> "<p>" . e('World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919') . "</p>",
             'img' => "images/site/ring_it_liberty_bell.jpg",
             'imgAlt' => 'Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan',
+            'breadcrumbs' => ''
         ];
 
         //return $this->getTemplateView($title, $content);

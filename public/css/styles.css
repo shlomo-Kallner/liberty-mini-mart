@@ -56,6 +56,10 @@ End Bootstrap 3 Overides
 	margin-top: 65px !important;
 }
 
+/* breadcrumb */
+.ecommerce .breadcrumb {
+	
+}
 
 
 .del-goods {

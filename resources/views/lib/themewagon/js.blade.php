@@ -18,41 +18,48 @@
 
 @if(false)
 
-<!--[if lt IE 9]>
-  {{--  --}}
-  @if(true)
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  @else
-  @include('inc.js.compatibility')
-  @endif
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<![endif]-->
-<![if gte IE 9]>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<![endif]>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/3.0.1/jquery-migrate.min.js"></script>
-<!-- Latest compiled and minified Bootstrap 3 JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+{{-- If we are using CDNs.. --}}
 
-<!-- OwlCarousel2 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.3/owl.carousel.min.js"></script>
+  <!--[if lt IE 9]>
+    {{-- If IE is LESSER THAN 9.. --}}
+    
+    {{-- We are not using our 'inc.js.compatibility' view.. --}}
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectivizr/1.0.2/selectivizr-min.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <![endif]-->
+  <![if gte IE 9]>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <![endif]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/3.0.1/jquery-migrate.min.js"></script>
+  <!-- Latest compiled and minified Bootstrap 3 JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <!-- OwlCarousel2 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.3/owl.carousel.min.js"></script>
 
 
 @else
-<script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/respond.min.js') }}"></script>  
+
+  <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/respond.min.js') }}"></script>  
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/jquery.min.js') }}" type="text/javascript"></script>
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/jquery-migrate.min.js') }}" type="text/javascript"></script>
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/bootstrap/js/bootstrap.min.js') }}" type="text/javascript"></script>      
 
+  <!-- OwlCarousel2 -->
+  <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/owl.carousel/owl.carousel.min.js') }}" type="text/javascript"></script><!-- slider for products -->
+   
 
 @endif
-<!-- Other Metronic Scripts -->
-<script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/corporate/scripts/back-to-top.js') }}" type="text/javascript"></script>
-<script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js') }}" type="text/javascript"></script>
 
-{{--  --}}
-<script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/owl.carousel/owl.carousel.min.js') }}" type="text/javascript"></script><!-- slider for products -->
-        
+  
+  {{-- Other Metronic Scripts --}}
+  
+  <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/corporate/scripts/back-to-top.js') }}" type="text/javascript"></script>
+  <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js') }}" type="text/javascript"></script>
+       
 
 <!-- END CORE PLUGINS -->
 
@@ -82,6 +89,11 @@
 {{-- 
     From Master-test2.blade.php: 
     In the @extending View - call @Parent last!  
+    UPDATE:
+    No need to worry about the position of the 
+    _Blade:_Parent Directive,
+    As 'our-stuff' is OUTSIDE the 'js-defered' _Blade:_Section!
+    But nonetheless...
 --}}
 @parent
 @endsection

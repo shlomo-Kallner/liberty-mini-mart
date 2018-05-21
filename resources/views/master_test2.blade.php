@@ -55,12 +55,19 @@ use the 'no-js' css class for IE9 and below as well.
 
         <title>{{ $title }}</title>
 
-        @include('inc.js.compatibility') {{-- <== from bootstrap and others...
-                                                its all in its own file in case
-                                                of possible 'growth'...
-                                                p.s. its just some IE Conditionals
-                                                     and a Blade comment..
-                                          --}}
+        
+        {{-- 
+            Loading compatibitity javascript tags 
+             via _Blade:_Section 'js-defered' below..
+        --}}
+        {{-- _include('inc.js.compatibility') --}}
+        {{-- <== 'inc.js.compatibility' is from 
+                    bootstrap and others...
+                    its all in its own file in case
+                    of possible 'growth'...
+                    p.s. its just some IE Conditionals
+                    and a Blade comment..
+        --}}
 
         <!-- CSS START -->
         <!-- Fonts START -->
