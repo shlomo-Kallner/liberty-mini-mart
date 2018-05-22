@@ -21,6 +21,7 @@
     "dependencies": {
         "@fancyapps/fancybox": "^3.3.5",
         "ajv": "^6.0.0",
+        "animate.css": "^3.6.1",
         "bootstrap": "^3.3.7",
         "fancybox": "^3.0.1",
         "html5shiv": "^3.7.3",

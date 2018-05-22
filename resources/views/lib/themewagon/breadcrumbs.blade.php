@@ -5,26 +5,23 @@
 @php
 //dd($breadcrumbs);
 $testing = false;
+use \App\Utilities\Functions\Functions;
 
 
 // unserializing $breadcrumbs if its set to a non-null string..
-if(isset( $breadcrumbs ) && unserialize(html_entity_decode((string)$breadcrumbs)) !== ''){
-    $crumbs = unserialize(html_entity_decode((string)$breadcrumbs));
-}else{
-    $crumbs = [
-        'links' => [
-            [
-                'name' => '',
-                'url' => '',
-            ],
-        ],
-        'current'=> [
+$crumbs = Functions::getBladedContent(isset($breadcrumbs)?$breadcrumbs:'', [
+    'links' => [
+        [
             'name' => '',
             'url' => '',
         ],
-    ];
-        
-}
+    ],
+    'current'=> [
+        'name' => '',
+        'url' => '',
+    ],
+]);
+
 @endphp
 
 @if ($testing || !empty($crumbs['current']['name']))
@@ -36,7 +33,7 @@ if(isset( $breadcrumbs ) && unserialize(html_entity_decode((string)$breadcrumbs)
 @if( !empty($crumbs['current']['name'] ) )
     
         <li><a href="{{ url('') }}">Home</a></li>
-        @if(isset($crumbs['links']) && is_array($crumbs['links']) && count($crumbs['links']) > 0  )
+        @if(Functions::testVar($crumbs['links']) && is_array($crumbs['links']) )
         @foreach ($crumbs['links'] as $breadcrumb)
             @if( !empty($breadcrumb['url']) && !empty($breadcrumb['name']) )
                 <li><a href="{{ url($breadcrumb['url']) }}">{{ $breadcrumb['name'] }}</a></li>

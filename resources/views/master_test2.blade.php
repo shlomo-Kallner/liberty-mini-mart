@@ -56,19 +56,6 @@ use the 'no-js' css class for IE9 and below as well.
         <title>{{ $title }}</title>
 
         
-        {{-- 
-            Loading compatibitity javascript tags 
-             via _Blade:_Section 'js-defered' below..
-        --}}
-        {{-- _include('inc.js.compatibility') --}}
-        {{-- <== 'inc.js.compatibility' is from 
-                    bootstrap and others...
-                    its all in its own file in case
-                    of possible 'growth'...
-                    p.s. its just some IE Conditionals
-                    and a Blade comment..
-        --}}
-
         <!-- CSS START -->
         <!-- Fonts START -->
         @section('css-fonts')
@@ -105,6 +92,24 @@ use the 'no-js' css class for IE9 and below as well.
         <link rel="stylesheet" href="{{ asset('css/styles.css') }}" type="text/css">
         <!-- CSS END -->
 
+
+        {{-- 
+            Loading compatibitity javascript tags 
+             via _Blade:_Section 'js-defered' below..
+
+            UPDATE: checked html5shiv project page at 
+            https://www.npmjs.com/package/html5shiv
+            and it specifies the placement of the 
+            html5shiv script tag in the head tag...
+        --}}
+        @include('inc.js.compatibility')
+        {{-- <== 'inc.js.compatibility' is from 
+                    bootstrap and others...
+                    its all in its own file in case
+                    of possible 'growth'...
+                    p.s. its just some IE Conditionals
+                    and a Blade comment..
+        --}}
 
         <!-- Preloaded JS START... -->
         @section('js-preloaded')

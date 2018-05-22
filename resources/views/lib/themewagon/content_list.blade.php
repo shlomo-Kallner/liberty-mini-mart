@@ -2,11 +2,11 @@
 @php
 use \App\Utilities\Functions\getBladedContent,
     \App\Utilities\Functions\testBladedVar,
+    \App\Utilities\Functions\testVar,
     \App\Utilities\Functions\genRange,
     \App\Utilities\Functions\genPageArray,
     \App\Utilities\Functions\genRowsPerPage,
-    \App\Utilities\Functions\genPagesIndexes,
-    \App\Utilities\Functions\testVar;
+    \App\Utilities\Functions\genPagesIndexes;
 
     // The DATA for the SLOTS of THIS COMPONENT are gathered HERE!!!  
     // Note: they CAN be empty... 
@@ -16,10 +16,10 @@ use \App\Utilities\Functions\getBladedContent,
     $pageNumber2 = getBladedContent($pageNumber,-1);
     // our default.. is 12 products per page (the template had 9..)
     $productsPerPage2 = getBladedContent($productsPerPage,12);
-    $productsPerRow2 = getBladedContent($productsPerRow,3);
 
-    // some calculations based on the Slot_s data..
-    $totalProducts = count($products2);
+    {{-- NOTE: every product 'row' can hold up to 3 products! --}}
+    // $productsPerRow2 = getBladedContent($productsPerRow,3);
+    $productsPerRow2 = 3;
 
     // Some Utility Functions for the component..
 
@@ -75,43 +75,18 @@ use \App\Utilities\Functions\getBladedContent,
     @if(testVar($products2))
         
         @php
-            if (testVar($productsPerPage2) && $productsPerPage2 <= $totalProducts) {
-                // if $productsPerPage is set then 
-                //  EVEN IF $pageNumber2 IS NOT set then we have paganation!
-                // THOUGH REALLY if we have more products than 
-                //  $productsPerRow times $rowsPerPage then we have paganation
-                // regardless...
-                $rowsPerPage = genRowsPerPage($productsPerPage2 , $productsPerRow2);
-            } elseif (testVar($productsPerPage2) && $productsPerPage2 > $totalProducts)) {
-                $rowsPerPage = genRowsPerPage($totalProducts , $productsPerRow2);
-
-            } else {
-                // our default.. 12 products per page (the template had 9..)
-                // though this is very likely to be a dead code branch
-                // as the get*() above on $productsPerPage2 was defaulted to 12..
-                // So.. this is here for insurance..
-                $rowsPerPage = 4;
-            }
-            $rowsIdxPages = genPageArray(genRange(0,$totalProducts), $productsPerRow2);
-            $pagesIdxPages = genPageArray(genRange(0,count($rowsIdxPages)), $rowsPerPage);
-
-            if(testVar($pageNumber2)){
-                $idxPages = [];
-                $tmp = $pagesIdxPages[$pageNumber2];
-                foreach($tmp as $idx){
-                    foreach($rowsIdxPages[$idx] as $val){
-                        $idxPages[] = $val;
-                    }
-                }
-            } else {
-                // by default 
-                $idxPages = &$rowsIdxPages;
-            }
-
+            $totalProducts = count($products2);
+            $rowIdxs = genPagesIndexes($productsPerPage2, $productsPerRow2, $totalProducts, $pageNumber2);
+            // if $productsPerPage is set then 
+            //  EVEN IF $pageNumber2 IS NOT set then we have paganation!
+            // THOUGH REALLY if we have more products than 
+            //  $productsPerRow times $rowsPerPage then we have paganation
+            // regardless...
+            
         @endphp
-        {{-- NOTE: every product 'row' can hold up to 3 products. --}}
-        @foreach ($idxPages as $page)
-            @foreach ($page as $idx)
+
+        @foreach ($rowIdxs as $row)
+            @foreach ($row as $idx)
                 <div class="row product-list">
                     @component('lib.themewagon.product_mini')
                         @slot('extraOuterCss')

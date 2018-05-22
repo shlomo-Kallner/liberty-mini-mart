@@ -3,7 +3,7 @@
     use Session;
 @endphp
 
-@extends('content.tests.template')
+@extends('content.index')
 
 @section('js-extra')
 @parent

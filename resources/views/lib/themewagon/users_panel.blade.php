@@ -1,4 +1,9 @@
 
+@php
+ use \App\Utilities\Functions\Functions;
+ 
+ $navbar2 = Functions::getBladedContent(isset($navbar)?$navbar:null);
+@endphp
 <!-- Derived and Inspired from Metronic Shop UI STYLE CUSTOMIZER -->
 
 <!-- BEGIN USERS Scrolled Links Panel -->

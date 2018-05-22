@@ -2,19 +2,19 @@
 @php
 
     $testing = true;
+    use \App\Utilities\Functions\Functions;
 
-    if(isset($sidebar) && unserialize(html_entity_decode((string)$sidebar)) !== ''){
-        $sidebar2 = unserialize(html_entity_decode((string)$sidebar));
-    }else{
-        $sidebar2 = [];
-    }
+    $sidebar2 = Functions::getBladedContent($sidebar);
+    $filters2 = Functions::getBladedContent($filters);
+    $bestsellers2 = Functions::getBladedContent($bestsellers);
+    $currency2 = Functions::getBladedContent($currency);
 @endphp
 
 
 <!-- BEGIN SIDEBAR -->
 <div class="sidebar col-md-3 col-sm-5">
 
-    @if(isset($sidebar2['sidebar']))
+    @if(Functions::testVar($sidebar2))
         <ul class="list-group margin-bottom-25 sidebar-menu">
 
             @if(!$testing)
@@ -23,7 +23,7 @@
                 use \App\Utilities\IterationStack\IterationStack,
                     \App\Utilities\IterationStack\IterationFrame;
 
-                    $frameStack = new IterationStack(&$sidebar2['sidebar']);
+                    $frameStack = new IterationStack(&$sidebar2);
                     /*
                         $currentParent = null;
                         $currentFrame = [
@@ -55,26 +55,26 @@
                     @endphp
                         {{-- the 'render' loop --}}
                             
-                        @if($elem->get('type') === 'url')
+                    @if($elem->get('type') === 'url')
 
-                            @php
-                                /* 'active' link or not is a ADVANCED+ Task LIst Item! 
-                                    -> Not IMPLEMENTNED YET!
-                                    @if($sidebar2['active']['url'] == $elem['url'])
-                                    <li class="list-group-item clearfix active">
-                                    @else
-                                    <li class="list-group-item clearfix">
-                                    @endif
-                                */
-                            @endphp
+                        @php
+                            /* 'active' link or not is a ADVANCED+ Task LIst Item! 
+                                -> Not IMPLEMENTNED YET!
+                                @if($sidebar2['active']['url'] == $elem['url'])
+                                <li class="list-group-item clearfix active">
+                                @else
+                                <li class="list-group-item clearfix">
+                                @endif
+                            */
+                        @endphp
 
-                            <li class="list-group-item clearfix">
-                                <a href="{{ url($elem->get('url')) }}">
-                                    <i class="fa fa-angle-right"></i> {{$elem->get('name')}}
-                                </a>
-                            </li>
+                        <li class="list-group-item clearfix">
+                            <a href="{{ url($elem->get('url')) }}">
+                                <i class="fa fa-angle-right"></i> {{$elem->get('name')}}
+                            </a>
+                        </li>
 
-                        @elseif($elem->get('type') === 'dropdown' && $elem->has('submenu'))
+                    @elseif($elem->get('type') === 'dropdown' && $elem->has('submenu'))
                             @php
                                 /* -- the old code.. here for future use ..
 
@@ -98,21 +98,21 @@
                                     </a>
                                     <ul class="dropdown-menu" style="display:block;">
                     {{-- Stack PUSH time! --}}
-                                @php
-                                    $frameStack->push('submenu');
-                                    
-                                    /* -- the old code.. here for future use ..
-                                        $parentFrameStack[] = $currentFrame;
-                                        $currentFrame;
-                                        // setting the parent..
-                                        $currentFrame['parent'] = &$currentFrame['elem'][$currentFrame['index']];
-                                        // setting the children..
-                                        $currentFrame['children'] = &$elem['submenu'];
+                        @php
+                            $frameStack->push('submenu');
+                            
+                            /* -- the old code.. here for future use ..
+                                $parentFrameStack[] = $currentFrame;
+                                $currentFrame;
+                                // setting the parent..
+                                $currentFrame['parent'] = &$currentFrame['elem'][$currentFrame['index']];
+                                // setting the children..
+                                $currentFrame['children'] = &$elem['submenu'];
 
-                                    */
-                                @endphp
-                                @continue
-                        @endif
+                            */
+                        @endphp
+                        @continue
+                    @endif
 
                     
                     {{-- 
@@ -123,7 +123,11 @@
                     @if ($frameStack->inc()->eof())
                         {{-- stack pop time! --}}
                         @php
-                            $frameStack->pop();
+                            $frameStack->pop()->inc();
+                            // need to increment because pop just 
+                            //  popped the frame, but left us in the
+                            //  parent element..
+
                             /*  -- the old code.. here for future use ..
                                 $tmp = array_pop($parentFrameStack);
                             */
@@ -198,12 +202,12 @@
         </ul>
     @endif
 
-    @if(isset($sidebar2['filters']) && !empty($sidebar2['filters']))
+    @if(Functions::testVar($filters2))
         <div class="sidebar-filter margin-bottom-25">
-            <h2>Filter</h2>
+            <h2>Filters</h2>
 
             @if (false)
-                @foreach ($sidebar2['filters'] as $item)
+                @foreach ($filters2 as $item)
 
                     <h3>{{ $item['name'] }}</h3>
                     {!! $item['filter'] !!}
@@ -230,12 +234,12 @@
         </div>
     @endif
 
-    @if(isset($sidebar2['bestsellers']) && !empty($sidebar2['bestsellers']))
+    @if(Functions::testVar($bestsellers2))
         <div class="sidebar-products clearfix">
             <h2>Bestsellers</h2>
             @if (false)
 
-                @foreach ($sidebar2['bestsellers'] as $item)
+                @foreach ($bestsellers2 as $item)
 
                     <div class="item">
                         <a href="{{ url($item['url'])}}">
@@ -247,7 +251,7 @@
                             </a>
                         </h3>
                         <div class="price">
-                            <i class="fa {{$currency}}"></i>
+                            <i class="fa {{$currency2}}"></i>
                             {{$item['price']}}
                         </div>
                     </div>

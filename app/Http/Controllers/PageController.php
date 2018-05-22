@@ -89,4 +89,41 @@ class PageController extends MainController {
         return self::getView('content.tests.index2', $title, $content);
     }
 
+    public function test(Request $request) {
+        $requestedPage = !empty($request->page) ? $request->page : 'index';
+        $title = 'test ' . $requestedPage . ' page';
+        $content = [
+            'header' => "<b>$requestedPage</b>",
+            'subheading' => "<p>'Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'</p>",
+            'article'=> "<p>" . e('World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919') . "</p>",
+            'img' => "images/site/ring_it_liberty_bell.jpg",
+            'imgAlt' => 'Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan',
+            'breadcrumbs' => ''
+        ];
+
+        //return $this->getTemplateView($title, $content);
+        //dd($request->session()->all());
+        //dd(session()->all());
+        self::$data['new_products'] = [
+            'products' => [],
+            'currency' => 'fa-usd',
+        ];
+        self::$data['pricing'] = [];
+        self::$data['sidebar'] = [
+            'sidebar' => [],
+            'filters' => [
+                'name' => '', // <= this the title/heading text of the filter!
+                'filter' => '', // <= this is the HTML of the filter!
+            ],
+            'bestsellers' => [
+                [
+                    'url' => '',
+                    'img' => '',
+                    'alt' => '',
+                ],
+            ],
+        ];
+        return self::getView('content.tests.test2', $title, $content);
+    }
+
 }

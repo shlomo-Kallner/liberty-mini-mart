@@ -234,47 +234,43 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
                 {{-- Moving our "main level" items to the 'front'.. --}}
                 @foreach($navbar as $nav)
 
-                {{-- BEGIN single "main level" menu --}}
-                @if ($nav['type'] == 'url' || $nav['type'] == 'modal')
+                    @if ($nav['type'] == 'url' || $nav['type'] == 'modal')
 
-                @component('lib.themewagon.links')
-                @foreach ($nav as $key => $value)
+                        {{-- BEGIN single "main level" menu --}}
+                        @component('lib.themewagon.links')
+                            @foreach ($nav as $key => $value)
 
-                    @slot($key)
-                        {{ $value }}
-                    @endslot
-                     
-                @endforeach
-                @endcomponent
-                {{-- End single "main level" menu --}}
-                
-                @elseif ($nav['type'] == 'dropdown')
-                    {{-- begin dropdown menu top-level link --}}
-                    {{-- DROPDOWNS ARE AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+                                @slot($key)
+                                    {{ $value }}
+                                @endslot
+                                
+                            @endforeach
+                        @endcomponent
+                        {{-- End single "main level" menu --}}
+                        
+                    @elseif ($nav['type'] == 'dropdown')
+                        {{-- begin dropdown menu top-level link --}}
+                        {{-- DROPDOWNS ARE AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+                        
+                        {{-- end dropdown menu top-level link --}}
+                    @elseif ($nav['type'] == 'dropdown-megamenu')
+                        {{-- DROPDOWN-MEGAMENUS ARE A ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+
                     
-                    {{-- end dropdown menu top-level link --}}
-                @elseif ($nav['type'] == 'dropdown-megamenu')
-                    {{-- DROPDOWN-MEGAMENUS ARE A ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
-
-                
-                @elseif ($nav['type'] == 'nav-catalogue')
-                {{-- NAV-CATALOGUE IS AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+                    @elseif ($nav['type'] == 'nav-catalogue')
+                        {{-- NAV-CATALOGUE IS AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
+                        
+                    @endif
                     
-                @endif
-                
-
                 @endforeach
-
-                
-                
-                {{-- Removing the 'pages' dropdown menu that came from the template.. --}}
-                
-
 
                 {{-- 
-                    REMOVED: the link to the Premium Admin Theme at 
+                    Removing the 'pages' dropdown menu that came from the template.. 
+
+                    REMOVED: the link tag to the Premium Admin Theme at 
                     keenthemes or at 'http://themeforest.net' where 
                     we got the Metronic Shop UI Template.. 
+                    there stil are links to them in the footer..
                 --}}
 
                 <!-- BEGIN TOP SEARCH -->
@@ -295,21 +291,26 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
                 @else
                     {{--  --}}
                     @if(false)
-                    <li role="separator" class="divider">
-                        <span class="sep"></span>
-                    </li>
-                    {{-- <span class="sep"></span> --}}
+                        <li role="separator" class="divider">
+                            <span class="sep"></span>
+                        </li>
+                        {{-- <span class="sep"></span> --}}
                     @endif
                     <li class="menu-search">
                         @if(false)
-                        <span class="sep"></span>
+                            <span class="sep"></span>
                         @endif
                         <a class="clearfix" href="#" data-toggle="modal" data-target="#search-modal">
                             <i class="fa fa-search"></i>
                         </a>
-                    @endif 
-                </li>
+                @endif 
+                </li> 
+                {{-- 
+                    This li end tag is of the search button.. 
+                    the li begin tag is in the above @If..
+                --}}
                 <!-- END TOP SEARCH -->
+                
             </ul>
         </div>
         <!-- END NAVIGATION -->

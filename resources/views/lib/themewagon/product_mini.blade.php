@@ -1,6 +1,7 @@
 @php
 use \App\Utilities\Functions\getBladedContent,
     \App\Utilities\Functions\testBladedVar,
+    \App\Utilities\Functions\getBladedString,
     \App\Utilities\Functions\testVar;
 
 

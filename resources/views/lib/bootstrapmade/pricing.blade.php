@@ -9,6 +9,10 @@ Author URL: https://bootstrapmade.com
 
  -->
 
+ @php
+    use \App\Utilities\Functions\Functions;
+ @endphp
+
 <!-- ======== @Region: #content ======== -->
 <div id="content">
     <!-- Pricing -->

@@ -16,6 +16,12 @@
 {{-- page local css --}}
 @parent
 
+<!-- Page level plugin styles START -->
+<link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/css/animate.css') }}" rel="stylesheet">
+<link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/fancybox/source/jquery.fancybox.css') }}" rel="stylesheet">
+<link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/owl.carousel/assets/owl.carousel.css') }}" rel="stylesheet">
+<!-- Page level plugin styles END -->
+
 @endsection
 
 @section('css-themes')

@@ -1,20 +1,33 @@
 
+@php
+
+$testing = true;
+use use \App\Utilities\Functions\Functions;
+    
+    $products2 = Functions::getBladedContent($products);
+    $sizeClass2 = Functions::getBladedContent($sizeClass);
+    $productClass2 = Functions::getBladedContent($productClass);
+    $owlClass2 = Functions::getBladedContent($owlClass);
+    $title2 = Functions::getBladedString($title);
+
+@endphp
+
 
 <!-- BEGIN PRODUCT GALLERY -->
 <div class="row margin-bottom-40 margin-top-30">
-    <div class="{{ $sizeClass }} {{ $productClass }}">
-        <h2>{{ $title }}</h2>
-        <div class="owl-carousel {{ $owlClass }}">
-            @if(false)
-            @component('lib.themewagon.product_mini')
-                @foreach (unserialize(html_entity_decode( $products ) ) as $product)
-                    @foreach ($product as $key => $item)
-                        @slot($key)
-                            {{$item}}
-                        @endslot
+    <div class="{{ $sizeClass2 }} {{ $productClass2 }}">
+        <h2>{{ $title2 }}</h2>
+        <div class="owl-carousel {{ $owlClass2 }}">
+            @if( Functions::testVar($products2) !== false && !$testing)
+                @component('lib.themewagon.product_mini')
+                    @foreach ($products2 as $product)
+                        @foreach ($product as $key => $item)
+                            @slot($key)
+                                {{$item}}
+                            @endslot
+                        @endforeach
                     @endforeach
-                @endforeach
-            @endcomponent
+                @endcomponent
             @else
                 <div>
                     <div class="product-item">

@@ -3,20 +3,19 @@
 
     $testing = true;
 
-    use \App\Utilities\Functions\getBladedContent,
-        \App\Utilities\Functions\testVar;
+    use \App\Utilities\Functions\Functions;
 
-    $paginator2 = getBladedContent($paginator);
+    $paginator2 = Functions::getBladedContent($paginator);
     
 @endphp
 
-@if (testVar($paginator2) || $testing === true)
+@if (Functions::testVar($paginator2) || $testing === true)
     <!-- BEGIN PAGINATOR -->
     <div class="row">
     
 @endif
 
-@if (testVar($paginator2))
+@if (Functions::testVar($paginator2))
     
         <div class="col-md-4 col-sm-4 items-info">
             Items {{$paginator2['currentRange']['begin']}} 
@@ -80,7 +79,7 @@
     
 @endif
 
-@if (testVar($paginator2) || $testing === true)    
+@if (Functions::testVar($paginator2) || $testing === true)    
     </div>
     <!-- END PAGINATOR -->
 @endif
