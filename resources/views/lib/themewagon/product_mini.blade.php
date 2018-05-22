@@ -1,5 +1,12 @@
+@php
+use \App\Utilities\Functions\getBladedContent,
+    \App\Utilities\Functions\testBladedVar,
+    \App\Utilities\Functions\testVar;
 
-@if (isset($extraOuterCss))
+
+@endphp
+
+@if (testVar($extraOuterCss))
     <div class="{{$extraOuterCss}}">
 @else
     <div>    
@@ -17,11 +24,11 @@
         <h3><a href="{{ url($url) }}">{{ $name }}</a></h3>
         <div class="pi-price">
             <i class="fa {{ $currency }}"></i>
-            {{ $price }}
+            <span>{{ $price }}</span>
         </div>
         <a href="javascript:;" class="btn btn-default add2cart" data-product-id="{{ $id }}">Add to cart</a>
-        @isset($sticker)
+        @if(testVar($sticker))
         <div class="sticker {{ $sticker }}"></div>
-        @endisset
+        @endif
     </div>
 </div>
