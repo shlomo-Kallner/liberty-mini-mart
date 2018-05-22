@@ -76,3 +76,36 @@ function genPageArray(array $range, int $numPerPage)
     }
     return $res;
 }
+
+
+/**
+    @param integer $ppp - productsPerPage
+    @param integer $ppr - productsPerRow
+    @return array - a array of arrays of indices of rows..
+*/
+function genPagesIndexes(int $ppp, int $ppr, int $tp, int $pn = -1)
+{
+    $res = [];
+    if ($ppp <= $tp) {
+        $rpp = genRowsPerPage($ppp, $ppr); // => $rowsPerPage
+    } else {
+        $rpp = genRowsPerPage($tp, $ppr); // => $rowsPerPage
+    }
+
+    $rip = genPageArray(genRange(0, $tp), $ppr); // => $rowsIdxPages
+    $pip = genPageArray(genRange(0, count($rip)), $rpp); // => $pagesIdxPages
+
+    if ($pn > -1) { // => $pageNumber2
+        $res = [];
+        $page = $pip[$pn];
+        foreach ($page as $row) {
+            $res[] = $rip[$row];
+        }
+    } else {
+        // by default 
+        $res = &$rip;
+    }
+    return $res;
+}
+            
+     

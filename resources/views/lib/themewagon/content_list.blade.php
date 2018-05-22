@@ -5,6 +5,7 @@ use \App\Utilities\Functions\getBladedContent,
     \App\Utilities\Functions\genRange,
     \App\Utilities\Functions\genPageArray,
     \App\Utilities\Functions\genRowsPerPage,
+    \App\Utilities\Functions\genPagesIndexes,
     \App\Utilities\Functions\testVar;
 
     // The DATA for the SLOTS of THIS COMPONENT are gathered HERE!!!  
@@ -12,7 +13,8 @@ use \App\Utilities\Functions\getBladedContent,
 
     $sorting2 = getBladedContent($sorting);
     $products2 = getBladedContent($products);
-    $pageNumber2 = getBladedContent($pageNumber);
+    $pageNumber2 = getBladedContent($pageNumber,-1);
+    // our default.. is 12 products per page (the template had 9..)
     $productsPerPage2 = getBladedContent($productsPerPage,12);
     $productsPerRow2 = getBladedContent($productsPerRow,3);
 
@@ -21,9 +23,7 @@ use \App\Utilities\Functions\getBladedContent,
 
     // Some Utility Functions for the component..
 
-    
-            
-            
+           
 @endphp
 
 <!-- BEGIN CONTENT -->
@@ -92,7 +92,7 @@ use \App\Utilities\Functions\getBladedContent,
                 // So.. this is here for insurance..
                 $rowsPerPage = 4;
             }
-            $rowsIdxPages = genPageArray(genRange(0,count($products2)), $productsPerRow2);
+            $rowsIdxPages = genPageArray(genRange(0,$totalProducts), $productsPerRow2);
             $pagesIdxPages = genPageArray(genRange(0,count($rowsIdxPages)), $rowsPerPage);
 
             if(testVar($pageNumber2)){
