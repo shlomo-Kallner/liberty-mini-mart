@@ -4,24 +4,34 @@
  *  404 and 503 page navbar retrieval code
  */
 
-use \App\Page;
+use \App\Page,
+    \App\Utilities\Functions\Functions,
+    Darryldecode\Cart\Cart;
 
-if (!isset($navbar) || empty($navbar)) {
-    $navbar = Page::getNavBar();
+$navbar2 = Functions::getBladedContent(isset($navbar)?$navbar:'');
+//dd($navbar2);
+if (!Functions::testVar($navbar2)) {
+    $navbar2 = Page::getNavBar();
 }
-if (!isset($preheader) || empty($preheader)) {
-    $preheader = Page::getPreHeader();
+
+
+$preheader2 = Functions::getBladedContent(isset($preheader)?$preheader:'');
+//dd($preheader2);
+if (!Functions::testVar($preheader2)) {
+    $preheader2 = Page::getPreHeader();
 }
+$preheader2s = serialize($preheader2); // preserialized for component slots..
 
 /// For testing, dump&die the $navbar variable.
 //dd($navbar);
 // And the $preheader variable.
 //dd($preheader);
 
-use Darryldecode\Cart\Cart;
 $testing = true;
-    
-if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
+
+$cart2 = Functions::getBladedContent(isset($cart)?$cart:'');
+
+if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
  // place some $cart initializing code here..
 } elseif($testing){
     $fakeID = 'MyFAKESEssionID123';
@@ -33,7 +43,7 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
             'description' => 'Rolex Classic Watch',
         ]);
         //$cartContent = \Cart::session($fakeID)->getContent();
-        $cart = [
+        $cart2 = [
             'items' => \Cart::session($fakeID)->getContent(),
             'currency-icon' => 'fa-usd',
             'sub-total' => \Cart::session($fakeID)->getSubTotal(),
@@ -49,7 +59,7 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
 
     @component('lib.themewagon.users_panel')
         @slot('navbar')
-            {!! serialize($preheader) !!}
+            {!! $preheader2s !!}
         @endslot
     @endcomponent
 @endsection
@@ -58,98 +68,107 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
 @section('pre-header-navbar')
 @parent
 
-<!-- BEGIN TOP BAR -->
-<div class="pre-header">
-    <div class="container">
-        <div class="row">
-            <!-- BEGIN TOP BAR LEFT PART -->
-            <div class="col-md-6 col-sm-6 additional-shop-info">
-                
-                {{-- 
-                     TO DO: Convert CURRENCIES LIST to a dynamic menu 
-                     list using our links component. 
-                --}}
-                <ul class="list-unstyled list-inline">
-                    {{-- REMOVED: the Phone link from 
-                        the template was removed. --}}
-                    <!-- BEGIN CURRENCIES -->
-                    <li class="shop-currencies">
-                        
-                        {{-- Euro --}}                        
-                        <a href="javascript:void(0);">
-                            <i class="fa fa-eur"></i>
-                        </a>
-                        
-                        {{-- British Pounds --}}
-                        <a href="javascript:void(0);">
-                            <i class="fa fa-gbp"></i>
-                        </a>
-                        
-                        {{-- Israeli Shekels --}}
-                        <a href="javascript:void(0);">
-                            <i class="fa fa-ils"></i>
-                        </a>
-
-                        {{-- USA Dollars - the default --}}
-                        <a href="javascript:void(0);" class="current">
-                            <i class="fa fa-usd"></i>
-                        </a>
-                    </li>
-                    <!-- END CURRENCIES -->
-                    <!-- BEGIN LANGS -->
-                    <li class="langs-block">
-                        <a href="javascript:void(0);" class="current">English </a>
-                        <div class="langs-block-others-wrapper"><div class="langs-block-others">
-                                <a href="javascript:void(0);">Hebrew</a>
-                                <a href="javascript:void(0);">French</a>
-                                <a href="javascript:void(0);">Germany</a>
-                                <a href="javascript:void(0);">Turkish</a>
-                            </div></div>
-                    </li>
-                    <!-- END LANGS -->
-                </ul>
-            </div>
-            <!-- END TOP BAR LEFT PART -->
-            <!-- BEGIN TOP BAR MENU -->
-            <!-- 
-                 While the Primary/Main template for this TOP BAR MENU 
-                 is Metronic Shop UI, the Internal Styling of individual
-                 menu items is inspired by/copied from 
-                 'bootstrapious/universal-1-0' TOP BAR MENU.
-            -->
-            <div class="col-md-6 col-sm-6 additional-nav">
-                <ul class="list-unstyled list-inline pull-right">
-                    @if($preheader)
-                    {{-- UPDATE: Copying FA icon and span tag link from 
-                                 master_bootstrapious.blade.php  TOP BAR Section
-                                 to replace the 'simple' text content of these 
-                                 couple of links...
-                     --}}
-
-                    @foreach($preheader as $nav)
-
-                        @component('lib.themewagon.links')
-                            @foreach ($nav as $key => $value)
-
-                                @slot($key)
-                                    {{ $value }}
-                                @endslot
-                                
-                            @endforeach
-                        @endcomponent
+@if (true)
+ 
+    @component('lib.themewagon.topbar')
+        @slot('preheader')
+            {!! $preheader2s !!}
+        @endslot
+    @endcomponent
+    
+@else
+    <!-- BEGIN TOP BAR -->
+    <div class="pre-header">
+        <div class="container">
+            <div class="row">
+                <!-- BEGIN TOP BAR LEFT PART -->
+                <div class="col-md-6 col-sm-6 additional-shop-info">
                     
-                    @endforeach
-                    {{-- End dynamicly generated "main level" topbar menu --}}
-                    @endif
+                    {{-- 
+                        TO DO: Convert CURRENCIES LIST to a dynamic menu 
+                        list using our links component. 
+                    --}}
+                    <ul class="list-unstyled list-inline">
+                        {{-- REMOVED: the Phone link from 
+                            the template was removed. --}}
+                        <!-- BEGIN CURRENCIES -->
+                        <li class="shop-currencies">
+                            
+                            {{-- Euro --}}                        
+                            <a href="javascript:void(0);">
+                                <i class="fa fa-eur"></i>
+                            </a>
+                            
+                            {{-- British Pounds --}}
+                            <a href="javascript:void(0);">
+                                <i class="fa fa-gbp"></i>
+                            </a>
+                            
+                            {{-- Israeli Shekels --}}
+                            <a href="javascript:void(0);">
+                                <i class="fa fa-ils"></i>
+                            </a>
 
-                </ul>
+                            {{-- USA Dollars - the default --}}
+                            <a href="javascript:void(0);" class="current">
+                                <i class="fa fa-usd"></i>
+                            </a>
+                        </li>
+                        <!-- END CURRENCIES -->
+                        <!-- BEGIN LANGS -->
+                        <li class="langs-block">
+                            <a href="javascript:void(0);" class="current">English </a>
+                            <div class="langs-block-others-wrapper"><div class="langs-block-others">
+                                    <a href="javascript:void(0);">Hebrew</a>
+                                    <a href="javascript:void(0);">French</a>
+                                    <a href="javascript:void(0);">Germany</a>
+                                    <a href="javascript:void(0);">Turkish</a>
+                                </div></div>
+                        </li>
+                        <!-- END LANGS -->
+                    </ul>
+                </div>
+                <!-- END TOP BAR LEFT PART -->
+                <!-- BEGIN TOP BAR MENU -->
+                <!-- 
+                    While the Primary/Main template for this TOP BAR MENU 
+                    is Metronic Shop UI, the Internal Styling of individual
+                    menu items is inspired by/copied from 
+                    'bootstrapious/universal-1-0' TOP BAR MENU.
+                -->
+                <div class="col-md-6 col-sm-6 additional-nav">
+                    <ul class="list-unstyled list-inline pull-right">
+                        @if(Functions::testVar($preheader2))
+                            {{-- UPDATE: Copying FA icon and span tag link from 
+                                        master_bootstrapious.blade.php  TOP BAR Section
+                                        to replace the 'simple' text content of these 
+                                        couple of links...
+                            --}}
+
+                            @foreach($preheader2 as $nav)
+
+                                @component('lib.themewagon.links')
+                                    @foreach ($nav as $key => $value)
+
+                                        @slot($key)
+                                            {{ $value }}
+                                        @endslot
+                                        
+                                    @endforeach
+                                @endcomponent
+                            
+                            @endforeach
+                            {{-- End dynamicly generated "main level" topbar menu --}}
+                        @endif
+
+                    </ul>
+                </div>
+                <!-- END TOP BAR MENU -->
             </div>
-            <!-- END TOP BAR MENU -->
-        </div>
-    </div>        
-</div>
-<!-- END TOP BAR -->
-
+        </div>        
+    </div>
+    <!-- END TOP BAR -->
+@endif
 @endsection
 
 
@@ -171,12 +190,12 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
         <div class="top-cart-block">
             <div class="top-cart-info">
                 <a href="javascript:void(0);" class="top-cart-info-count">
-                    {{ $cart['total-items'] }} 
-                    {{ $cart['total-items'] == 0 || $cart['total-items'] > 1 ? 'items' : 'item' }}
+                    {{ $cart2['total-items'] }} 
+                    {{ $cart2['total-items'] == 0 || $cart2['total-items'] > 1 ? 'items' : 'item' }}
                 </a>
                 <a href="javascript:void(0);" class="top-cart-info-value">
-                    <i class="fa {{ $cart['currency-icon'] }}"></i>
-                    {{ $cart['sub-total'] }}
+                    <i class="fa {{ $cart2['currency-icon'] }}"></i>
+                    {{ $cart2['sub-total'] }}
                 </a>
             </div>
             <i class="fa fa-shopping-cart"></i>
@@ -184,7 +203,7 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
             <div class="top-cart-content-wrapper">
                 <div class="top-cart-content">
                     <ul class="scroller" style="height: 250px;">
-                        @foreach($cart['items'] as $item)
+                        @foreach($cart2['items'] as $item)
                         <?php //dd($item);     ?>
                         @component('lib.themewagon.cartItem')
                         @slot('url')
@@ -232,7 +251,7 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
                 {{-- Replacing Original 'Kids' menu Item with 
                      our Blade Foreach loop...  --}}
                 {{-- Moving our "main level" items to the 'front'.. --}}
-                @foreach($navbar as $nav)
+                @foreach($navbar2 as $nav)
 
                     @if ($nav['type'] == 'url' || $nav['type'] == 'modal')
 
@@ -310,7 +329,7 @@ if ((!isset($cart) || emptyArray($cart)) && !$testing ) {
                     the li begin tag is in the above @If..
                 --}}
                 <!-- END TOP SEARCH -->
-                
+
             </ul>
         </div>
         <!-- END NAVIGATION -->

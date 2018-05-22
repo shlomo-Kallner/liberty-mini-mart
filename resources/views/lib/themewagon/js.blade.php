@@ -100,7 +100,7 @@
         Layout.initOWL();
         Layout.initImageZoom();
         Layout.initTouchspin();
-        Layout.initTwitter();
+        //Layout.initTwitter();
 
         Layout.initFixHeaderWithPreHeader();
         Layout.initNavScrolling();

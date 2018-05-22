@@ -2,7 +2,8 @@
 
 namespace App\Utilities\Functions;
 
-use \Illuminate\Support\Collection;
+use \Illuminate\Support\Collection,
+    Illuminate\Support\HtmlString;
 
 class Functions{
 
@@ -11,20 +12,28 @@ class Functions{
         return isset($var) && !empty($var);
     }
 
-    static public function testBladedVar(string $var)
+    static public function testBladedVar($var)
     {
         if (self::testVar($var)) {
-            $tmp = unserialize(html_entity_decode($var));
-            return !empty($tmp);
+            if (is_string($var) || $var instanceof HtmlString ) {
+                $tmp = unserialize(html_entity_decode((string)$var));
+                return !empty($tmp);
+            }
+            return true;
         }
         return false;
     }
 
-    static public function getBladedContent(string $var, $default = null)
+    static public function getBladedContent($var, $default = null)
     {
         if (self::testVar($var)) {
-            $tmp = unserialize(html_entity_decode($var));
-            return !empty($tmp) ? $tmp : $default ;
+            if (is_string($var) || $var instanceof HtmlString ) {
+                $tmp = unserialize(html_entity_decode($var));
+                return !empty($tmp) ? $tmp : $default ;
+            } else {
+                return !empty($var) ? $var : $default ;
+            }
+
         } else {
             return $default;
         }
@@ -40,7 +49,7 @@ class Functions{
         }
     }
 
-    static public function getContent(string $var, $default = null)
+    static public function getContent($var, $default = null)
     {
         if (self::testVar($var)) {
             return !empty($var) ? $var : $default ;

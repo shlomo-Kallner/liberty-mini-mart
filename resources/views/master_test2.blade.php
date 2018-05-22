@@ -93,29 +93,29 @@ use the 'no-js' css class for IE9 and below as well.
         <!-- CSS END -->
 
 
-        {{-- 
-            Loading compatibitity javascript tags 
-             via _Blade:_Section 'js-defered' below..
-
-            UPDATE: checked html5shiv project page at 
-            https://www.npmjs.com/package/html5shiv
-            and it specifies the placement of the 
-            html5shiv script tag in the head tag...
-        --}}
-        @include('inc.js.compatibility')
-        {{-- <== 'inc.js.compatibility' is from 
-                    bootstrap and others...
-                    its all in its own file in case
-                    of possible 'growth'...
-                    p.s. its just some IE Conditionals
-                    and a Blade comment..
-        --}}
-
         <!-- Preloaded JS START... -->
-        @section('js-preloaded')
-        {{-- Not using Font Awesome v5! --}}
-        {{-- Include('inc.js.preloaded') --}}{{--  <-- This file is pure HTML.. --}}
-        @show
+            {{-- 
+                Loading compatibitity javascript tags 
+                via _Blade:_Section 'js-defered' below..
+
+                UPDATE: checked html5shiv project page at 
+                https://www.npmjs.com/package/html5shiv
+                and it specifies the placement of the 
+                html5shiv script tag in the head tag...
+            --}}
+            @include('inc.js.compatibility')
+            {{-- <== 'inc.js.compatibility' is from 
+                        bootstrap and others...
+                        its all in its own file in case
+                        of possible 'growth'...
+                        p.s. its just some IE Conditionals
+                        and a Blade comment..
+            --}}
+
+            @section('js-preloaded')
+            {{-- Not using Font Awesome v5! --}}
+            {{-- Include('inc.js.preloaded') --}}{{--  <-- This file is pure HTML.. --}}
+            @show
         <!-- Preloaded JS END -->
     </head>
     <body class="ecommerce"> 

@@ -22,9 +22,11 @@ $crumbs = Functions::getBladedContent(isset($breadcrumbs)?$breadcrumbs:'', [
     ],
 ]);
 
+//dd($crumbs);
+
 @endphp
 
-@if ($testing || !empty($crumbs['current']['name']))
+@if ($testing || Functions::testVar($crumbs['current']['name']))
 <div class="row margin-bottom-5 margin-top-5">
     <ul class="breadcrumb pull-left">
             

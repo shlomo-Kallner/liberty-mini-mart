@@ -1,7 +1,12 @@
 <?php
-//$useTimesIcon = true;
+
+/// THIS FILE IS UNUSED AND OBSOLETE!
+///  Content was split into 2 sepparate files.
+///  'login.blade.php' and 'search.blade.php'.
+
 /* THE OLD IF USE TIMES ICON OR USE CLOSE ICON FOR MODAL CLOSE..
  * 
+ * $useTimesIcon = true;
  * @if($useTimesIcon)
   <i class="fa fa-times"></i>
   @else
