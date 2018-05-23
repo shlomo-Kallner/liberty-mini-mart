@@ -94,14 +94,18 @@
 
 @section('js-extra')
   @parent
+  
+  {{-- 
+     from Metronic file "shop-index-header-fix.html" 
+     with "Layout.initTwitter();" removed..
+  --}}
+  
   <script type="text/javascript">
     jQuery(document).ready(function () {
         Layout.init();
         Layout.initOWL();
         Layout.initImageZoom();
         Layout.initTouchspin();
-        //Layout.initTwitter();
-
         Layout.initFixHeaderWithPreHeader();
         Layout.initNavScrolling();
     });

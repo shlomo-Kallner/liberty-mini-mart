@@ -1,13 +1,10 @@
 @php
-use \App\Utilities\Functions\getBladedContent,
-    \App\Utilities\Functions\testBladedVar,
-    \App\Utilities\Functions\getBladedString,
-    \App\Utilities\Functions\testVar;
+use \App\Utilities\Functions\Functions;
 
 
 @endphp
 
-@if (testVar($extraOuterCss))
+@if (Functions::testVar($extraOuterCss))
     <div class="{{$extraOuterCss}}">
 @else
     <div>    
@@ -28,7 +25,7 @@ use \App\Utilities\Functions\getBladedContent,
             <span>{{ $price }}</span>
         </div>
         <a href="javascript:;" class="btn btn-default add2cart" data-product-id="{{ $id }}">Add to cart</a>
-        @if(testVar($sticker))
+        @if(Functions::testVar($sticker))
         <div class="sticker {{ $sticker }}"></div>
         @endif
     </div>
