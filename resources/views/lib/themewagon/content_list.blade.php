@@ -67,7 +67,7 @@ use \App\Utilities\Functions\Functions;
             @if(false)
                 {{-- 
                     This merely provides different views of the content, 
-                    THIS IS AN ADVANCED_TASK_LIST Item => NOT YET IMPLEMENTED!
+                    THIS IS AN WISHLIST_TASK_LIST Item => NOT YET IMPLEMENTED!
                 --}}
                 
                 <div class="col-md-2 col-sm-2 list-view">

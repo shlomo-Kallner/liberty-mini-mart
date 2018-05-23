@@ -135,33 +135,50 @@ class Functions{
     static public function genPagesIndexes(int $ppp, int $ppr, int $tp, int $pn = -1)
     {
         $res = [];
-        if ($ppp <= $tp) {
-            /// usually productsPerPage is smaller and so use it..
-            $rpp = self::genRowsPerPage($ppp, $ppr); // => $rowsPerPage
+        if (false) {
+
+            /// step 0] if not given a valid page index, 
+            ///         goto step 4.
+            /// step 1] generate a 'table/array' of 
+            ///         indexes into the ProductArray Per Content Page. 
+            /// step 2] split each indexesPerContentPage Array into
+            ///         rows of indexesPerContentPage per Page
+            /// step 3] return the page's rowArray. exit function.
+            /// step 4] execute step 1, 2 and 3 with the total number of
+            ///         Products as the number of Products Per Content
+            ///         Page and a Page Number of 0. 
+            ///         (aka Generate a PageTable with only 1 entry,
+            ///          and return the entry's rowArray.)
         } else {
-            /// otherwise use totalProducts
-            $rpp = self::genRowsPerPage($tp, $ppr); // => $rowsPerPage
-        }
-
-        /// generate the 'pages' of indices (into the product array) for ALL rows..
-        $rip = self::genPageArray(self::genRange(0, $tp), $ppr); // => $rowsIdxPages
-        /// generate the 'pages' of indices (into $rip) for ALL 'content-pages'
-        $pip = self::genPageArray(self::genRange(0, count($rip)), $rpp); // => $pagesIdxPages
-
-        if ($pn > -1 && $pn < count($pip) ) { // => $pageNumber2
-            /// if a 'content-pages-number'
-            ///  is set AND it's valid, 
-            ///  return just that 'content-page's'
-            ///  row-index-pages from $rip..
-            $res = [];
-            $page = $pip[$pn];
-            foreach ($page as $row) {
-                $res[] = $rip[$row];
+            // the OLD AND WRONG CODE - here for working reference during fix...
+            if ($ppp <= $tp) {
+                /// usually productsPerPage is smaller and so use it..
+                $rpp = self::genRowsPerPage($ppp, $ppr); // => $rowsPerPage
+            } else {
+                /// otherwise use totalProducts
+                $rpp = self::genRowsPerPage($tp, $ppr); // => $rowsPerPage
             }
-        } else {
-            /// else by default ..
-            /// return ALL row-index-pages..
-            $res = &$rip;
+    
+            /// generate the 'pages' of indices (into the product array) for ALL rows..
+            $rip = self::genPageArray(self::genRange(0, $tp), $ppr); // => $rowsIdxPages
+            /// generate the 'pages' of indices (into $rip) for ALL 'content-pages'
+            $pip = self::genPageArray(self::genRange(0, count($rip)), $rpp); // => $pagesIdxPages
+    
+            if ($pn > -1 && $pn < count($pip) ) { // => $pageNumber2
+                /// if a 'content-pages-number'
+                ///  is set AND it's valid, 
+                ///  return just that 'content-page's'
+                ///  row-index-pages from $rip..
+                $res = [];
+                $page = $pip[$pn];
+                foreach ($page as $row) {
+                    $res[] = $rip[$row];
+                }
+            } else {
+                /// else by default ..
+                /// return ALL row-index-pages..
+                $res = &$rip;
+            }
         }
         return $res;
     }
