@@ -27,8 +27,29 @@ class Functions{
     static public function getBladedContent($var, $default = null)
     {
         if (self::testVar($var)) {
-            if (is_string($var) || $var instanceof HtmlString ) {
+            if (is_string($var) ) {
                 $tmp = unserialize(html_entity_decode((string)$var));
+                return !empty($tmp) ? $tmp : $default ;
+            } elseif ($var instanceof HtmlString) {
+                $tmp = unserialize(html_entity_decode($var->toHtml()));
+                return !empty($tmp) ? $tmp : $default ;
+            } else {
+                return !empty($var) ? $var : $default ;
+            }
+
+        } else {
+            return $default;
+        }
+    }
+
+    static public function getUnBladedContent($var, $default = null)
+    {
+        if (self::testVar($var)) {
+            if (is_string($var) ) {
+                $tmp = unserialize((string)$var);
+                return !empty($tmp) ? $tmp : $default ;
+            } elseif ($var instanceof HtmlString) {
+                $tmp = unserialize($var->toHtml());
                 return !empty($tmp) ? $tmp : $default ;
             } else {
                 return !empty($var) ? $var : $default ;
@@ -113,10 +134,15 @@ class Functions{
     static public function genPageArray(array $range, int $numPerPage)
     {
         $res = [];
-        $col = collect($range);
-        $numTotal = self::genRowsPerPage($col->count(), $numPerPage);
-        for ($i = 0; $i < $numTotal; $i++ ) {
-            $res[] = $col->forPage($i, $numPerPage)->all();
+        $rngLen = count($range);
+        if ($rngLen == $numPerPage) {
+            $res[] = $range;
+        } elseif ($rngLen > $numPerPage) {
+            $col = collect($range);
+            $numTotal = self::genRowsPerPage($col->count(), $numPerPage);
+            for ($i = 0; $i < $numTotal; $i++ ) {
+                $res[] = $col->forPage($i, $numPerPage)->all();
+            }
         }
         return $res;
     }
@@ -128,19 +154,23 @@ class Functions{
      * @param integer $ppp - productsPerPage
      * @param integer $ppr - productsPerRow
      * @param int     $tp  - totalProducts (total number OF products)
-     * @param int     $pn  - pageNumber ; -1 for generate a single-page
+     * @param int     $pn  - pageNumber ; valid page numbers are from 0 and up;
+     *                     - -1 for generate and return all as a single-page;
+     *                     - -2 for generate and return all pages;
      * 
      * @return array - a array of arrays of indices of rows..
      */
     static public function genPagesIndexes(int $ppp, int $ppr, int $tp, int $pn = -1)
     {
         $res = [];
-        if (false) {
+        $numPages = self::genRowsPerPage($tp, $ppp);
+        if ($pn > -3 && $pn < $numPages) {
 
             /// step 0] if not given a valid page index, 
             ///         goto step 4.
             /// step 1] generate a 'table/array' of 
             ///         indexes into the ProductArray Per Content Page. 
+            $pnValid = $pn > 0 && $pn < $numPages;
             /// step 2] split each indexesPerContentPage Array into
             ///         rows of indexesPerContentPage per Page
             /// step 3] return the page's rowArray. exit function.
@@ -149,36 +179,50 @@ class Functions{
             ///         Page and a Page Number of 0. 
             ///         (aka Generate a PageTable with only 1 entry,
             ///          and return the entry's rowArray.)
-        } else {
-            // the OLD AND WRONG CODE - here for working reference during fix...
-            if ($ppp <= $tp) {
-                /// usually productsPerPage is smaller and so use it..
-                $rpp = self::genRowsPerPage($ppp, $ppr); // => $rowsPerPage
+            if ($pnValid || $pn == -2) {
+                $pageIndexRanges = self::genPageArray(self::genRange(0, $tp), $ppp);
             } else {
-                /// otherwise use totalProducts
-                $rpp = self::genRowsPerPage($tp, $ppr); // => $rowsPerPage
+                $pageIndexRanges = self::genPageArray(self::genRange(0, $tp), $tp);
             }
-    
-            /// generate the 'pages' of indices (into the product array) for ALL rows..
-            $rip = self::genPageArray(self::genRange(0, $tp), $ppr); // => $rowsIdxPages
-            /// generate the 'pages' of indices (into $rip) for ALL 'content-pages'
-            $pip = self::genPageArray(self::genRange(0, count($rip)), $rpp); // => $pagesIdxPages
-    
-            if ($pn > -1 && $pn < count($pip) ) { // => $pageNumber2
-                /// if a 'content-pages-number'
-                ///  is set AND it's valid, 
-                ///  return just that 'content-page's'
-                ///  row-index-pages from $rip..
-                $res = [];
-                $page = $pip[$pn];
-                foreach ($page as $row) {
-                    $res[] = $rip[$row];
+            if ($pnValid || $pn == -1) {
+                $res[] = self::genPageArray(count($pageIndexRanges[$pnValid?$pn:0]), $ppr);
+            } else {
+                foreach ($pageIndexRanges as $page) {
+                    $res[] = self::genPageArray(count($page), $ppr);
                 }
-            } else {
-                /// else by default ..
-                /// return ALL row-index-pages..
-                $res = &$rip;
             }
+
+            /* // the OLD AND WRONG CODE - here for working reference during fix...
+                if ($ppp <= $tp) {
+                    /// usually productsPerPage is smaller and so use it..
+                    $rpp = self::genRowsPerPage($ppp, $ppr); // => $rowsPerPage
+                } else {
+                    /// otherwise use totalProducts
+                    $rpp = self::genRowsPerPage($tp, $ppr); // => $rowsPerPage
+                }
+        
+                /// generate the 'pages' of indices (into the product array) for ALL rows..
+                $rip = self::genPageArray(self::genRange(0, $tp), $ppr); // => $rowsIdxPages
+                /// generate the 'pages' of indices (into $rip) for ALL 'content-pages'
+                $pip = self::genPageArray(self::genRange(0, count($rip)), $rpp); // => $pagesIdxPages
+        
+                if ($pn > -1 && $pn < count($pip) ) { // => $pageNumber2
+                    /// if a 'content-pages-number'
+                    ///  is set AND it's valid, 
+                    ///  return just that 'content-page's'
+                    ///  row-index-pages from $rip..
+                    $res = [];
+                    $page = $pip[$pn];
+                    foreach ($page as $row) {
+                        $res[] = $rip[$row];
+                    }
+                } else {
+                    /// else by default ..
+                    /// return ALL row-index-pages..
+                    $res = &$rip;
+
+            */
+
         }
         return $res;
     }

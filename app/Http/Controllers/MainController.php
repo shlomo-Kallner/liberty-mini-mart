@@ -23,6 +23,18 @@ class MainController extends Controller {
         'navbar' => [], // the header navbar data...
         'sidebar' => [], // the side[navigation]bar data...
         'footer' => [], // the footer navigation bar data..
+        'breadcrumbs' => [
+            'links' => [
+                [
+                    'name' => '',
+                    'url' => '',
+                ],
+            ],
+            'current'=> [
+                'name' => '',
+                'url' => '',
+            ],
+        ],
         /// UPDATE: Replaced 'Preheader' with 'footer'
         ///         as - currently - the preheader bar's 
         ///         content is pre-determined, and not for 
@@ -37,18 +49,6 @@ class MainController extends Controller {
             'article' => '', // 'div' page article content
             'img' => '', // page article img content
             'imgAlt' => '', // page img alt content
-            'breadcrumbs' => [
-                'links' => [
-                    [
-                        'name' => '',
-                        'url' => '',
-                    ],
-                ],
-                'current'=> [
-                    'name' => '',
-                    'url' => '',
-                ],
-            ],
         ],
         'user' => [
             'name' => '',
@@ -157,7 +157,8 @@ class MainController extends Controller {
         return self::getView('content.template', $title, $content);
     }
 
-    static public function getLoremIpsum(){
+    static public function getLoremIpsum()
+    {
         return 'Lorem ipsum dolor sit amet, 
         consectetur adipisicing elit. Modi, nulla, 
         porro facilis officiis sequi natus eum nemo 
@@ -202,12 +203,11 @@ class MainController extends Controller {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         $title = 'test ' . $requestedPage . ' page';
         $content = [
-            'header' => "<b>$requestedPage</b>",
-            'subheading' => "<p>'Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'</p>",
-            'article'=> "<p>" . e('World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919') . "</p>",
+            'header' => e("<b>$requestedPage</b>"),
+            'subheading' => e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
+            'article'=> e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
             'img' => "images/site/ring_it_liberty_bell.jpg",
-            'imgAlt' => 'Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan',
-            'breadcrumbs' => ''
+            'imgAlt' => e('Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'),
         ];
 
         //return $this->getTemplateView($title, $content);

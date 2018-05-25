@@ -10,7 +10,8 @@ class ShopController extends MainController {
         parent::__construct($name, $titleNameSep);
     }
 
-    public function categories(Request $request) {
+    public function categories(Request $request) 
+    {
         $request->page = 'store/categories';
         return parent::test2($request);
     }
@@ -34,9 +35,8 @@ class ShopController extends MainController {
             'products' => serialize($products),
         ];
 
-        foreach($cssClasses as $key => $value){
-            if($key !== 'title' || $key !== 'products')
-            {
+        foreach ($cssClasses as $key => $value) {
+            if ($key !== 'title' || $key !== 'products') {
                 $res[$key] = $value;
             }
         }
@@ -54,7 +54,7 @@ class ShopController extends MainController {
             'productClass' => 'sale-product', // some extra Metronic CSS class .. can be blank.
             // others?... 
         ];
-        return self::genProductGallery($name,$products,$cssClasses);
+        return self::genProductGallery($name, $products, $cssClasses);
     }
 
     public function index(Request $request){

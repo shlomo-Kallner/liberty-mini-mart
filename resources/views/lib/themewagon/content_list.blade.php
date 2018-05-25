@@ -1,17 +1,17 @@
 
 @php
-use \App\Utilities\Functions\Functions;
+    use \App\Utilities\Functions\Functions;
 
     // The DATA for the SLOTS of THIS COMPONENT are gathered HERE!!!  
     // Note: they CAN be empty... 
 
     $sorting2 = Functions::getBladedContent($sorting??'');
     $products2 = Functions::getBladedContent($products??'');
-    $pageNumber2 = Functions::getBladedContent($pageNumber??-1,-1);
+    $pageNumber2 = intval(Functions::getBladedString($pageNumber??-1,-1));
     // our default.. is 12 products per page (the template had 9..)
-    $productsPerPage2 = Functions::getBladedContent($productsPerPage??12,12);
+    $productsPerPage2 = intval(Functions::getBladedString($productsPerPage??12,12));
 
-    {{-- NOTE: every product 'row' can hold up to 3 products! --}}
+    // NOTE: every product 'row' can hold up to 3 products! 
     // $productsPerRow2 = getBladedContent($productsPerRow,3);
     $productsPerRow2 = 3;
 
@@ -39,20 +39,19 @@ use \App\Utilities\Functions\Functions;
 
         // initializing the paginator
         $numPages = Functions::genRowsPerPage($totalProducts, $productsPerPage2);
-        if($numPages > 1){
-            if($pageNumber2)
-        }
         $paginator = [
             'totalItems' => $totalProducts,
             'numRanges' => $numPages,
             'ranges' => Functions::genRange(0, $numPages, 1),
             'currentRange' => [
-                'begin' => $rowIdxs[0][0],
-                'end' => $rowIdxs[count($rowIdxs)][count($rowIdxs[count($rowIdxs)])],
-                'index' => 0,
+                'begin' => $rowIdxs[0][0][0],
+                'end' => $rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])],
+                'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
             ],
         ];
             
+    } else {
+        $paginator = [];
     }
 
     
@@ -63,6 +62,7 @@ use \App\Utilities\Functions\Functions;
 <div class="col-md-9 col-sm-7">
 
     @if (Functions::testVar($sorting2))
+    @else
         <div class="row list-view-sorting clearfix">
             @if(false)
                 {{-- 
@@ -187,13 +187,13 @@ use \App\Utilities\Functions\Functions;
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="product-item">
                     <div class="pi-img-wrapper">
-                    <img src="assets/pages/img/products/model1.jpg" class="img-responsive" alt="Berry Lace Dress">
+                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model1.jpg') }}" class="img-responsive" alt="Berry Lace Dress">
                     <div>
-                        <a href="assets/pages/img/products/model1.jpg" class="btn btn-default fancybox-button">Zoom</a>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model1.jpg') }}" class="btn btn-default fancybox-button">Zoom</a>
                         <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
                     </div>
                     </div>
-                    <h3><a href="shop-item.html">Berry Lace Dress Berry Lace Dress</a></h3>
+                    <h3><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Berry Lace Dress Berry Lace Dress</a></h3>
                     <div class="pi-price">$29.00</div>
                     <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
                 </div>
@@ -203,13 +203,13 @@ use \App\Utilities\Functions\Functions;
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="product-item">
                     <div class="pi-img-wrapper">
-                    <img src="assets/pages/img/products/model2.jpg" class="img-responsive" alt="Berry Lace Dress">
+                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model2.jpg') }}" class="img-responsive" alt="Berry Lace Dress">
                     <div>
-                        <a href="assets/pages/img/products/model2.jpg" class="btn btn-default fancybox-button">Zoom</a>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model2.jpg') }}" class="btn btn-default fancybox-button">Zoom</a>
                         <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
                     </div>
                     </div>
-                    <h3><a href="shop-item.html">Berry Lace Dress</a></h3>
+                    <h3><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Berry Lace Dress</a></h3>
                     <div class="pi-price">$29.00</div>
                     <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
                 </div>
@@ -219,13 +219,13 @@ use \App\Utilities\Functions\Functions;
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="product-item">
                     <div class="pi-img-wrapper">
-                    <img src="assets/pages/img/products/model6.jpg" class="img-responsive" alt="Berry Lace Dress">
+                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model6.jpg') }}" class="img-responsive" alt="Berry Lace Dress">
                     <div>
-                        <a href="assets/pages/img/products/model6.jpg" class="btn btn-default fancybox-button">Zoom</a>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model6.jpg') }}" class="btn btn-default fancybox-button">Zoom</a>
                         <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
                     </div>
                     </div>
-                    <h3><a href="shop-item.html">Berry Lace Dress 2</a></h3>
+                    <h3><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Berry Lace Dress 2</a></h3>
                     <div class="pi-price">$29.00</div>
                     <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
                 </div>
@@ -235,113 +235,113 @@ use \App\Utilities\Functions\Functions;
         <div class="row product-list">
             <!-- PRODUCT ITEM START -->
             <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="product-item">
-                <div class="pi-img-wrapper">
-                <img src="assets/pages/img/products/model4.jpg" class="img-responsive" alt="Berry Lace Dress">
-                <div>
-                    <a href="assets/pages/img/products/model4.jpg" class="btn btn-default fancybox-button">Zoom</a>
-                    <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
+                <div class="product-item">
+                    <div class="pi-img-wrapper">
+                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model4.jpg') }}" class="img-responsive" alt="Berry Lace Dress">
+                    <div>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model4.jpg') }}" class="btn btn-default fancybox-button">Zoom</a>
+                        <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
+                    </div>
+                    </div>
+                    <h3><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Berry Lace Dress Berry Lace Dress</a></h3>
+                    <div class="pi-price">$29.00</div>
+                    <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
                 </div>
-                </div>
-                <h3><a href="shop-item.html">Berry Lace Dress Berry Lace Dress</a></h3>
-                <div class="pi-price">$29.00</div>
-                <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
-            </div>
-            </div>
-            <!-- PRODUCT ITEM END -->
-            <!-- PRODUCT ITEM START -->
-            <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="product-item">
-                <div class="pi-img-wrapper">
-                <img src="assets/pages/img/products/model5.jpg" class="img-responsive" alt="Berry Lace Dress">
-                <div>
-                    <a href="assets/pages/img/products/model5.jpg" class="btn btn-default fancybox-button">Zoom</a>
-                    <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
-                </div>
-                </div>
-                <h3><a href="shop-item.html">Berry Lace Dress</a></h3>
-                <div class="pi-price">$29.00</div>
-                <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
-                <div class="sticker sticker-new"></div>
-            </div>
             </div>
             <!-- PRODUCT ITEM END -->
             <!-- PRODUCT ITEM START -->
             <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="product-item">
-                <div class="pi-img-wrapper">
-                <img src="assets/pages/img/products/model3.jpg" class="img-responsive" alt="Berry Lace Dress">
-                <div>
-                    <a href="assets/pages/img/products/model3.jpg" class="btn btn-default fancybox-button">Zoom</a>
-                    <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
+                <div class="product-item">
+                    <div class="pi-img-wrapper">
+                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model5.jpg') }}" class="img-responsive" alt="Berry Lace Dress">
+                    <div>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model5.jpg') }}" class="btn btn-default fancybox-button">Zoom</a>
+                        <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
+                    </div>
+                    </div>
+                    <h3><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Berry Lace Dress</a></h3>
+                    <div class="pi-price">$29.00</div>
+                    <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
+                    <div class="sticker sticker-new"></div>
                 </div>
-                </div>
-                <h3><a href="shop-item.html">Berry Lace Dress</a></h3>
-                <div class="pi-price">$29.00</div>
-                <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
             </div>
+            <!-- PRODUCT ITEM END -->
+            <!-- PRODUCT ITEM START -->
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="product-item">
+                    <div class="pi-img-wrapper">
+                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model3.jpg') }}" class="img-responsive" alt="Berry Lace Dress">
+                    <div>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model3.jpg') }}" class="btn btn-default fancybox-button">Zoom</a>
+                        <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
+                    </div>
+                    </div>
+                    <h3><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Berry Lace Dress</a></h3>
+                    <div class="pi-price">$29.00</div>
+                    <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
+                </div>
             </div>              
             <!-- PRODUCT ITEM END -->
         </div>
         <div class="row product-list">
             <!-- PRODUCT ITEM START -->
             <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="product-item">
-                <div class="pi-img-wrapper">
-                <img src="assets/pages/img/products/model7.jpg" class="img-responsive" alt="Berry Lace Dress">
-                <div>
-                    <a href="assets/pages/img/products/model7.jpg" class="btn btn-default fancybox-button">Zoom</a>
-                    <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
+                <div class="product-item">
+                    <div class="pi-img-wrapper">
+                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model7.jpg') }}" class="img-responsive" alt="Berry Lace Dress">
+                    <div>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model7.jpg')}}" class="btn btn-default fancybox-button">Zoom</a>
+                        <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
+                    </div>
+                    </div>
+                    <h3><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html')}}">Berry Lace Dress</a></h3>
+                    <div class="pi-price">$29.00</div>
+                    <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
                 </div>
-                </div>
-                <h3><a href="shop-item.html">Berry Lace Dress</a></h3>
-                <div class="pi-price">$29.00</div>
-                <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
-            </div>
-            </div>
-            <!-- PRODUCT ITEM END -->
-            <!-- PRODUCT ITEM START -->
-            <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="product-item">
-                <div class="pi-img-wrapper">
-                <img src="assets/pages/img/products/model1.jpg" class="img-responsive" alt="Berry Lace Dress">
-                <div>
-                    <a href="assets/pages/img/products/model1.jpg" class="btn btn-default fancybox-button">Zoom</a>
-                    <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
-                </div>
-                </div>
-                <h3><a href="shop-item.html">Berry Lace Dress</a></h3>
-                <div class="pi-price">$29.00</div>
-                <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
-            </div>
             </div>
             <!-- PRODUCT ITEM END -->
             <!-- PRODUCT ITEM START -->
             <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="product-item">
-                <div class="pi-img-wrapper">
-                <img src="assets/pages/img/products/model2.jpg" class="img-responsive" alt="Berry Lace Dress">
-                <div>
-                    <a href="assets/pages/img/products/model2.jpg" class="btn btn-default fancybox-button">Zoom</a>
-                    <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
+                <div class="product-item">
+                    <div class="pi-img-wrapper">
+                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model1.jpg') }}" class="img-responsive" alt="Berry Lace Dress">
+                    <div>
+                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model1.jpg') }}" class="btn btn-default fancybox-button">Zoom</a>
+                        <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
+                    </div>
+                    </div>
+                    <h3><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Berry Lace Dress</a></h3>
+                    <div class="pi-price">$29.00</div>
+                    <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
                 </div>
-                </div>
-                <h3><a href="shop-item.html">Berry Lace Dress</a></h3>
-                <div class="pi-price">$29.00</div>
-                <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
-                <div class="sticker sticker-sale"></div>
             </div>
+            <!-- PRODUCT ITEM END -->
+            <!-- PRODUCT ITEM START -->
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="product-item">
+                    <div class="pi-img-wrapper">
+                    <img src="{{url('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model2.jpg')}}" class="img-responsive" alt="Berry Lace Dress">
+                    <div>
+                        <a href="{{url('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model2.jpg')}}" class="btn btn-default fancybox-button">Zoom</a>
+                        <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
+                    </div>
+                    </div>
+                    <h3><a href="{{url('lib/themewagon/metronicShopUI/theme/shop-item.html')}}">Berry Lace Dress</a></h3>
+                    <div class="pi-price">$29.00</div>
+                    <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
+                    <div class="sticker sticker-sale"></div>
+                </div>
             </div>
             <!-- PRODUCT ITEM END -->
         </div>
     @endif
     <!-- END PRODUCT LIST -->
-    @if(Functions::testVar($products2))
-        @component('lib.themewagon.paginator')
-            @slot('paginator')
-                {!! $paginator !!}
-            @endslot
-        @endcomponent
-    @endif
+
+    @component('lib.themewagon.paginator')
+        @slot('paginator')
+            {!! serialize($paginator) !!}
+        @endslot
+    @endcomponent
+
 </div>
 <!-- END CONTENT -->

@@ -5,7 +5,7 @@
 
     use \App\Utilities\Functions\Functions;
 
-    $paginator2 = Functions::getBladedContent($paginator);
+    $paginator2 = Functions::getBladedContent($paginator??'');
     
 @endphp
 

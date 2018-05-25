@@ -31,29 +31,17 @@ class="ecommerce"
 @parent
 @component('lib.themewagon.breadcrumbs')
     @slot('breadcrumbs')
-        {{serialize($page['breadcrumbs'])}}
+        {{ serialize($breadcrumbs) }}
     @endslot
 @endcomponent
-<div class="row">
-    <div class="col-md-5">
-        <h1>{!! $page['header'] !!} </h1>
-        <h2>
-        {!! $page['subheading'] !!}
-        </h2>
-        
-        @if (isset($page['img']))
-            <img src="{{ $page['img'] }}" alt="{{ $page['imgAlt'] }}">
-        @endif
-        
-        {{-- <i class="fa fa-search" style="font-size: 16px;"></i> --}}
-        
-    </div>
-    <div class="col-md-5">
-        <div>
-            {!! $page['article'] !!}
-        </div>
-    </div>
-</div>
+
+@component('lib.themewagon.article')
+    @foreach ($page as $key => $item)
+        @slot($key)
+            {{ $item }}
+        @endslot
+    @endforeach
+@endcomponent
 
 @endsection
 
