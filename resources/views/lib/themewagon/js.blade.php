@@ -73,6 +73,12 @@
 
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/zoom/jquery.zoom.min.js') }}" type="text/javascript"></script><!-- product zoom -->
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/bootstrap-touchspin/bootstrap.touchspin.js') }}" type="text/javascript"></script><!-- Quantity -->
+  <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/uniform/jquery.uniform.min.js') }}" type="text/javascript"></script>
+  <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/rateit/src/jquery.rateit.js') }}" type="text/javascript"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js" type="text/javascript"></script>
+  <script src="{{ asset('lib/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.min.js') }}"></script><!-- for slider-range -->
+
+    
 
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/corporate/scripts/layout.js') }}" type="text/javascript"></script>
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/scripts/bs-carousel.js') }}" type="text/javascript"></script>
@@ -108,6 +114,8 @@
         Layout.initTouchspin();
         Layout.initFixHeaderWithPreHeader();
         Layout.initNavScrolling();
+        Layout.initUniform();
+        Layout.initSliderRange();
     });
   </script>
 @endsection

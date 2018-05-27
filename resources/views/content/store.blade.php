@@ -24,45 +24,76 @@
         
     @else
 
-        {{-- 
-            USING THE SECTION View for layout purposes only. 
-            REQUIRES the components from bootstrapious/universal/index5.html..
-        --}}
+    <section class="bar background-white no-mb">
+        <div class="container" data-animate="fadeInUp">
+            <div class="row">
+                <div class="col-md-12">
+                    @component('lib.bootstrapious.feature_single_showcase_item')
+                    
+                    @endcomponent
+                </div>
+            </div>
+            <div class="row margin-bottom-40 ">
+
+                @component('lib.themewagon.sidebar')
+                    @slot('sidebar')
+                        {!! $sidebar2 !!}
+                    @endslot
+                    @slot('filters')
+                        {!! $filters2 !!}
+                    @endslot
+                    @slot('bestsellers')
+                        {!! $bestsellers2 !!}
+                    @endslot
+                    @slot('currency')
+                        {{ $currency2 }}
+                    @endslot
+                @endcomponent
+        
+                @if (false)
+                    @component('lib.themewagon.content_list')
+                        @slot('sorting')
+                            {{ "" }}
+                        @endslot
+                        @slot('products')
+                            {{ '' }}
+                        @endslot
+                        @slot('pageNumber')
+                            {{ '-1' }}
+                        @endslot
+                        @slot('productsPerPage')
+                            {{ '12' }}
+                        @endslot
+                    @endcomponent
+                @endif
+
+                @if (true)
+                    @component('lib.bootstrapious.feature_multiple_items')
+                        
+                    @endcomponent
+                @endif
+
         
 
-        <div class="row margin-bottom-40 ">
-
-            @component('lib.themewagon.sidebar')
-                @slot('sidebar')
-                    {!! $sidebar2 !!}
-                @endslot
-                @slot('filters')
-                    {!! $filters2 !!}
-                @endslot
-                @slot('bestsellers')
-                    {!! $bestsellers2 !!}
-                @endslot
-                @slot('currency')
-                    {{ $currency2 }}
-                @endslot
-            @endcomponent
-    
-            @component('lib.themewagon.content_list')
-                @slot('sorting')
-                    {{ "" }}
-                @endslot
-                @slot('products')
-                    {{ '' }}
-                @endslot
-                @slot('pageNumber')
-                    {{ '-1' }}
-                @endslot
-                @slot('productsPerPage')
-                    {{ '12' }}
-                @endslot
-            @endcomponent
-    
+            </div>
         </div>
+    </section>
         
     @endif
+@endsection
+
+@section('js-extra')
+    @parent
+
+    <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/uniform/jquery.uniform.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/rateit/src/jquery.rateit.js') }}" type="text/javascript"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js" type="text/javascript"></script><!-- for slider-range -->
+
+    <script>
+        $(function(){
+                Layout.initUniform();
+                Layout.initSliderRange();
+        });
+    </script>
+    
 @endsection

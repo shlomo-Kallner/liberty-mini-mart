@@ -6,10 +6,15 @@
         \App\Utilities\IterationStack\IterationStack,
         \App\Utilities\IterationStack\IterationFrame;
 
+    //dd($testing);
     $sidebar2 = Functions::getBladedContent($sidebar??'');
-    $filters2 = Functions::getBladedContent($filters??'');
-    $bestsellers2 = Functions::getBladedContent($bestsellers??'');
-    $currency2 = Functions::getBladedContent($currency??'');
+    //dd($sidebar2);
+    $filters2 = Functions::getBladedContent($filters??'123FAKEDATA');
+    //dd($filters2);
+    $bestsellers2 = Functions::getBladedContent($bestsellers??'123FAKEDATA');
+    //dd($bestsellers2);
+    $currency2 = Functions::getBladedContent($currency??'fa-usd');
+    //dd($currency2);
 @endphp
 
 
@@ -221,7 +226,7 @@
     </ul>
     
         
-    @if(Functions::testVar($filters2))
+    @if(Functions::testVar($filters2) || $testing)
         <div class="sidebar-filter margin-bottom-25">
             <h2>Filters</h2>
 
@@ -237,14 +242,14 @@
 
                 <h3>Availability</h3>
                 <div class="checkbox-list">
-                <label><input type="checkbox"> Not Available (3)</label>
-                <label><input type="checkbox"> In Stock (26)</label>
+                    <label><input type="checkbox"> Not Available (3)</label>
+                    <label><input type="checkbox"> In Stock (26)</label>
                 </div>
 
                 <h3>Price</h3>
                 <p>
-                <label for="amount">Range:</label>
-                <input type="text" id="amount" style="border:0; color:#f6931f; font-weight:bold;">
+                    <label for="amount">Range:</label>
+                    <input type="text" id="amount" style="border:0; color:#f6931f; font-weight:bold;">
                 </p>
                 <div id="slider-range"></div>
                 
@@ -253,9 +258,11 @@
         </div>
     @endif
 
-    @if(Functions::testVar($bestsellers2))
+    @if(Functions::testVar($bestsellers2) || $testing)
+
         <div class="sidebar-products clearfix">
             <h2>Bestsellers</h2>
+
             @if (false)
 
                 @foreach ($bestsellers2 as $item)
@@ -305,6 +312,7 @@
                 </div>
             @endif
         </div>
+
     @endif
 
 </div>

@@ -20,6 +20,13 @@
 <link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/css/animate.css') }}" rel="stylesheet">
 <link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/fancybox/source/jquery.fancybox.css') }}" rel="stylesheet">
 <link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/owl.carousel/assets/owl.carousel.css') }}" rel="stylesheet">
+<link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/uniform/css/uniform.default.css') }}" rel="stylesheet" type="text/css">
+{{-- 
+    <link href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css"> 
+--}}
+<link rel="stylesheet" href="{{ asset('lib/jquery-ui-1.10.4.custom/css/jqueryUiTheme/jquery-ui-1.10.4.custom.min.css') }}"><!-- for slider-range -->
+
+<link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/rateit/src/rateit.css') }}" rel="stylesheet" type="text/css">
 <!-- Page level plugin styles END -->
 
 @endsection

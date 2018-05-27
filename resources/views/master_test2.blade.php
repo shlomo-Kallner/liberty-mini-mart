@@ -60,7 +60,8 @@ use the 'no-js' css class for IE9 and below as well.
         <!-- Fonts START -->
         @section('css-fonts')
         {{-- This @Section was copied from 'lib.themewagon.fonts'
-            instead @Including it here or in a child view. --}}
+             originally, now @Including it in a child view
+             instead of here.. --}}
         {{-- 
             These "_Section ... _Include ... _Show" bother me.
             I dont think that I should be writing code blocks 

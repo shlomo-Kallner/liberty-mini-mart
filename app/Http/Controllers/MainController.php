@@ -72,7 +72,8 @@ class MainController extends Controller {
       ];
      */
 
-    public function __construct($name = '', $titleNameSep = ' | ') {
+    public function __construct($name = '', $titleNameSep = ' | ') 
+    {
         self::setSiteName($name, $titleNameSep);
         //        self::$data['navbar'] = Page::getNavBar();
         //        //dd(session()->all());
@@ -86,7 +87,8 @@ class MainController extends Controller {
     /// Begin Utility Functions
     /// UPDATE: converting all Utility functions to static functions...
 
-    static public function setSiteName($name = '', $titleNameSep = ' | ') {
+    static public function setSiteName($name = '', $titleNameSep = ' | ') 
+    {
         self::$data['site']['name'] = !empty($name) ?
                 $name :
                 self::$data['site']['name'];
@@ -102,7 +104,8 @@ class MainController extends Controller {
      * without necessarily overwriting presets...
      * 
      */
-    static public function setSiteData($content, $val = null) {
+    static public function setSiteData($content, $val = null) 
+    {
         if (!empty($content)) {
             if (is_string($content)) {
                 if (!empty($val)) {
@@ -116,7 +119,8 @@ class MainController extends Controller {
         }
     }
 
-    static public function setTitle($title = '') {
+    static public function setTitle($title = '') 
+    {
         if (!empty($title)) {
             self::$data['title'] = self::$data['site']['name'];
             self::$data['title'] .= self::$data['site']['titleNameSep'];
@@ -124,7 +128,8 @@ class MainController extends Controller {
         }
     }
 
-    static public function setPageContent($content, string $val = '') {
+    static public function setPageContent($content, string $val = '') 
+    {
         if (!empty($content)) {
             $purifier = new HTMLPurifier();
             if (is_string($content)) {
@@ -139,7 +144,8 @@ class MainController extends Controller {
         }
     }
 
-    static public function getView(string $viewName = 'content.template', string $title = '', array $content = []) {
+    static public function getView(string $viewName = 'content.template', string $title = '', array $content = []) 
+    {
         self::setTitle($title);
         self::setPageContent($content);
         //
@@ -153,7 +159,8 @@ class MainController extends Controller {
         return view($viewName, self::$data);
     }
 
-    static public function getTemplateView(string $title = '', array $content = []) {
+    static public function getTemplateView(string $title = '', array $content = []) 
+    {
         return self::getView('content.template', $title, $content);
     }
 

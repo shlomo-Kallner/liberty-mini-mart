@@ -59,10 +59,10 @@ class="ecommerce"
 {{-- BEGIN SECTION:  JS Content From Metronic Shop UI --}}
 @include('lib.themewagon.js')
 {{-- END SECTION:  JS Content From Metronic Shop UI --}}
+{{-- BEGIN SECTION:  JS Content From UNIVERSAL --}}
+@include('lib.bootstrapious.js')
+{{-- END SECTION:  JS Content From UNIVERSAL --}}
 
-@section('cookie-cutter')
 
-
-
-    
+@section('cookie-cutter')   
 @endsection

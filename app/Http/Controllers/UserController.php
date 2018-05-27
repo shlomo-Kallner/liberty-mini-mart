@@ -102,13 +102,14 @@ class UserController extends MainController {
         return str_replace( '/', '-', $tmp1);
     }
 
-    public function signin(Request $request) {
-//        $email = !empty($request->email) ? $request->email : '[blank]';
-//        $password = !empty($request->password) ? $request->password : '[empty-string]';
-//        $content = [];
-//        $content['header'] = 'Welcome Back!';
-//        $content['article'] = 'Hello ' . $email .
-//                ' !! Your Password is: ' . $password;
+    public function signin(Request $request) 
+    {
+        //        $email = !empty($request->email) ? $request->email : '[blank]';
+        //        $password = !empty($request->password) ? $request->password : '[empty-string]';
+        //        $content = [];
+        //        $content['header'] = 'Welcome Back!';
+        //        $content['article'] = 'Hello ' . $email .
+        //                ' !! Your Password is: ' . $password;
         //dd(session()->all());
 
         // for testing..
@@ -121,14 +122,15 @@ class UserController extends MainController {
         //dd(session()->all());
         //self::$data['user']['loggedin'] = true;
         //return parent::getView('content.tests.test2', 'User Logged In Successfull!!', $content);
-        if($request->session()->has('redirectPage')){
-            $redirect = self::pagePathSplit( $request->session()->pull('redirectPage') ) ;
+        if ($request->session()->has('redirectPage')) {
+            $redirect = self::pagePathSplit($request->session()->pull('redirectPage'));
         }
 
         return redirect($redirect);
     }
 
-    public function signinRedirect(Request $request){
+    public function signinRedirect(Request $request)
+    {
         // the old @param string $page ... was REMOVED as 
         //  it IS BEING PASSED THROUGH THE Request @param 
         //  ANYWAYS...

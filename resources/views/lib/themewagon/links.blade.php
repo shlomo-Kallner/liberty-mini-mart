@@ -10,6 +10,7 @@
   'type' => 'url', // 'url' for a url link, 'modal' for a modal button link..  
   'target' => '', // the data-target attribute's data value (of a modal)
   'transform' => '', // Bootstrap 3 text-transform css class.
+  'cssExtraClasses' => '' // extra CSS classes for the a tag..
   ];
  * 
  */
@@ -20,7 +21,11 @@
 @if( isset($type) && ($type == 'modal') )
     <a href="#" data-toggle="modal" data-target="{{ $target }}">
 @else
-    <a href="{{ url($url) }}">
+        @if (isset($cssExtraClasses))
+            <a href="{{ url($url) }}" class="{{ $cssExtraClasses }}">
+        @else
+            <a href="{{ url($url) }}">
+        @endif
 @endif
 
             @if( isset($icon) && (mb_strlen($icon) !== 0) )
