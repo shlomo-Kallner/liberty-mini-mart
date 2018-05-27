@@ -1,2 +1,2 @@
 
-{{--@include('...lib.themewagon.fonts')--}}
+{{--@include('lib.themewagon.fonts')--}}

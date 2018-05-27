@@ -2,8 +2,8 @@
 
 
 {{-- TO BE FURTHER ABSTRCTIFIED... WISHLIST TASK... --}}
-    <!-- BEGIN fast view of a product -->
-    @if(true)
+<!-- BEGIN fast view of a product -->
+@if(true)
     <div id="product-pop-up" style="display: none; width: 700px;">
         <div class="product-page product-pop-up">
             <div class="row">

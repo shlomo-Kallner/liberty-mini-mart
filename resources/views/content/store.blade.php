@@ -16,6 +16,7 @@
 
 @endphp
 
+
 @section('main-content')
     @parent
 

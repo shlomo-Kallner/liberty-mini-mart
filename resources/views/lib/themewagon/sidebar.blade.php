@@ -75,29 +75,29 @@
                     </li>
 
                 @elseif($elem->get('type') === 'dropdown' && $elem->has('submenu'))
-                        @php
-                            /* -- the old code.. here for future use ..
+                    @php
+                        /* -- the old code.. here for future use ..
 
-                                @if($sidebar2['active']['url'] == $elem->get('url'))
-                                    <li class="list-group-item clearfix dropdown active">
-                                @else
-                                    <li class="list-group-item clearfix dropdown">
-                                @endif
-                                @if($elem['data']['status'] === 'open' )
-                                    <a href="javascript:void(0);" class="collapsed">
-                                @else
-                                    <a href="javascript:void(0);" class="">
-                                @endif
-
-                            */
-                        @endphp
-
-                            <li class="list-group-item clearfix dropdown">
+                            @if($sidebar2['active']['url'] == $elem->get('url'))
+                                <li class="list-group-item clearfix dropdown active">
+                            @else
+                                <li class="list-group-item clearfix dropdown">
+                            @endif
+                            @if($elem['data']['status'] === 'open' )
+                                <a href="javascript:void(0);" class="collapsed">
+                            @else
                                 <a href="javascript:void(0);" class="">
-                                    <i class="fa fa-angle-right"></i> {{$elem->get('name')}}
-                                </a>
-                                <ul class="dropdown-menu" style="display:block;">
-                {{-- Stack PUSH time! --}}
+                            @endif
+
+                        */
+                    @endphp
+
+                    <li class="list-group-item clearfix dropdown">
+                        <a href="javascript:void(0);" class="">
+                            <i class="fa fa-angle-right"></i> {{$elem->get('name')}}
+                        </a>
+                        <ul class="dropdown-menu" style="display:block;">
+                    {{-- Stack PUSH time! --}}
                     @php
                         $frameStack->push('submenu');
                         
@@ -114,7 +114,6 @@
                     @continue
                 @endif
 
-                
                 {{-- 
                     Incrementing the index and 
                     check for end of frame.. 
@@ -127,6 +126,10 @@
                         // need to increment because pop just 
                         //  popped the frame, but left us in the
                         //  parent element..
+                        // no worries over poping
+                        // out of the 'top/first frame' 
+                        // (we were "pushing" down/in/onto-the-end..)
+                        // these methods do nothing if so..
 
                         /*  -- the old code.. here for future use ..
                             $tmp = array_pop($parentFrameStack);
@@ -156,46 +159,62 @@
         
         @else
 
-            <li class="list-group-item clearfix"><a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Ladies</a></li>
-            <li class="list-group-item clearfix dropdown active">
-            <a href="javascript:void(0);" class="collapsed">
-                <i class="fa fa-angle-right"></i>
-                Mens
-                
-            </a>
-            <ul class="dropdown-menu" style="display:block;">
-                <li class="list-group-item dropdown clearfix active">
-                <a href="javascript:void(0);" class="collapsed"><i class="fa fa-angle-right"></i> Shoes </a>
-                    <ul class="dropdown-menu" style="display:block;">
-                    <li class="list-group-item dropdown clearfix">
-                        <a href="javascript:void(0);"><i class="fa fa-angle-right"></i> Classic </a>
-                        <ul class="dropdown-menu">
-                        <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Classic 1</a></li>
-                        <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Classic 2</a></li>
-                        </ul>
-                    </li>
-                    <li class="list-group-item dropdown clearfix active">
-                        <a href="javascript:void(0);" class="collapsed"><i class="fa fa-angle-right"></i> Sport  </a>
-                        <ul class="dropdown-menu" style="display:block;">
-                        <li class="active"><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Sport 1</a></li>
-                        <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Sport 2</a></li>
-                        </ul>
-                    </li>
-                    </ul>
-                </li>
-                <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Trainers</a></li>
-                <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Jeans</a></li>
-                <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Chinos</a></li>
-                <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> T-Shirts</a></li>
-            </ul>
+            <li class="list-group-item clearfix">
+                <a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Ladies</a>
             </li>
-            <li class="list-group-item clearfix"><a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Kids</a></li>
-            <li class="list-group-item clearfix"><a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Accessories</a></li>
-            <li class="list-group-item clearfix"><a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Sports</a></li>
-            <li class="list-group-item clearfix"><a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Brands</a></li>
-            <li class="list-group-item clearfix"><a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Electronics</a></li>
-            <li class="list-group-item clearfix"><a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Home & Garden</a></li>
-            <li class="list-group-item clearfix"><a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Custom Link</a></li>
+            <li class="list-group-item clearfix dropdown active">
+                <a href="javascript:void(0);" class="collapsed">
+                    <i class="fa fa-angle-right"></i>
+                    Mens
+                    
+                </a>
+                <ul class="dropdown-menu" style="display:block;">
+                    <li class="list-group-item dropdown clearfix active">
+                    <a href="javascript:void(0);" class="collapsed"><i class="fa fa-angle-right"></i> Shoes </a>
+                        <ul class="dropdown-menu" style="display:block;">
+                        <li class="list-group-item dropdown clearfix">
+                            <a href="javascript:void(0);"><i class="fa fa-angle-right"></i> Classic </a>
+                            <ul class="dropdown-menu">
+                            <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Classic 1</a></li>
+                            <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Classic 2</a></li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item dropdown clearfix active">
+                            <a href="javascript:void(0);" class="collapsed"><i class="fa fa-angle-right"></i> Sport  </a>
+                            <ul class="dropdown-menu" style="display:block;">
+                            <li class="active"><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Sport 1</a></li>
+                            <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Sport 2</a></li>
+                            </ul>
+                        </li>
+                        </ul>
+                    </li>
+                    <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Trainers</a></li>
+                    <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Jeans</a></li>
+                    <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Chinos</a></li>
+                    <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> T-Shirts</a></li>
+                </ul>
+            </li>
+            <li class="list-group-item clearfix">
+                <a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Kids</a>
+            </li>
+            <li class="list-group-item clearfix">
+                <a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Accessories</a>
+            </li>
+            <li class="list-group-item clearfix">
+                <a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Sports</a>
+            </li>
+            <li class="list-group-item clearfix">
+                <a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Brands</a>
+            </li>
+            <li class="list-group-item clearfix">
+                <a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Electronics</a>
+            </li>
+            <li class="list-group-item clearfix">
+                <a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Home & Garden</a>
+            </li>
+            <li class="list-group-item clearfix">
+                <a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Custom Link</a>
+            </li>
 
         @endif
 

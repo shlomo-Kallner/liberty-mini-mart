@@ -2,7 +2,7 @@
 @php
  use \App\Utilities\Functions\Functions;
  
- $navbar2 = Functions::getBladedContent(isset($navbar)?$navbar:null);
+ $navbar2 = Functions::getBladedContent($navbar??'');
 @endphp
 <!-- Derived and Inspired from Metronic Shop UI STYLE CUSTOMIZER -->
 
@@ -13,11 +13,11 @@
     <div class="users-links">
         {{-- <p>THEME COLOR</p> --}}
         <ul class="inline">
-            @if(isset($navbar))
+            @if(Functions::testVar($navbar2))
             @php
-                //dd($navbar);
+                //dd($navbar2);
             @endphp
-            @foreach (unserialize($navbar) as $nav)
+            @foreach ($navbar2 as $nav)
                 <li>
                     @if( isset($nav['type']) && ($nav['type'] == 'modal') )
                         <a href="#" data-toggle="modal" data-target="{{ $nav['target'] }}">

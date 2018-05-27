@@ -7,18 +7,18 @@ class IterationStack
 {
 
     protected $stack = [];
-    protected  $current;
+    protected $current;
 
-    public function __construct(&$elems, &$parent = null)
+    public function __construct(array &$elems, &$parent = null)
     {
         $this->current = new IterationFrame($elems, $parent);
     }
 
     public function push($key)
     {
-        if (is_string($key) || is_int($key)) {
+        if (( is_string($key) || is_int($key)) && !$this->empty() ) {
             $this->stack[] = $this->current;
-            $tmp = new IterationFrame ( $this->current->get($key), $this->current );
+            $tmp = new IterationFrame($this->current->get($key), $this->current);
             $this->current = $tmp;
         }
         return $this;
@@ -26,7 +26,9 @@ class IterationStack
 
     public function pop()
     {
-        $this->current = array_pop($this->stack);
+        if (!$this->empty()) {
+            $this->current = array_pop($this->stack);
+        }
         return $this;
     }
 
@@ -37,13 +39,17 @@ class IterationStack
 
     public function inc()
     {
-        $this->current->next();
+        if (!$this->empty()) {
+            $this->current->next();
+        }
         return $this;
     }
 
     public function dec()
     {
-        $this->current->prev();
+        if (!$this->empty()) {
+            $this->current->prev();
+        }
         return $this;
     }
 
@@ -54,17 +60,16 @@ class IterationStack
         } else {
             return false;
         }
-        
     }
 
     public function eof()
     {
-        return $this->current->eoa();
+        return $this->empty() || $this->current->eoa();
     }
 
     public function bof()
     {
-        return $this->current->boa();
+        return !$this->empty() && $this->current->boa();
     }
 
 }
