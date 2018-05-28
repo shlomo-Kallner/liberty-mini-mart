@@ -85,15 +85,6 @@
 @section('js-extra')
     @parent
 
-    <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/uniform/jquery.uniform.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/rateit/src/jquery.rateit.js') }}" type="text/javascript"></script>
-    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js" type="text/javascript"></script><!-- for slider-range -->
-
-    <script>
-        $(function(){
-                Layout.initUniform();
-                Layout.initSliderRange();
-        });
-    </script>
+    
     
 @endsection
