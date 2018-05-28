@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use App\Section;
 use Illuminate\Http\Request;
 
-class SectionController extends Controller
+class SectionController extends MainController
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        return self::getView('content.section');
     }
 
     /**

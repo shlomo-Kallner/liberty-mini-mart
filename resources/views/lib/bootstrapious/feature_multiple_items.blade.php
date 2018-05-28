@@ -2,26 +2,22 @@
 @php
     use \App\Utilities\Functions\Functions;
 
-    $heading2 = Functions::getBladedString($heading??'');
-    $items2 = Functions::getBladedString($items??'');
+    //dd($heading);
+    $heading2 = Functions::getBladedString($heading??'','Latest from our workshop');
+    $items2 = Functions::getUnBladedContent($items??'',Functions::genRange(0,15,1));
+    //dd($items2);
 
 @endphp
 
 {{-- BEGIN HEADING --}}
     <div class="heading text-center">
-    @if (true)
-
-        <h3>Latest from our workshop</h3>
-        
-    @else
         <h3>{!! $heading2 !!}</h3>
-    @endif
     </div>
 {{-- END HEADING --}}
 
 {{-- BEGIN PORTFOLIO BOXES --}}
     <div class="row portfolio no-space">
-        @if (true)
+        @if (false)
         
             <div class="col-sm-4">
                 <div class="box-image">
@@ -206,27 +202,34 @@
         @else
             @foreach ($items2 as $item)
                 @component('lib.bootstrapious.feature_single_item')
-                    @slot('img')
-                        {!! $item['img'] !!}
-                    @endslot
-                    @slot('name')
-                        {!! $item['name'] !!}
-                    @endslot
-                    @slot('url')
-                        {!! $item['url'] !!}
-                    @endslot
-                    @slot('description')
-                        {!! $item['description'] !!}
-                    @endslot
-                    @slot('buttons')
-                        {!! serialize($item['buttons']) !!}
-                    @endslot
+                    @if (false)
+                        @slot('img')
+                            {!! $item['img'] !!}
+                        @endslot
+                        @slot('name')
+                            {!! $item['name'] !!}
+                        @endslot
+                        @slot('url')
+                            {!! $item['url'] !!}
+                        @endslot
+                        @slot('description')
+                            {!! $item['description'] !!}
+                        @endslot
+                        @slot('buttons')
+                            {!! serialize($item['buttons']) !!}
+                        @endslot
+                    @endif
                 @endcomponent
             @endforeach
         @endif
     </div>
 {{-- END PORTFOLIO BOXES --}}
 
+
+@if (false)
     <div class="see-more">
         <a href="{{ url('lib/bootstrapious/universal/portfolio-4.html') }}" class="btn btn-template-main">See more of our work</a>
     </div> 
+@endif
+
+

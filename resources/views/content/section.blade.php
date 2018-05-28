@@ -4,7 +4,7 @@
 {{-- 
     a section's inner view: 
 
-    Should show the list of products of the section + a side bar with filters & bestsellers..
+    Should show the list of categories in the section + a side bar with filters & bestsellers..
 --}}
 
 @php

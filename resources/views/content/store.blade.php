@@ -20,12 +20,13 @@
 @section('main-content')
     @parent
 
-    @if (false)
-        
-    @else
-
     <section class="bar background-white no-mb">
         <div class="container" data-animate="fadeInUp">
+
+            @component('lib.themewagon.new_and_sales')
+    
+            @endcomponent
+        
             <div class="row">
                 <div class="col-md-12">
                     @component('lib.bootstrapious.feature_single_showcase_item')
@@ -69,17 +70,21 @@
 
                 @if (true)
                     @component('lib.bootstrapious.feature_multiple_items')
-                        
+                        @slot('heading')
+                            {!! "OUR SECTIONS" !!}
+                        @endslot
                     @endcomponent
                 @endif
 
+                @component('lib.themewagon.paginator')
+                    
+                @endcomponent
         
 
             </div>
         </div>
     </section>
-        
-    @endif
+    
 @endsection
 
 @section('js-extra')

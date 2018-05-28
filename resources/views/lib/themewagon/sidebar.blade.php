@@ -7,7 +7,7 @@
         \App\Utilities\IterationStack\IterationFrame;
 
     //dd($testing);
-    $sidebar2 = Functions::getBladedContent($sidebar??'');
+    $sidebar2 = Functions::getUnBladedContent($sidebar??'');
     //dd($sidebar2);
     $filters2 = Functions::getBladedContent($filters??'123FAKEDATA');
     //dd($filters2);

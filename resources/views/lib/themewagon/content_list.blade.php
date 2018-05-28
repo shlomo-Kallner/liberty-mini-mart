@@ -144,7 +144,7 @@
                         {{ "sale-product" }}
                     @endslot
                     @slot('owlClass')
-                        {{ "owl-carousel5" }}
+                        {{ "owl-carousel3" }}
                     @endslot
                     @slot('title')
                         {{ "New Arrivals" }}

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use HTMLPurifier,
+use Illuminate\Http\Request,
+    HTMLPurifier,
     \App\Page,
     Session;
 
@@ -22,7 +22,7 @@ class MainController extends Controller {
         'preheader' => [], // the preheader navbar data...
         'navbar' => [], // the header navbar data...
         'sidebar' => [], // the side[navigation]bar data...
-        'footer' => [], // the footer navigation bar data..
+        'footer' => [], // the footer navigation bar data.. THIS MAY REMAIN STATIC!
         'breadcrumbs' => [
             'links' => [
                 [
@@ -144,17 +144,18 @@ class MainController extends Controller {
         }
     }
 
-    static public function getView(string $viewName = 'content.template', string $title = '', array $content = []) 
+    static public function getView(string $viewName = 'content.template', string $title = '', array $content = [], bool $useFakeData = false) 
     {
         self::setTitle($title);
         self::setPageContent($content);
         //
 
-        self::$data['navbar'] = Page::getNavBar();
+        self::$data['navbar'] = Page::getNavBar($useFakeData);
         //dd(session()->all());
-        self::$data['preheader'] = Page::getPreHeader();
+        self::$data['preheader'] = Page::getPreHeader($useFakeData);
         //dd(session()->all());
         //dd(self::$data['preheader']); 
+        //
         //
         return view($viewName, self::$data);
     }
@@ -216,11 +217,33 @@ class MainController extends Controller {
             'img' => "images/site/ring_it_liberty_bell.jpg",
             'imgAlt' => e('Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'),
         ];
+        //self::$data['sidebar'] = Page::getSidebar($request, $useFakeData);
+        //self::$data['breadcrumbs'] = Page::getBreadcrumbs($request, $useFakeData);
 
         //return $this->getTemplateView($title, $content);
         //dd($request->session()->all());
         //dd(session()->all());
         return self::getView('content.tests.test2', $title, $content);
+    }
+
+    public function test3(Request $request) {
+        $requestedPage = !empty($request->page) ? $request->page : 'index';
+        $title = 'test ' . $requestedPage . ' page';
+        $content = [
+            'header' => e("<b>$requestedPage</b>"),
+            'subheading' => e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
+            'article'=> e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
+            'img' => "images/site/ring_it_liberty_bell.jpg",
+            'imgAlt' => e('Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'),
+        ];
+        $useFakeData = true;
+        self::$data['sidebar'] = Page::getSidebar($useFakeData);
+        self::$data['breadcrumbs'] = Page::getBreadcrumbs($request, $useFakeData);
+
+        //return $this->getTemplateView($title, $content);
+        //dd($request->session()->all());
+        //dd(session()->all());
+        return self::getView('content.index', $title, $content, $useFakeData);
     }
 
 }

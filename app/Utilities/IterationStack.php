@@ -159,7 +159,7 @@ class IterationFrame
 
     public function current()
     {
-        return $this-elems[$this->index];
+        return $this->elems[$this->index];
     }
 
     public function get($key = '')
@@ -173,16 +173,16 @@ class IterationFrame
 
     public function has($key)
     {
-        return array_key_exists($key, $this->elems);
+        return array_key_exists($key, $this->elems) && isset($this->elems[$key]);
     }
 
     public function set($key, $value = null)
     {
         if ((is_string($key) && $key !== '' ) || is_int($key)) {
-            $this-elems[$this->index][$key] = $value;
+            $this->elems[$this->index][$key] = $value;
         } elseif (is_array($key)) {
             foreach ($key as $idx => $val) {
-                $this-elems[$this->index][$idx] = $val;
+                $this->elems[$this->index][$idx] = $val;
             }
         }
         return $this;

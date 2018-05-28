@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Http\Request,
+    App\Page;
 
 class ShopController extends MainController {
 
@@ -43,7 +44,8 @@ class ShopController extends MainController {
         return $res;
     }
 
-    static public function getNewProducts() {
+    static public function getNewProducts() 
+    {
         $products = [];
         // the gallery's name..
         $name = 'New Arrivals';
@@ -57,9 +59,35 @@ class ShopController extends MainController {
         return self::genProductGallery($name, $products, $cssClasses);
     }
 
-    public function index(Request $request){
-        
+    public function index(Request $request)
+    {
         return parent::getView('content.store');
+    }
+
+    public function test(Request $request)
+    {
+        
+        $useFakeData = true;
+        self::$data['sidebar'] = Page::getSidebar($useFakeData);
+        self::$data['breadcrumbs'] = [
+            'links' => [
+                [
+                    'name' => '',
+                    'url' => '',
+                ],
+            ],
+            'current'=> [
+                'name' => 'Store',
+                'url' => 'store',
+            ],
+        ];
+        $title = 'test Store page';
+        $content = [
+                'header' => 'Welcome To Our Store!',
+                'subheading' => 'Here you will find a wealth of products that only LIBERTY can PROVIDE!',
+                'article' => self::getLoremIpsum(),
+        ];
+        return parent::getView('content.store', $title, $content, $useFakeData);
     }
 
 }

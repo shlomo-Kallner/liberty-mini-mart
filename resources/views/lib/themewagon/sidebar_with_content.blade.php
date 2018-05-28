@@ -14,7 +14,6 @@ $bestsellers2 = Functions::getContent($bestsellers??'');
 
 @endphp
 
-@if(true)
 <!-- BEGIN SIDEBAR & CONTENT -->
 <div class="row margin-bottom-40 ">
 
@@ -204,4 +203,4 @@ $bestsellers2 = Functions::getContent($bestsellers??'');
     @endif
 </div>
 <!-- END SIDEBAR & CONTENT -->
-@endif
+

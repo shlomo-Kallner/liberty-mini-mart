@@ -11,11 +11,13 @@
   |
  */
 
-Route::get('/', 'PageController@test2');
+Route::get('/', 'PageController@test3');
 
-Route::get('template', function () {
-    return view('master_themewagon');
-});
+Route::get(
+    'template', function () {
+        return view('master_themewagon');
+    }
+);
 
 //Route::resource('user', 'UserController');
 Route::prefix('user')->group(
@@ -27,8 +29,9 @@ Route::prefix('user')->group(
 
 Route::prefix('store')->group( 
     function () {
-        Route::get('/', 'ShopController@index');
-        Route::get('all', 'ShopController@products');
+        Route::get('/', 'ShopController@test2');
+        //Route::get('/', 'ShopController@index');
+        //Route::get('all', 'ShopController@products');
 
         Route::resource('section', 'SectionController');
         // 'section/' goes to 'index()' which returns 'all-sections' of the store..
@@ -61,7 +64,7 @@ Route::post('signin/{page?}', 'UserController@signin');
 
 Route::get('signout', 'UserController@signout');
 
-Route::get('{page}', 'PageController@index1');
+Route::get('{page}', 'PageController@test3');
 
 
 //

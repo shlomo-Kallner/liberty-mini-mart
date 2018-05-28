@@ -60,10 +60,17 @@ class Functions{
         }
     }
 
-    static public function getBladedString(string $str, $default = '')
+    static public function getBladedString($str, $default = '')
     {
         if (self::testVar($str)) {
-            $tmp = html_entity_decode((string)$str);
+            $tmp = null;
+            if (is_string($str)) {
+                $tmp = html_entity_decode((string)$str);
+            } elseif ($str instanceof HtmlString) {
+                $tmp = html_entity_decode($str->toHtml());
+            } else {
+                return $default;
+            }
             return !empty($tmp) ? $tmp : $default ;
         } else {
             return $default;

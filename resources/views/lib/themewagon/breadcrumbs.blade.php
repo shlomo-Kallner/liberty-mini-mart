@@ -9,7 +9,7 @@ use \App\Utilities\Functions\Functions;
 
 
 // unserializing $breadcrumbs if its set to a non-null string..
-$crumbs = Functions::getBladedContent(isset($breadcrumbs)?$breadcrumbs:'', [
+$crumbs = Functions::getBladedContent($breadcrumbs??'', [
     'links' => [
         [
             'name' => '',

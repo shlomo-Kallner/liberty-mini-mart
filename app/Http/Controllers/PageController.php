@@ -76,6 +76,7 @@ class PageController extends MainController {
         //
     }
 
+    /// UTILITY METHODS:
     /// Testing Functions Start:
 
     public function index1(Request $request) {
