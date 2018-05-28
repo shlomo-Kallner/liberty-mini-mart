@@ -5,8 +5,14 @@ namespace App\Http\Controllers;
 use App\Categorie;
 use Illuminate\Http\Request;
 
-class CategorieController extends Controller
+class CategorieController extends MainController
 {
+    
+    public function __construct($name = '', $titleNameSep = ' | ') 
+    {
+        parent::__construct($name, $titleNameSep);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -82,4 +88,10 @@ class CategorieController extends Controller
     {
         //
     }
+
+    public function test(Request $request)
+    {
+        return static::getView('content.category', 'DEMO-CATEGORY', [], true);
+    }
+
 }

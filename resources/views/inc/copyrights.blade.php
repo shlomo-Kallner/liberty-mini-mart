@@ -13,11 +13,12 @@
 
             <div class="col-md-3">
                 <p class="powered">
-                    Powered by: &nbsp;
+                    Powered by: <br>
                     <a class="powered" href="http://htmlpurifier.org/">
                         <img src="http://htmlpurifier.org/live/art/powered.png"
                             alt="Powered by HTML Purifier" border="0" />
-                    </a>
+                    </a> <br>
+                    From: <a href="http://htmlpurifier.org/">HTML Purifier</a>
                 </p>
             </div>
         </div>

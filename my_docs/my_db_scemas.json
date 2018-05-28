@@ -47,6 +47,7 @@
         "__super__/@super": "basic()",
         "$(parent)_id? @obsolete(!use_parent)": "int",
         "title": "string",
+        "sub_title": "string",
         "article": "longtext",
         "url": "string",
         "description": "string"
@@ -70,12 +71,13 @@
         "SectionProducts : pivot()": {}
     },
 
-    "Sections : component(false,'department')": {
-        "__alias__": "Category"
-    },
+    "Sections : component(false,'department')": {},
+
+    "Category : component(true,'section')" : {},
 
     "Products : component(true,'category')": {
-        "price": "float[10,2]"
+        "price": "float[10,2]",
+        "sale?": "float[10,2]"
     },
 
     "Orders": {

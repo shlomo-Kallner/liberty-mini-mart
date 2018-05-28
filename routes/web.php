@@ -29,9 +29,13 @@ Route::prefix('user')->group(
 
 Route::prefix('store')->group( 
     function () {
-        Route::get('/', 'ShopController@test2');
+        Route::get('/', 'ShopController@test');
         //Route::get('/', 'ShopController@index');
         //Route::get('all', 'ShopController@products');
+
+        Route::get('section/test', 'SectionController@test');
+        Route::get('section/test/category/test', 'CategorieController@test');
+        Route::get('section/test/category/test/product/test', 'ProductController@test');
 
         Route::resource('section', 'SectionController');
         // 'section/' goes to 'index()' which returns 'all-sections' of the store..

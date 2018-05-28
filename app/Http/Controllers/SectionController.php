@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class SectionController extends MainController
 {
+    
+    public function __construct($name = '', $titleNameSep = ' | ') 
+    {
+        parent::__construct($name, $titleNameSep);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -81,5 +87,10 @@ class SectionController extends MainController
     public function destroy(Section $section)
     {
         //
+    }
+
+    public function test(Request $request)
+    {
+        return static::getView('content.section', 'TEST-SECTION', [], true);
     }
 }

@@ -5,7 +5,13 @@ namespace App\Http\Controllers;
 use App\Page;
 use Illuminate\Http\Request;
 
-class PageController extends MainController {
+class PageController extends MainController 
+{
+    
+    public function __construct($name = '', $titleNameSep = ' | ') 
+    {
+        parent::__construct($name, $titleNameSep);
+    }
 
     /**
      * Display a listing of the resource.

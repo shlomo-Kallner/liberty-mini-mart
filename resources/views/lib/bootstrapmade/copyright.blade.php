@@ -11,9 +11,7 @@
   
 <div class="col-md-3 pull-right">
     <p>
-        <a href="https://bootstrapmade.com/flexor-free-multipurpose-bootstrap-template/">
-            Pricing Box
-        </a> inspired by: <br>
+        Powered by: <br>
         <a href="https://bootstrapmade.com/flexor-free-multipurpose-bootstrap-template/">
             <img src="{{ asset('lib/bootstrapmade/flexor/img/logo.png') }}" alt="Flexor Logo">
         </a> <br> From:

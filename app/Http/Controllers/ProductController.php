@@ -5,8 +5,14 @@ namespace App\Http\Controllers;
 use App\Product;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class ProductController extends MainController
 {
+    
+    public function __construct($name = '', $titleNameSep = ' | ') 
+    {
+        parent::__construct($name, $titleNameSep);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -81,5 +87,10 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         //
+    }
+
+    public function test(Request $request)
+    {
+        return static::getView('content.category', 'TEST-PRODUCT', [], true);
     }
 }
