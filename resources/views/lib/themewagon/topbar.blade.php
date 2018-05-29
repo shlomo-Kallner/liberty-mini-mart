@@ -4,14 +4,14 @@ use \App\Page,
     \App\Utilities\Functions\Functions;
 
     
-$preheader2 = Functions::getBladedContent(isset($preheader)?$preheader:'');
+$preheader2 = Functions::getUnBladedContent($preheader??'');
 //dd($preheader2);
 if (Functions::testVar($preheader2)) {
     $preheader2 = Page::getPreHeader();
 }
 
-// $currencies2 = Functions::getBladedContent(!isset($currencies)?$currencies:'');
-// $langs2 = Functions::getBladedContent(!isset($langs)?$langs:'');
+// $currencies2 = Functions::getUnBladedContent(!isset($currencies)?$currencies:'');
+// $langs2 = Functions::getUnBladedContent(!isset($langs)?$langs:'');
 @endphp
 
 <!-- BEGIN TOP BAR -->
@@ -129,12 +129,13 @@ if (Functions::testVar($preheader2)) {
             -->
             <div class="col-md-6 col-sm-6 additional-nav">
                 <ul class="list-unstyled list-inline pull-right">
+
                     @if(Functions::testVar($preheader2))
-                    {{-- UPDATE: Copying FA icon and span tag link from 
-                                 master_bootstrapious.blade.php  TOP BAR Section
-                                 to replace the 'simple' text content of these 
-                                 couple of links...
-                     --}}
+                        {{-- UPDATE: Copying FA icon and span tag link from 
+                                    master_bootstrapious.blade.php  TOP BAR Section
+                                    to replace the 'simple' text content of these 
+                                    couple of links...
+                        --}}
 
                         @foreach($preheader2 as $nav)
 
@@ -149,7 +150,7 @@ if (Functions::testVar($preheader2)) {
                             @endcomponent
                         
                         @endforeach
-                    {{-- End dynamicly generated "main level" topbar menu --}}
+                        {{-- End dynamicly generated "main level" topbar menu --}}
                     @endif
 
                 </ul>

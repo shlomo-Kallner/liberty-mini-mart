@@ -7,20 +7,21 @@
         \App\Utilities\IterationStack\IterationFrame;
 
     //dd($testing);
-    $sidebar2 = Functions::getUnBladedContent($sidebar??'');
-    //dd($sidebar2);
+    //dd($menu);
+    $menu2 = Functions::getUnBladedContent($menu??'');
+    //dd($menu2);
 
 @endphp
 
 
     <ul class="list-group margin-bottom-25 sidebar-menu">
 
-        @if(Functions::testVar($sidebar2))
+        @if(Functions::testVar($menu2))
             
             @php
             
 
-                $frameStack = new IterationStack($sidebar2);
+                $frameStack = new IterationStack($menu2);
                 /*
                     $currentParent = null;
                     $currentFrame = [

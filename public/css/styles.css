@@ -108,17 +108,21 @@ End Bootstrap 3 Overides
 }
 
 .header .header-navigation li.menu-search {
+    /*
     width: 72px;
     height: inherit;
-    top: 0;
+    top: 0; 
     float: left;
+    */
 }
 
 .header-navigation li.menu-search i {
-    top: 0;
+    /*top: 0; */
 }
 .header-navigation li.menu-search a {
+    /*
     margin-left: 40px;
+    */
 }
 
 /*

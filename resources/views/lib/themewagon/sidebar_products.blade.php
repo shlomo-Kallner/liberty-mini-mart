@@ -3,9 +3,10 @@
 @php
 
     $testing = false;
+    //$fakeData = ''; // old fakeData '123FAKEDATA'
     use \App\Utilities\Functions\Functions;
 
-    $products2 = Functions::getUnBladedContent($products??'123FAKEDATA');
+    $products2 = Functions::getUnBladedContent($products??'','');
     //dd($products2);
     $title2 = Functions::getBladedString($title??'','');
     $currency2 = Functions::getBladedString($currency??'fa-usd','fa-usd');
@@ -67,6 +68,7 @@
                 <div class="price">$86.00</div>
             </div>
         @endif
+
     </div>
 
 @endif

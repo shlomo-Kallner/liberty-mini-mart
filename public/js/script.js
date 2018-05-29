@@ -37,5 +37,15 @@ $(function () {
 
     };
     handleUsersLinks();
+
+    var handleSearch = function() {    
+        $('.search-modal-trigger-btn').click(function(){
+            $('#search-modal').modal('show');
+        });
+
+        
+
+    };
+    handleSearch();
     
 });

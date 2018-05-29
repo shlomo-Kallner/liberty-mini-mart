@@ -8,14 +8,17 @@ use \App\Page,
     \App\Utilities\Functions\Functions,
     Darryldecode\Cart\Cart;
 
-$navbar2 = Functions::getBladedContent(isset($navbar)?$navbar:'');
+$testing = true;
+
+
+$navbar2 = Functions::getBladedContent($navbar??'');
 //dd($navbar2);
 if (!Functions::testVar($navbar2)) {
     $navbar2 = Page::getNavBar();
 }
 
 
-$preheader2 = Functions::getBladedContent(isset($preheader)?$preheader:'');
+$preheader2 = Functions::getBladedContent($preheader??'');
 //dd($preheader2);
 if (!Functions::testVar($preheader2)) {
     $preheader2 = Page::getPreHeader();
@@ -27,9 +30,7 @@ $preheader2s = serialize($preheader2); // preserialized for component slots..
 // And the $preheader variable.
 //dd($preheader);
 
-$testing = true;
-
-$cart2 = Functions::getBladedContent(isset($cart)?$cart:'');
+$cart2 = Functions::getBladedContent($cart??'');
 
 if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
  // place some $cart initializing code here..
@@ -62,113 +63,19 @@ if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
             {!! $preheader2s !!}
         @endslot
     @endcomponent
+
 @endsection
 
 
 @section('pre-header-navbar')
 @parent
 
-@if (true)
- 
     @component('lib.themewagon.topbar')
         @slot('preheader')
             {!! $preheader2s !!}
         @endslot
     @endcomponent
-    
-@else
-    <!-- BEGIN TOP BAR -->
-    <div class="pre-header">
-        <div class="container">
-            <div class="row">
-                <!-- BEGIN TOP BAR LEFT PART -->
-                <div class="col-md-6 col-sm-6 additional-shop-info">
-                    
-                    {{-- 
-                        TO DO: Convert CURRENCIES LIST to a dynamic menu 
-                        list using our links component. 
-                    --}}
-                    <ul class="list-unstyled list-inline">
-                        {{-- REMOVED: the Phone link from 
-                            the template was removed. --}}
-                        <!-- BEGIN CURRENCIES -->
-                        <li class="shop-currencies">
-                            
-                            {{-- Euro --}}                        
-                            <a href="javascript:void(0);">
-                                <i class="fa fa-eur"></i>
-                            </a>
-                            
-                            {{-- British Pounds --}}
-                            <a href="javascript:void(0);">
-                                <i class="fa fa-gbp"></i>
-                            </a>
-                            
-                            {{-- Israeli Shekels --}}
-                            <a href="javascript:void(0);">
-                                <i class="fa fa-ils"></i>
-                            </a>
 
-                            {{-- USA Dollars - the default --}}
-                            <a href="javascript:void(0);" class="current">
-                                <i class="fa fa-usd"></i>
-                            </a>
-                        </li>
-                        <!-- END CURRENCIES -->
-                        <!-- BEGIN LANGS -->
-                        <li class="langs-block">
-                            <a href="javascript:void(0);" class="current">English </a>
-                            <div class="langs-block-others-wrapper"><div class="langs-block-others">
-                                    <a href="javascript:void(0);">Hebrew</a>
-                                    <a href="javascript:void(0);">French</a>
-                                    <a href="javascript:void(0);">Germany</a>
-                                    <a href="javascript:void(0);">Turkish</a>
-                                </div></div>
-                        </li>
-                        <!-- END LANGS -->
-                    </ul>
-                </div>
-                <!-- END TOP BAR LEFT PART -->
-                <!-- BEGIN TOP BAR MENU -->
-                <!-- 
-                    While the Primary/Main template for this TOP BAR MENU 
-                    is Metronic Shop UI, the Internal Styling of individual
-                    menu items is inspired by/copied from 
-                    'bootstrapious/universal-1-0' TOP BAR MENU.
-                -->
-                <div class="col-md-6 col-sm-6 additional-nav">
-                    <ul class="list-unstyled list-inline pull-right">
-                        @if(Functions::testVar($preheader2))
-                            {{-- UPDATE: Copying FA icon and span tag link from 
-                                        master_bootstrapious.blade.php  TOP BAR Section
-                                        to replace the 'simple' text content of these 
-                                        couple of links...
-                            --}}
-
-                            @foreach($preheader2 as $nav)
-
-                                @component('lib.themewagon.links')
-                                    @foreach ($nav as $key => $value)
-
-                                        @slot($key)
-                                            {{ $value }}
-                                        @endslot
-                                        
-                                    @endforeach
-                                @endcomponent
-                            
-                            @endforeach
-                            {{-- End dynamicly generated "main level" topbar menu --}}
-                        @endif
-
-                    </ul>
-                </div>
-                <!-- END TOP BAR MENU -->
-            </div>
-        </div>        
-    </div>
-    <!-- END TOP BAR -->
-@endif
 @endsection
 
 
@@ -204,30 +111,30 @@ if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
                 <div class="top-cart-content">
                     <ul class="scroller" style="height: 250px;">
                         @foreach($cart2['items'] as $item)
-                        <?php //dd($item);     ?>
-                        @component('lib.themewagon.cartItem')
-                        @slot('url')
-                        {{$item->attributes['url']}}
-                        @endslot
-                        @slot('img')
-                        {{ $item->attributes['img'] }}
-                        @endslot
-                        @slot('description')
-                        {{ $item->attributes['description'] }}
-                        @endslot
-                        @slot('quantity')
-                        {{ $item->quantity }}
-                        @endslot
-                        @slot('name')
-                        {{ $item->name }}
-                        @endslot
-                        @slot('currencyIcon')
-                        {{ $cart['currency-icon'] }}
-                        @endslot
-                        @slot('priceSum')
-                        {{ $item->getPriceSumWithConditions() }}
-                        @endslot
-                        @endcomponent
+                            <?php //dd($item);     ?>
+                            @component('lib.themewagon.cartItem')
+                                @slot('url')
+                                {{$item->attributes['url']}}
+                                @endslot
+                                @slot('img')
+                                {{ $item->attributes['img'] }}
+                                @endslot
+                                @slot('description')
+                                {{ $item->attributes['description'] }}
+                                @endslot
+                                @slot('quantity')
+                                {{ $item->quantity }}
+                                @endslot
+                                @slot('name')
+                                {{ $item->name }}
+                                @endslot
+                                @slot('currencyIcon')
+                                {{ $cart['currency-icon'] }}
+                                @endslot
+                                @slot('priceSum')
+                                {{ $item->getPriceSumWithConditions() }}
+                                @endslot
+                            @endcomponent
                         @endforeach
                     </ul>
                     <div class="text-right">
@@ -238,6 +145,7 @@ if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
                         <a href="{{ url('checkout') }}" class="btn btn-primary">
                             Checkout
                         </a>
+                        
                     </div>
                 </div>
             </div>            
@@ -293,41 +201,31 @@ if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
                 --}}
 
                 <!-- BEGIN TOP SEARCH -->
-                @if(false)
-                    <li class="menu-search">
-                    <span class="sep"></span>
-                    <i class="fa fa-search search-btn"></i>
-                    <div class="search-box">
-                        <form action="#">
-                            <div class="input-group">
-                                <input type="text" placeholder="Search" class="form-control">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-primary" type="submit">Search</button>
-                                </span>
-                            </div>
-                        </form>
-                    </div>
-                @else
-                    {{--  --}}
+                <li class="menu-search">
                     @if(false)
-                        <li role="separator" class="divider">
+                        <span class="sep"></span>
+                        <i class="fa fa-search search-btn"></i>
+                        <div class="search-box">
+                            <form action="#">
+                                <div class="input-group">
+                                    <input type="text" placeholder="Search" class="form-control">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit">Search</button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                    @else
+                        @if(true)
                             <span class="sep"></span>
-                        </li>
-                        {{-- <span class="sep"></span> --}}
-                    @endif
-                    <li class="menu-search">
-                        @if(false)
-                            <span class="sep"></span>
+                            <i class="fa fa-search search-modal-trigger-btn"></i>
+                        @else
+                            <a class="clearfix" href="#" data-toggle="modal" data-target="#search-modal">
+                                <i class="fa fa-search"></i>
+                            </a>
                         @endif
-                        <a class="clearfix" href="#" data-toggle="modal" data-target="#search-modal">
-                            <i class="fa fa-search"></i>
-                        </a>
-                @endif 
+                    @endif 
                 </li> 
-                {{-- 
-                    This li end tag is of the search button.. 
-                    the li begin tag is in the above @If..
-                --}}
                 <!-- END TOP SEARCH -->
 
             </ul>
