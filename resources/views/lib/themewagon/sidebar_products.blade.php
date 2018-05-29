@@ -2,13 +2,13 @@
 
 @php
 
-    $testing = true;
+    $testing = false;
     use \App\Utilities\Functions\Functions;
 
     $products2 = Functions::getUnBladedContent($products??'123FAKEDATA');
-    //dd($bestsellers2);
-    $title2 = Functions::getBladedContent($title??'');
-    $currency2 = Functions::getBladedContent($currency??'fa-usd');
+    //dd($products2);
+    $title2 = Functions::getBladedString($title??'','');
+    $currency2 = Functions::getBladedString($currency??'fa-usd','fa-usd');
     //dd($currency2);
 
 @endphp
@@ -18,7 +18,7 @@
     <div class="sidebar-products clearfix">
         <h2>{{ $title2 }}</h2>
 
-        @if (false)
+        @if (Functions::testVar($products2))
 
             @foreach ($products2 as $item)
 
@@ -27,7 +27,7 @@
                         <img src="{{asset($item['img'])}}" alt="{{ $item['alt'] }}">
                     </a>
                     <h3>
-                        <a href="{{asset($item['img'])}}">
+                        <a href="{{asset($item['url'])}}">
                             {{ $item['alt'] }}
                         </a>
                     </h3>
@@ -39,7 +39,8 @@
                 
             @endforeach
                 
-        @else
+        @elseif($testing)
+
             <div class="item">
                 <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">
                     <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k1.jpg') }}" alt="Some Shoes in Animal with Cut Out">

@@ -33,7 +33,30 @@
     ]);
     }
     //dd($filters2);
-    $bestsellers2 = Functions::getUnBladedContent($bestsellers??$fakeData);
+    if (!$testing) {
+        $bestsellers2 = Functions::getUnBladedContent($bestsellers??$fakeData);
+    } else {
+        $bestsellers2 = serialize([
+            [
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k1.jpg',
+                'alt' => 'Some Shoes in Animal with Cut Out',
+                'price' => '31.00'
+            ],
+            [
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k4.jpg',
+                'alt' => 'Some Shoes in Animal with Cut Out',
+                'price' => '23.00'
+            ],
+            [
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k3.jpg',
+                'alt' => 'Some Shoes in Animal with Cut Out',
+                'price' => '86.00'
+            ]
+        ]);
+    }
     //dd($bestsellers2);
     $currency2 = Functions::getContent($currency??'fa-usd');
     //dd($currency2);
@@ -61,13 +84,13 @@
         @endslot
     @endcomponent
     
-    @if (false)
+    @if (true)
         @component('lib.themewagon.sidebar_products')
             @slot('products')
-                {!! Functions::getContent($bestsellers??$fakeData) !!}
+                {!! $bestsellers2 !!}
             @endslot
             @slot('currency')
-                {!! Functions::getContent($currency??'fa-usd') !!}
+                {!! $currency2 !!}
             @endslot
             @slot('title')
                 {!! "Bestsellers" !!}
