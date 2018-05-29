@@ -8,6 +8,7 @@
     $sampleProducts2 = Functions::getContent($sampleProducts??'');
     $currency2 = Functions::getContent($currency??'');
     $sidebar2 = Functions::getContent($sidebar??'');
+    //dd($sidebar2);
     $filters2 = Functions::getContent($filters2??'');
     $bestsellers2 = Functions::getContent($bestsellers??'');
 

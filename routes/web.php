@@ -33,6 +33,7 @@ Route::prefix('store')->group(
         //Route::get('/', 'ShopController@index');
         //Route::get('all', 'ShopController@products');
 
+        // some pre-database-filling testing routes..
         Route::get('section/test', 'SectionController@test');
         Route::get('section/test/category/test', 'CategorieController@test');
         Route::get('section/test/category/test/product/test', 'ProductController@test');

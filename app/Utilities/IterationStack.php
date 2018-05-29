@@ -18,7 +18,8 @@ class IterationStack
     {
         if (( is_string($key) || is_int($key)) && !$this->empty() ) {
             $this->stack[] = $this->current;
-            $tmp = new IterationFrame($this->current->get($key), $this->current);
+            $tArr = $this->current->get($key);
+            $tmp = new IterationFrame($tArr, $this->current);
             $this->current = $tmp;
         }
         return $this;
@@ -162,18 +163,25 @@ class IterationFrame
         return $this->elems[$this->index];
     }
 
-    public function get($key = '')
+    public function get($key, $default = null)
     {
-        if ((is_string($key) && $key !== '' ) || is_int($key)) {
-            return $this->current()[$key];
+        //dd($key);
+        if ($this->has($key)) {
+            return $this->elems[$this->index][$key];
         } else {
-            return null;
+            return $default;
         }
     }
 
     public function has($key)
     {
-        return array_key_exists($key, $this->elems) && isset($this->elems[$key]);
+        //dd($key);
+        if ((is_string($key) && $key !== '') || is_int($key)) {
+            //dd($key);
+            return !empty($this->elems[$this->index][$key]);
+        } else {
+            return false;
+        }
     }
 
     public function set($key, $value = null)
