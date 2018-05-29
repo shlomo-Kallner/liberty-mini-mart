@@ -145,7 +145,7 @@ if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
                         <a href="{{ url('checkout') }}" class="btn btn-primary">
                             Checkout
                         </a>
-                        
+
                     </div>
                 </div>
             </div>            
@@ -202,29 +202,8 @@ if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
 
                 <!-- BEGIN TOP SEARCH -->
                 <li class="menu-search">
-                    @if(false)
-                        <span class="sep"></span>
-                        <i class="fa fa-search search-btn"></i>
-                        <div class="search-box">
-                            <form action="#">
-                                <div class="input-group">
-                                    <input type="text" placeholder="Search" class="form-control">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-primary" type="submit">Search</button>
-                                    </span>
-                                </div>
-                            </form>
-                        </div>
-                    @else
-                        @if(true)
-                            <span class="sep"></span>
-                            <i class="fa fa-search search-modal-trigger-btn"></i>
-                        @else
-                            <a class="clearfix" href="#" data-toggle="modal" data-target="#search-modal">
-                                <i class="fa fa-search"></i>
-                            </a>
-                        @endif
-                    @endif 
+                    <span class="sep"></span>
+                    <i class="fa fa-search search-modal-trigger-btn"></i> 
                 </li> 
                 <!-- END TOP SEARCH -->
 
