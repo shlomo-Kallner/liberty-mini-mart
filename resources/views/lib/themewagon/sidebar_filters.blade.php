@@ -10,9 +10,10 @@
 
     //dd($testing);
     $filters2 = Functions::getUnBladedContent($filters??'123FAKEDATA');
+    //dd($filters);
     //dd($filters2);
-    $title2 = Functions::getBladedContent($title??'');
-    $currency2 = Functions::getBladedContent($currency??'fa-usd');
+    $title2 = Functions::getBladedString($title??'');
+    $currency2 = Functions::getBladedString($currency??'fa-usd');
     //dd($currency2);
 
 @endphp
@@ -23,10 +24,11 @@
     <h2>{{ $title2 }}</h2>
 
     @if (false)
+
         @foreach ($filters2 as $item)
 
             <h3>{{ $item['name'] }}</h3>
-            {!! $item['filter'] !!}
+            {!! Functions::getBladedString($item['filter']) !!}
             
         @endforeach
 

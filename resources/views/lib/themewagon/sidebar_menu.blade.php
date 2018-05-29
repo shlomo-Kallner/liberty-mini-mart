@@ -15,7 +15,7 @@
 
     <ul class="list-group margin-bottom-25 sidebar-menu">
 
-        @if(Functions::testVar($sidebar2) || !$testing)
+        @if(Functions::testVar($sidebar2))
             
             @php
             
@@ -161,7 +161,7 @@
 
             @endwhile
         
-        @else
+        @elseif($testing)
 
             <li class="list-group-item clearfix">
                 <a href="lib/themewagon/metronicShopUI/theme/shop-product-list.html"><i class="fa fa-angle-right"></i> Ladies</a>
