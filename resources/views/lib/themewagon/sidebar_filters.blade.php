@@ -3,7 +3,7 @@
 
 @php
 
-    $testing = true;
+    $testing = false;
     use \App\Utilities\Functions\Functions,
         \App\Utilities\IterationStack\IterationStack,
         \App\Utilities\IterationStack\IterationFrame;
@@ -23,7 +23,10 @@
 <div class="sidebar-filter margin-bottom-25">
     <h2>{{ $title2 }}</h2>
 
-    @if (false)
+    @if (Functions::testVar($filters2))
+        @php
+            //dd($filters2);
+        @endphp
 
         @foreach ($filters2 as $item)
 
@@ -32,7 +35,7 @@
             
         @endforeach
 
-    @else
+    @elseif($testing)
 
         <h3>Availability</h3>
         <div class="checkbox-list">

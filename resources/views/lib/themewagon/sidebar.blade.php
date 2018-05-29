@@ -49,55 +49,17 @@
         @endslot
     @endcomponent
 
-    
-    
-    @if (true)
-        @component('lib.themewagon.sidebar_filters')
-            @slot('filters')
-                {!! $filters2 !!}
-            @endslot
-            @slot('currency')
-                {!! $currency2 !!}
-            @endslot
-            @slot('title')
-                {!! "Filters" !!}
-            @endslot
-        @endcomponent
-    @else
-        
-        @if(Functions::testVar($filters2) || $testing)
-            <div class="sidebar-filter margin-bottom-25">
-                <h2>Filters</h2>
-
-                @if (false)
-                    @foreach ($filters2 as $item)
-
-                        <h3>{{ $item['name'] }}</h3>
-                        {!! $item['filter'] !!}
-                        
-                    @endforeach
-            
-                @else
-
-                    <h3>Availability</h3>
-                    <div class="checkbox-list">
-                        <label><input type="checkbox"> Not Available (3)</label>
-                        <label><input type="checkbox"> In Stock (26)</label>
-                    </div>
-
-                    <h3>Price</h3>
-                    <p>
-                        <label for="amount">Range:</label>
-                        <input type="text" id="amount" style="border:0; color:#f6931f; font-weight:bold;">
-                    </p>
-                    <div id="slider-range"></div>
-                    
-                @endif
-                
-            </div>
-        @endif
-
-    @endif
+    @component('lib.themewagon.sidebar_filters')
+        @slot('filters')
+            {!! $filters2 !!}
+        @endslot
+        @slot('currency')
+            {!! $currency2 !!}
+        @endslot
+        @slot('title')
+            {!! "Filters" !!}
+        @endslot
+    @endcomponent
     
     @if (false)
         @component('lib.themewagon.sidebar_products')
