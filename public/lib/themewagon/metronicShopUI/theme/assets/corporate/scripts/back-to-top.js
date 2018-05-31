@@ -11,7 +11,7 @@ var scrolltotop={
 	setting: {startline:100, scrollto: 0, scrollduration:1000, fadeduration:[500, 100]},
 	// the original Metronic UI Code had path '../../assets/corporate/img/up.png',
 	//  it was changed to reflect the REAL path in Liberty-MiniMart..
-	controlHTML: '<img src="lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png" style="width:40px; height:40px" />', //HTML for control, which is auto wrapped in DIV w/ ID="topcontrol"
+	controlHTML: '<img src="../../lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png" style="width:40px; height:40px" />', //HTML for control, which is auto wrapped in DIV w/ ID="topcontrol"
 	controlattrs: {offsetx:10, offsety:10}, //offset of control relative to right/ bottom of window corner
 	anchorkeyword: '#top', //Enter href value of HTML anchors on the page that should also act as "Scroll Up" links
 
@@ -72,7 +72,45 @@ var scrolltotop={
 				mainobj.togglecontrol()
 			})
 		})
-	}
-}
+	},
 
-scrolltotop.init()
+	// MOD: function genControlHTML() and init2 and init3 are my (Shlomo Kallner's) MODIFICATION 
+	//  in order to insert the @REAL@ path via LARAVEL v5.5.0 BLADE 
+	//  string interpolation.
+	genControlHTML: function(imgPath){
+		return '<img src="' + imgPath + '" style="width:40px; height:40px" />';
+	},
+
+	init2:function(imgPath){
+		jQuery(function($){
+			var mainobj=scrolltotop;
+			var iebrws=document.all;
+			mainobj.cssfixedsupport=!iebrws || iebrws && document.compatMode=="CSS1Compat" && window.XMLHttpRequest; //not IE or IE7+ browsers in standards mode
+			mainobj.$body=(window.opera)? (document.compatMode=="CSS1Compat"? $('html') : $('body')) : $('html,body');
+			mainobj.controlHTML = mainobj.genControlHTML(imgPath);
+			mainobj.$control=$('<div id="topcontrol">'+mainobj.controlHTML+'</div>')
+				.css({position:mainobj.cssfixedsupport? 'fixed' : 'absolute', bottom:mainobj.controlattrs.offsety, right:mainobj.controlattrs.offsetx, opacity:0, cursor:'pointer'})
+				.attr({title:'Scroll Back to Top'})
+				.click(function(){mainobj.scrollup(); return false})
+				.appendTo('body');
+			if (document.all && !window.XMLHttpRequest && mainobj.$control.text()!='') //loose check for IE6 and below, plus whether control contains any text
+				mainobj.$control.css({width:mainobj.$control.width()}); //IE6- seems to require an explicit width on a DIV containing text
+			mainobj.togglecontrol();
+			$('a[href="' + mainobj.anchorkeyword +'"]').click(function(){
+				mainobj.scrollup();
+				return false;
+			});
+			$(window).bind('scroll resize', function(e){
+				mainobj.togglecontrol();
+			});
+		});
+	},
+	init3:function(){
+		jQuery(function($){
+			var mainobj=scrolltotop;
+			return $.extend({ scrolltotop: mainobj } );
+		});
+	}
+};
+//scrolltotop.init();
+scrolltotop.init3();

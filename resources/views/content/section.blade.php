@@ -22,13 +22,13 @@
     <div class="row margin-bottom-40 ">
 
         @component('lib.themewagon.sidebar')
-            @slot('sidebar')
+            @slot('menu')
                 {!! $sidebar2 !!}
             @endslot
             @slot('filters')
                 {!! $filters2 !!}
             @endslot
-            @slot('bestsellers')
+            @slot('products')
                 {!! $bestsellers2 !!}
             @endslot
             @slot('currency')

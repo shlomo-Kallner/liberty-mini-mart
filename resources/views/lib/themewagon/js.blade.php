@@ -110,7 +110,7 @@
   --}}
   
   <script type="text/javascript">
-    jQuery(document).ready(function () {
+    jQuery(function ($) {
         Layout.init();
         Layout.initOWL();
         Layout.initImageZoom();
@@ -119,6 +119,7 @@
         Layout.initNavScrolling();
         Layout.initUniform();
         Layout.initSliderRange();
+        $.scrolltotop.init2( "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}" );
     });
   </script>
 @endsection
