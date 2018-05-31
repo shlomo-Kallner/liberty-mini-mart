@@ -8,7 +8,7 @@ use \App\Utilities\Functions\Functions;
 $products2 = Functions::getContent($products??'');
 $productsTitle2 = Functions::getBladedString($productsTitle??'');
 $currency2 = Functions::getBladedString($currency??'');
-$sidebar2 = Functions::getContent($sidebar??'');
+$menu2 = Functions::getContent($menu??'');
 $filters2 = Functions::getContent($filters2??'');
 $bestsellers2 = Functions::getContent($bestsellers??'');
 
@@ -19,7 +19,7 @@ $bestsellers2 = Functions::getContent($bestsellers??'');
 
     @component('lib.themewagon.sidebar')
         @slot('menu')
-            {!! $sidebar2 !!}
+            {!! $menu2 !!}
         @endslot
         @slot('filters')
             {!! $filters2 !!}
