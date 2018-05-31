@@ -2,8 +2,9 @@
 
 namespace App\Utilities\Functions;
 
-use \Illuminate\Support\Collection,
-    Illuminate\Support\HtmlString;
+use Illuminate\Support\Collection,
+    Illuminate\Support\HtmlString,
+    HTMLPurifier;
 
 class Functions{
 
@@ -84,6 +85,33 @@ class Functions{
         } else {
             return $default;
         }
+    }
+
+    static public function purifyContent($content)
+    {
+        if (static::testVar($content)) {
+            $purify = new HTMLPurifier();
+            if (is_string($content)) {
+                return $purify->purify($content);
+            } elseif ($content instanceof HtmlString) {
+                return $purify->purify($content->toHtml());
+            } elseif (is_object($content)) {
+                foreach ($content as $key => $value) {
+                    $content->$key = self::purifyContent($value);
+                }
+                return $content;
+            } elseif (is_array($content)) {
+                foreach ($content as $key => $value) {
+                    $content[$key] = self::purifyContent($value);
+                }
+                return $content;
+            } else {
+                return $purify->purify((string)$content);
+            }
+        } else {
+            return null;
+        }
+
     }
 
     static public function genRange(int $beg, int $end, int $step = 1)

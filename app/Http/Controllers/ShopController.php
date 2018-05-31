@@ -83,9 +83,11 @@ class ShopController extends MainController {
         ];
         $title = 'test Store page';
         $content = [
+            'article' => [
                 'header' => 'Welcome To Our Store!',
                 'subheading' => 'Here you will find a wealth of products that only LIBERTY can PROVIDE!',
                 'article' => self::getLoremIpsum(),
+            ]
         ];
         return parent::getView('content.store', $title, $content, $useFakeData);
     }

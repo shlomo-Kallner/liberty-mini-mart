@@ -10,7 +10,7 @@
     $description2 = Functions::getBladedString($description??'','This is the lead paragraph of the article. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget.');
     $article2 = Functions::getBladedString($article??'','Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper.
     Aenean ultricies mi vitae est. Mauris placerat eleifend leo.');
-    $buttons2 = Functions::getUnBladedContent($buttons??'',[[ 'url' => 'lib/bootstrapious/universal/portfolio-detail.html',
+    $buttons2 = Functions::getUnBladedContent($buttons??'',[[ 'url' => $url2,
                                                               'caption' => 'View' ]]);
 @endphp
 

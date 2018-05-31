@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request,
-    HTMLPurifier,
-    \App\Page,
+    Illuminate\Support\HtmlString,
+    App\Page,
+    App\Utilities\Functions\Functions,
     Session;
 
 class MainController extends Controller {
@@ -44,11 +45,13 @@ class MainController extends Controller {
         ///                 dynamically generated component
         ///                 and Blade Foreach using code block.
         'page' => [
-            'header' => '', // 'h1' page article content
-            'subheading' => '', // 'h2' page article content
-            'article' => '', // 'div' page article content
-            'img' => '', // page article img content
-            'imgAlt' => '', // page img alt content
+            'article' => [
+                'header' => '', // 'h1' page article content
+                'subheading' => '', // 'h2' page article content
+                'article' => '', // 'div' page article content
+                'img' => '', // page article img content
+                'imgAlt' => '', // page img alt content
+            ],
         ],
         'user' => [
             'name' => '',
@@ -131,20 +134,20 @@ class MainController extends Controller {
     static public function setPageContent($content, string $val = '') 
     {
         if (!empty($content)) {
-            $purifier = new HTMLPurifier();
-            if (is_string($content)) {
+            //$purifier = new HTMLPurifier();
+            if (is_string($content) || $content instanceof HtmlString ) {
                 if (!empty($val)) {
-                    self::$data['page'][$content] = $purifier->purify($val);
+                    self::$data['page'][$content] = Functions::purifyContent($val);
                 }
-            } elseif (is_array($content)) {
+            } elseif (is_array($content) || is_object($content)) {
                 foreach ($content as $key => $value) {
-                    self::$data['page'][$key] = $purifier->purify($value);
+                    self::$data['page'][$key] = Functions::purifyContent($value);
                 }
             }
         }
     }
 
-    static public function getView(string $viewName = 'content.template', string $title = '', array $content = [], bool $useFakeData = false) 
+    static public function getView(string $viewName = 'content.template', string $title = '', $content = [], bool $useFakeData = false) 
     {
         self::setTitle($title);
         self::setPageContent($content);
@@ -160,7 +163,7 @@ class MainController extends Controller {
         return view($viewName, self::$data);
     }
 
-    static public function getTemplateView(string $title = '', array $content = []) 
+    static public function getTemplateView(string $title = '', $content = []) 
     {
         return self::getView('content.template', $title, $content);
     }
@@ -211,11 +214,13 @@ class MainController extends Controller {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         $title = 'test ' . $requestedPage . ' page';
         $content = [
-            'header' => e("<b>$requestedPage</b>"),
-            'subheading' => e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
-            'article'=> e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
-            'img' => "images/site/ring_it_liberty_bell.jpg",
-            'imgAlt' => e('Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'),
+            'article' => [
+                'header' => e("<b>$requestedPage</b>"),
+                'subheading' => e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
+                'article'=> e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
+                'img' => "images/site/ring_it_liberty_bell.jpg",
+                'imgAlt' => e('Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'),
+            ]
         ];
         //self::$data['sidebar'] = Page::getSidebar($request, $useFakeData);
         //self::$data['breadcrumbs'] = Page::getBreadcrumbs($request, $useFakeData);
@@ -230,11 +235,13 @@ class MainController extends Controller {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         $title = 'test ' . $requestedPage . ' page';
         $content = [
-            'header' => e("<b>$requestedPage</b>"),
-            'subheading' => e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
-            'article'=> e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
-            'img' => "images/site/ring_it_liberty_bell.jpg",
-            'imgAlt' => e('Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'),
+            'article'=> [
+                'header' => e("<b>$requestedPage</b>"),
+                'subheading' => e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
+                'article'=> e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
+                'img' => "images/site/ring_it_liberty_bell.jpg",
+                'imgAlt' => e('Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'),
+            ]
         ];
         $useFakeData = true;
         self::$data['sidebar'] = Page::getSidebar($useFakeData);

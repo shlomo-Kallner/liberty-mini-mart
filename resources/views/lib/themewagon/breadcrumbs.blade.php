@@ -27,7 +27,7 @@ $crumbs = Functions::getBladedContent($breadcrumbs??'', [
 @endphp
 
 @if ($testing || Functions::testVar($crumbs['current']['name']))
-<div class="row margin-bottom-5 margin-top-5">
+<div class="row padding-top-5">
     <ul class="breadcrumb pull-left">
             
 @endif

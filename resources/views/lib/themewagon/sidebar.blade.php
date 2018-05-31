@@ -34,7 +34,7 @@
     }
     //dd($filters2);
     if (!$testing) {
-        $products2 = Functions::getUnBladedContent($products??$fakeData,$fakeData);
+        $products2 = Functions::getContent($products??$fakeData,$fakeData);
     } else {
         $products2 = serialize([
             [

@@ -129,6 +129,14 @@ End Bootstrap 3 Overides
  END HEADER STYLING
 */
 
+.title-wrapper {
+  background-image: none;
+}
+
+.bar {
+  padding: 0;
+}
+
 /*
 
 BEGIN USERS Scrolled Links Panel Styling

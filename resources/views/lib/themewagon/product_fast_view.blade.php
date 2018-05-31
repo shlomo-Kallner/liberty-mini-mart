@@ -27,8 +27,8 @@
                     <h2>Cool green dress with red bell</h2>
                     <div class="price-availability-block clearfix">
                         <div class="price">
-                            <strong><span>$</span>47.00</strong>
-                            <em>$<span>62.00</span></em>
+                            <strong><span><i class="fa fa-usd"></i></span>47.00</strong>
+                            <em><i class="fa fa-usd"></i><span>62.00</span></em>
                         </div>
                         <div class="availability">
                             Availability: <strong>In Stock</strong>
@@ -95,8 +95,8 @@
                     <h2>Cool green dress with red bell</h2>
                     <div class="price-availability-block clearfix">
                         <div class="price">
-                            <strong><span>$</span>47.00</strong>
-                            <em>$<span>62.00</span></em>
+                            <strong><span><i class="fa fa-usd"></i></span>47.00</strong>
+                            <em><i class="fa fa-usd"></i><span>62.00</span></em>
                         </div>
                         <div class="availability">
                             Availability: <strong>In Stock</strong>

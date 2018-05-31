@@ -32,26 +32,44 @@
     $sidebar2 = Functions::getUnBladedContent($sidebar??'');
 @endphp
 
-@component('lib.themewagon.new_products')
-    @slot('sidebar')
-        {!! serialize($sidebar2) !!}
-    @endslot
-    @slot('newProducts')
-        {!! serialize($new_products2) !!}
-    @endslot
-
-    @if(Functions::testVar($new_products2))
-        @foreach ($new_products2 as $key => $item)
+@if (true)
+    @component('lib.themewagon.article')
+        @foreach ($page['article'] as $key => $item)
             @slot($key)
-                {{$item}}
-            @endslot    
+                {{ $item }}
+            @endslot
         @endforeach
+    @endcomponent
+@endif
 
-    @endif
-@endcomponent
+@if (false)
+    
+    
+@else
+    {{-- Use the old new_products component --}}
+    @component('lib.themewagon.new_products')
+        @slot('sidebar')
+            {!! serialize($sidebar2) !!}
+        @endslot
+        @slot('newProducts')
+            {!! serialize($new_products2) !!}
+        @endslot
+
+        @if(Functions::testVar($new_products2))
+            @foreach ($new_products2 as $key => $item)
+                @slot($key)
+                    {{$item}}
+                @endslot    
+            @endforeach
+
+        @endif
+    @endcomponent
+
+@endif
+
 
 @component('lib.themewagon.article')
-    @foreach ($page as $key => $item)
+    @foreach ($page['article'] as $key => $item)
         @slot($key)
             {{ $item }}
         @endslot

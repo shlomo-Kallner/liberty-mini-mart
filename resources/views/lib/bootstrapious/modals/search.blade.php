@@ -41,14 +41,14 @@
 
                         @for($idx = 0; $idx < 4; $idx++)
                         
-                        {{-- 
-                            A Template / Memo Outline for a search result,
-                            to be filled in / generated via jQuery/AJAX.
-                            May recieve a csrf refresh token as well...
-                            This is a Product result.. 
-                            To be added: category, page, section, blog post, review, etc..
-                        --}}
-                        <div class="media">
+                            {{-- 
+                                A Template / Memo Outline for a search result,
+                                to be filled in / generated via jQuery/AJAX.
+                                May recieve a csrf refresh token as well...
+                                This is a Product result.. 
+                                To be added: category, page, section, blog post, review, etc..
+                            --}}
+                            <div class="media padding-top-20">
                                 <div class="media-left">
                                     <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">
                                         <img class="media-object" width="128" height="128" src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model4.jpg') }}" alt="{{ 'Berry Lace Dress' }}" class="img-responsive">
@@ -56,9 +56,9 @@
                                 </div>
                                 <div class="media-body">
                                     <h4 class="media-heading">
-                                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Berry Lace Dress</a>
+                                        <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">{{ 'Berry Lace Dress' }}</a>
                                     </h4>
-                                    <div class="container">
+                                    <div class="container-fluid">
                                         <div class="row">
                                             <div class="col-md-8">
                                                 <p>
@@ -73,10 +73,11 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-3 pull-left">
-                                                <div class="pi-price">$29.00</div>
+                                                <div class="pi-price"><i class="fa fa-usd"></i>29.00</div>
                                             </div>
                                             <div class="col-md-6 pull-right">
                                                 <button type="button" class="btn btn-primary">Add to cart</button>
+                                                <button type="button" class="btn btn-primary">Order Now</button>
                                             </div>
                                         </div>
                                     </div>
@@ -84,13 +85,14 @@
                             </div>
                             
                         @endfor
+                        
                     </div>
                     <div class="col-md-1"></div>
                 </div>
                 
             </div>
             <div class="modal-footer" style="text-align: center;">
-                <div class="row">
+                <div class="row padding-top-20">
                     <div class="col-md-1"></div>
                     <div class="col-md-10">
                         <nav aria-label="Page navigation" class="navbar navbar-default navbar-fixed-bottom">

@@ -144,18 +144,27 @@ use the 'no-js' css class for IE9 and below as well.
         @yield('login-modal')
         @yield('search-modal')
         @yield('user-links-panel')
+
+        @if (false)
         <br><br><br>
+        @endif
+        
         <main>
             <div class="container">
                 @section('main-content')
                 @show
             </div>  
         </main>
+
+        @if (false)
         <br><br><br>
+        @endif
+
         <footer>
             @section('footer-content')
             @show
         </footer>
+
         @section('css-defered')
         @show
 

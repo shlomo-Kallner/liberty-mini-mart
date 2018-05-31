@@ -35,13 +35,15 @@ class="ecommerce"
     @endslot
 @endcomponent
 
-@component('lib.themewagon.article')
-    @foreach ($page as $key => $item)
-        @slot($key)
-            {{ $item }}
-        @endslot
-    @endforeach
-@endcomponent
+@if (false)
+    @component('lib.themewagon.article')
+        @foreach ($page as $key => $item)
+            @slot($key)
+                {{ $item }}
+            @endslot
+        @endforeach
+    @endcomponent
+@endif
 
 @endsection
 
