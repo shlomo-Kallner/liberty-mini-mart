@@ -1,5 +1,6 @@
 
 @php
+    $testing = true;
     use \App\Utilities\Functions\Functions;
 
     // The DATA for the SLOTS of THIS COMPONENT are gathered HERE!!!  
@@ -76,108 +77,64 @@
                 </div>
             @endif
             <div class="col-md-10 col-sm-10">
-            <div class="pull-right">
-                <label class="control-label">Show:</label>
-                <select class="form-control input-sm">
-                <option value="#?limit=24" selected="selected">24</option>
-                <option value="#?limit=25">25</option>
-                <option value="#?limit=50">50</option>
-                <option value="#?limit=75">75</option>
-                <option value="#?limit=100">100</option>
-                </select>
-            </div>
-            <div class="pull-right">
-                <label class="control-label">Sort&nbsp;By:</label>
-                <select class="form-control input-sm">
-                <option value="#?sort=p.sort_order&amp;order=ASC" selected="selected">Default</option>
-                <option value="#?sort=pd.name&amp;order=ASC">Name (A - Z)</option>
-                <option value="#?sort=pd.name&amp;order=DESC">Name (Z - A)</option>
-                <option value="#?sort=p.price&amp;order=ASC">Price (Low &gt; High)</option>
-                <option value="#?sort=p.price&amp;order=DESC">Price (High &gt; Low)</option>
-                <option value="#?sort=rating&amp;order=DESC">Rating (Highest)</option>
-                <option value="#?sort=rating&amp;order=ASC">Rating (Lowest)</option>
-                <option value="#?sort=p.model&amp;order=ASC">Model (A - Z)</option>
-                <option value="#?sort=p.model&amp;order=DESC">Model (Z - A)</option>
-                </select>
-            </div>
+                <div class="pull-right">
+                    <label class="control-label">Show:</label>
+                    <select class="form-control input-sm">
+                    <option value="#?limit=24" selected="selected">24</option>
+                    <option value="#?limit=25">25</option>
+                    <option value="#?limit=50">50</option>
+                    <option value="#?limit=75">75</option>
+                    <option value="#?limit=100">100</option>
+                    </select>
+                </div>
+                <div class="pull-right">
+                    <label class="control-label">Sort&nbsp;By:</label>
+                    <select class="form-control input-sm">
+                    <option value="#?sort=p.sort_order&amp;order=ASC" selected="selected">Default</option>
+                    <option value="#?sort=pd.name&amp;order=ASC">Name (A - Z)</option>
+                    <option value="#?sort=pd.name&amp;order=DESC">Name (Z - A)</option>
+                    <option value="#?sort=p.price&amp;order=ASC">Price (Low &gt; High)</option>
+                    <option value="#?sort=p.price&amp;order=DESC">Price (High &gt; Low)</option>
+                    <option value="#?sort=rating&amp;order=DESC">Rating (Highest)</option>
+                    <option value="#?sort=rating&amp;order=ASC">Rating (Lowest)</option>
+                    <option value="#?sort=p.model&amp;order=ASC">Model (A - Z)</option>
+                    <option value="#?sort=p.model&amp;order=DESC">Model (Z - A)</option>
+                    </select>
+                </div>
             </div>
         </div>
         
     @endif
+    
 
     <!-- BEGIN PRODUCT LIST -->
     @if(Functions::testVar($products2))
         
         @foreach ($rowIdxs as $row)
 
-            @if (false)
+            <div class="row product-list">
+                @foreach ($row as $idx)
 
-                @php
-
-                    // load up the row's products
-                    // to be passed to the gallery..
-                    // THIS is how we regulate the 
-                    //  number of products per row
-                    //  with 'lib.themewagon.product_gallery'!
-                    $rowProducts = [];
-                    foreach ($row as $idx){
-                        $rowProducts[] = $products2[$idx];
-                    }
+                    @component('lib.themewagon.product_mini')
+                    {{-- 
+                        slot 'extraOuterCss' added above... 
                     
-                @endphp
-                    
-                @component('lib.themewagon.product_gallery')
-                    @slot('products')
-                        @if('continue_escaping_$products' !== '')
-                        {{ $rowProducts }}
-                        @else
-                        {!! $rowProducts !!}
-                        @endif
-                    @endslot
-                    @slot('containerClasses')
-                        {{ "row product-list" }}
-                    @endslot
-                    @slot('sizeClass')
-                        {{ "col-md-12" }}
-                    @endslot
-                    @slot('productClass')
-                        {{ "sale-product" }}
-                    @endslot
-                    @slot('owlClass')
-                        {{ "owl-carousel3" }}
-                    @endslot
-                    @slot('title')
-                        {{ "New Arrivals" }}
-                    @endslot
-                @endcomponent
+                        @slot('extraOuterCss')
+                            {{ "col-md-4 col-sm-6 col-xs-12" }}
+                        @endslot
 
-            @else
-                
-                <div class="row product-list">
-                    @foreach ($row as $idx)
+                    --}}
 
-                        @component('lib.themewagon.product_mini')
-                        {{-- 
-                            slot 'extraOuterCss' added above... 
-                        
-                            @slot('extraOuterCss')
-                                {{ "col-md-4 col-sm-6 col-xs-12" }}
+                        @foreach ($products2[$idx] as $key => $value)
+                            @slot($key)
+                                {{ $value }}
                             @endslot
+                        @endforeach
 
-                        --}}
+                    @endcomponent
 
-                            @foreach ($products2[$idx] as $key => $value)
-                                @slot($key)
-                                    {{ $value }}
-                                @endslot
-                            @endforeach
-
-                        @endcomponent
-
-                    @endforeach
-                </div>
-
-            @endif
+                @endforeach
+            </div>
             
         @endforeach
         

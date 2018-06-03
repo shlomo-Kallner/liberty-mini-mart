@@ -225,3 +225,4 @@ class Page extends Model {
     
 
 }
+bs

@@ -106,7 +106,33 @@
         ];
         //dd($plans2);
     }
-    $planRows2 = [];
+    $sorting2 = Functions::getBladedContent($sorting??'','');
+    $pageNumber2 = intval(Functions::getBladedString($pageNumber??-1,-1));
+    // our default.. is 16 plans per page (the template had 4 per row..)
+    $plansPerPage2 = intval(Functions::getBladedString($plansPerPage??16,16));
+
+    if (Functions::testVar($plans2)) {
+
+        $totalPlans = count($plans2);
+        $rowIdxs = Functions::genPagesIndexes($plansPerPage2, $plansPerRow, $totalPlans, $pageNumber2);
+
+        // initializing the paginator
+        $numPages = Functions::genRowsPerPage($totalProducts, $productsPerPage2);
+        $paginator = [
+            'totalItems' => $totalPlans,
+            'numRanges' => $numPages,
+            'ranges' => Functions::genRange(0, $numPages, 1),
+            'currentRange' => [
+                'begin' => $rowIdxs[0][0][0],
+                'end' => $rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])],
+                'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
+            ],
+        ];
+        
+    } else {
+        $paginator = [];
+        $rowIdxs = [];
+    }
 
 
 @endphp
@@ -118,17 +144,58 @@
         <h2 class="block-title">
             {{ $title2 }}
         </h2>
-        @foreach ($planRows2 as $row)
+
+        @if (Functions::testVar($sorting2))
+            {{-- 
+                inspired by Metronic Shop UI 
+                - (lib.themewagon.content_list.blade.php) 
+            --}}
+            
+            <div class="row">
+                <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                    <div class="pull-right">
+                        
+                        <label for="showNumPricing-slc" class="col-sm-2">Show:</label>
+                        <select name="showNumPricing" id="showNumPricing-slc" class="form-control input-sm">
+                            <option value="#?limit=24" selected="selected">24</option>
+                            <option value="#?limit=25">25</option>
+                            <option value="#?limit=50">50</option>
+                            <option value="#?limit=75">75</option>
+                            <option value="#?limit=100">100</option>
+                        </select>
+                        
+                    </div>
+                    <div class="pull-right">
+                        
+                            <label for="pricingSorting-slc" class="col-sm-2">Sort&nbsp;By:</label>
+                            <select name="pricingSorting" id="pricingSorting-slc" class="form-control input-sm">
+                                <option value="#?sort=p.sort_order&amp;order=ASC" selected="selected">Default</option>
+                                <option value="#?sort=pd.name&amp;order=ASC">Name (A - Z)</option>
+                                <option value="#?sort=pd.name&amp;order=DESC">Name (Z - A)</option>
+                                <option value="#?sort=p.price&amp;order=ASC">Price (Low &gt; High)</option>
+                                <option value="#?sort=p.price&amp;order=DESC">Price (High &gt; Low)</option>
+                                <option value="#?sort=rating&amp;order=DESC">Rating (Highest)</option>
+                                <option value="#?sort=rating&amp;order=ASC">Rating (Lowest)</option>
+                            </select>
+                            
+                    </div>
+                </div>
+            </div>
+            
+            
+        @endif
+
+        @foreach ($rowIdxs as $row)
             <div class="row">
 
-                @foreach ($row as $plan)
+                @foreach ($row as $idx)
                     @component('lib.bootstrapmade.price_plan')
                         @slot('currency')
-                            {!! is_numeric($plan['price']) ? 
+                            {!! is_numeric($plans2[$idx]['price']) ? 
                                 $currency2 : 'fa-thumbs-up' !!}
                         @endslot
                         
-                        @foreach ($plan as $key => $value)
+                        @foreach ($plans2[$idx] as $key => $value)
                             @slot($key)
                                 {!! $value !!}
                             @endslot
@@ -139,9 +206,21 @@
                 
             </div>
         @endforeach
+        
+        @if (Functions::testVar($paginator))
+            @component('lib.themewagon.paginator')
+                @slot('paginator')
+                    {!! serialize($paginator) !!}
+                @endslot
+            @endcomponent
+        @endif
+                
     </div>
+    
 </div>
 <!-- ======== @Region: #content ======== -->
+
+
 
 
      
