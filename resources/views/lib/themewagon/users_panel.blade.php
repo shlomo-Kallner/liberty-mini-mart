@@ -20,7 +20,6 @@
             <ul class="inline">
                 @foreach ($navbar2 as $nav)
 
-                    @if (true)
                     @php
                         // remove/erase the 'name' property... 
                         // as we don't use it here..
@@ -38,17 +37,6 @@
                                 
                             @endforeach
                         @endcomponent
-                    @else
-                        <li>
-                            @if( isset($nav['type']) && ($nav['type'] == 'modal') )
-                                <a href="#" data-toggle="modal" data-target="{{ $nav['target'] }}">
-                            @else
-                                <a href="{{ url($nav['url']) }}">
-                            @endif
-                                <i class="fa {{ $nav['icon'] }}"></i>
-                            </a>        
-                        </li>
-                    @endif
                     
                 @endforeach
             </ul>
