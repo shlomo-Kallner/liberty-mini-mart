@@ -1,4 +1,5 @@
-?php
+
+@php
 /*
  * A template for a 'normal-link' or a 'modal-link' menu-item
  * .. and nothing else!
@@ -13,23 +14,23 @@
   'cssExtraClasses' => '' // extra CSS classes for the a tag..
   ];
  * 
- */
+*/
  
-    $testing = false;
-    use App\Utilities\Functions\Functions;
-    $listCSS2 = Functions::getBladedString($listCSS??'','');
+ $testing = false;
+ use App\Utilities\Functions\Functions;
+ 
+ $listCSS2 = Functions::getBladedString($listCSS??'','');
+ 
+ $type2 = Functions::getBladedString($type??'','url');
+ $target2 = Functions::getBladedString($target??'','');
+ $cssExtraClasses2 = Functions::getBladedString($cssExtraClasses??'','');
+ $url2 = Functions::getBladedString($url??'','#');
+ $icon2 = Functions::getBladedString($icon??'','');
+ $name2 = Functions::getBladedString($name??'','');
+ $transform2 = Functions::getBladedString($transform??'','');
 
-    
-    $type2 = Functions::getBladedString($type??'','url');
-    $target2 = Functions::getBladedString($target??'','');
-    $cssExtraClasses2 = Functions::getBladedString($cssExtraClasses??'','');
-    $url2 = Functions::getBladedString($url??'','#');
-    $icon2 = Functions::getBladedString($icon??'','');
-    $name2 = Functions::getBladedString($name??'','');
-    $transform2 = Functions::getBladedString($transform??'','');
+@endphp
 
-
-?>
 <li
 @if (Functions::testVar($listCSS2))
     class="{!! $listCSS2 !!}"

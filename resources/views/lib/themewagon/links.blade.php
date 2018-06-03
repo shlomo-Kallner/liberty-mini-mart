@@ -1,6 +1,6 @@
 
-<?php
-/*
+@php
+    /*
  * A template for a 'normal-link' or a 'modal-link' @LINK!@ tag
  * .. and nothing else!
  * 
@@ -27,8 +27,7 @@
  $name2 = Functions::getBladedString($name??'','');
  $transform2 = Functions::getBladedString($transform??'','');
 
-?>
-
+@endphp
 <a href="{{ url($url2) }}"
     @if( Functions::testVar($type2) && ($type2 == 'modal') )
         data-toggle="modal" data-target="{{ $target2 }}"

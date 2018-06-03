@@ -71,35 +71,35 @@
                         */
                     @endphp
 
-                    @if (false)
-                    
-                        @component('lib.themewagon.menu_links')
-                            @slot('listCSS')
-                                {!! "list-group-item clearfix" !!}
-                            @endslot
-                            @slot('type')
-                                {!! "url" !!}
-                            @endslot
-                            @slot('url')
-                                {{ url($elem->get('url')) }}
-                            @endslot
-                            @slot('name')
-                                {{$elem->get('name')}} 
-                            @endslot
-                            @slot('icon')
-                                {!! "fa-angle-right" !!}
-                            @endslot
-                        @endcomponent
+                    @component('lib.themewagon.menu_links')
+                        @slot('listCSS')
+                            {!! "list-group-item clearfix" !!}
+                        @endslot
+                        @slot('type')
+                            {!! "url" !!}
+                        @endslot
+                        @slot('url')
+                            {{ url($elem->get('url')) }}
+                        @endslot
+                        @slot('name')
+                            {{$elem->get('name')}} 
+                        @endslot
+                        @slot('icon')
+                            {!! "fa-angle-right" !!}
+                        @endslot
+                    @endcomponent
 
-                    @else
-
-                        <li class="list-group-item clearfix">
-                            <a href="{{ url($elem->get('url')) }}">
-                                <i class="fa fa-angle-right"></i> {{$elem->get('name')}}
-                            </a>
-                        </li>
-    
-                    @endif
+                    @php
+                        // the old code: here for reference.. 
+                        
+                        /*
+                            <li class="list-group-item clearfix">
+                                <a href="{{ url($elem->get('url')) }}">
+                                    <i class="fa fa-angle-right"></i> {{$elem->get('name')}}
+                                </a>
+                            </li>
+                        */
+                    @endphp
                     
                 @elseif($elem_type === 'dropdown')
                     {{-- REMOVED: " && $elem->has('submenu') "! --}}
@@ -125,7 +125,7 @@
                         <a href="javascript:void(0);" class="">
                             <i class="fa fa-angle-right"></i> {{$elem->get('name')}}
                         </a>
-                        <ul class="dropdown-menu" style="display:block;">
+                        <ul class="dropdown-menu" style="display:none;">
                     {{-- Stack PUSH time! --}}
                     @php
                         $frameStack->push('submenu');

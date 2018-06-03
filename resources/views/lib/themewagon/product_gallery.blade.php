@@ -6,17 +6,90 @@
     
     //dd($productClass);
     
-    $products2 = Functions::getBladedContent($products??'');
-    //$hasContainer2 = Functions::getBladedString($hasContainer??'');
+    if (!$testing) {
+        $products2 = Functions::getUnBladedContent($products??'','');
+    } else {
+        $products2 = [
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model1.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '1',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => 'sticker-sale',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model2.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '2',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model6.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '3',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model4.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '4',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => 'sticker-new',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model5.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '5',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model3.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '6',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model7.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '7',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+        ];
+    }
+    
     $containerClasses2 = Functions::getBladedString($containerClasses??'');
     $sizeClass2 = Functions::getBladedString($sizeClass??'');
     $productClass2 = Functions::getBladedString($productClass??'');
     $owlClass2 = Functions::getBladedString($owlClass??'');
     $title2 = Functions::getBladedString($title??'');
+    $currency2 = Functions::getBladedString($currency??'','fa-usd');
+
+    
+
+
 
 @endphp
 
-@if( Functions::testVar($products2) || $testing)
+@if(Functions::testVar($products2))
 
     <!-- BEGIN PRODUCT GALLERY -->
     @if( Functions::testVar($containerClasses2) )
@@ -35,13 +108,16 @@
             @endif
             
 
-                @if( Functions::testVar($products2) && !$testing)
+                @if(Functions::testVar($products2))
 
                     @foreach ($products2 as $product)
                         @component('lib.themewagon.product_mini')
                             @foreach ($product as $key => $item)
                                 @slot($key)
                                     {{$item}}
+                                @endslot
+                                @slot('currency')
+                                    {!! $currency2 !!}
                                 @endslot
                             @endforeach
                         @endcomponent
@@ -101,7 +177,7 @@
                                     <a href="#product-pop-up" class="btn btn-default fancybox-fast-view">View</a>
                                 </div>
                             </div>
-                            <h3><a href="javascript:;">Berry Lace Dress4</a></h3>
+                            <h3><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Berry Lace Dress4</a></h3>
                             <div class="pi-price">$29.00</div>
                             <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
                             <div class="sticker sticker-new"></div>

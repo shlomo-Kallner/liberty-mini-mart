@@ -6,7 +6,8 @@ use Illuminate\Support\Collection,
     Illuminate\Support\HtmlString,
     HTMLPurifier;
 
-class Functions{
+class Functions
+{
 
     static public function testVar($var)
     {
