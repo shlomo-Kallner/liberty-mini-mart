@@ -16,8 +16,11 @@ class Functions{
     static public function testBladedVar($var)
     {
         if (self::testVar($var)) {
-            if (is_string($var) || $var instanceof HtmlString ) {
+            if (is_string($var)) {
                 $tmp = unserialize(html_entity_decode((string)$var));
+                return !empty($tmp);
+            } elseif ($var instanceof HtmlString) {
+                $tmp = unserialize(html_entity_decode($var->toHtml()));
                 return !empty($tmp);
             }
             return true;

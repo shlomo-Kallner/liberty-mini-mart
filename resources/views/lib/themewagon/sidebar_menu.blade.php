@@ -71,12 +71,36 @@
                         */
                     @endphp
 
-                    <li class="list-group-item clearfix">
-                        <a href="{{ url($elem->get('url')) }}">
-                            <i class="fa fa-angle-right"></i> {{$elem->get('name')}}
-                        </a>
-                    </li>
+                    @if (false)
+                    
+                        @component('lib.themewagon.menu_links')
+                            @slot('listCSS')
+                                {!! "list-group-item clearfix" !!}
+                            @endslot
+                            @slot('type')
+                                {!! "url" !!}
+                            @endslot
+                            @slot('url')
+                                {{ url($elem->get('url')) }}
+                            @endslot
+                            @slot('name')
+                                {{$elem->get('name')}} 
+                            @endslot
+                            @slot('icon')
+                                {!! "fa-angle-right" !!}
+                            @endslot
+                        @endcomponent
 
+                    @else
+
+                        <li class="list-group-item clearfix">
+                            <a href="{{ url($elem->get('url')) }}">
+                                <i class="fa fa-angle-right"></i> {{$elem->get('name')}}
+                            </a>
+                        </li>
+    
+                    @endif
+                    
                 @elseif($elem_type === 'dropdown')
                     {{-- REMOVED: " && $elem->has('submenu') "! --}}
                 

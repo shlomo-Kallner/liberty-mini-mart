@@ -10,7 +10,12 @@ Author URL: https://bootstrapmade.com
  -->
 
  @php
+    $testing = false;
     use \App\Utilities\Functions\Functions;
+
+    $title2 = Functions::getBladedString($title??'','Our Plans');
+    $plans2 = Functions::getUnBladedContent($plans??'','');
+
  @endphp
 
 <!-- ======== @Region: #content ======== -->
@@ -18,17 +23,13 @@ Author URL: https://bootstrapmade.com
     <!-- Pricing -->
     <div class="block-contained">
         <h2 class="block-title">
-            @isset($title)
-                {{ $title }}
-            @else
-                Our Plans
-            @endisset
+            {{ $title2 }}
         </h2>
         <div class="row">
 
-            @if(isset($plans))
+            @if(Functions::testVar($plans2))
             
-            @foreach (unserialize($plans) as $plan)
+            @foreach ($plans2 as $plan)
                 @component('lib.bootstrapmade.price_plan')
                     
                     @foreach ($plan as $key => $value)

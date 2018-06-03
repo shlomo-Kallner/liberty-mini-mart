@@ -3,7 +3,19 @@
     use \App\Utilities\Functions\Functions;
 
     $navbar2 = Functions::getUnBladedContent($navbar??'','');
+
+    // remove/erase the 'name' property... 
+    // as we don't use it here..
+    // and so we prevent it from propagating 
+    //  to the links component..
+    foreach ($navbar2 as $nav) {
+        if (Functions::testVar($nav['name'])) {
+            $nav['name'] = '';
+        }
+    }
+
 @endphp
+
 @if(Functions::testVar($navbar2))
     @php
         //dd($navbar2);
@@ -17,15 +29,29 @@
             {{-- <p>THEME COLOR</p> --}}
             <ul class="inline">
                 @foreach ($navbar2 as $nav)
-                    <li>
-                        @if( isset($nav['type']) && ($nav['type'] == 'modal') )
-                            <a href="#" data-toggle="modal" data-target="{{ $nav['target'] }}">
-                        @else
-                            <a href="{{ url($nav['url']) }}">
-                        @endif
-                            <i class="fa {{ $nav['icon'] }}"></i>
-                        </a>        
-                    </li>
+
+                    @if (true)
+                        @component('lib.themewagon.menu_links')
+                            @foreach ($nav as $key => $value)
+
+                                @slot($key)
+                                    {{ $value }}
+                                @endslot
+                                
+                            @endforeach
+                        @endcomponent
+                    @else
+                        <li>
+                            @if( isset($nav['type']) && ($nav['type'] == 'modal') )
+                                <a href="#" data-toggle="modal" data-target="{{ $nav['target'] }}">
+                            @else
+                                <a href="{{ url($nav['url']) }}">
+                            @endif
+                                <i class="fa {{ $nav['icon'] }}"></i>
+                            </a>        
+                        </li>
+                    @endif
+                    
                 @endforeach
             </ul>
         </div>

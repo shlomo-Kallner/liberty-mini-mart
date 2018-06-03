@@ -67,7 +67,7 @@ if (!Functions::testVar($langs2)) {
                             @endphp
                         
                             @foreach ($currencies2['others'] as $item)
-                                @if (false)
+                                @if (true)
                                     @component('lib.themewagon.links')
                                         @foreach ($item as $key => $value)
                                             @slot($key)
@@ -142,9 +142,19 @@ if (!Functions::testVar($langs2)) {
                             <div class="langs-block-others-wrapper">
                                 <div class="langs-block-others">
                                     @foreach ($langs2['others'] as $item)
-                                        <a href="javascript:void(0);">
-                                            {!! $item['name'] !!}
-                                        </a>
+                                        @if (true)
+                                            @component('lib.themewagon.links')
+                                                @foreach ($item as $key => $value)
+                                                    @slot($key)
+                                                        {!! $value !!}
+                                                    @endslot
+                                                @endforeach
+                                            @endcomponent
+                                        @else
+                                            <a href="javascript:void(0);">
+                                                {!! $item['name'] !!}
+                                            </a>
+                                        @endif
                                     @endforeach
                                 </div>
                             </div>
@@ -183,7 +193,7 @@ if (!Functions::testVar($langs2)) {
 
                         @foreach($preheader2 as $nav)
 
-                            @component('lib.themewagon.links')
+                            @component('lib.themewagon.menu_links')
                                 @foreach ($nav as $key => $value)
 
                                     @slot($key)

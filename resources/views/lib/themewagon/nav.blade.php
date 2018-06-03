@@ -164,7 +164,7 @@ if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
                     @if ($nav['type'] == 'url' || $nav['type'] == 'modal')
 
                         {{-- BEGIN single "main level" menu --}}
-                        @component('lib.themewagon.links')
+                        @component('lib.themewagon.menu_links')
                             @foreach ($nav as $key => $value)
 
                                 @slot($key)

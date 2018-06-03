@@ -1,7 +1,8 @@
 
 <?php
 /*
- * A template for a 'normal-link' or a 'modal-link' menu item .. and nothing else!
+ * A template for a 'normal-link' or a 'modal-link' @LINK!@ tag
+ * .. and nothing else!
  * 
  * $templateItem = [
   'icon' => '', // the Font Awesome 4 icon class without the 'fa'.
@@ -14,36 +15,45 @@
   ];
  * 
  */
+ 
+ $testing = false;
+ use \App\Utilities\Functions\Functions;
+
+ $type2 = Functions::getBladedString($type??'','url');
+ $target2 = Functions::getBladedString($target??'','');
+ $cssExtraClasses2 = Functions::getBladedString($cssExtraClasses??'','');
+ $url2 = Functions::getBladedString($url??'','#');
+ $icon2 = Functions::getBladedString($icon??'','');
+ $name2 = Functions::getBladedString($name??'','');
+ $transform2 = Functions::getBladedString($transform??'','');
+
 ?>
 
-<li>
-    
-@if( isset($type) && ($type == 'modal') )
-    <a href="#" data-toggle="modal" data-target="{{ $target }}">
-@else
-        @if (isset($cssExtraClasses))
-            <a href="{{ url($url) }}" class="{{ $cssExtraClasses }}">
-        @else
-            <a href="{{ url($url) }}">
+<a href="{{ url($url2) }}"
+    @if( Functions::testVar($type2) && ($type2 == 'modal') )
+        data-toggle="modal" data-target="{{ $target2 }}"
+    @endif
+    @if (Functions::testVar($cssExtraClasses2))
+        class="{{ $cssExtraClasses2 }}"
+    @endif
+    >
+
+
+        @if( Functions::testVar($icon2) && (mb_strlen($icon2) !== 0) )
+            @if ( !Functions::testVar($name2) || (mb_strlen($name2) === 0)  )
+            <i class="fa {{ $icon2 }}"></i>    
+            @else
+            <i class="fa {{ $icon2 }}" aria-hidden="true"></i>
+            @endif
         @endif
-@endif
 
-            @if( isset($icon) && (mb_strlen($icon) !== 0) )
-                @if ( !isset($name) || (mb_strlen($name) === 0)  )
-                <i class="fa {{ $icon }}"></i>    
-                @else
-                <i class="fa {{ $icon }}" aria-hidden="true"></i>
-                @endif
-            @endif
-
-            @if ( isset($name) && (mb_strlen($name) !== 0)  ) 
-                @if(mb_strlen($transform) !== 0)
-                    <span class="hidden-xs {{ $transform }}">{{ $name }}</span> 
-                @else 
-                    {{ $name }} 
-                @endif 
-            @endif
+        @if ( Functions::testVar($name2) && (mb_strlen($name2) !== 0)  ) 
+            @if(mb_strlen($transform2) !== 0)
+                <span class="hidden-xs {{ $transform2 }}">{{ $name2 }}</span> 
+            @else 
+                {{ $name2 }} 
+            @endif 
+        @endif
             
-        </a>
-</li>
+</a>
 
