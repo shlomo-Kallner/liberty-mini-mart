@@ -1,22 +1,23 @@
 
 <!-- 
-Plans Pricing Component
+    Plans Pricing (Row) Component
+        
+    Theme Name: Flexor
+    Theme URL: https://bootstrapmade.com/flexor-free-multipurpose-bootstrap-template/
+    Author: BootstrapMade.com
+    Author URL: https://bootstrapmade.com
     
-Theme Name: Flexor
-Theme URL: https://bootstrapmade.com/flexor-free-multipurpose-bootstrap-template/
-Author: BootstrapMade.com
-Author URL: https://bootstrapmade.com
+-->
 
- -->
+@php
 
- @php
     $testing = true;
     use \App\Utilities\Functions\Functions,
         \App\Page;
 
-    $title2 = Functions::getBladedString($title??'','Our Plans');
-    $currency2 = Functions::getBladedString($currency??'','fa-usd');
+
     $plansPerRow = 4;
+    $currency2 = Functions::getBladedString($currency??'','fa-usd');
     if (!$testing) {
         $plans2 = Functions::getUnBladedContent($plans??'','');
     } else {
@@ -105,9 +106,10 @@ Author URL: https://bootstrapmade.com
         ];
         //dd($plans2);
     }
-    
+    $planRows2 = [];
 
- @endphp
+
+@endphp
 
 <!-- ======== @Region: #content ======== -->
 <div id="content">
@@ -116,25 +118,30 @@ Author URL: https://bootstrapmade.com
         <h2 class="block-title">
             {{ $title2 }}
         </h2>
-        <div class="row">
+        @foreach ($planRows2 as $row)
+            <div class="row">
 
-            @foreach ($plans2 as $plan)
-                @component('lib.bootstrapmade.price_plan')
-                    @slot('currency')
-                        {!! is_numeric($plan['price']) ? 
-                            $currency2 : 'fa-thumbs-up' !!}
-                    @endslot
-                    
-                    @foreach ($plan as $key => $value)
-                        @slot($key)
-                            {!! $value !!}
+                @foreach ($row as $plan)
+                    @component('lib.bootstrapmade.price_plan')
+                        @slot('currency')
+                            {!! is_numeric($plan['price']) ? 
+                                $currency2 : 'fa-thumbs-up' !!}
                         @endslot
-                    @endforeach
-                    
-                @endcomponent
-            @endforeach
-            
-        </div>
+                        
+                        @foreach ($plan as $key => $value)
+                            @slot($key)
+                                {!! $value !!}
+                            @endslot
+                        @endforeach
+                        
+                    @endcomponent
+                @endforeach
+                
+            </div>
+        @endforeach
     </div>
 </div>
 <!-- ======== @Region: #content ======== -->
+
+
+     

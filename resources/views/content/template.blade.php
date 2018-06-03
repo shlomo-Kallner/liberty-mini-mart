@@ -2,7 +2,7 @@
 // put your code here
 ?>
 
-@extends('master_test2')
+@extends('master')
 
 @include('lib.themewagon.fonts')
 @include('lib.bootstrapious.fonts')

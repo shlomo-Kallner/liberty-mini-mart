@@ -6,7 +6,7 @@
 //$nav = Page::getNavBar();
 $title .= '-- dummy Title -- blahhh';
 ?>
-@extends('old-master')
+@extends('old.old-master')
 
 
 @section('license-header')

@@ -1,5 +1,5 @@
 @php
-    $testing = false;
+    $testing = true;
     use \App\Utilities\Functions\Functions;
 
     $name2 = Functions::getBladedString($name??'','');
@@ -17,8 +17,8 @@
     <div class="panel panel-default panel-pricing panel-pricing-highlighted text-center">
         <div class="panel-heading">
             <h4 class="panel-title">
-                {{$name}}
-                @if(Functions::testVar($popular) && $popular === 'true')
+                {!! $name2 !!}
+                @if(Functions::testVar($popular2))
                 <span class="panel-pricing-popular"><i class="fa fa-thumbs-up"></i> Popular</span>
                 @endif
             </h4>
@@ -29,7 +29,7 @@
                     <i class="fa {{ $currency2 }}"></i>
                 @if(!is_numeric($price2))
                     {{-- <i class="fa fa-thumbs-up"></i> FREE!! --}}
-                    {{ $price2 }}
+                    {!! $price2 !!}
                 @else 
                     <span class="digits">{{ $price2 }}</span> /mo.
                 @endif
@@ -45,17 +45,17 @@
                 
             </ul>
             @foreach ($buttons2 as $button)
-            @if (true)
-                <a href="#" class="btn btn-primary btn-sm">Choose Plan</a>
-            @else
+                @php
+                    //dd($button);
+                @endphp
                 @component('lib.themewagon.links')
-                    
+                    @foreach ($button as $key => $val)
+                            @slot($key)
+                                {!! $val !!}
+                            @endslot
+                    @endforeach
                 @endcomponent
-            @endif
-            <a href="#" class="btn btn-primary btn-sm">Choose Plan</a>
             @endforeach
-            <a href="#" class="btn btn-primary btn-sm">Choose Plan</a>
-
         </div>
     </div>
 </div>

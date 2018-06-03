@@ -5,6 +5,7 @@
     //dd($page);
     //$page2 = Functions::getUnBladedContent($page??'');
 
+    $pageHeader2 = Functions::getBladedString($pageHeader??'');
     $header2 = Functions::getBladedString($header??'');
     $subheading2 = Functions::getBladedString($subheading??'');
     $img2 = Functions::getBladedString($img??'');
@@ -16,17 +17,23 @@
 <div class="row">
     <div class="col-md-5">
 
-        @if (Functions::testVar($header2))
+        @if (Functions::testVar($pageHeader2))
             <h1>
-                {!! $header2 !!} 
+                {!! $pageHeader2 !!}
             </h1>
+        @endif
+
+        @if (Functions::testVar($header2))
+            <h2>
+                {!! $header2 !!} 
+            </h2>
         @endif
         
 
         @if (Functions::testVar($subheading2))
-            <h2>
+            <h3>
                 {!! $subheading2 !!}
-            </h2>
+            </h3>
         @endif
         
         
@@ -34,14 +41,10 @@
             <img src="{{ $img2 }}" alt="{{ $imgAlt2 }}">
         @endif
         
-        {{-- <i class="fa fa-search" style="font-size: 16px;"></i> --}}
-        
     </div>
     @if (Functions::testVar($article2))
         <div class="col-md-5">
-            <div>
-                {!! $article2 !!}
-            </div>
+            {!! $article2 !!}
         </div>
     @endif
     

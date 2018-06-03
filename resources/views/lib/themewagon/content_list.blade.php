@@ -5,8 +5,8 @@
     // The DATA for the SLOTS of THIS COMPONENT are gathered HERE!!!  
     // Note: they CAN be empty... 
 
-    $sorting2 = Functions::getBladedContent($sorting??'');
     $products2 = Functions::getBladedContent($products??'');
+    $sorting2 = Functions::getBladedContent($sorting??'');
     $pageNumber2 = intval(Functions::getBladedString($pageNumber??-1,-1));
     // our default.. is 12 products per page (the template had 9..)
     $productsPerPage2 = intval(Functions::getBladedString($productsPerPage??12,12));

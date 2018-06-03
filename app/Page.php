@@ -9,6 +9,25 @@ use Illuminate\Database\Eloquent\Model,
 
 class Page extends Model {
 
+    static public function genLink(
+        string $type, string $url, string $name, string $cssExtraClasses = '',
+        string $icon = '', string $textTransform = '', string $target = '', 
+        array $submenus = null
+    ) {
+        return [
+            'type' => $type, // 'url' for a url link, 'modal' for a modal button link.. 
+            //-@NEW! => 'type' replaces 'isModal'!
+            'icon' => $icon, // the Font Awesome 4 icon class without the lone 'fa'.
+            'name' => $name, // the name to fill in the Link.
+            'url' => $url, // the URL of the link. 
+            'target' => $target, // the data-target attribute's data value (of a modal)
+            'transform' => $textTransform, // Bootstrap 3 text-transform css class.
+            'submenu' => $submenus,
+            'cssExtraClasses' => $cssExtraClasses, // extra CSS classes for the anchor tag...
+            // (Bootstrap 3/other..)
+        ];
+    }
+
     /* A template for a menu item ..
      * 
      * $templateItem = [
@@ -25,49 +44,37 @@ class Page extends Model {
      */
 
 
-    static public function genURLMenuItem(string $url, string $name, string $icon = '', string $textTransform = '') 
-    {
+    static public function genURLMenuItem(
+        string $url, string $name, string $icon = '', 
+        string $textTransform = '', string $cssExtraClasses = ''
+    ) {
         // previously called 'genPreHeaderURL()'
-        $template = [
-            'type' => 'url', // 'url' for a url link, 'modal' for a modal button link.. 
-            //-@NEW! => 'type' replaces 'isModal'!
-            'icon' => $icon, // the Font Awesome 4 icon class without the lone 'fa'.
-            'name' => $name, // the name to fill in the Link.
-            'url' => $url, // the URL of the link. 
-            'target' => '', // the data-target attribute's data value (of a modal)
-            'transform' => $textTransform, // Bootstrap 3 text-transform css class.
-            'submenu' => null,
-        ];
-        return $template;
+        return static::genLink( 
+            'url', $url, $name, $cssExtraClasses, 
+            $icon, $textTransform, '', null 
+        );
     }
 
-    static public function genModalMenuItem(string $name, string $target, string $icon = '', string $textTransform = '') 
-    {
+    static public function genModalMenuItem(
+        string $name, string $target, string $icon = '', 
+        string $textTransform = '', string $cssExtraClasses = ''
+    ) {
         // previously called 'genPreHeaderModal()'
-        $template = [
-            'type' => 'modal', // 'url' for a url link, 'modal' for a modal button link.. 
-            //-@NEW! => 'type' replaces 'isModal'!
-            'icon' => $icon, // the Font Awesome 4 icon class without the lone 'fa'.
-            'name' => $name, // the name to fill in the Link.
-            'url' => '#', // the URL of the link. 
-            'target' => $target, // the data-target attribute's data value (of a modal)
-            'transform' => $textTransform, // Bootstrap 3 text-transform css class.
-            'submenu' => null,
-        ];
-        return $template;
+        return static::genLink( 
+            'modal', '#', $name, $cssExtraClasses, $icon,
+            $textTransform, $target, null
+        );
     }
 
-    static public function genDropdownLink(string $name, array $submenus = [], string $icon = '', string $textTransform = '')
-    {
-        return [
-            'type' => 'dropdown',
-            'icon' => $icon, // the Font Awesome 4 icon class without the lone 'fa'.
-            'name' => $name, // the name to fill in the Link.
-            'url' => '', // the URL of the link. 
-            'target' => '', // the data-target attribute's data value (of a modal)
-            'transform' => $textTransform, // Bootstrap 3 text-transform css class.
-            'submenu' => $submenus,
-        ];
+    static public function genDropdownLink(
+        string $name, array $submenus = [], string $icon = '', 
+        string $textTransform = '', string $cssExtraClasses = '',
+        string $url = 'javascript:void(0);'
+    ) {
+        return static::genLink( 
+            'dropdown', $url, $name, $cssExtraClasses,
+            $icon, $textTransform, '', $submenus
+        );
     }
 
     static public function getNavBar($genFakeData = false) 
