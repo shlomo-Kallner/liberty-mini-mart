@@ -4,16 +4,6 @@
 
     $navbar2 = Functions::getUnBladedContent($navbar??'','');
 
-    // remove/erase the 'name' property... 
-    // as we don't use it here..
-    // and so we prevent it from propagating 
-    //  to the links component..
-    foreach ($navbar2 as $nav) {
-        if (Functions::testVar($nav['name'])) {
-            $nav['name'] = '';
-        }
-    }
-
 @endphp
 
 @if(Functions::testVar($navbar2))
@@ -31,6 +21,14 @@
                 @foreach ($navbar2 as $nav)
 
                     @if (true)
+                    @php
+                        // remove/erase the 'name' property... 
+                        // as we don't use it here..
+                        // and so we prevent it from propagating 
+                        //  to the links component..
+                        unset($nav['name']);
+                        //dd($nav);
+                    @endphp
                         @component('lib.themewagon.menu_links')
                             @foreach ($nav as $key => $value)
 
