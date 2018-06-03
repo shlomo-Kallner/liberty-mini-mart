@@ -1,7 +1,7 @@
 
 @php
 
-    $testing = false;
+    $testing = true;
     $fakeData = ''; // the old data was '123FAKEDATA321'..
 
     use \App\Utilities\Functions\Functions,

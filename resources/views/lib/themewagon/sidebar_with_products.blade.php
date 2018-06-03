@@ -2,7 +2,7 @@
 
 @php
 
-$testing = true;
+//$testing = true;
 use \App\Utilities\Functions\Functions;
 
 $products2 = Functions::getContent($products??'');

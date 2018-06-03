@@ -1,10 +1,7 @@
-<?php
-// Will be placing our "index" or "Home" page content in this view/file.
-    use \App\Utilities\Functions\Functions;
 
-?>
 
 @extends('content.template')
+{{-- Will be placing our "index" or "Home" page content in this view/file. --}}
 
 @section('css-extra-fonts')
 @parent
@@ -26,21 +23,164 @@
 
 @section('main-content')
 @parent
+
 @php
-    $new_products2 = Functions::getBladedContent($newProducts??'');
-    $pricing2 = Functions::getBladedContent($pricing??'');
-    $sidebar2 = Functions::getUnBladedContent($sidebar??'');
+    $testing = true;
+    use \App\Utilities\Functions\Functions;
+
+    if (!$testing) {
+        $newProducts2 = serialize(Functions::getContent($newProducts??'',''));
+    } else {
+        $newProducts2 = serialize([
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model1.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '1',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => 'sticker-sale',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model2.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '2',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model6.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '3',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model4.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '4',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => 'sticker-new',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model5.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '5',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model3.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '6',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model7.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '7',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+        ]);
+    }
+    if (!$testing) {
+        $sampleProducts2 = serialize(Functions::getContent($sampleProducts??''));
+    } else {
+        $sampleProducts2 = serialize([
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model1.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '1',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => 'sticker-sale',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model2.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '2',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model6.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '3',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model4.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '4',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => 'sticker-new',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model5.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '5',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model3.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '6',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+            [
+                'extraOuterCss' => '',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model7.jpg',
+                'name' => 'Berry Lace Dress',
+                'id' => '7',
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'price' => '29.00',
+                'sticker' => '',
+            ],
+        ]);
+    }
+    $sidebar2 = serialize(Functions::getContent($sidebar??''));
+    $pricing2 = Functions::getContent($pricing??'');
+    $currency2 = Functions::getContent($currency??'','fa-usd');
+    $filters2 = Functions::getContent($filters2??'');
+    $bestsellers2 = Functions::getContent($bestsellers??'');
+
 @endphp
 
-@if (true)
-    @component('lib.themewagon.article')
-        @foreach ($page['article'] as $key => $item)
-            @slot($key)
-                {{ $item }}
-            @endslot
-        @endforeach
-    @endcomponent
-@endif
+@component('lib.themewagon.article')
+    @foreach ($page['article'] as $key => $item)
+        @slot($key)
+            {{ $item }}
+        @endslot
+    @endforeach
+@endcomponent
 
 @if (false)
     
@@ -49,20 +189,29 @@
     {{-- Use the old new_products component --}}
     @component('lib.themewagon.new_products')
         @slot('sidebar')
-            {!! serialize($sidebar2) !!}
+            {!! $sidebar2 !!}
         @endslot
         @slot('newProducts')
-            {!! serialize($new_products2) !!}
+            {!! $newProducts2 !!}
         @endslot
-
-        @if(Functions::testVar($new_products2))
-            @foreach ($new_products2 as $key => $item)
-                @slot($key)
-                    {{$item}}
-                @endslot    
-            @endforeach
-
-        @endif
+        @slot('sampleProducts')
+            {!! $sampleProducts2 !!}
+        @endslot
+        @slot('newProductsTitle')
+            {!! "New Arrivals" !!}
+        @endslot
+        @slot('sampleProductsTitle')
+            {!! "Three Items" !!}
+        @endslot
+        @slot('currency')
+            {!! $currency2 !!}
+        @endslot
+        @slot('filters')
+            {!! $filters2 !!}
+        @endslot
+        @slot('bestsellers')
+            {!! $bestsellers2 !!}
+        @endslot
     @endcomponent
 
 @endif

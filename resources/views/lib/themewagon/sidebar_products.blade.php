@@ -6,7 +6,31 @@
     //$fakeData = ''; // old fakeData '123FAKEDATA'
     use \App\Utilities\Functions\Functions;
 
-    $products2 = Functions::getUnBladedContent($products??'','');
+    if (!$testing) {
+        $products2 = Functions::getUnBladedContent($products??'','');
+    } else {
+        $products2 = [
+            [
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k1.jpg',
+                'alt' => 'Some Shoes in Animal with Cut Out',
+                'price' => '31.00',
+            ],
+            [
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k4.jpg',
+                'alt' => 'Some Shoes in Animal with Cut Out',
+                'price' => '23.00',
+            ],
+            [
+                'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k3.jpg',
+                'alt' => 'Some Shoes in Animal with Cut Out',
+                'price' => '86.00',
+            ],
+        ];
+    }
+    
     //dd($products2);
     $title2 = Functions::getBladedString($title??'','');
     $currency2 = Functions::getBladedString($currency??'fa-usd','fa-usd');
@@ -14,7 +38,7 @@
 
 @endphp
 
-@if(Functions::testVar($products2) || $testing)
+@if(Functions::testVar($products2))
 
     <div class="sidebar-products clearfix">
         <h2>{{ $title2 }}</h2>
@@ -40,33 +64,6 @@
                 
             @endforeach
                 
-        @elseif($testing)
-
-            <div class="item">
-                <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">
-                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k1.jpg') }}" alt="Some Shoes in Animal with Cut Out">
-                </a>
-                <h3>
-                    <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Some Shoes in Animal with Cut Out</a>
-                </h3>
-                <div class="price">$31.00</div>
-            </div>
-            <div class="item">
-                <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">
-                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k4.jpg') }}" alt="Some Shoes in Animal with Cut Out">
-                </a>
-                <h3><a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Some Shoes in Animal with Cut Out</a></h3>
-                <div class="price">$23.00</div>
-            </div>
-            <div class="item">
-                <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">
-                    <img src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k3.jpg') }}" alt="Some Shoes in Animal with Cut Out">
-                </a>
-                <h3>
-                    <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}">Some Shoes in Animal with Cut Out</a>
-                </h3>
-                <div class="price">$86.00</div>
-            </div>
         @endif
 
     </div>
