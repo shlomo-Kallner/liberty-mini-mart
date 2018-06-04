@@ -10,6 +10,7 @@
 
     
     @endphp
+    
 
     @component('lib.bootstrapmade.pricings_list')
         

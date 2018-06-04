@@ -91,6 +91,6 @@ class ProductController extends MainController
 
     public function test(Request $request)
     {
-        return static::getView('content.category', 'TEST-PRODUCT', [], true);
+        return static::getView('content.product', 'TEST-PRODUCT', [], true);
     }
 }

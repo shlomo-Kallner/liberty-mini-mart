@@ -113,9 +113,9 @@ class Page extends Model {
             $navbar = [
                 self::genURLMenuItem('about', 'About'),
                 self::genURLMenuItem('store', 'Store'),
-                self::genURLMenuItem('store/section/test', 'TEST-SECTION'),
+                //self::genURLMenuItem('store/section/test', 'TEST-SECTION'),
                 //self::genURLMenuItem('store/section/test/category/test', 'TEST-CATEGORY'),
-                //self::genURLMenuItem('store/section/test/category/test/product/test', 'TEST-PRODUCT'),
+                self::genURLMenuItem('store/section/test/category/test/product/test', 'TEST-PRODUCT'),
                 //self::genURLMenuItem('template', 'My Template'),
             ];
         }

@@ -13,7 +13,7 @@
 
 
 @section('body-tags')
-class="ecommerce"
+    class="ecommerce"
 @endsection
 
 {{-- 
@@ -28,33 +28,34 @@ class="ecommerce"
 @include('lib.bootstrapious.modals.search')
 
 @section('main-content')
-@parent
-@component('lib.themewagon.breadcrumbs')
-    @slot('breadcrumbs')
-        {{ serialize($breadcrumbs) }}
-    @endslot
-@endcomponent
-
-@if (false)
-    @component('lib.themewagon.article')
-        @foreach ($page as $key => $item)
-            @slot($key)
-                {{ $item }}
-            @endslot
-        @endforeach
+    @parent
+    @component('lib.themewagon.breadcrumbs')
+        @slot('breadcrumbs')
+            {!! serialize($breadcrumbs) !!}
+        @endslot
     @endcomponent
-@endif
+
+    @if (false)
+        @component('lib.themewagon.article')
+            @foreach ($page as $key => $item)
+                @slot($key)
+                    {{ $item }}
+                @endslot
+            @endforeach
+        @endcomponent
+    @endif
 
 @endsection
 
 
 @section('footer-content')
-@parent
-@include('lib.themewagon.prefooter')
-@include('inc.copyrights')
-@component('lib.themewagon.product_fast_view')
-    
-@endcomponent
+    @parent
+    @include('lib.themewagon.prefooter')
+    @include('inc.copyrights')
+
+    @component('lib.themewagon.product_fast_view')
+        
+    @endcomponent
 @endsection
 
 

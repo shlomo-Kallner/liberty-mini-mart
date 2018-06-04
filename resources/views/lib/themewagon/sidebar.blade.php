@@ -1,7 +1,7 @@
 
 @php
 
-    $testing = true;
+    $testing = false;
     $fakeData = ''; // the old data was '123FAKEDATA321'..
 
     use \App\Utilities\Functions\Functions,
@@ -62,41 +62,52 @@
     //dd($currency2);
 @endphp
 
+{{-- Initially intended to avoid doing exactly THIS (testing the primary slots), 
+     but time has shown THIS the wiser course of ACTION... --}}
 
-<!-- BEGIN SIDEBAR -->
-<div class="sidebar col-md-3 col-sm-5">
+@if (Functions::testVar($menu2) || Functions::testVar($filters2) || Functions::testVar($products2))
+    <!-- BEGIN SIDEBAR -->
+    <div class="sidebar col-md-3 col-sm-5">
 
-    @component('lib.themewagon.sidebar_menu')
-        @slot('menu')
-            {!! $menu2 !!}
-        @endslot
-    @endcomponent
-
-    @component('lib.themewagon.sidebar_filters')
-        @slot('filters')
-            {!! $filters2 !!}
-        @endslot
-        @slot('currency')
-            {!! $currency2 !!}
-        @endslot
-        @slot('title')
-            {!! "Filters" !!}
-        @endslot
-    @endcomponent
-    
-    @component('lib.themewagon.sidebar_products')
-        @slot('products')
-            {!! $products2 !!}
-        @endslot
-        @slot('currency')
-            {!! $currency2 !!}
-        @endslot
-        @slot('title')
-            {!! "Bestsellers" !!}
-        @endslot
-    @endcomponent
+        @if (Functions::testVar($menu2))
+            @component('lib.themewagon.sidebar_menu')
+                @slot('menu')
+                    {!! $menu2 !!}
+                @endslot
+            @endcomponent
+        @endif
         
-</div>
-<!-- END SIDEBAR -->
+        @if (Functions::testVar($filters2))
+            @component('lib.themewagon.sidebar_filters')
+                @slot('filters')
+                    {!! $filters2 !!}
+                @endslot
+                @slot('currency')
+                    {!! $currency2 !!}
+                @endslot
+                @slot('title')
+                    {!! "Filters" !!}
+                @endslot
+            @endcomponent
+        @endif
+    
+        @if (Functions::testVar($products2))
+            @component('lib.themewagon.sidebar_products')
+                @slot('products')
+                    {!! $products2 !!}
+                @endslot
+                @slot('currency')
+                    {!! $currency2 !!}
+                @endslot
+                @slot('title')
+                    {!! "Bestsellers" !!}
+                @endslot
+            @endcomponent
+        @endif
+            
+    </div>
+    <!-- END SIDEBAR -->
+@endif
+
 
 

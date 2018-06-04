@@ -26,6 +26,7 @@ mix.scripts(
     [
         'public/lib/require.js/require.min.js',
         'public/lib/history.js/scripts/bundled/html4+html5/jquery.history.js',
+        'public/lib/themewagon/metronicShopUI/theme/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js',
         // jquery, font-awesome, bootstrap 3.x, OwlCarousel(?), fancybox, ...
         'public/lib/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.min.js'
     ] , 'public/js/support.js');
