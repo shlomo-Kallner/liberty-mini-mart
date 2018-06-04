@@ -118,6 +118,19 @@ class Functions
 
     }
 
+    static public function genMultipleFromArray(array $arr, int $num)
+    {
+        $res = [];
+        if (self::testVar($arr) && self::testVar($num) && $num > 0) {
+            for ($i = 0; $i < $num; $i++) {
+                foreach ($arr as $val) {
+                    $res[] = $val;
+                }
+            }
+        }
+        return $res;
+    }
+
     static public function genRange(int $beg, int $end, int $step = 1)
     {
         $tmp = [];
@@ -180,7 +193,12 @@ class Functions
             $col = collect($range);
             $numTotal = self::genRowsPerPage($col->count(), $numPerPage);
             for ($i = 0; $i < $numTotal; $i++ ) {
-                $res[] = $col->forPage($i, $numPerPage)->all();
+                $tmp = $col->forPage($i, $numPerPage)->all();
+                $tmp1 = [];
+                foreach ($tmp as $val) {
+                    $tmp1[] = $val;
+                }
+                $res[] = $tmp1;
             }
         }
         return $res;
@@ -219,15 +237,27 @@ class Functions
             ///         (aka Generate a PageTable with only 1 entry,
             ///          and return the entry's rowArray.)
             if ($pnValid || $pn == -2) {
+                // generate all pages_of_indexes ...
+                // for multiple/single_selected display_page..
                 $pageIndexRanges = self::genPageArray(self::genRange(0, $tp), $ppp);
             } else {
+                // generate a single page_of_indexes with all products..
+                // for a single display_page of all products..
                 $pageIndexRanges = self::genPageArray(self::genRange(0, $tp), $tp);
             }
+            // now create the Pages_Of_Rows ...
             if ($pnValid || $pn == -1) {
-                $res[] = self::genPageArray(count($pageIndexRanges[$pnValid?$pn:0]), $ppr);
+                // if generating for a single_selected_display_page
+                // or for a single_display_page_of_all_products ..
+                $tmpRange = self::genRange(
+                    $pageIndexRanges[$pnValid?$pn:0][0], 
+                    count($pageIndexRanges[$pnValid?$pn:0])
+                );
+                $res[] = self::genPageArray($tmpRange, $ppr);
             } else {
+                // if generating all display_pages ..
                 foreach ($pageIndexRanges as $page) {
-                    $res[] = self::genPageArray(count($page), $ppr);
+                    $res[] = self::genPageArray(self::genRange(0, count($page)), $ppr);
                 }
             }
 

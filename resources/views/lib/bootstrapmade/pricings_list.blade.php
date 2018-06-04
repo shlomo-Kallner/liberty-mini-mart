@@ -11,17 +11,18 @@
 
 @php
 
-    $testing = true;
+    $testing = false;
     use \App\Utilities\Functions\Functions,
         \App\Page;
 
 
     $plansPerRow = 4;
     $currency2 = Functions::getBladedString($currency??'','fa-usd');
+    $title2 = Functions::getBladedString($title??'','OUR PLANS');
     if (!$testing) {
         $plans2 = Functions::getUnBladedContent($plans??'','');
     } else {
-        $plans2 = [
+        $plansTmp = [
             [
                 'name' => e('Flex<em>Starter</em>'),
                 'popular' => '',
@@ -104,6 +105,7 @@
                 ]),
             ],
         ];
+        $plans2 = Functions::genMultipleFromArray($plansTmp, 8);
         //dd($plans2);
     }
     $sorting2 = Functions::getBladedContent($sorting??'','');
@@ -117,17 +119,45 @@
         $rowIdxs = Functions::genPagesIndexes($plansPerPage2, $plansPerRow, $totalPlans, $pageNumber2);
 
         // initializing the paginator
-        $numPages = Functions::genRowsPerPage($totalProducts, $productsPerPage2);
+        //$numPages = Functions::genRowsPerPage($totalPlans, $plansPerPage2);
+        if ($testing) {
+            $tmp = [
+                'level 0' => [
+                    $rowIdxs,
+                    count($rowIdxs),
+                ],
+                'level 1' => [
+                    $rowIdxs[0],
+                    count($rowIdxs[0]),
+                ],
+                'level 2' => [
+                    $rowIdxs[0][0],
+                    count($rowIdxs[0][0]),
+                ],
+                'level 3' => [
+                    $rowIdxs[0][0][0],
+                    //count($rowIdxs[0][0][0])
+                ]
+            ];
+        }
+        
+        $lastIndexes = [
+            count($rowIdxs)-1,
+            count($rowIdxs[count($rowIdxs)-1])-1,
+            count($rowIdxs[count($rowIdxs)-1][count($rowIdxs[count($rowIdxs)-1])-1])-1,
+        ];
+        //dd($totalPlans, $plansPerPage2, $numPages, $tmp, $rowIdxs, $lastIndexes);
         $paginator = [
             'totalItems' => $totalPlans,
-            'numRanges' => $numPages,
-            'ranges' => Functions::genRange(0, $numPages, 1),
+            'numRanges' => count($rowIdxs), // $numPages,
+            'ranges' => Functions::genRange(0, count($rowIdxs)-1, 1),
             'currentRange' => [
                 'begin' => $rowIdxs[0][0][0],
-                'end' => $rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])],
+                'end' => $rowIdxs[$lastIndexes[0]][$lastIndexes[1]][$lastIndexes[2]],
                 'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
             ],
         ];
+        //dd($paginator);
         
     } else {
         $paginator = [];
@@ -185,27 +215,36 @@
             
         @endif
 
-        @foreach ($rowIdxs as $row)
-            <div class="row">
+        @foreach ($rowIdxs as $page)
+            @foreach ($page as $row)
+                <div class="row">
 
-                @foreach ($row as $idx)
-                    @component('lib.bootstrapmade.price_plan')
-                        @slot('currency')
-                            {!! is_numeric($plans2[$idx]['price']) ? 
-                                $currency2 : 'fa-thumbs-up' !!}
-                        @endslot
-                        
-                        @foreach ($plans2[$idx] as $key => $value)
-                            @slot($key)
-                                {!! $value !!}
-                            @endslot
-                        @endforeach
-                        
-                    @endcomponent
-                @endforeach
-                
-            </div>
+                    @foreach ($row as $idx)
+                        @php
+                            //dd($rowIdxs,$page,$row,$idx,$plans2);
+                        @endphp
+                        @if ($idx < count($plans2))
+                            @component('lib.bootstrapmade.price_plan')
+                                @slot('currency')
+                                    {!! is_numeric($plans2[$idx]['price']) ? 
+                                        $currency2 : 'fa-thumbs-up' !!}
+                                @endslot
+                                
+                                @foreach ($plans2[$idx] as $key => $value)
+                                    @slot($key)
+                                        {!! $value !!}
+                                    @endslot
+                                @endforeach
+                                
+                            @endcomponent
+                        @endif
+
+                    @endforeach
+                    
+                </div>
+            @endforeach
         @endforeach
+        
         
         @if (Functions::testVar($paginator))
             @component('lib.themewagon.paginator')

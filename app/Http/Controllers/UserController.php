@@ -85,7 +85,7 @@ class UserController extends MainController {
      */
 
     public function signup() {
-        return parent::getView('content.tests.test2', 'New User Registeration Page');
+        return parent::getView('forms.register', 'New User Registeration Page');
     }
 
     public function register(Request $request) {
