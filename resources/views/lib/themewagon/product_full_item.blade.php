@@ -14,19 +14,19 @@
 
     $currency2 = 'fa-usd';
 
-    $image2 = 'assets/pages/img/products/model7.jpg';
+    $image2 = 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model7.jpg';
     $imageAlt2 = 'Cool green dress with red bell';
     $otherImages2 = [
         [
-            'image' => 'assets/pages/img/products/model3.jpg',
+            'image' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model3.jpg',
             'alt' => 'Berry Lace Dress',
         ],
         [
-            'image' => 'assets/pages/img/products/model4.jpg',
+            'image' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model4.jpg',
             'alt' => 'Berry Lace Dress',
         ],
         [
-            'image' => 'assets/pages/img/products/model5.jpg',
+            'image' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model5.jpg',
             'alt' => 'Berry Lace Dress',
         ]
     ];
@@ -195,7 +195,7 @@
                   </div>
                   <div class="review">
                     <input type="range" value="{{ $productRating2 }}" step="0.25" id="backing4">
-                    <div class="rateit" data-rateit-backingfld="#backing4" data-rateit-resetable="false"  data-rateit-ispreset="true" data-rateit-min="0" data-rateit-max="5">
+                    <div class="rateit" data-rateit-backingfld="#backing4" data-rateit-resetable="false" data-rateit-readonly="true" data-rateit-ispreset="true" data-rateit-min="0" data-rateit-max="5">
                     </div>
                     <a href="#Reviews" data-toggle="tab">
                         @if ($numProductReviews > 1 || $numProductReviews === 0 )
@@ -258,19 +258,19 @@
                         @endif
                         
                         <!-- BEGIN FORM-->
-                        <form action="#" class="reviews-form" role="form">
+                        <form method="POST" action="#" class="reviews-form" role="form">
                             <h2>Write a review</h2>
                             <div class="form-group">
                             <label for="name">Name <span class="require">*</span></label>
                             <input type="text" class="form-control" id="name">
                             </div>
                             <div class="form-group">
-                            <label for="email">Email</label>
+                            <label for="email">Email <span class="require">*</label>
                             <input type="text" class="form-control" id="email">
                             </div>
                             <div class="form-group">
-                            <label for="review-summernote">Review <span class="require">*</span></label>
-                            <textarea class="form-control" rows="8" id="review-summernote"></textarea>
+                            <label for="reviewSummernote">Review <span class="require">*</span></label>
+                            <textarea class="form-control" rows="8" id="reviewSummernote"></textarea>
                             </div>
                             <div class="form-group">
                             <label for="email">Rating</label>
@@ -282,12 +282,6 @@
                             <button type="submit" class="btn btn-primary">Send</button>
                             </div>
                         </form>
-                        <script>
-                                $(document).ready(function($) 
-                                {
-                                    $('#review-summernote').summernote();
-                                });
-                        </script>
                         <!-- END FORM--> 
                     </div>
                   </div>
@@ -298,3 +292,13 @@
             </div>
         </div>
     <!-- END CONTENT -->
+
+@section('js-extra')
+    @parent
+    <script>
+        jQuery(function($) 
+        {
+            $('#reviewSummernote').summernote();
+        });
+    </script>
+@endsection    

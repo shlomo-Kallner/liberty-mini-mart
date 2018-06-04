@@ -2,17 +2,48 @@
 @extends('content.template')
 
 
-@section('name')
+@section('main-content')
     @parent
 
     {{-- OUR SLOTS... --}}
     @php
         $testing = true;
-        use \App\Utilities\Functions\Functions;
+        $fakeData = '';
 
-        $sidebarMenu2 = serialize();
-        $sidebarProducts2 = serialize();
-        $currency2 = '';
+        use \App\Utilities\Functions\Functions,
+            \App\Page;
+
+        if (!$testing) {
+            $sidebarMenu2 = serialize(Functions::getContent($sidebarMenu??$fakeData,$fakeData));
+        } else {
+            $sidebarMenu2 = serialize(Page::getSidebar(true));
+        }
+        if (!$testing) {
+            $sidebarProducts2 = Functions::getContent($sidebarProducts??$fakeData,$fakeData);
+        } else {
+            $sidebarProducts2 = serialize([
+                [
+                    'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                    'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k1.jpg',
+                    'alt' => 'Some Shoes in Animal with Cut Out',
+                    'price' => '31.00'
+                ],
+                [
+                    'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                    'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k4.jpg',
+                    'alt' => 'Some Shoes in Animal with Cut Out',
+                    'price' => '23.00'
+                ],
+                [
+                    'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+                    'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k3.jpg',
+                    'alt' => 'Some Shoes in Animal with Cut Out',
+                    'price' => '86.00'
+                ]
+            ]);
+        }
+        //dd($sidebarProducts2);
+        $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
 
     @endphp
 
