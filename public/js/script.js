@@ -4,18 +4,18 @@
  * and open the template in the editor.
  */
 
-$(function () {
+jQuery(function ($) {
     //put your code here..
     //console.log("Ready To Code with jQuery!!");
 
     // from 
     /*
 
-   BEGIN USERS Scrolled Links Panel Scripting
+        BEGIN USERS Scrolled Links Panel Scripting
 
-   Inspired From Styler Panel in 
-   '..\lib\themewagon\metronicShopUI\theme\assets\corporate\scripts\layout.js'
-***/
+        Inspired From Styler Panel in 
+        '..\lib\themewagon\metronicShopUI\theme\assets\corporate\scripts\layout.js'
+    ***/
 
     var handleUsersLinks = function () {
     
@@ -50,5 +50,30 @@ $(function () {
 
     };
     handleSearch();
+
+    var getOptionVals = function (options, jquery)
+        {
+            var result = {};
+            for(var i in options){
+                result[i] = jquery(options[i]).val();
+            }
+            return result;
+        };
+
+    var handleCart = function() {
+        var cartForStore = {
+            // utility 
+            getOptionVals: function (options, jquery)
+            {
+                var result = {};
+                for(var i in options){
+                    result[i] = jquery(options[i]).val();
+                }
+                return result;
+            },
+        
+        };
+
+    };
     
 });

@@ -92,4 +92,31 @@ class ShopController extends MainController {
         return parent::getView('content.store', $title, $content, $useFakeData);
     }
 
+    public function checkout(Request $request) 
+    {
+        $useFakeData = true;
+        self::$data['sidebar'] = Page::getSidebar($useFakeData);
+        self::$data['breadcrumbs'] = [
+            'links' => [
+                [
+                    'name' => '',
+                    'url' => '',
+                ],
+            ],
+            'current'=> [
+                'name' => 'Store',
+                'url' => 'store',
+            ],
+        ];
+        $title = 'test Cart page';
+        $content = [
+            'article' => [
+                'header' => 'This is Our CART!',
+                'subheading' => 'Here you will find a wealth of products that only LIBERTY can PROVIDE!',
+                'article' => serialize($request->json()),
+            ]
+        ];
+        return parent::getView('content.store', $title, $content, $useFakeData);
+    }
+
 }

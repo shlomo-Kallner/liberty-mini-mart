@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Product;
-use Illuminate\Http\Request;
+use App\Product,
+    Illuminate\Http\Request,
+    Illuminate\Http\Response;
 
 class ProductController extends MainController
 {
@@ -92,5 +93,18 @@ class ProductController extends MainController
     public function test(Request $request)
     {
         return static::getView('content.product', 'TEST-PRODUCT', [], true);
+    }
+
+    public function testPost(Request $request)
+    {
+        //return json_encode(__METHOD__);
+        //dd($request);
+        return response()->json(
+            [
+                //'data' => serialize($request->json("parameters")),
+                'method' => __METHOD__,
+                'data' => serialize($request->post()),
+            ]
+        );
     }
 }

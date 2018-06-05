@@ -37,6 +37,7 @@ Route::prefix('store')->group(
         Route::get('section/test', 'SectionController@test');
         Route::get('section/test/category/test', 'CategorieController@test');
         Route::get('section/test/category/test/product/test', 'ProductController@test');
+        Route::post('section/test/category/test/product/test', 'ProductController@testPost');
 
         Route::resource('section', 'SectionController');
         // 'section/' goes to 'index()' which returns 'all-sections' of the store..
