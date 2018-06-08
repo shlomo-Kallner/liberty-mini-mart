@@ -16,7 +16,15 @@
     $numPerView = 4;
     $numViews = Functions::genRowsPerPage(count($ranges2), $numPerView);
     $viewIdxs = Functions::genPageArray($ranges2, $numPerView);
-    dd($numPerView, $numViews, $viewIdxs);
+    $currentView = -1;
+    for ($i = 0; $i < count($viewIdxs); $i++) {
+        if (in_array($currentRange2['index'],$viewIdxs[$i])) {
+            $currentView = $i;
+            break;
+        }
+    }
+    //dd($numPerView, $numViews, $viewIdxs, $currentView);
+    
 @endphp
 
 @if (Functions::testVar($paginator2) || $testing === true)
@@ -26,13 +34,13 @@
     @if (Functions::testVar($paginator2))
         
             <div class="col-md-4 col-sm-4 items-info">
-                Items {{ $currentRange2['begin'] }} 
-                to {{ $currentRange2['end'] }} 
+                Items {{ $currentRange2['begin'] + 1 }} 
+                to {{ $currentRange2['end'] + 1 }} 
                 of {{ $totalItems2 }} total
             </div>
             <div class="col-md-8 col-sm-8">
                 <ul class="pagination pull-right">
-                    @if ($numRanges2 > 1 && $currentRange2['index'] > 0 )
+                    @if ($numViews > 1 && $currentView > 0 )
                         <li>
                             <a href="javascript:;" aria-label="Previous">
                                 <i class="fa fa-chevron-left" aria-hidden="true"></i>
@@ -40,18 +48,18 @@
                         </li>
                     @endif
 
-                    @foreach ($ranges2 as $item)
-                        @if ($loop->index === $currentRange2['index'])
+                    @foreach ($viewIdxs[$currentView] as $item)
+                        @if ($item === $currentRange2['index'])
                             <li>
-                                <span>{{ $loop->index + 1 }}</span>
+                                <span>{{ $item + 1 }}</span>
                             </li> 
                         
                         @else
-                            <li><a href="javascript:;">{{ $loop->index + 1 }}</a></li>
+                            <li><a href="javascript:;">{{ $item + 1 }}</a></li>
                         @endif
                     @endforeach
                     
-                    @if ($numRanges2 > 1 && $currentRange2['index'] < $numRanges2 )
+                    @if ($numViews > 1 && $currentView < $numViews )
                         <li>
                             <a href="javascript:;" aria-label="Next">
                                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
