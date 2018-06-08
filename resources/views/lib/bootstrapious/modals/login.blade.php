@@ -36,6 +36,16 @@
                     <p class="text-center">
                         <button class="btn btn-template-main"><i class="fa fa-sign-in"></i> Sign In</button>
                     </p>
+                    <a href="javascript:;">Forgotten Password?</a>
+                    <div class="login-socio text-center">
+                        <p class="text-muted">or login using:</p>
+                        <ul class="social-icons">
+                            <li><a href="javascript:;" data-original-title="facebook" class="facebook" title="facebook"></a></li>
+                            <li><a href="javascript:;" data-original-title="Twitter" class="twitter" title="Twitter"></a></li>
+                            <li><a href="javascript:;" data-original-title="Google Plus" class="googleplus" title="Google Plus"></a></li>
+                            <li><a href="javascript:;" data-original-title="Linkedin" class="linkedin" title="LinkedIn"></a></li>
+                        </ul>
+                    </div>
                 </form>
 
                 <p class="text-center text-muted">Not registered yet?</p>

@@ -60,6 +60,7 @@
                             <input id="product-quantity" type="text" value="1" readonly name="product-quantity" class="form-control input-sm">
                         </div>
                         <button class="btn btn-primary" type="submit">Add to cart</button>
+                        <button class="btn btn-primary" type="submit">Order Now!</button>
                         <a href="{{ url('lib/themewagon/metronicShopUI/theme/shop-item.html') }}" class="btn btn-default">More details</a>
                     </div>
                 </div>

@@ -21,6 +21,7 @@
     $title2 = Functions::getBladedString($title??'','OUR PLANS');
     if (!$testing) {
         $plans2 = Functions::getUnBladedContent($plans??'','');
+        //dd($plans);
     } else {
         $plansTmp = [
             [
@@ -109,9 +110,15 @@
         //dd($plans2);
     }
     $sorting2 = Functions::getBladedContent($sorting??'','');
-    $pageNumber2 = intval(Functions::getBladedString($pageNumber??-1,-1));
+    // $pageNumber is problematic.. 
+    // our defualt should be '-1' (show all) but to show the first
+    // page we cannot pass '0' because it's a null string value.. 
+    // and empty() will evaluate it to being empty/null.. 
+    $pageNumber2 = intval(Functions::getBladedString($pageNumber??0,0)) -1;
+    //dd($pageNumber2);
     // our default.. is 16 plans per page (the template had 4 per row..)
     $plansPerPage2 = intval(Functions::getBladedString($plansPerPage??16,16));
+    //dd($plansPerPage2);
 
     if (Functions::testVar($plans2)) {
 
@@ -119,7 +126,8 @@
         $rowIdxs = Functions::genPagesIndexes($plansPerPage2, $plansPerRow, $totalPlans, $pageNumber2);
 
         // initializing the paginator
-        //$numPages = Functions::genRowsPerPage($totalPlans, $plansPerPage2);
+        $numPages = Functions::genRowsPerPage($totalPlans, $plansPerPage2);
+        //dd($pageNumber2, $totalPlans, $plansPerPage2, $rowIdxs, $numPages);
         if ($testing) {
             $tmp = [
                 'level 0' => [
@@ -146,16 +154,16 @@
             count($rowIdxs[count($rowIdxs)-1])-1,
             count($rowIdxs[count($rowIdxs)-1][count($rowIdxs[count($rowIdxs)-1])-1])-1,
         ];
-        //dd($totalPlans, $plansPerPage2, $numPages, $tmp, $rowIdxs, $lastIndexes);
+        //dd($pageNumber2, $totalPlans, $plansPerPage2, $rowIdxs, $numPages, $lastIndexes);
         $paginator = [
             'totalItems' => $totalPlans,
-            'numRanges' => count($rowIdxs), // $numPages,
-            'ranges' => Functions::genRange(0, count($rowIdxs)-1, 1),
-            'currentRange' => [
+            'numRanges' => $numPages, // count($rowIdxs), // 
+            'ranges' => serialize(Functions::genRange(0, $numPages-1, 1)), // serialize(Functions::genRange(0, count($rowIdxs)-1, 1)),
+            'currentRange' => serialize([
                 'begin' => $rowIdxs[0][0][0],
                 'end' => $rowIdxs[$lastIndexes[0]][$lastIndexes[1]][$lastIndexes[2]],
                 'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
-            ],
+            ]),
         ];
         //dd($paginator);
         
@@ -251,6 +259,11 @@
                 @slot('paginator')
                     {!! serialize($paginator) !!}
                 @endslot
+                @foreach ($paginator as $key => $item)
+                    @slot($key)
+                        {!! $item !!}
+                    @endslot
+                @endforeach
             @endcomponent
         @endif
                 
