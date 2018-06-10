@@ -8,17 +8,15 @@ use \App\Page,
     \App\Utilities\Functions\Functions,
     Darryldecode\Cart\Cart;
 
-$testing = true;
 
-
-$navbar2 = Functions::getBladedContent($navbar??'');
+$navbar2 = Functions::getUnBladedContent($navbar??'');
 //dd($navbar2);
 if (!Functions::testVar($navbar2)) {
     $navbar2 = Page::getNavBar();
 }
 
 
-$preheader2 = Functions::getBladedContent($preheader??'');
+$preheader2 = Functions::getUnBladedContent($preheader??'');
 //dd($preheader2);
 if (!Functions::testVar($preheader2)) {
     $preheader2 = Page::getPreHeader();
@@ -30,11 +28,13 @@ $preheader2s = serialize($preheader2); // preserialized for component slots..
 // And the $preheader variable.
 //dd($preheader);
 
-$cart2 = Functions::getBladedContent($cart??'');
 
-if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
+$testing = true;
+
+if (!$testing) {
  // place some $cart initializing code here..
-} elseif($testing){
+    $cart2 = Functions::getBladedContent($cart??'');
+} else{
     $fakeID = 'MyFAKESEssionID123';
         //$myCart = new Cart();
         \Cart::session($fakeID);
@@ -110,34 +110,38 @@ if ((!Functions::testVar($cart2) || emptyArray($cart2)) && !$testing ) {
             <div class="top-cart-content-wrapper">
                 <div class="top-cart-content">
                     <ul class="scroller" style="height: 250px;">
-                        @foreach($cart2['items'] as $item)
-                            <?php //dd($item);     ?>
-                            @component('lib.themewagon.cartItem')
-                                @slot('url')
-                                {{$item->attributes['url']}}
-                                @endslot
-                                @slot('img')
-                                {{ $item->attributes['img'] }}
-                                @endslot
-                                @slot('description')
-                                {{ $item->attributes['description'] }}
-                                @endslot
-                                @slot('quantity')
-                                {{ $item->quantity }}
-                                @endslot
-                                @slot('name')
-                                {{ $item->name }}
-                                @endslot
-                                @slot('currencyIcon')
-                                {{ $cart['currency-icon'] }}
-                                @endslot
-                                @slot('priceSum')
-                                {{ $item->getPriceSumWithConditions() }}
-                                @endslot
-                            @endcomponent
-                        @endforeach
+                        @if (Functions::testVar($cart2['items']))
+                            @foreach($cart2['items'] as $item)
+                                <?php //dd($item);     ?>
+                                @component('lib.themewagon.cartItem')
+                                    @slot('url')
+                                    {{$item->attributes['url']}}
+                                    @endslot
+                                    @slot('img')
+                                    {{ $item->attributes['img'] }}
+                                    @endslot
+                                    @slot('description')
+                                    {{ $item->attributes['description'] }}
+                                    @endslot
+                                    @slot('quantity')
+                                    {{ $item->quantity }}
+                                    @endslot
+                                    @slot('name')
+                                    {{ $item->name }}
+                                    @endslot
+                                    @slot('currencyIcon')
+                                    {{ $cart['currency-icon'] }}
+                                    @endslot
+                                    @slot('priceSum')
+                                    {{ $item->getPriceSumWithConditions() }}
+                                    @endslot
+                                @endcomponent
+                            @endforeach
+                        @else
+                            <p>Your shopping cart is empty!</p>
+                        @endif
                     </ul>
-                    <div class="text-right">
+                    <div class="pull-right">
 
                         <a href="{{ url('cart') }}" class="btn btn-default">
                             View Cart

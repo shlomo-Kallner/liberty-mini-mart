@@ -16,8 +16,10 @@ class CartController extends MainController {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index() 
+    {
         //
+        return parent::getView('content.cart');
     }
 
     /**
@@ -25,7 +27,8 @@ class CartController extends MainController {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() {
+    public function create() 
+    {
         //
     }
 
@@ -35,7 +38,8 @@ class CartController extends MainController {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(Request $request) 
+    {
         //
     }
 
@@ -45,7 +49,8 @@ class CartController extends MainController {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {
+    public function show($id) 
+    {
         //
     }
 
@@ -55,7 +60,8 @@ class CartController extends MainController {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id) {
+    public function edit($id) 
+    {
         //
     }
 
@@ -66,7 +72,8 @@ class CartController extends MainController {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id) 
+    {
         //
     }
 
@@ -76,7 +83,8 @@ class CartController extends MainController {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) {
+    public function destroy($id) 
+    {
         //
     }
 

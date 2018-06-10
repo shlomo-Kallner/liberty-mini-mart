@@ -63,16 +63,20 @@ End Bootstrap 3 Overides
 
 
 .del-goods {
-    background: #d7dde3 50% 50%;
+    background: #d7dde3 url(../lib/themewagon/metronicShopUI/theme/assets/pages/img/icons/del-goods.png) no-repeat 50% 50%;
+    width: 20px !important;
+    height: 20px !important;
 }
 .del-goods:hover {
-    background: #E94D1C 50% 50%;
+    background: #E94D1C url(../lib/themewagon/metronicShopUI/theme/assets/pages/img/icons/del-goods.png) no-repeat 50% 50%;
 }
 .add-goods {
-    background: #7bdd00 50% 50%;
+    background: #7bdd00 url(../lib/themewagon/metronicShopUI/theme/assets/pages/img/icons/add-goods.png) no-repeat 50% 50%;
+    width: 20px !important;
+    height: 20px !important;
 }
 .add-goods:hover {
-    background: #E94D1C 50% 50%;
+    background: #E94D1C url(../lib/themewagon/metronicShopUI/theme/assets/pages/img/icons/add-goods.png) no-repeat 50% 50%;
 }
 
 .sticker-sale {
@@ -341,6 +345,36 @@ BEGIN TOP CART OVERLOADS
 /*
 END TOP CART OVERLOADS
 */
+
+
+.pagination > li > a > i.fa::before, .pagination > li > a > i::before, 
+.pagination > li > a > i.fa::before::-moz-selection, .pagination > li > a > i::before::-moz-selection,
+.pagination > li:first-child > a > i.fa::before, .pagination > li:first-child > a > i::before,
+.pagination > li:first-child > a > i.fa::before::-moz-selection, .pagination > li:first-child > a > i::before::-moz-selection,
+.pagination > li:last-child > a > i.fa::before, .pagination > li:last-child > a > i  ::before,
+.pagination > li:last-child > a > i.fa::before::-moz-selection, .pagination > li:last-child > a > i::before::-moz-selection {
+	border-radius: 25px !important;
+	border: 1px #000 solid !important;
+  color: #555 !important;
+  background: #fff !important;
+  font-size: 13px !important;
+  padding-right: 10px;
+  margin-right: 10px;
+  z-index: 9999 !important;
+  height: 25px;
+  width: 20px;
+}
+.pagination > li > a > i.fa:hover, .pagination > li > a > i:hover,
+.pagination > li > a > i.fa:hover::-moz-selection, .pagination > li > a > i:hover::-moz-selection,
+.pagination > li:first-child > a > i.fa:hover, .pagination > li:first-child > a > i:hover,
+.pagination > li:first-child > a > i.fa:hover::-moz-selection, .pagination > li:first-child > a > i:hover::-moz-selection,
+.pagination > li:last-child > a > i.fa:hover, .pagination > li:last-child > a > i:hover,
+.pagination > li:last-child > a > i.fa:hover::-moz-selection, .pagination > li:last-child > a > i:hover::-moz-selection {
+	background: #555 !important;
+	color: #fff !important;
+  font-size: 13px !important;
+	border: 1px #fff solid !important;
+}
 
 /*
 

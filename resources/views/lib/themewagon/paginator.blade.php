@@ -43,26 +43,25 @@
                     @if ($numViews > 1 && $currentView > 0 )
                         <li>
                             <a href="javascript:;" aria-label="Previous">
-                                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                <i class="fa fa-chevron-left"></i>
                             </a>
                         </li>
                     @endif
 
                     @foreach ($viewIdxs[$currentView] as $item)
-                        @if ($item === $currentRange2['index'])
-                            <li>
-                                <span>{{ $item + 1 }}</span>
-                            </li> 
-                        
-                        @else
-                            <li><a href="javascript:;">{{ $item + 1 }}</a></li>
-                        @endif
+                        <li>
+                            @if ($item === $currentRange2['index'])
+                                <span>{{ $item + 1 }}</span> 
+                            @else
+                                <a href="javascript:;">{{ $item + 1 }}</a>
+                            @endif
+                        </li>
                     @endforeach
                     
                     @if ($numViews > 1 && $currentView < $numViews )
                         <li>
                             <a href="javascript:;" aria-label="Next">
-                                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                    <i class="fa fa-chevron-right"></i>
                             </a>
                         </li>
                     @endif
