@@ -116,7 +116,7 @@ class ShopController extends MainController {
                 'article' => serialize($request->json()),
             ]
         ];
-        return parent::getView('content.store', $title, $content, $useFakeData);
+        return parent::getView('forms.checkout', $title, $content, $useFakeData);
     }
 
 }

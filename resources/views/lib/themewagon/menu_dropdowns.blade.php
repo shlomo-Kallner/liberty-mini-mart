@@ -16,6 +16,7 @@ $target2 = Functions::getBladedString($target??'','#');
 $cssExtraClasses2 = Functions::getBladedString($cssExtraClasses??'','');
 $url2 = Functions::getBladedString($url??'','javascript:void(0);');
 $icon2 = Functions::getBladedString($icon??'','');
+$iconAfter2 = Functions::getBladedString($iconAfter??'','');
 $name2 = Functions::getBladedString($name??'','');
 $transform2 = Functions::getBladedString($transform??'','');
 $submenus2 = Functions::getUnBladedContent($submenus??'','');
@@ -26,7 +27,7 @@ $submenus2 = Functions::getUnBladedContent($submenus??'','');
 <li class="dropdown {!! $listCSS2 !!}">
     <a class="dropdown-toggle {{ $cssExtraClasses2 }}" data-toggle="dropdown" data-target="{{ $target2 }}" href="{{ url($url2) }}" role="button">
         
-            @if( Functions::testVar($icon2) && (mb_strlen($icon2) !== 0) )
+        @if( Functions::testVar($icon2) && (mb_strlen($icon2) !== 0) )
             @if ( !Functions::testVar($name2) || (mb_strlen($name2) === 0)  )
             <i class="fa {{ $icon2 }}"></i>    
             @else
@@ -41,6 +42,11 @@ $submenus2 = Functions::getUnBladedContent($submenus??'','');
                 {{ $name2 }} 
             @endif 
         @endif
+
+        @if( Functions::testVar($iconAfter2) && (mb_strlen($iconAfter2) !== 0) )
+            <i class="fa {{ $iconAfter2 }}"></i>
+        @endif
+
 
     </a>
 

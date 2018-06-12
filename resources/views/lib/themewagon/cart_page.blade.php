@@ -67,6 +67,7 @@
         $totalPrice2 = '50.00';
         $currency2 = 'fa-usd';
         $cartTitle2 = 'Your Cart&apos;s Content:';
+        $cartType2 = 'shopping cart';
         $extraContainerCss2 = 'col-sm-12';
         $pageButtons2 = [
             [
@@ -154,7 +155,7 @@
                         </table>
                     </div>
                 @else
-                    <p>Your shopping cart is empty!</p>
+                    <p>Your {{ $cartType2 }} is empty!</p>
                 @endif
                 
                 <div class="shopping-total">

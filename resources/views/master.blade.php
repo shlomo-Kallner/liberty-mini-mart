@@ -124,18 +124,22 @@ use the 'no-js' css class for IE9 and below as well.
 
         <header>
 
-            <nav class="navbar navbar-default">
+            <nav class="navbar navbar-default" role="navigation">
 
                 @section('pre-header')
 
-                @yield('pre-header-navbar')
+                    @yield('pre-header-navbar')
     
                 @show
     
                 @section('header-content')
     
-                @yield('header-navbar')
+                    @yield('header-navbar')
     
+                @show
+                
+                @section('extra-navigation-content')
+                    
                 @show
         
             </nav>

@@ -61,7 +61,7 @@ if (!Functions::testVar($langs2)) {
                         
                         @if (true)
                                 
-                            {{-- the component caling code for $currencies.. --}}
+                            {{-- the component calling code for $currencies.. --}}
                             @php
                                 //dd($currencies2);
                             @endphp

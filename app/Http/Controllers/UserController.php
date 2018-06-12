@@ -102,6 +102,11 @@ class UserController extends MainController {
         return str_replace( '/', '-', $tmp1);
     }
 
+    public function cms(Request $request)
+    {
+        return parent::getView('content.management', 'MY ADMIN PANEL');
+    }
+
     public function signin(Request $request) 
     {
         //        $email = !empty($request->email) ? $request->email : '[blank]';

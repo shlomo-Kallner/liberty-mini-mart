@@ -56,6 +56,8 @@ Route::resource('cart', 'CartController');
 Route::resource('wishlist', 'WishlistController');
 Route::get('checkout', 'ShopController@checkout');
 
+Route::get('admin', 'UserController@cms');
+
 //Route::get('user', 'UserController');
 //Route::post('user', 'UserController');
 //Route::resource('user', 'UserController');
