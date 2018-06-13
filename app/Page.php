@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Model,
     DB,
     Session;
 
-class Page extends Model {
+class Page extends Model
+{
 
     static public function genLink(
         string $type, string $url, string $name, string $cssExtraClasses = '',
         string $icon = '', string $textTransform = '', string $target = '', 
-        array $submenus = null
+        array $submenus = null, string $iconAfter = ''
     ) {
         return [
             'type' => $type, // 'url' for a url link, 'modal' for a modal button link.. 
@@ -25,6 +26,7 @@ class Page extends Model {
             'submenu' => $submenus,
             'cssExtraClasses' => $cssExtraClasses, // extra CSS classes for the anchor tag...
             // (Bootstrap 3/other..)
+            'iconAfter' => $iconAfter,
         ];
     }
 
@@ -69,11 +71,11 @@ class Page extends Model {
     static public function genDropdownLink(
         string $name, array $submenus = [], string $icon = '', 
         string $textTransform = '', string $cssExtraClasses = '',
-        string $url = 'javascript:void(0);'
+        string $url = 'javascript:void(0);', string $iconAfter = 'fa-angle-right'
     ) {
         return static::genLink( 
             'dropdown', $url, $name, $cssExtraClasses,
-            $icon, $textTransform, '', $submenus
+            $icon, $textTransform, '', $submenus, $iconAfter
         );
     }
 

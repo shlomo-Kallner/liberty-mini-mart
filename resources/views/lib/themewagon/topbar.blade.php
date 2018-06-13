@@ -59,15 +59,59 @@ if (!Functions::testVar($langs2)) {
                     <!-- BEGIN CURRENCIES -->
                     <li class="shop-currencies">
                         
-                        @if (true)
-                                
-                            {{-- the component calling code for $currencies.. --}}
-                            @php
-                                //dd($currencies2);
-                            @endphp
+                        {{-- the component calling code for $currencies.. --}}
+                        @php
+                            //dd($currencies2);
+                        @endphp
+                    
+                        @foreach ($currencies2['others'] as $item)
+                            @component('lib.themewagon.links')
+                                @foreach ($item as $key => $value)
+                                    @slot($key)
+                                        {!! $value !!}
+                                    @endslot
+                                @endforeach
+                            @endcomponent
+                        @endforeach
+                        <a href="javascript:void(0);" class="current">
+                            <i class="fa {{$currencies2['current']}}"></i>
+                        </a>
+
+                    </li>
+                    <!-- END CURRENCIES -->
+                    <!-- BEGIN LANGS -->
+                    <li class="langs-block">
+                        @php
+                            //dd($langs2);
+                        @endphp
                         
-                            @foreach ($currencies2['others'] as $item)
-                                @if (true)
+                        {{-- the component calling code for $langs.. 
+                            <a href="javascript:void(0);" class="current">{{$langs2['current']}}</a>
+                            <div class="langs-block-others-wrapper">
+                                <div class="langs-block-others">
+                                    @foreach ($langs2['others'] as $item)
+                                        @component('lib.themewagon.links')
+                                            @slot('type')
+                                                {{ 'url' }}
+                                            @endslot
+                                            @slot('url')
+                                                {!! 'javascript:void(0);' !!}
+                                            @endslot
+                                            @slot('name')
+                                                {{ $item }}
+                                            @endslot
+                                        @endcomponent
+                                    @endforeach
+                                </div>
+                            </div>
+                            
+                        --}}
+                        <a href="javascript:void(0);" class="current">
+                            {!! $langs2['current'] !!}
+                        </a>
+                        <div class="langs-block-others-wrapper">
+                            <div class="langs-block-others">
+                                @foreach ($langs2['others'] as $item)
                                     @component('lib.themewagon.links')
                                         @foreach ($item as $key => $value)
                                             @slot($key)
@@ -75,100 +119,9 @@ if (!Functions::testVar($langs2)) {
                                             @endslot
                                         @endforeach
                                     @endcomponent
-                                @else
-                                    <a href="javascript:void(0);">
-                                        <i class="fa {{$item['icon']}}"></i>
-                                    </a>
-                                @endif
-                            @endforeach
-                            <a href="javascript:void(0);" class="current">
-                                <i class="fa {{$currencies2['current']}}"></i>
-                            </a>
-                        @else
-                            {{-- Euro --}}                        
-                            <a href="javascript:void(0);">
-                                <i class="fa fa-eur"></i>
-                            </a>
-                            
-                            {{-- British Pounds --}}
-                            <a href="javascript:void(0);">
-                                <i class="fa fa-gbp"></i>
-                            </a>
-                            
-                            {{-- Israeli Shekels --}}
-                            <a href="javascript:void(0);">
-                                <i class="fa fa-ils"></i>
-                            </a>
-    
-                            {{-- USA Dollars - the default --}}
-                            <a href="javascript:void(0);" class="current">
-                                <i class="fa fa-usd"></i>
-                            </a>
-                        @endif
-
-                    </li>
-                    <!-- END CURRENCIES -->
-                    <!-- BEGIN LANGS -->
-                    <li class="langs-block">
-                        @if (true)
-                            @php
-                                //dd($langs2);
-                            @endphp
-                            
-                            {{-- the component caling code for $langs.. 
-                                <a href="javascript:void(0);" class="current">{{$langs2['current']}}</a>
-                                <div class="langs-block-others-wrapper">
-                                    <div class="langs-block-others">
-                                        @foreach ($langs2['others'] as $item)
-                                            @component('lib.themewagon.links')
-                                                @slot('type')
-                                                    {{ 'url' }}
-                                                @endslot
-                                                @slot('url')
-                                                    {!! 'javascript:void(0);' !!}
-                                                @endslot
-                                                @slot('name')
-                                                    {{ $item }}
-                                                @endslot
-                                            @endcomponent
-                                        @endforeach
-                                    </div>
-                                </div>
-                                
-                            --}}
-                            <a href="javascript:void(0);" class="current">
-                                {!! $langs2['current'] !!}
-                            </a>
-                            <div class="langs-block-others-wrapper">
-                                <div class="langs-block-others">
-                                    @foreach ($langs2['others'] as $item)
-                                        @if (true)
-                                            @component('lib.themewagon.links')
-                                                @foreach ($item as $key => $value)
-                                                    @slot($key)
-                                                        {!! $value !!}
-                                                    @endslot
-                                                @endforeach
-                                            @endcomponent
-                                        @else
-                                            <a href="javascript:void(0);">
-                                                {!! $item['name'] !!}
-                                            </a>
-                                        @endif
-                                    @endforeach
-                                </div>
+                                @endforeach
                             </div>
-                        @else
-                            <a href="javascript:void(0);" class="current">English</a>
-                            <div class="langs-block-others-wrapper">
-                                <div class="langs-block-others">
-                                    <a href="javascript:void(0);">Hebrew</a>
-                                    <a href="javascript:void(0);">French</a>
-                                    <a href="javascript:void(0);">Germany</a>
-                                    <a href="javascript:void(0);">Turkish</a>
-                                </div>
-                            </div>
-                        @endif
+                        </div>
                     </li>
                     <!-- END LANGS -->
                 </ul>
