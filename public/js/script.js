@@ -49,7 +49,13 @@ jQuery(function ($) {
         
 
     };
-    handleSearch();
+    //handleSearch();
+    
+    /// set up handling the search-modal-trigger's click event
+    $('.search-modal-trigger-btn').click(function(){
+        $('#search-modal').modal('show');
+    });
+
 
     var getOptionVals = function (options, jquery)
         {

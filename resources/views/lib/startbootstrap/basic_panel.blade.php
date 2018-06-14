@@ -34,6 +34,7 @@
 
 @endphp
 
+<!-- begin panel component -->
     <div class="{{ $containerClass2 }}">
         <div class="panel {{ $panelClass2 }}">
             <div class="panel-heading">
@@ -47,4 +48,4 @@
             </div>
         </div>
     </div>
-    <!-- end panel component -->
+<!-- end panel component -->
