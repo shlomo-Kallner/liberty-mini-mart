@@ -50,10 +50,11 @@ jQuery(function ($) {
 
     };
     //handleSearch();
-    
+
     /// set up handling the search-modal-trigger's click event
     $('.search-modal-trigger-btn').click(function(){
         $('#search-modal').modal('show');
+        //console.log('helloOOOh World!');
     });
 
 

@@ -10,6 +10,7 @@
             @include('lib.themewagon.copyright')
             @include('lib.bootstrapious.copyright')
             @include('lib.bootstrapmade.copyright')
+            @include('lib.startbootstrap.copyright')
 
             <div class="col-md-3">
                 <p class="powered">

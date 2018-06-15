@@ -197,7 +197,7 @@ use the 'no-js' css class for IE9 and below as well.
             _Blade:_Parent Directive,
             As it is OUTSIDE the 'js-defered' _Blade:_Section!
         --}}
-        <script src="{{ asset('js/script.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
 
         {{-- 
             Some views need an extra script tag or more,

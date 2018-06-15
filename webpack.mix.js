@@ -15,12 +15,16 @@ mix.js('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css');
 
 //mix.scripts([],'public/css/.css');
-mix.scripts([],'public/css/support.css');
-mix.scripts([],'public/css/metronic.css');
-mix.scripts([],'public/css/bootstrapious.css');
+//mix.scripts([],'public/css/support.css');
+//mix.scripts([],'public/css/metronic.css');
+//mix.scripts([],'public/css/bootstrapious.css');
 mix.scripts(['public/lib/bootstrapmade/flexor/css/style.css'],'public/css/bootstrapmade.css');
 
-mix.scripts(['html5shiv', 'respond.js', 'selectivizr'], 'public/js/compatibility.js');
+mix.scripts([
+    'node_modules/html5shiv/dist/html5shiv.min.js', 
+    'node_modules/respond.js/dest/respond.min.js', 
+    'node_modules/selectivizr/selectivizr.js'
+], 'public/js/compatibility.js');
 
 mix.scripts(
     [

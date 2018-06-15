@@ -430,37 +430,12 @@
 
         <div class="row">
             <div class="col-lg-8">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <i class="fa fa-bar-chart-o fa-fw"></i> Area Chart Example
-                        <div class="pull-right">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                    Actions
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu pull-right" role="menu">
-                                    <li><a href="#">Action</a>
-                                    </li>
-                                    <li><a href="#">Another action</a>
-                                    </li>
-                                    <li><a href="#">Something else here</a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <div id="morris-area-chart"></div>
-                    </div>
-                    <!-- /.panel-body -->
-                </div>
-                <!-- /.panel -->
-                @if (true)
+                @if (false)
+                    @component('lib.startbootstrap.area_chart_panel')
+                        
+                    @endcomponent
+                @endif
+                @if (false)
                     @component('lib.startbootstrap.barchart_panel')
                         
                     @endcomponent
@@ -511,7 +486,12 @@
     <!-- Morris Charts JavaScript -->
     <script src="{{ asset('lib/startbootstrap/admin2/vendor/raphael/raphael.min.js') }}"></script>
     <script src="{{ asset('lib/startbootstrap/admin2/vendor/morrisjs/morris.min.js') }}"></script>
-    <script src="{{ asset('lib/startbootstrap/admin2/data/morris-data.js') }}"></script>
+    {{-- 
+        temporarily removing this script element so that I can remove or otherwise 
+        initialize the Morris.js components elsewise..
+        <script src="{{ asset('lib/startbootstrap/admin2/data/morris-data.js') }}"></script> 
+    --}}
+    
 
     <!-- Custom Theme JavaScript -->
     <script src="{{ asset('lib/startbootstrap/admin2/dist/js/sb-admin-2.js') }}"></script>
