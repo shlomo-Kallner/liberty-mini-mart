@@ -1,6 +1,7 @@
 <?php
 // put any special code here..
 $title .= '-- dummy Title -- for testing Master Page 2';
+use \App\Utilities\Functions\Functions;
 ?>
 <!DOCTYPE html>
 @section('license-header')
@@ -155,6 +156,23 @@ use the 'no-js' css class for IE9 and below as well.
         
         <main>
             <div class="container">
+
+                <div class="row">
+                    <div class="col-md-12" id="masterPageAlertContainer">
+
+                        @if (Functions::testVar($alert??''))
+                            <div id="masterPageAlert" class="alert {{ $alert['class'] }} alert-dismissible fade in">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                    <i class="fa fa-close" aria-hidden="true"></i>
+                                </button>
+                                <strong>{{ $alert['title'] }}</strong> 
+                                {!! $alert['content'] !!}
+                            </div>
+                        @endif
+                        
+                    </div>
+                </div>
+
                 @section('main-content')
                 @show
             </div>  

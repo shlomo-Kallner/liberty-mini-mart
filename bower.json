@@ -1,0 +1,22 @@
+{
+  "name": "liberty-mini-mart",
+  "description": "my portfolio/Finals E-Commerce Site",
+  "main": "",
+  "authors": [
+    "Shlomo Kallner <shlomo.kallner@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bowerder": "^0.7.5",
+    "requirejs-plugin-bower": "*"
+  }
+}

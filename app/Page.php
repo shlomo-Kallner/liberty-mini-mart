@@ -10,61 +10,73 @@ use Illuminate\Database\Eloquent\Model,
 class Page extends Model
 {
 
+    /** 
+     * A template for a menu item ..
+     * 
+     * @param string $type  // 'url' for a url link, 
+     *                      'modal' for a modal button link.. 
+     *                      NEW! 'type' replaces 'isModal'!
+     * @param string $url // the URL of the link. 
+     * @param string $name // the name to fill in the Link.
+     * @param string $cssExtraClasses, // extra CSS classes for the anchor tag...
+     *                                 // (Bootstrap 3/other..)
+     * @param string $icon // the Font Awesome 4 icon class without the '.fa' class.
+     *                     // AKA fills in as so: '<i class="fa {{ $icon }}">'
+     * @param string $textTransform // Bootstrap 3 text-transform css class.
+     * @param string $target // the data-target attribute's data value of a modal,
+     *                       // or a dropdown or tab...
+     * @param array $submenus // submenu-links individually generated also by this
+     *                        // method..  
+     * @param string $iconAfter // 'the Font Awesome 4 icon class' inserted AFTER
+     *                          // the NAME unlike $icon which PRECEDES the NAME.. 
+     * 
+     * @return array - a descriptor of a link.
+     */
     static public function genLink(
         string $type, string $url, string $name, string $cssExtraClasses = '',
         string $icon = '', string $textTransform = '', string $target = '', 
         array $submenus = null, string $iconAfter = ''
     ) {
         return [
-            'type' => $type, // 'url' for a url link, 'modal' for a modal button link.. 
+            'type' => $type, // 'url' for a url link, 'modal' for a modal 
+            // button link.. 
             //-@NEW! => 'type' replaces 'isModal'!
-            'icon' => $icon, // the Font Awesome 4 icon class without the lone 'fa'.
+            'icon' => $icon, // the Font Awesome 4 icon class without the 
+            // lone 'fa'.
             'name' => $name, // the name to fill in the Link.
             'url' => $url, // the URL of the link. 
-            'target' => $target, // the data-target attribute's data value (of a modal)
+            'target' => $target, // the data-target attribute's data value 
+            // (of a modal)
             'transform' => $textTransform, // Bootstrap 3 text-transform css class.
             'submenu' => $submenus,
-            'cssExtraClasses' => $cssExtraClasses, // extra CSS classes for the anchor tag...
-            // (Bootstrap 3/other..)
-            'iconAfter' => $iconAfter,
+            'cssExtraClasses' => $cssExtraClasses, // extra CSS classes for the 
+            // anchor tag... (Bootstrap 3/other..)
+            'iconAfter' => $iconAfter, // 'the Font Awesome 4 icon class' inserted 
+            // AFTER the NAME unlike $icon which PRECEDES the NAME.. 
         ];
     }
 
-    /* A template for a menu item ..
-     * 
-     * $templateItem = [
-      'icon' => '', // the Font Awesome 4 icon class without the 'fa'.
-      'name' => '', // the name to fill in the Link.
-      'url' => '', // the URL of the link.
-      //'isModal' => false, // a Boolean, Is this a Modal or a URL? -@OBSOLETE!!
-      'type' => 'url', // 'url' for a url link, 'modal' for a modal button link.. -@NEW!
-      // 'type' replaces 'isModal'!
-      'target' => '', // the data-target attribute's data value (of a modal)
-      'transform' => '', // Bootstrap 3 text-transform css class.
-      ];
-     * 
-     */
-
-
     static public function genURLMenuItem(
         string $url, string $name, string $icon = '', 
-        string $textTransform = '', string $cssExtraClasses = ''
+        string $textTransform = '', string $cssExtraClasses = '', 
+        string $iconAfter = ''
     ) {
         // previously called 'genPreHeaderURL()'
         return static::genLink( 
             'url', $url, $name, $cssExtraClasses, 
-            $icon, $textTransform, '', null 
+            $icon, $textTransform, '', null, $iconAfter 
         );
     }
 
     static public function genModalMenuItem(
         string $name, string $target, string $icon = '', 
-        string $textTransform = '', string $cssExtraClasses = ''
+        string $textTransform = '', string $cssExtraClasses = '', 
+        string $iconAfter = ''
     ) {
         // previously called 'genPreHeaderModal()'
         return static::genLink( 
             'modal', '#', $name, $cssExtraClasses, $icon,
-            $textTransform, $target, null
+            $textTransform, $target, null, $iconAfter
         );
     }
 
