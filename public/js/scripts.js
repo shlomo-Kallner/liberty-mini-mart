@@ -5,10 +5,10 @@
  */
 
 jQuery(function ($) {
-    //put your code here..
-    //console.log("Ready To Code with jQuery!!");
+    // put your code here..
+    // console.log("Ready To Code with jQuery!!");
 
-    // from 
+    // from
     /*
 
         BEGIN USERS Scrolled Links Panel Scripting
@@ -33,7 +33,7 @@ jQuery(function ($) {
             $('.icon-users-links-close').hide();
         });
 
-        //$('body:not(.page-header-fixed) .icon-users-links-panel-open');
+        // $('body:not(.page-header-fixed) .icon-users-links-panel-open');
 
     };
     handleUsersLinks();
@@ -61,7 +61,7 @@ jQuery(function ($) {
     var getOptionVals = function (options, jquery)
         {
             var result = {};
-            for(var i in options){
+            for (var i in options) {
                 result[i] = jquery(options[i]).val();
             }
             return result;

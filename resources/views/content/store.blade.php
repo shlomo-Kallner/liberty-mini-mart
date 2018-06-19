@@ -15,7 +15,7 @@
     use \App\Utilities\Functions\Functions;
 
     if (!$testing) {
-        $newProducts2 = serialize(Functions::getContent($sidebar??'',''));
+        $newProducts2 = serialize(Functions::getContent($newProducts??'',''));
         $sidebar2 = serialize(Functions::getContent($sidebar??'',''));
         $filters2 = serialize(Functions::getContent($filters??$fakeData,$fakeData));
         $bestsellers2 = serialize(Functions::getContent($bestsellers??$fakeData,$fakeData));
@@ -81,7 +81,9 @@
         <div class="container" data-animate="fadeInUp">
 
             @component('lib.themewagon.new_and_sales')
-    
+                @slot('newProducts')
+                    {!! $newProducts2 !!}
+                @endslot
             @endcomponent
             
             <div class="row">

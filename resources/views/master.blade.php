@@ -40,6 +40,7 @@ use the 'no-js' css class for IE9 and below as well.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         @section('header-metas')
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta content="Metronic Shop UI description" name="description">
         <meta content="Metronic Shop UI keywords" name="keywords">
         <meta content="Shlomo Kallner" name="author">
@@ -216,6 +217,7 @@ use the 'no-js' css class for IE9 and below as well.
             As it is OUTSIDE the 'js-defered' _Blade:_Section!
         --}}
         <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('js/app.js') }}"></script>
 
         {{-- 
             Some views need an extra script tag or more,

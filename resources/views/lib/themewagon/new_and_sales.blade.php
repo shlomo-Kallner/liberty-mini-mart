@@ -4,7 +4,12 @@
     $testing = true;
     use \App\Utilities\Functions\Functions;
 
-    $newProducts2 = Functions::getContent($newProducts??'');
+    if ($testing) {
+        $newProducts2 = '';
+    } else {
+        $newProducts2 = Functions::getContent($newProducts??'');
+    }
+    
 
 @endphp
 
