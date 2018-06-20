@@ -11,14 +11,16 @@ let mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/assets/js/app.js', 'public/js')
+mix.js([
+        'resources/assets/js/app.js'
+    ], 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css');
 
-//mix.scripts([],'public/css/.css');
-//mix.scripts([],'public/css/support.css');
-//mix.scripts([],'public/css/metronic.css');
-//mix.scripts([],'public/css/bootstrapious.css');
-mix.scripts(['public/lib/bootstrapmade/flexor/css/style.css'],'public/css/bootstrapmade.css');
+//mix.styles([],'public/css/.css');
+//mix.styles([],'public/css/support.css');
+//mix.styles([],'public/css/metronic.css');
+//mix.styles([],'public/css/bootstrapious.css');
+//mix.styles(['public/lib/bootstrapmade/flexor/css/style.css'],'public/css/bootstrapmade.css');
 
 mix.scripts([
     'node_modules/html5shiv/dist/html5shiv.min.js', 
@@ -43,9 +45,14 @@ mix.scripts(
         'public/lib/themewagon/metronicShopUI/theme/assets/pages/scripts/bs-carousel.js',
 
     ] , 'public/js/metronic.js');
+
 mix.scripts(
     [
         'public/lib/bootstrapious/universal/js/front.js'
     ] , 'public/js/bootstrapious.js');
-mix.scripts([] , 'public/js/bootstrapmade.js');
-//mix.scripts([] , 'public/js/compatibility.js');
+    
+//mix.scripts([] , 'public/js/bootstrapmade.js');
+//mix.scripts([] , 'public/js/bootstrapmade.js');
+//mix.scripts([] , 'public/js/bootstrapmade.js');
+//mix.scripts([] , 'public/js/bootstrapmade.js');
+

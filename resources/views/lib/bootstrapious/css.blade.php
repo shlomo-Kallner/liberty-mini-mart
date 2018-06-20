@@ -14,9 +14,15 @@
 
 @section('css-preloaded-global')
 @parent
-<!-- Global UNIVERSAL styles START -->          
-<!-- Css animations  -->
-<link href="{{ asset('lib/bootstrapious/universal/css/animate.css') }}" rel="stylesheet">
+<!-- Global UNIVERSAL styles START -->      
+
+{{-- 
+
+    <!-- Css animations  -->
+    <link href="{{ asset('lib/bootstrapious/universal/css/animate.css') }}" rel="stylesheet">
+
+--}}
+    
 
 <!-- Theme stylesheet, if possible do not edit this stylesheet -->
 <link href="{{ asset('lib/bootstrapious/universal/css/style.default.css') }}" rel="stylesheet" id="theme-stylesheet">
@@ -24,11 +30,14 @@
 <!-- Custom stylesheet - for your changes -->
 <link href="{{ asset('lib/bootstrapious/universal/css/custom.css') }}" rel="stylesheet">
 
+{{-- 
+    
+    <!-- owl carousel css -->
 
-<!-- owl carousel css -->
+    <link href="{{ asset('lib/bootstrapious/universal/css/owl.carousel.css') }}" rel="stylesheet">
+    <link href="{{ asset('lib/bootstrapious/universal/css/owl.theme.css') }}" rel="stylesheet">
 
-<link href="{{ asset('lib/bootstrapious/universal/css/owl.carousel.css') }}" rel="stylesheet">
-<link href="{{ asset('lib/bootstrapious/universal/css/owl.theme.css') }}" rel="stylesheet">
+--}}
 
 <!-- Global UNIVERSAL styles END -->
 @endsection

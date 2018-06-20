@@ -208,6 +208,9 @@ use the 'no-js' css class for IE9 and below as well.
             <script src="{{ asset('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
         @endif
 
+        {{-- from Laravel.. Vue.js is now ENABLED! --}}
+        <script src="{{ asset('js/app.js') }}"></script>
+
         {{-- 
             this stuff is ours.. so it should come last.. 
             In the @Extending View - call @Parent last!
@@ -217,7 +220,6 @@ use the 'no-js' css class for IE9 and below as well.
             As it is OUTSIDE the 'js-defered' _Blade:_Section!
         --}}
         <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('js/app.js') }}"></script>
 
         {{-- 
             Some views need an extra script tag or more,
