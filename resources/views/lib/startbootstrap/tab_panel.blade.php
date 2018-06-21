@@ -103,48 +103,48 @@
     
 @endphp
 
-    @component('lib.startbootstrap.basic_panel')
-        @slot('containerClass')
-            {!! $containerClass2 !!}
-        @endslot
-        @slot('panelClass')
-            {!! $panelClass2 !!}
-        @endslot
-        @slot('panelHeader')
-            {!! $panelHeader2 !!}
-        @endslot
-        @slot('panelFooter')
-            {!! $panelFooter2 !!}
-        @endslot
-        @slot('panelContent')
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs">
-                @foreach ($panelTabs2 as $tab)
-                    @if ($tab['name'] === $activeTab2)
-                        <li class="active">
-                    @else
-                        <li>
-                    @endif
-                            <a href="{{ '#'. $tab['name'] }}" data-toggle="tab">
-                                {{ title_case($tab['name']) }}
-                            </a>
-                        </li>
-                @endforeach
-            </ul>
+@component('lib.startbootstrap.basic_panel')
+    @slot('containerClass')
+        {!! $containerClass2 !!}
+    @endslot
+    @slot('panelClass')
+        {!! $panelClass2 !!}
+    @endslot
+    @slot('panelHeader')
+        {!! $panelHeader2 !!}
+    @endslot
+    @slot('panelFooter')
+        {!! $panelFooter2 !!}
+    @endslot
+    @slot('panelContent')
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs">
+            @foreach ($panelTabs2 as $tab)
+                @if ($tab['name'] === $activeTab2)
+                    <li class="active">
+                @else
+                    <li>
+                @endif
+                        <a href="{{ '#'. $tab['name'] }}" data-toggle="tab">
+                            {{ title_case($tab['name']) }}
+                        </a>
+                    </li>
+            @endforeach
+        </ul>
 
-            <!-- Tab panes -->
-            <div class="tab-content">
-                @foreach ($panelTabs2 as $tab)
-                    @if ($tab['name'] === $activeTab2)
-                        <div class="tab-pane fade in active" id="{{ $tab['name'] }}">
-                    @else
-                        <div class="tab-pane fade" id="{{ $tab['name'] }}">
-                    @endif
-                            {!! $tab['title'] !!}
-                            {!! $tab['content'] !!}
-                        </div>
-                @endforeach
-            </div>
-        @endslot                 
-    @endcomponent
+        <!-- Tab panes -->
+        <div class="tab-content">
+            @foreach ($panelTabs2 as $tab)
+                @if ($tab['name'] === $activeTab2)
+                    <div class="tab-pane fade in active" id="{{ $tab['name'] }}">
+                @else
+                    <div class="tab-pane fade" id="{{ $tab['name'] }}">
+                @endif
+                        {!! $tab['title'] !!}
+                        {!! $tab['content'] !!}
+                    </div>
+            @endforeach
+        </div>
+    @endslot                 
+@endcomponent
     

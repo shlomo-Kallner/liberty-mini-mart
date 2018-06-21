@@ -1,10 +1,8 @@
 {
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
-    "/css/bootstrapmade.css": "/css/bootstrapmade.css",
     "/js/compatibility.js": "/js/compatibility.js",
     "/js/support.js": "/js/support.js",
     "/js/metronic.js": "/js/metronic.js",
-    "/js/bootstrapious.js": "/js/bootstrapious.js",
-    "/js/bootstrapmade.js": "/js/bootstrapmade.js"
+    "/js/bootstrapious.js": "/js/bootstrapious.js"
 }

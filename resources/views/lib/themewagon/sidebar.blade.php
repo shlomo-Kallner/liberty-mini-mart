@@ -60,6 +60,8 @@
     //dd($products2);
     $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
     //dd($currency2);
+
+    $sidebarClasses2 = Functions::getBladedString($sidebarClasses??'col-md-3 col-sm-5','col-md-3 col-sm-5');
 @endphp
 
 {{-- Initially intended to avoid doing exactly THIS (testing the primary slots), 
@@ -67,7 +69,7 @@
 
 @if (Functions::testVar($menu2) || Functions::testVar($filters2) || Functions::testVar($products2))
     <!-- BEGIN SIDEBAR -->
-    <div class="sidebar col-md-3 col-sm-5">
+    <div class="sidebar {{ $sidebarClasses2 }}">
 
         @if (Functions::testVar($menu2))
             @component('lib.themewagon.sidebar_menu')
