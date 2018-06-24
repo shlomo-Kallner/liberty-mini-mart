@@ -22,7 +22,7 @@
         $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
 
     } else {
-        $newProducts2 = serialize(Functions::getContent($sidebar??'',''));
+        $newProducts2 = serialize(Functions::getContent($newProducts??'',''));
         $sidebar2 = serialize(Functions::getContent($sidebar??'',''));
         $filters2 = serialize([
             [
@@ -67,8 +67,11 @@
     
 
     if ($testing) {
-          //dd($filters2);
-        //dd($bestsellers2);
+        //dd($filters2); 
+        //dd($newProducts2); 
+        //dd($sidebar2); 
+        //dd($bestsellers2); 
+        //dd($currency2);
     } 
     
 @endphp
@@ -78,14 +81,46 @@
     @parent
 
     <section class="bar background-white no-mb">
-        <div class="container" data-animate="fadeInUp">
+        <div class="container" {{-- data-animate="fadeInUp" --}} > 
+        
 
-            @component('lib.themewagon.new_and_sales')
-                @slot('newProducts')
-                    {!! $newProducts2 !!}
-                @endslot
-            @endcomponent
+            @if (false)
+                @component('lib.themewagon.new_and_sales')
+                    @slot('newProducts')
+                        {!! $newProducts2 !!}
+                    @endslot
+                @endcomponent
+            @endif
             
+            @if (false)
+            <!-- BEGIN SALE PRODUCT & NEW ARRIVALS -->
+            
+                @component('lib.themewagon.product_gallery')
+                    @slot('products')
+                        {!! $newProducts2 !!}
+                    @endslot
+                    @slot('containerClasses')
+                        {{ "row margin-bottom-40 margin-top-30" }}
+                    @endslot
+                    @slot('sizeClass')
+                        {{ "col-md-12" }}
+                    @endslot
+                    @slot('productClass')
+                        {{ "sale-product" }}
+                    @endslot
+                    @slot('owlClass')
+                        {{ "owl-carousel5" }}
+                    @endslot
+                    @slot('title')
+                        {{ "New Arrivals" }}
+                    @endslot
+                @endcomponent
+
+            <!-- END SALE PRODUCT & NEW ARRIVALS -->
+            @endif
+            
+            @if (false)
+                
             <div class="row">
                 <div class="col-md-12">
                     @component('lib.bootstrapious.feature_single_showcase_item')
@@ -97,6 +132,8 @@
                     @endcomponent
                 </div>
             </div>
+
+            @endif
             <div class="row margin-bottom-40 ">
 
                 @component('lib.themewagon.sidebar')
@@ -131,7 +168,7 @@
                     @endcomponent
                 @endif
 
-                @if (true)
+                @if (false)
                     @component('lib.bootstrapious.feature_multiple_items')
                         @slot('heading')
                             {!! "OUR SECTIONS" !!}
@@ -139,10 +176,14 @@
                     @endcomponent
                 @endif
 
-                @component('lib.themewagon.paginator')
-                    
-                @endcomponent
-        
+                
+                @if (false)
+
+                    @component('lib.themewagon.paginator')
+                        
+                    @endcomponent
+            
+                @endif
 
             </div>
         </div>

@@ -35,4 +35,5 @@
             {{ "New Arrivals" }}
         @endslot
     @endcomponent
+    
 <!-- END SALE PRODUCT & NEW ARRIVALS -->

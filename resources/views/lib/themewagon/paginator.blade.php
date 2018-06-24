@@ -12,6 +12,7 @@
     $ranges2 = Functions::getUnBladedContent($ranges??'','');
     
     //dd($paginator2, $currentRange2, $totalItems2, $numRanges2, $ranges2);
+    //dd($ranges2);
 
     $numPerView = 4;
     $numViews = Functions::genRowsPerPage(count($ranges2), $numPerView);

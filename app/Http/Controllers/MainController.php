@@ -158,6 +158,7 @@ class MainController extends Controller {
         self::$data['preheader'] = Page::getPreHeader($useFakeData);
         //dd(session()->all());
         //dd(self::$data['preheader']); 
+        self::$data['sidebar'] = Page::getSidebar($useFakeData);
         //
         //
         return view($viewName, self::$data);

@@ -61,14 +61,16 @@ class ShopController extends MainController {
 
     public function index(Request $request)
     {
-        return parent::getView('content.store');
+        //self::$data['sidebar'] = Page::getSidebar($useFakeData);
+
+        //return parent::getView('content.store');
+        return self::test($request, false);
     }
 
-    public function test(Request $request)
+    public function test(Request $request, bool $useFakeData = true)
     {
         
-        $useFakeData = true;
-        self::$data['sidebar'] = Page::getSidebar($useFakeData);
+        //self::$data['sidebar'] = Page::getSidebar($useFakeData);
         self::$data['breadcrumbs'] = [
             'links' => [
                 [

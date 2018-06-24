@@ -11,6 +11,7 @@ class IterationStack
 
     public function __construct(array &$elems, &$parent = null)
     {
+        //dd($elems);
         $this->current = new IterationFrame($elems, $parent);
     }
 
@@ -93,9 +94,10 @@ class IterationFrame
                 $elems,
                 $index;
 
-    public function __construct(array &$elems, &$parent = null)
+    public function __construct(array &$elems, &$parent = null, int $index = 0)
     {
-        $this->index = 0;
+        //dd($elems , "fsfsf");
+        $this->index = $index;
         $this->elems = $elems;
         $this->parent = $parent;
     }

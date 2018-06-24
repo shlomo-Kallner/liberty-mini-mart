@@ -5,7 +5,7 @@
     //dd($heading);
     $heading2 = Functions::getBladedString($heading??'','Latest from our workshop');
     $items2 = Functions::getUnBladedContent($items??'',Functions::genRange(0,15,1));
-    //dd($items2);
+    //dd($heading2, $items2);
 
 @endphp
 

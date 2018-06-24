@@ -48,9 +48,9 @@
 
         @if ( Functions::testVar($name2) && (mb_strlen($name2) !== 0)  ) 
             @if(mb_strlen($transform2) !== 0)
-                <span class="hidden-xs {{ $transform2 }}">{{ $name2 }}</span> 
+                <span class="hidden-xs {{ $transform2 }}">{!! $name2 !!}</span> 
             @else 
-                {{ $name2 }} 
+                {!! $name2 !!}
             @endif 
         @endif
             

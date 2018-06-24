@@ -302,7 +302,7 @@ var Layout = function () {
             handleInit();
             handleResponsiveOnResize();
             handleIEFixes();
-            handleSearch();
+            //handleSearch();
             handleFancybox();
             handleDifInits();
             handleSidebarMenu();

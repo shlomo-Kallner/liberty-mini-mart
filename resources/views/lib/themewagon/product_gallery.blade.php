@@ -1,7 +1,7 @@
 
 @php
 
-    $testing = false;
+    $testing = true;
     use \App\Utilities\Functions\Functions;
     
     //dd($productClass);

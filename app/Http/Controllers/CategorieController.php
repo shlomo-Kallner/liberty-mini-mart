@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Categorie;
+use App\Categorie,
+    App\Section;
 use Illuminate\Http\Request;
 
 class CategorieController extends MainController
@@ -50,9 +51,20 @@ class CategorieController extends MainController
      * @param  \App\Categorie  $categorie
      * @return \Illuminate\Http\Response
      */
-    public function show(Categorie $categorie)
+    public function show(Request $request)
     {
-        //
+        //dd($categorie);
+        //dd($request->section, $request->category);
+        //$categorie
+        $sect = Section::where('url',$request->section)->first();
+        //dd($sect->id);
+        $cat = Categorie::where(
+            [
+                ['section_id',$sect->id],
+                ['url',$request->category]
+            ]
+        )->first();
+        dd($cat);
     }
 
     /**

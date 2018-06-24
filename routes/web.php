@@ -29,19 +29,23 @@ Route::prefix('user')->group(
 
 Route::prefix('store')->group( 
     function () {
-        Route::get('/', 'ShopController@test');
-        //Route::get('/', 'ShopController@index');
+        //Route::get('/', 'ShopController@test');
+        Route::get('/', 'ShopController@index');
         //Route::get('all', 'ShopController@products');
 
         // some pre-database-filling testing routes..
-        Route::get('section/test', 'SectionController@test');
-        Route::get('section/test/category/test', 'CategorieController@test');
-        Route::get('section/test/category/test/product/test', 'ProductController@test');
-        Route::post('section/test/category/test/product/test', 'ProductController@testPost');
+        //Route::get('section/test', 'SectionController@test');
+        //Route::get('section/test/category/test', 'CategorieController@test');
+        //Route::get('section/test/category/test/product/test', 'ProductController@test');
+        //Route::post('section/test/category/test/product/test', 'ProductController@testPost');
 
         Route::resource('section', 'SectionController');
         // 'section/' goes to 'index()' which returns 'all-sections' of the store..
-        Route::resource('section/{section}/category', 'CategorieController');
+        Route::resource('section/{section}/category', 'CategorieController', [
+            'parameters'=> [
+                'categorie' => 'category'
+            ]
+        ]);
         // 'category/' goes to 'index()' which returns 'all-categories' of the store..
         Route::resource('section/{section}/category/{category}/product', 'ProductController');
         // 'product/' goes to 'index()' which returns 'all-products' of the category..

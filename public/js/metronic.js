@@ -254,6 +254,7 @@ var Layout = function () {
         }); 
 
         // close search box on body click
+        debugger;
         if($('.search-btn').size() != 0) {
             $('.search-box, .search-btn').on('click', function(e){
                 e.stopPropagation();
@@ -418,7 +419,7 @@ var Layout = function () {
             handleInit();
             handleResponsiveOnResize();
             handleIEFixes();
-            handleSearch();
+            //handleSearch();
             handleFancybox();
             handleDifInits();
             handleSidebarMenu();

@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model, 
     Illuminate\Http\Request,
     DB,
+    App\Section,
+    App\Categorie,
     Session;
 
 class Page extends Model
@@ -196,6 +198,25 @@ class Page extends Model
             $res[] = self::genURLMenuItem('lib/themewagon/metronicShopUI/theme/shop-product-list.html', 'Electronics');
             $res[] = self::genURLMenuItem('lib/themewagon/metronicShopUI/theme/shop-product-list.html', 'Home &amp; Garden');
             $res[] = self::genURLMenuItem('lib/themewagon/metronicShopUI/theme/shop-product-list.html', 'Custom Link');
+        } else {
+            $sections = Section::all();
+            //dd($sections);
+            foreach ($sections as $section) {
+                // each section is a dropdown containing categories
+                // each category is a url link.
+                $cats = Categorie::where('section_id', $section->id)->get();
+                //dd($section, $cats);
+                $subs = [];
+                foreach ($cats as $cat) {
+                    $subs[] = self::genURLMenuItem(
+                        "store/section/". $section->url . "/category/". $cat->url, 
+                        $cat->title
+                    );
+                }
+                //dd($subs);
+                $res[] = self::genDropdownLink($section->title, $subs);
+                //dd($res);
+            }
         }
         return $res;
     }
@@ -203,6 +224,14 @@ class Page extends Model
     static public function getNameForURL($url)
     { // to be implemented with a db query!
         return $url === '' ? 'index' : '' ;
+    }
+
+    static public function genBreadcrumb(string $name = '', string $url = '')
+    {
+        return [
+            'name' => $name,
+            'url' => $url,
+        ];
     }
 
     static public function getBreadcrumbs(Request $request, bool $genFakeData = false)

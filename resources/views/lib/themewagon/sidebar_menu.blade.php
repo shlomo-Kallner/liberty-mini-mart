@@ -9,7 +9,7 @@
     //dd($testing);
     //dd($menu);
     $menu2 = Functions::getUnBladedContent($menu??'');
-    //dd($menu2);
+    //dd($menu2, "my_menu");
 
 @endphp
 
@@ -82,7 +82,7 @@
                             {{ url($elem->get('url')) }}
                         @endslot
                         @slot('name')
-                            {{$elem->get('name')}} 
+                            {!! $elem->get('name') !!}
                         @endslot
                         @slot('icon')
                             {!! "fa-angle-right" !!}
