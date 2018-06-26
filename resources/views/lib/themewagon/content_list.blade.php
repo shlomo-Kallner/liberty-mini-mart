@@ -7,6 +7,8 @@
     // Note: they CAN be empty... 
 
     $products2 = Functions::getBladedContent($products??'');
+    //dd($products, $products2);
+    $currency2 = Functions::getBladedString($currency??'fa-usd','fa-usd');
     $sorting2 = Functions::getBladedContent($sorting??'');
     $pageNumber2 = intval(Functions::getBladedString($pageNumber??-1,-1));
     // our default.. is 12 products per page (the template had 9..)
@@ -37,23 +39,32 @@
         // THOUGH REALLY if we have more products than 
         //  $productsPerRow times $rowsPerPage then we have paganation
         // regardless...
+        //dd($totalProducts, $rowIdxs, $productsPerPage2);
 
         // initializing the paginator
+        //dd(
+        //    count($rowIdxs[0]),
+        //    $rowIdxs[0][count($rowIdxs[0]) -1],
+        //    $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1]
+        //);
+        //dd($rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])]);
         $numPages = Functions::genRowsPerPage($totalProducts, $productsPerPage2);
         $paginator = [
             'totalItems' => $totalProducts,
             'numRanges' => $numPages,
-            'ranges' => Functions::genRange(0, $numPages, 1),
+            'ranges' => Functions::genRange(0, $numPages - 1, 1),
             'currentRange' => [
                 'begin' => $rowIdxs[0][0][0],
-                'end' => $rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])],
+                'end' => $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1],
                 'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
             ],
         ];
+        $currentPage = $pageNumber2 > -1 ? $pageNumber2 : 0;
             
     } else {
         $paginator = [];
     }
+    //dd("cont", $paginator, $currentPage, $products2);
 
     
            
@@ -110,26 +121,37 @@
     <!-- BEGIN PRODUCT LIST -->
     @if(Functions::testVar($products2))
         
-        @foreach ($rowIdxs as $row)
+        @foreach ($rowIdxs[$currentPage] as $row)
+
+            @php
+                //dd($row);
+            @endphp
 
             <div class="row product-list">
                 @foreach ($row as $idx)
 
-                    @component('lib.themewagon.product_mini')
-                    {{-- 
-                        slot 'extraOuterCss' added above... 
-                    
-                        @slot('extraOuterCss')
-                            {{ "col-md-4 col-sm-6 col-xs-12" }}
-                        @endslot
+                    @php
+                        //dd($idx);
+                    @endphp
 
-                    --}}
+                    @component('lib.themewagon.product_mini')
+                        {{-- 
+                            slot 'extraOuterCss' added above... 
+                        
+                            @slot('extraOuterCss')
+                                {{ "col-md-4 col-sm-6 col-xs-12" }}
+                            @endslot
+
+                        --}}
 
                         @foreach ($products2[$idx] as $key => $value)
                             @slot($key)
                                 {{ $value }}
                             @endslot
                         @endforeach
+                        @slot('currency')
+                            {!! $currency2 !!}
+                        @endslot
 
                     @endcomponent
 
@@ -295,9 +317,15 @@
     <!-- END PRODUCT LIST -->
 
     @component('lib.themewagon.paginator')
-        @slot('paginator')
+        @foreach ($paginator as $key => $val)
+            @slot($key)
+                {!! serialize($val) !!}
+            @endslot
+        @endforeach
+        {{-- @slot('paginator')
             {!! serialize($paginator) !!}
-        @endslot
+        @endslot --}}
+        
     @endcomponent
 
 </div>

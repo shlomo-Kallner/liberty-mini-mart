@@ -165,11 +165,15 @@ class Functions
      */
     static public function genRowsPerPage(int $ppp, int $ppr) 
     {
-        $res = $ppp / $ppr;
-        if ($ppp % $ppr > 0) {
-            $res++;
+        if ($ppp <= $ppr) {
+            return 1;
+        } else {
+            $res = $ppp / $ppr;
+            if ($ppp % $ppr > 0) {
+                $res++;
+            }
+            return $res;
         }
-        return $res;
     }
 
 
@@ -187,7 +191,7 @@ class Functions
     {
         $res = [];
         $rngLen = count($range);
-        if ($rngLen == $numPerPage) {
+        if ($rngLen <= $numPerPage) {
             $res[] = $range;
         } elseif ($rngLen > $numPerPage) {
             $col = collect($range);
@@ -259,7 +263,7 @@ class Functions
                     count($pageIndexRanges[$pnValid?$pn:0]) -1
                 );
                 $res[] = self::genPageArray($tmpRange, $ppr);
-                //dd($res, $tmpRange);
+                //dd("res", $res, $tmpRange);
             } else {
                 // if generating all display_pages ..
                 foreach ($pageIndexRanges as $page) {

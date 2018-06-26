@@ -34,6 +34,7 @@ $testing = true;
 if (!$testing) {
  // place some $cart initializing code here..
     $cart2 = Functions::getBladedContent($cart??'');
+    $currency2 = Functions::getBladedString($currency??'fa-usd');
 } else{
     $fakeID = 'MyFAKESEssionID123';
         //$myCart = new Cart();
@@ -46,10 +47,10 @@ if (!$testing) {
         //$cartContent = \Cart::session($fakeID)->getContent();
         $cart2 = [
             'items' => \Cart::session($fakeID)->getContent(),
-            'currency-icon' => 'fa-usd',
             'sub-total' => \Cart::session($fakeID)->getSubTotal(),
             'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
         ];
+        $currency2 = Functions::getBladedString($currency??'fa-usd');
 }
 ?>
 
@@ -102,7 +103,7 @@ if (!$testing) {
                         {{ $cart2['total-items'] == 0 || $cart2['total-items'] > 1 ? 'items' : 'item' }}
                     </a>
                     <a href="javascript:void(0);" class="top-cart-info-value">
-                        <i class="fa {{ $cart2['currency-icon'] }}"></i>
+                        <i class="fa {{ $currency2 }}"></i>
                         {{ $cart2['sub-total'] }}
                     </a>
                 </div>
@@ -131,7 +132,7 @@ if (!$testing) {
                                         {{ $item->name }}
                                         @endslot
                                         @slot('currencyIcon')
-                                        {{ $cart['currency-icon'] }}
+                                        {{ $currency2 }}
                                         @endslot
                                         @slot('priceSum')
                                         {{ $item->getPriceSumWithConditions() }}
@@ -182,8 +183,15 @@ if (!$testing) {
                             
                         @elseif ($nav['type'] == 'dropdown')
                             {{-- begin dropdown menu top-level link --}}
-                            {{-- DROPDOWNS ARE AN ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
-                            
+                            @component('lib.themewagon.menu_dropdowns')
+                                @foreach ($nav as $key => $value)
+
+                                    @slot($key)
+                                        {{ $value }}
+                                    @endslot
+                                    
+                                @endforeach
+                            @endcomponent
                             {{-- end dropdown menu top-level link --}}
                         @elseif ($nav['type'] == 'dropdown-megamenu')
                             {{-- DROPDOWN-MEGAMENUS ARE A ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}

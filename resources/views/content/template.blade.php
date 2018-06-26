@@ -31,7 +31,7 @@
     @parent
     @component('lib.themewagon.breadcrumbs')
         @slot('breadcrumbs')
-            {!! serialize($breadcrumbs) !!}
+            {!! serialize($breadcrumbs??'') !!}
         @endslot
     @endcomponent
 

@@ -2,6 +2,9 @@
 
 @section('js-defered')
 
+  
+
+
   <!-- BEGIN SECTION:  JS link tags From Metronic Shop UI -->
   {{-- 
     was using PHP comments to "hide" dev-comments from end-user... switched to laravel's ..
@@ -50,37 +53,37 @@
   @else
 
     <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/respond.min.js') }}"></script>  
+
     <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/jquery.min.js') }}" type="text/javascript"></script>
+
     <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/jquery-migrate.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/bootstrap/js/bootstrap.min.js') }}" type="text/javascript"></script>      
 
     <!-- OwlCarousel2 -->
     <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/owl.carousel/owl.carousel.js') }}" type="text/javascript"></script><!-- slider for products -->
-    
 
   @endif
 
   {{-- Other Metronic Scripts --}}
-  
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/corporate/scripts/back-to-top.js') }}" type="text/javascript"></script>
-  <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js') }}" type="text/javascript"></script>
-       
-
+  <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/jquery-slimscroll/jquery.slimscroll.js') }}" type="text/javascript"></script>
+   
   <!-- END CORE PLUGINS -->
 
   <!-- BEGIN PAGE LEVEL JAVASCRIPTS (REQUIRED ONLY FOR CURRENT PAGE) -->
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/fancybox/source/jquery.fancybox.pack.js') }}" type="text/javascript"></script><!-- pop up -->
-
+ 
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/zoom/jquery.zoom.min.js') }}" type="text/javascript"></script><!-- product zoom -->
+  
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/bootstrap-touchspin/bootstrap.touchspin.js') }}" type="text/javascript"></script><!-- Quantity -->
+  
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/uniform/jquery.uniform.min.js') }}" type="text/javascript"></script>
+  
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/rateit/src/jquery.rateit.js') }}" type="text/javascript"></script>
+  
   {{-- <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js" type="text/javascript"></script> --}}
   <script src="{{ asset('lib/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.min.js') }}"></script><!-- for slider-range -->
-  <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
-
-    
-
+  
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/corporate/scripts/layout.js') }}" type="text/javascript"></script>
   <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/pages/scripts/bs-carousel.js') }}" type="text/javascript"></script>
   

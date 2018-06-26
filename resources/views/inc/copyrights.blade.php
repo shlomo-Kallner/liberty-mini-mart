@@ -26,7 +26,10 @@
         <hr>
         <div class="row">
             <div class="col-md-12">
-                <p class="text-center"> <a href="{{url('')}}">{{ $siteName }}</a> &copy; {{ date('Y') }}</p>
+                @php
+                    $sn = $siteName ?? App\Http\Controllers\MainController::$data['site']['name'];
+                @endphp
+                <p class="text-center"> <a href="{{url('')}}">{{ $sn }}</a> &copy; {{ date('Y') }}</p>
             </div>
         </div>
     </div>

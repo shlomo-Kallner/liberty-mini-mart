@@ -1,14 +1,14 @@
 @php
-use \App\Utilities\Functions\Functions;
+    use \App\Utilities\Functions\Functions;
 
-$extraOuterCss2 = Functions::getBladedString($extraOuterCss??'','');
-$img2 = Functions::getBladedString($img??'','');
-$name2 = Functions::getBladedString($name??'','');
-$id2 = Functions::getBladedString($id??'','');
-$url2 = Functions::getBladedString($url??'','');
-$currency2 = Functions::getBladedString($currency??'','fa-usd');
-$price2 = Functions::getBladedString($price??'','');
-$sticker2 = Functions::getBladedString($sticker??'','');
+    $extraOuterCss2 = Functions::getBladedString($extraOuterCss??'','');
+    $img2 = Functions::getBladedString($img??'','');
+    $name2 = Functions::getBladedString($name??'','');
+    $id2 = Functions::getBladedString($id??'','');
+    $url2 = Functions::getBladedString($url??'','');
+    $currency2 = Functions::getBladedString($currency??'fa-usd','fa-usd');
+    $price2 = Functions::getBladedString($price??'','');
+    $sticker2 = Functions::getBladedString($sticker??'','');
 
 @endphp
 

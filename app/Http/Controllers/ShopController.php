@@ -71,18 +71,9 @@ class ShopController extends MainController {
     {
         
         //self::$data['sidebar'] = Page::getSidebar($useFakeData);
-        self::$data['breadcrumbs'] = [
-            'links' => [
-                [
-                    'name' => '',
-                    'url' => '',
-                ],
-            ],
-            'current'=> [
-                'name' => 'Store',
-                'url' => 'store',
-            ],
-        ];
+        $breadcrumbs = Page::getBreadcrumbs(
+            Page::genBreadcrumb('Store','store')
+        );
         $title = 'test Store page';
         $content = [
             'article' => [
@@ -91,7 +82,7 @@ class ShopController extends MainController {
                 'article' => self::getLoremIpsum(),
             ]
         ];
-        return parent::getView('content.store', $title, $content, $useFakeData);
+        return parent::getView('content.store', $title, $content, $useFakeData, $breadcrumbs);
     }
 
     public function checkout(Request $request) 

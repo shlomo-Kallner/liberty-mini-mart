@@ -8,11 +8,17 @@
 --}}
 
 @php
+    $testing = false;
 
- $sidebar2 = '';
- $filters2 = '';
- $bestsellers2 = '';
- $currency2 = '';
+    use \App\Utilities\Functions\Functions;
+
+
+    $sidebar2 = serialize(Functions::getContent($sidebar??''));
+    //dd($sidebar, $sidebar2);
+    $products2 = serialize(Functions::getContent($products??''));
+    $filters2 = '';
+    $bestsellers2 = '';
+    $currency2 = 'fa-usd';
 
 @endphp
 
@@ -22,7 +28,7 @@
     <div class="row margin-bottom-40 ">
 
         @component('lib.themewagon.sidebar')
-            @slot('sidebar')
+            @slot('menu')
                 {!! $sidebar2 !!}
             @endslot
             @slot('filters')
@@ -41,13 +47,16 @@
                 {{ "" }}
             @endslot
             @slot('products')
-                {{ '' }}
+                {!! $products2 !!}
             @endslot
             @slot('pageNumber')
                 {{ '-1' }}
             @endslot
             @slot('productsPerPage')
                 {{ '12' }}
+            @endslot
+            @slot('currency')
+                {{ $currency2 }}
             @endslot
         @endcomponent
 

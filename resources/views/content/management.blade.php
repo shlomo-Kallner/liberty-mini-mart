@@ -371,7 +371,7 @@
                     </p>'
             ]
         ];
-        $sidebarMenu2 = serialize(Page::getSidebar(true));
+        $sidebarMenu2 = serialize($sidebar??Page::getSidebar(true));
     } else {
         $sidebarMenu2 = Functions::getContent($sidebarMenu??'');
     }
@@ -406,77 +406,81 @@
         <!-- /.row -->
         {{-- END: quick links.. --}}
 
-        <div class="row">
-            @component('lib.startbootstrap.tab_panel')
-                @slot('containerClass')
-                    {!! 'col-lg-12' !!}
-                @endslot
-                @slot('panelClass')
-                    {!! 'panel-default' !!}
-                @endslot
-                @slot('panelHeader')
-                    {!! 'Basic Tabs' !!}
-                @endslot
-                @slot('panelFooter')
-                    {!! 'Panel Footer' !!}
-                @endslot
-                @slot('activeTab')
-                    {!! 'home' !!}
-                @endslot
-                @slot('panelTabs')
-                    {!! serialize($tabs2) !!}
-                @endslot
-            @endcomponent
-        </div>
-        <div class="row">
-            <div class="col-lg-8">
-                @php
-                    $accordion = [
-                        [
-                            'panelClass' => 'panel-default',
-                            'title' => 'tabs panel',
-                            'content' => 'Lorem ipsum dolor sit amet, 
-                                        consectetur adipisicing elit, 
-                                        sed do eiusmod tempor incididunt 
-                                        ut labore et dolore magna aliqua. 
-                                        Ut enim ad minim veniam, quis 
-                                        nostrud exercitation ullamco 
-                                        laboris nisi ut aliquip ex ea 
-                                        commodo consequat. Duis aute irure 
-                                        dolor in reprehenderit in voluptate 
-                                        velit esse cillum dolore eu fugiat 
-                                        nulla pariatur. Excepteur sint 
-                                        occaecat cupidatat non proident, 
-                                        sunt in culpa qui officia deserunt 
-                                        mollit anim id est laborum.'
-                        ],
-                        [
-                            'panelClass' => 'panel-default',
-                            'title' => 'panel 4',
-                            'content' => 'Lorem ipsum dolor sit amet, 
-                                        consectetur adipisicing elit, 
-                                        sed do eiusmod tempor incididunt 
-                                        ut labore et dolore magna aliqua. 
-                                        Ut enim ad minim veniam, quis 
-                                        nostrud exercitation ullamco 
-                                        laboris nisi ut aliquip ex ea 
-                                        commodo consequat. Duis aute irure 
-                                        dolor in reprehenderit in voluptate 
-                                        velit esse cillum dolore eu fugiat 
-                                        nulla pariatur. Excepteur sint 
-                                        occaecat cupidatat non proident, 
-                                        sunt in culpa qui officia deserunt 
-                                        mollit anim id est laborum.'
-                        ]
-                    ];
-                @endphp
-                @component('lib.startbootstrap.accordion')
-                    @slot('accordion')
-                        {!! serialize($accordion) !!}
+        @if (false)
+            
+            <div class="row">
+                @component('lib.startbootstrap.tab_panel')
+                    @slot('containerClass')
+                        {!! 'col-lg-12' !!}
+                    @endslot
+                    @slot('panelClass')
+                        {!! 'panel-default' !!}
+                    @endslot
+                    @slot('panelHeader')
+                        {!! 'Basic Tabs' !!}
+                    @endslot
+                    @slot('panelFooter')
+                        {!! 'Panel Footer' !!}
+                    @endslot
+                    @slot('activeTab')
+                        {!! 'home' !!}
+                    @endslot
+                    @slot('panelTabs')
+                        {!! serialize($tabs2) !!}
                     @endslot
                 @endcomponent
             </div>
-        </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    @php
+                        $accordion = [
+                            [
+                                'panelClass' => 'panel-default',
+                                'title' => 'tabs panel',
+                                'content' => 'Lorem ipsum dolor sit amet, 
+                                            consectetur adipisicing elit, 
+                                            sed do eiusmod tempor incididunt 
+                                            ut labore et dolore magna aliqua. 
+                                            Ut enim ad minim veniam, quis 
+                                            nostrud exercitation ullamco 
+                                            laboris nisi ut aliquip ex ea 
+                                            commodo consequat. Duis aute irure 
+                                            dolor in reprehenderit in voluptate 
+                                            velit esse cillum dolore eu fugiat 
+                                            nulla pariatur. Excepteur sint 
+                                            occaecat cupidatat non proident, 
+                                            sunt in culpa qui officia deserunt 
+                                            mollit anim id est laborum.'
+                            ],
+                            [
+                                'panelClass' => 'panel-default',
+                                'title' => 'panel 4',
+                                'content' => 'Lorem ipsum dolor sit amet, 
+                                            consectetur adipisicing elit, 
+                                            sed do eiusmod tempor incididunt 
+                                            ut labore et dolore magna aliqua. 
+                                            Ut enim ad minim veniam, quis 
+                                            nostrud exercitation ullamco 
+                                            laboris nisi ut aliquip ex ea 
+                                            commodo consequat. Duis aute irure 
+                                            dolor in reprehenderit in voluptate 
+                                            velit esse cillum dolore eu fugiat 
+                                            nulla pariatur. Excepteur sint 
+                                            occaecat cupidatat non proident, 
+                                            sunt in culpa qui officia deserunt 
+                                            mollit anim id est laborum.'
+                            ]
+                        ];
+                    @endphp
+                    @component('lib.startbootstrap.accordion')
+                        @slot('accordion')
+                            {!! serialize($accordion) !!}
+                        @endslot
+                    @endcomponent
+                </div>
+            </div>
+    
+        @endif
 
         <div class="row">
             
@@ -488,134 +492,139 @@
             
         </div>
 
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Collapsible Accordion Panel Group
-                    </div>
-                    <!-- .panel-heading -->
-                    <div class="panel-body">
-                        <div class="panel-group" id="accordion">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Collapsible Group Item #1</a>
-                                    </h4>
-                                </div>
-                                <div id="collapseOne" class="panel-collapse collapse in">
-                                    <div class="panel-body  table-responsive">
-                                        <table class="table table-striped table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>First Name</th>
-                                                    <th>Last Name</th>
-                                                    <th>Username</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Mark</td>
-                                                    <td>Otto</td>
-                                                    <td>@mdo</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>Jacob</td>
-                                                    <td>Thornton</td>
-                                                    <td>@fat</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3</td>
-                                                    <td>Larry</td>
-                                                    <td>the Bird</td>
-                                                    <td>@twitter</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+        @if (false)
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Collapsible Accordion Panel Group
+                        </div>
+                        <!-- .panel-heading -->
+                        <div class="panel-body">
+                            <div class="panel-group" id="accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Collapsible Group Item #1</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne" class="panel-collapse collapse in">
+                                        <div class="panel-body  table-responsive">
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>First Name</th>
+                                                        <th>Last Name</th>
+                                                        <th>Username</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@mdo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>3</td>
+                                                        <td>Larry</td>
+                                                        <td>the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Collapsible Group Item #2</a>
-                                    </h4>
-                                </div>
-                                <div id="collapseTwo" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Collapsible Group Item #2</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseTwo" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Collapsible Group Item #3</a>
-                                    </h4>
-                                </div>
-                                <div id="collapseThree" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Collapsible Group Item #3</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseThree" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- .panel-body -->
                     </div>
-                    <!-- .panel-body -->
+                    <!-- /.panel -->
                 </div>
-                <!-- /.panel -->
+                <!-- /.col-lg-12 -->
             </div>
-            <!-- /.col-lg-12 -->
-        </div>
-        <!-- /.row -->
+            <!-- /.row -->
+    
+            <div class="row">
 
-        <div class="row">
-            <div class="col-lg-8">
-                @if (false)
-                    @component('lib.startbootstrap.area_chart_panel')
-                        
-                    @endcomponent
-                @endif
-                @if (false)
-                    @component('lib.startbootstrap.barchart_panel')
-                        
-                    @endcomponent
-                @endif
-                @if (true)
-                    @component('lib.startbootstrap.timeline_panel')
-                        
-                    @endcomponent
-                @endif
-            </div>
-            <!-- /.col-lg-8 -->
-            <div class="col-lg-4">
+                <div class="col-lg-8">
+                    @if (false)
+                        @component('lib.startbootstrap.area_chart_panel')
+                            
+                        @endcomponent
+                    @endif
+                    @if (false)
+                        @component('lib.startbootstrap.barchart_panel')
+                            
+                        @endcomponent
+                    @endif
+                    @if (true)
+                        @component('lib.startbootstrap.timeline_panel')
+                            
+                        @endcomponent
+                    @endif
+                </div>
+                <!-- /.col-lg-8 -->
+
+                <div class="col-lg-4">
+                    
+                    @if (true)
+                        @component('lib.startbootstrap.notifications_panel')
+                            
+                        @endcomponent
+                    @endif
+    
+                    @if (false)
+                        @component('lib.startbootstrap.donut_chart_panel')
+                            
+                        @endcomponent
+                    @endif
+    
+                    @if (false)
+                        @component('lib.startbootstrap.chat_panel')
+                            
+                        @endcomponent
+                    @endif
+                 
+                </div>
+                <!-- /.col-lg-4 -->
                 
-                @if (true)
-                    @component('lib.startbootstrap.notifications_panel')
-                        
-                    @endcomponent
-                @endif
-
-                @if (false)
-                    @component('lib.startbootstrap.donut_chart_panel')
-                        
-                    @endcomponent
-                @endif
-
-                @if (false)
-                    @component('lib.startbootstrap.chat_panel')
-                        
-                    @endcomponent
-                @endif
-                
-
             </div>
-            <!-- /.col-lg-4 -->
-        </div>
-        <!-- /.row -->
+            <!-- /.row -->
+        @endif
+
     </div>
     <!-- /#page-wrapper -->
 

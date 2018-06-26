@@ -38,13 +38,13 @@ $crumbs = Functions::getUnBladedContent($breadcrumbs??'', [
         @if(Functions::testVar($crumbs['links']) && is_array($crumbs['links']) )
             @foreach ($crumbs['links'] as $breadcrumb)
                 @if( !empty($breadcrumb['url']) && !empty($breadcrumb['name']) && $breadcrumb['name'] != 'Home' )
-                    <li><a href="{{ url($breadcrumb['url']) }}">{{ $breadcrumb['name'] }}</a></li>
+                    <li><a href="{{ url($breadcrumb['url']) }}">{!! $breadcrumb['name'] !!}</a></li>
                 @endif
             @endforeach
         @endif
             
         @if ( !empty($crumbs['current']['url']) && !empty($crumbs['current']['name']) )
-            <li class="active">{{$crumbs['current']['name']}}</li>
+            <li class="active">{!! $crumbs['current']['name'] !!}</li>
         @endif
                 
 @elseif($testing)

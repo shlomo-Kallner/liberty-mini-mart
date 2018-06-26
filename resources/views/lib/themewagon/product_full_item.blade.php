@@ -154,6 +154,7 @@
         $productID2 = Functions::getBladedString($productID??'','');
     }
 
+
     // it does not matter to us how we get this number ...
     $numProductReviews = count($productReviews2);
         

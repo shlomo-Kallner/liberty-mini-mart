@@ -1,7 +1,8 @@
 <?php
-// put any special code here..
-$title .= '-- dummy Title -- for testing Master Page 2';
-use \App\Utilities\Functions\Functions;
+    // put any special code here..
+    use \App\Utilities\Functions\Functions;
+    $title2 =  Functions::getBladedString($title ?? '');// . '-- dummy Title -- for testing Master Page 2';
+    $siteName2 = Functions::getBladedString($site['name']?? App\Http\Controllers\MainController::$data['site']['name']);
 ?>
 <!DOCTYPE html>
 @section('license-header')
@@ -45,7 +46,7 @@ use the 'no-js' css class for IE9 and below as well.
         <meta content="Metronic Shop UI keywords" name="keywords">
         <meta content="Shlomo Kallner" name="author">
 
-        <meta property="og:site_name" content="{{ $site['name'] }}">
+        <meta property="og:site_name" content="{{ $siteName2 }}">
         <meta property="og:title" content="-CUSTOMER VALUE-">
         <meta property="og:description" content="-CUSTOMER VALUE-">
         <meta property="og:type" content="website">
@@ -55,7 +56,13 @@ use the 'no-js' css class for IE9 and below as well.
 
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 
-        <title>{{ $title }}</title>
+        <title>
+            @if (Functions::testVar($title2))
+                {{ $title2 }}
+            @else
+                @yield('pageTitle')
+            @endif
+        </title>
 
         
         <!-- CSS START -->
@@ -209,7 +216,8 @@ use the 'no-js' css class for IE9 and below as well.
         @endif
 
         {{-- from Laravel.. Vue.js is now ENABLED! --}}
-        <script src="{{ asset('js/app.js') }}"></script>
+        {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+        
 
         {{-- 
             this stuff is ours.. so it should come last.. 

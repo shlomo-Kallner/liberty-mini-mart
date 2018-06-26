@@ -7,7 +7,6 @@
  *
  */
 (function($) {
-
     jQuery.fn.extend({
         slimScroll: function(options) {
 

@@ -228,41 +228,15 @@ class Page extends Model
 
     static public function genBreadcrumb(string $name = '', string $url = '')
     {
-        return [
-            'name' => $name,
-            'url' => $url,
-        ];
+        return static::genURLMenuItem($url, $name);
     }
 
-    static public function getBreadcrumbs(Request $request, bool $genFakeData = false)
+    static public function getBreadcrumbs(array $current = null, array $links = null)
     {
-        if (!$genFakeData) {
-
-            $path = $request->segments();
-            $res = [];
-            for ($i = 0; $i < count($path); $i++) {
-                $page = '';
-                for ($j = 0; $j < $i; $j++) {
-                    $page .= ( $j > 0 ? DIRECTORY_SEPARATOR . $path[$j] : $path[$j] );
-                }
-                $res['links'][] = self::genURLMenuItem(
-                    $page, 
-                    static::getNameForURL($page)
-                );
-            }
-            $res['current'] = self::genURLMenuItem(
-                $request->url(), 
-                static::getNameForURL($request->url())
-            );
-        } else {
-            $res = [
-                'links' => [ 
-                    static::genURLMenuItem('', ''), 
-                    static::genURLMenuItem('', '')
-                ],
-                'current' => static::genURLMenuItem('', '')
+        $res = [
+                'links' => $links ?? static::genBreadcrumb(),
+                'current' => $current ?? static::genBreadcrumb()
             ];
-        }
         return $res;
     }
     

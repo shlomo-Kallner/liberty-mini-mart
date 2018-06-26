@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Categorie,
-    App\Section;
+    App\Product,
+    App\Section,
+    App\Page;
 use Illuminate\Http\Request;
 
 class CategorieController extends MainController
@@ -64,7 +66,21 @@ class CategorieController extends MainController
                 ['url',$request->category]
             ]
         )->first();
-        dd($cat);
+        // 'store/section/{section}/category/{category}/product/{product}'...
+        $sect_url = 'store/section/'. $sect->url;
+        $cat_url = $sect_url . '/category/' . $request->category;
+        $breadcrumbs = Page::getBreadcrumbs( 
+            Page::genBreadcrumb($cat->title, $cat_url),
+            [
+                Page::genBreadcrumb('Store', 'store'),
+                Page::genBreadcrumb($sect->title, $sect_url)
+            ]
+        );
+        //dd($cat);
+        // getting the products of the category..
+        self::$data['products'] = Product::getProductsForCategory($cat->id, 'mini', $cat_url);
+        //dd($products);
+        return parent::getView('content.category', $request->category, [], false, $breadcrumbs);
     }
 
     /**

@@ -8,11 +8,14 @@
 --}}
 
 @php
+    $testing = false;
 
- $sidebar2 = '';
- $filters2 = '';
- $bestsellers2 = '';
- $currency2 = '';
+    use \App\Utilities\Functions\Functions;
+
+    $sidebar2 = '';
+    $filters2 = '';
+    $bestsellers2 = '';
+    $currency2 = '';
 
 @endphp
 

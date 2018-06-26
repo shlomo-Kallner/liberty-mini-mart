@@ -25,6 +25,7 @@ class MainController extends Controller {
         'sidebar' => [], // the side[navigation]bar data...
         'footer' => [], // the footer navigation bar data.. THIS MAY REMAIN STATIC!
         'breadcrumbs' => [
+            // my old placeholder schema..
             'links' => [
                 [
                     'name' => '',
@@ -147,8 +148,10 @@ class MainController extends Controller {
         }
     }
 
-    static public function getView(string $viewName = 'content.template', string $title = '', $content = [], bool $useFakeData = false) 
-    {
+    static public function getView(
+        string $viewName = 'content.template', string $title = '', $content = [], 
+        bool $useFakeData = false, array $breadcrumbs = null
+    ) {
         self::setTitle($title);
         self::setPageContent($content);
         //
@@ -160,6 +163,7 @@ class MainController extends Controller {
         //dd(self::$data['preheader']); 
         self::$data['sidebar'] = Page::getSidebar($useFakeData);
         //
+        self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
         //
         return view($viewName, self::$data);
     }
@@ -245,13 +249,16 @@ class MainController extends Controller {
             ]
         ];
         $useFakeData = true;
-        self::$data['sidebar'] = Page::getSidebar($useFakeData);
-        self::$data['breadcrumbs'] = Page::getBreadcrumbs($request, $useFakeData);
+        //self::$data['sidebar'] = Page::getSidebar($useFakeData);
+        //dd($request->path());
+        $breadcrumbs = Page::getBreadcrumbs(
+            Page::genBreadcrumb($requestedPage, $request->path())
+        );
 
         //return $this->getTemplateView($title, $content);
         //dd($request->session()->all());
         //dd(session()->all());
-        return self::getView('content.index', $title, $content, $useFakeData);
+        return self::getView('content.index', $title, $content, $useFakeData, $breadcrumbs);
     }
 
 }

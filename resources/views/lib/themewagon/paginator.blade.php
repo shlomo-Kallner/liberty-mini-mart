@@ -5,34 +5,45 @@
 
     use \App\Utilities\Functions\Functions;
 
-    $paginator2 = Functions::getUnBladedContent($paginator??'');
+    //$paginator2 = Functions::getUnBladedContent($paginator??'');
     $currentRange2 = Functions::getUnBladedContent($currentRange??'','');
-    $totalItems2 = intval(Functions::getBladedString($totalItems??'',''));
-    $numRanges2 = intval(Functions::getBladedString($numRanges??'',''));
+    $totalItems2 = intval(Functions::getUnBladedContent($totalItems??'',''));
+    $numRanges2 = intval(Functions::getUnBladedContent($numRanges??'',''));
     $ranges2 = Functions::getUnBladedContent($ranges??'','');
     
-    //dd($paginator2, $currentRange2, $totalItems2, $numRanges2, $ranges2);
+    //dd($paginator2);
+    //dd($currentRange2, $totalItems2, $numRanges2, $ranges2);
+    //dd($currentRange, $totalItems, $numRanges, $ranges);
     //dd($ranges2);
-
-    $numPerView = 4;
-    $numViews = Functions::genRowsPerPage(count($ranges2), $numPerView);
-    $viewIdxs = Functions::genPageArray($ranges2, $numPerView);
-    $currentView = -1;
-    for ($i = 0; $i < count($viewIdxs); $i++) {
-        if (in_array($currentRange2['index'],$viewIdxs[$i])) {
-            $currentView = $i;
-            break;
+    $paging = true;
+    if ($currentRange2 == '' || $totalItems2 == '' || $numRanges2 == '' || $ranges2 == '') 
+    {
+        $paging = false;
+    } 
+    if (Functions::testVar($paging)) {
+        $numPerView = 4;
+        $numViews = Functions::genRowsPerPage(count($ranges2), $numPerView);
+        $viewIdxs = Functions::genPageArray($ranges2, $numPerView);
+        $currentView = -1;
+        for ($i = 0; $i < count($viewIdxs); $i++) {
+            if (in_array($currentRange2['index'],$viewIdxs[$i])) {
+                $currentView = $i;
+                break;
+            }
         }
+        //dd($numPerView, $numViews, $viewIdxs, $currentView);
+    } else {
+        //$testing = true;
     }
-    //dd($numPerView, $numViews, $viewIdxs, $currentView);
+
     
 @endphp
 
-@if (Functions::testVar($paginator2) || $testing === true)
+@if (Functions::testVar($paging) || $testing === true)
     <!-- BEGIN PAGINATOR -->
     <div class="row">
 
-    @if (Functions::testVar($paginator2))
+    @if (Functions::testVar($paging))
         
             <div class="col-md-4 col-sm-4 items-info">
                 Items {{ $currentRange2['begin'] + 1 }} 
