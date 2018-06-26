@@ -13,11 +13,21 @@
 
 Route::get('/', 'PageController@test3');
 
-Route::get(
+/**
+ * Route::get(
+ *    'php', function () {
+ *      phpinfo();
+ *      return '';
+ *  }
+ *);
+ *
+ */
+
+/* Route::get(
     'template', function () {
         return view('master_themewagon');
     }
-);
+); */
 
 //Route::resource('user', 'UserController');
 Route::prefix('user')->group(
