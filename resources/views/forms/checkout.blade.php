@@ -66,6 +66,7 @@
                       <h3>Confirm Your Identity</h3>
                       <p>Please Confirm Your Identity by entering your email and password.</p>
                       <form role="form" action="#">
+                        {{ csrf_field() }}
                         <div class="form-group">
                           <label for="email-login">E-Mail</label>
                           <input type="text" id="email-login" class="form-control">
