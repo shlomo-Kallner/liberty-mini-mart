@@ -78,7 +78,6 @@ jQuery(function ($) {
     };
 
     var myInit = function ($) {
-        debugger;
         Layout.init();
         Layout.initOWL();
         Layout.initImageZoom();

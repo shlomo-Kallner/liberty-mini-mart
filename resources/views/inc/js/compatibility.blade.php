@@ -10,11 +10,11 @@ WARNING: Respond.js doesn't work if you view the page via file:// .
 
 @php
   use \App\Utilities\Functions\Functions;
-  $usingCompiled2 = Functions::getBladedString($usingCompiled??'','');
+  $usingCDNs2 = Functions::getBladedString($site['usingCDNs']??'','');
 @endphp
 
 <!--[if lt IE 9]>
-  @if (Functions::testVar($usingCompiled2))
+  @if (!Functions::testVar($usingCDNs2))
     <script src="{{ asset('js/compatibility.js') }}"></script>  
   @else
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
