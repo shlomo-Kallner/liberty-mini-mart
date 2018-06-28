@@ -19,6 +19,7 @@ class MainController extends Controller {
             ///         access it directly..
             'name' => 'Liberty MiniMart',
             'titleNameSep' => ' | ',
+            'usingCDNs' => '',
         ],
         'preheader' => [], // the preheader navbar data...
         'navbar' => [], // the header navbar data...

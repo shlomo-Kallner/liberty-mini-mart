@@ -41,22 +41,16 @@ jQuery(function ($) {
     var handleSearch = function() {    
 
         /// set up handling the search-modal-trigger's click event
-        $('.search-modal-trigger-btn').click(function(){
+        $('.search-modal-trigger-btn').click(function() {
             $('#search-modal').modal('show');
+            //console.log('helloOOOh World!');
         });
 
         /// 
         
 
     };
-    //handleSearch();
-
-    /// set up handling the search-modal-trigger's click event
-    $('.search-modal-trigger-btn').click(function(){
-        $('#search-modal').modal('show');
-        //console.log('helloOOOh World!');
-    });
-
+    handleSearch();
 
     var getOptionVals = function (options, jquery)
         {
@@ -82,5 +76,20 @@ jQuery(function ($) {
         };
 
     };
+
+  var myInit = function($, scrollUpPngPath, token) {
+    Layout.init();
+    Layout.initOWL();
+    Layout.initImageZoom();
+    Layout.initTouchspin();
+    Layout.initFixHeaderWithPreHeader();
+    Layout.initNavScrolling();
+    Layout.initUniform();
+    Layout.initSliderRange();
+    window.Laravel = {
+      'csrfToken': token
+    };
+    $.scrolltotop.init2( scrollUpPngPath );
+  };
     
 });

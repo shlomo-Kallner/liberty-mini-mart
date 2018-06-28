@@ -228,6 +228,13 @@ use the 'no-js' css class for IE9 and below as well.
             As it is OUTSIDE the 'js-defered' _Blade:_Section!
         --}}
         <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
+        <script>
+                myInit(
+                    jQuery,
+                    "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}", 
+                    {{ csrf_token() }}
+                );
+        </script>
 
         {{-- 
             Some views need an extra script tag or more,

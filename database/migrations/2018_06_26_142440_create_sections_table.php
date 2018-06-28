@@ -35,10 +35,10 @@ class CreateSectionsTable extends Migration
                     $table->increments('id');
                 }
                 if (!Schema::hasColumn('sections', 'name')) {
-                    $table->string('name');
+                    $table->string('name', 255);
                 }
                 if (!Schema::hasColumn('sections', 'image')) {                
-                    $table->string('image');
+                    $table->string('image', 255);
                 }
                 if (!Schema::hasColumn('sections', 'title')) {
                     $table->string('title', 255);
