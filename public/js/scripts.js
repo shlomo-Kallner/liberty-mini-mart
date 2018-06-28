@@ -77,19 +77,18 @@ jQuery(function ($) {
 
     };
 
-  var myInit = function($, scrollUpPngPath, token) {
-    Layout.init();
-    Layout.initOWL();
-    Layout.initImageZoom();
-    Layout.initTouchspin();
-    Layout.initFixHeaderWithPreHeader();
-    Layout.initNavScrolling();
-    Layout.initUniform();
-    Layout.initSliderRange();
-    window.Laravel = {
-      'csrfToken': token
-    };
-    $.scrolltotop.init2( scrollUpPngPath );
-  };
-    
+    var myInit = function ($) {
+        debugger;
+        Layout.init();
+        Layout.initOWL();
+        Layout.initImageZoom();
+        Layout.initTouchspin();
+        Layout.initFixHeaderWithPreHeader();
+        Layout.initNavScrolling();
+        Layout.initUniform();
+        Layout.initSliderRange();
+        $.scrolltotop.init2(window.Laravel.upPngPath);
+      };
+    myInit($);  
+  
 });

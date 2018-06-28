@@ -3,6 +3,7 @@
     use \App\Utilities\Functions\Functions;
     $title2 =  Functions::getBladedString($title ?? '');// . '-- dummy Title -- for testing Master Page 2';
     $siteName2 = Functions::getBladedString($site['name']?? App\Http\Controllers\MainController::$data['site']['name']);
+    $usingCDNs = Functions::getBladedString($site['usingCDNs']??'');
 ?>
 <!DOCTYPE html>
 @section('license-header')
@@ -42,6 +43,11 @@ use the 'no-js' css class for IE9 and below as well.
 
         @section('header-metas')
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <script>
+            window.Laravel = { csrfToken: '{{ csrf_token() }}',
+                               upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}" 
+                    };
+        </script>
         <meta content="Metronic Shop UI description" name="description">
         <meta content="Metronic Shop UI keywords" name="keywords">
         <meta content="Shlomo Kallner" name="author">
@@ -205,7 +211,7 @@ use the 'no-js' css class for IE9 and below as well.
             For now not using CDN, but when doing so will use the minified version...
             not minified version here for fallback..
         --}}
-        @if (false)
+        @if (Functions::testVar($usingCDNs))
             @if (true)
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/bundled/html4+html5/jquery.history.min.js"></script> 
             @else
@@ -218,7 +224,6 @@ use the 'no-js' css class for IE9 and below as well.
         {{-- from Laravel.. Vue.js is now ENABLED! --}}
         {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
         
-
         {{-- 
             this stuff is ours.. so it should come last.. 
             In the @Extending View - call @Parent last!
@@ -228,13 +233,6 @@ use the 'no-js' css class for IE9 and below as well.
             As it is OUTSIDE the 'js-defered' _Blade:_Section!
         --}}
         <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
-        <script>
-                myInit(
-                    jQuery,
-                    "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}", 
-                    {{ csrf_token() }}
-                );
-        </script>
 
         {{-- 
             Some views need an extra script tag or more,
