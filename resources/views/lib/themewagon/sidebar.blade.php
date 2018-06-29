@@ -12,7 +12,8 @@
     $menu2 = Functions::getContent($menu??$fakeData,$fakeData);
     //dd($menu2);
     if (!$testing) {
-        $filters2 = Functions::getContent($filters??$fakeData,$fakeData);  
+        $filters2 = Functions::getContent($filters??$fakeData,$fakeData);
+        $products2 = Functions::getContent($products??$fakeData,$fakeData);  
     } else {
         $filters2 = serialize([
             [
@@ -31,11 +32,6 @@
                     <div id="slider-range"></div>')
             ]
         ]);
-    }
-    //dd($filters2);
-    if (!$testing) {
-        $products2 = Functions::getContent($products??$fakeData,$fakeData);
-    } else {
         $products2 = serialize([
             [
                 'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
@@ -57,6 +53,7 @@
             ]
         ]);
     }
+    //dd($filters2);
     //dd($products2);
     $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
     //dd($currency2);

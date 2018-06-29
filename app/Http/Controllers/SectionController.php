@@ -30,7 +30,7 @@ class SectionController extends MainController
      */
     public function create()
     {
-        //
+        return self::getView('forms.new_section', 'Create a New Store Section');
     }
 
     /**

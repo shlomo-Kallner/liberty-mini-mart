@@ -7,23 +7,23 @@
     Should show a selection of 'Bestsellers' and the the list of Sections of the store.
 --}}
 
-@php
-    $testing = false;
-
-    use \App\Utilities\Functions\Functions;
-
-
-    $sidebar2 = serialize(Functions::getContent($sidebar??''));
-    //dd($sidebar, $sidebar2);
-    $products2 = serialize(Functions::getContent($products??''));
-    $filters2 = '';
-    $bestsellers2 = '';
-    $currency2 = 'fa-usd';
-
-@endphp
-
 @section('main-content')
     @parent
+
+    @php
+        $testing = false;
+
+        use \App\Utilities\Functions\Functions;
+
+
+        $sidebar2 = serialize(Functions::getContent($sidebar??''));
+        //dd($sidebar, $sidebar2);
+        $products2 = serialize(Functions::getContent($products??''));
+        $filters2 = '';
+        $bestsellers2 = '';
+        $currency2 = 'fa-usd';
+
+    @endphp
 
     <div class="row margin-bottom-40 ">
 

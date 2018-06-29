@@ -160,9 +160,13 @@ use the 'no-js' css class for IE9 and below as well.
             </nav>
 
         </header>
-        @yield('login-modal')
-        @yield('search-modal')
-        @yield('user-links-panel')
+        @section('modals')
+
+            @yield('login-modal')
+            @yield('search-modal')
+            @yield('user-links-panel')
+                
+        @show
 
         @if (false)
         <br><br><br>
