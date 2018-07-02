@@ -49,7 +49,11 @@ Route::prefix('store')->group(
         //Route::get('section/test/category/test/product/test', 'ProductController@test');
         //Route::post('section/test/category/test/product/test', 'ProductController@testPost');
 
-        Route::resource('section', 'SectionController');
+        Route::resource('section', 'SectionController', [
+            'parameters'=> [
+                'section' => 'section'
+            ]
+        ]);
         // 'section/' goes to 'index()' which returns 'all-sections' of the store..
         Route::resource('section/{section}/category', 'CategorieController', [
             'parameters'=> [
@@ -86,7 +90,7 @@ Route::post('signin/{page?}', 'UserController@signin');
 
 Route::get('signout', 'UserController@signout');
 
-Route::get('{page}', 'PageController@test3');
+Route::get('{page}', 'PageController@show');
 
 
 //

@@ -3,14 +3,16 @@
     use \App\Utilities\Functions\Functions;
     $title2 =  Functions::getBladedString($title ?? '');// . '-- dummy Title -- for testing Master Page 2';
     $siteName2 = Functions::getBladedString($site['name']?? App\Http\Controllers\MainController::$data['site']['name']);
+    $scripts = Functions::getBladedString($site['scripts']??'');
     $usingCDNs = Functions::getBladedString($site['usingCDNs']??'');
+    $usingMix = Functions::getBladedString($site['usingMix']??'');
 ?>
 <!DOCTYPE html>
 @section('license-header')
 <!--
 
 My license header. 
-Copyright 2018 Shlomo Kallner , shlomo.kallner@gmail.com
+Copyright {{ date('Y') }} Shlomo Kallner , shlomo.kallner@gmail.com
 
 -->
 
@@ -223,6 +225,20 @@ use the 'no-js' css class for IE9 and below as well.
             @endif
         @else
             <script src="{{ asset('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
+        @endif
+
+        {{-- a method for tracking used scripts and including them! --}}
+        {{-- A WISHLIST ITEM!!! --}}
+        @if (Functions::testVar($scripts))
+            @foreach ($scripts as $script)
+                @if (Functions::testVar($usingCDNs) && Functions::testVar($script['cdn-url']))
+                    <script src="{{ $script['cdn-url'] }}"></script>
+                @elseif (Functions::testVar($usingMix) && Functions::testVar($script['mix-path']))
+                    <script src="{{ asset($script['mix-path']) }}"></script>
+                @elseif (Functions::testVar($script['local-path']))
+                    <script src="{{ asset($script['local-path']) }}"></script>
+                @endif
+            @endforeach
         @endif
 
         {{-- from Laravel.. Vue.js is now ENABLED! --}}

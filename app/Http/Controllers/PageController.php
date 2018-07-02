@@ -44,20 +44,25 @@ class PageController extends MainController
     /**
      * Display the specified resource.
      *
-     * @param  \App\Pages  $pages
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function show(Page $page) {
-        //
+    public function show(Request $request, $page) 
+    {
+        $page_info = Page::getNamedPage($page, $request->path());
+        return self::getView(
+            'content.content', $page_info['title'], $page_info['content'],
+            false, $page_info['breadcrumbs']
+        );
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Page  $page
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function edit(Page $page) {
+    public function edit(Request $request) {
         //
     }
 
@@ -68,7 +73,7 @@ class PageController extends MainController
      * @param  \App\Page  $page
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Page $page) {
+    public function update(Request $request, $page) {
         //
     }
 

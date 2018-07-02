@@ -75,7 +75,6 @@
     <!-- BEGIN PAGE LEVEL JAVASCRIPTS (REQUIRED ONLY FOR CURRENT PAGE) -->
     @if (Functions::testVar($usingCDNs))
 
-        <script src=""></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.3/jquery.fancybox.pack.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-zoom/1.7.21/jquery.zoom.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-touchspin/3.0.1/jquery.bootstrap-touchspin.min.js"></script>

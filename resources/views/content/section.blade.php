@@ -12,6 +12,8 @@
 
     use \App\Utilities\Functions\Functions;
 
+    $section2 = '';
+
     $sidebar2 = '';
     $filters2 = '';
     $bestsellers2 = '';

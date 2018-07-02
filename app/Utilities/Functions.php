@@ -5,6 +5,7 @@ namespace App\Utilities\Functions;
 use Illuminate\Support\Collection,
     Illuminate\Support\HtmlString,
     HTMLPurifier;
+use Composer\Semver\Comparator;
 
 class Functions
 {
@@ -116,6 +117,41 @@ class Functions
             return null;
         }
 
+    }
+
+    static public function testVersions(string $ver1, string $ver2, string $op = '==')
+    {
+        $res = false;
+        switch ($op) {
+            case '==':
+                $res = Comparator::equalTo($ver1, $ver2);
+                break;
+
+            case '!=':
+                $res = Comparator::notEqualTo($ver1, $ver2);
+                break;
+            
+            case '>':
+                $res = Comparator::greaterThan($ver1, $ver2);
+                break;
+            
+            case '<':
+                $res = Comparator::lessThan($ver1, $ver2);
+                break;
+
+            case '>=':
+                $res = Comparator::greaterThanOrEqualTo($ver1, $ver2);
+                break;
+
+            case '<=':
+                $res = Comparator::lessThanOrEqualTo($ver1, $ver2);
+                break;
+
+            default:
+                $res = false;
+                break;
+        }
+        return $res;
     }
 
     static public function genMultipleFromArray(array $arr, int $num)

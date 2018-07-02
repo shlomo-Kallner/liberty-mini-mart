@@ -20,6 +20,12 @@
         $filters2 = serialize(Functions::getContent($filters??$fakeData,$fakeData));
         $bestsellers2 = serialize(Functions::getContent($bestsellers??$fakeData,$fakeData));
         $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
+        $article2 = [
+            'pageHeader' => Functions::getBladedString($page['article']['header']??''),
+            'header' => Functions::getBladedString($page['article']['subheading']??''),
+            'img' => Functions::getBladedString($page['article']['img']??''),
+            'imgAlt' => Functions::getBladedString($page['article']['imgAlt']??''),
+        ];
 
     } else {
         $newProducts2 = serialize(Functions::getContent($newProducts??'',''));
@@ -62,7 +68,12 @@
             ]
         ]);
         $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
-
+        $article2 = [
+            'pageHeader' => Functions::getBladedString($page['article']['header']??''),
+            'header' => Functions::getBladedString($page['article']['subheading']??''),
+            'img' => Functions::getBladedString($page['article']['img']??''),
+            'imgAlt' => Functions::getBladedString($page['article']['imgAlt']??''),
+        ];
     }
     
 
@@ -82,6 +93,50 @@
 
     <section class="bar background-white no-mb">
         <div class="container" {{-- data-animate="fadeInUp" --}} > 
+
+            @component('lib.themewagon.article')
+                @slot('pageHeader')
+                    {!! $article2['pageHeader'] !!}
+                @endslot
+                @slot('header')
+                    {!! $article2['header'] !!}
+                @endslot
+                @slot('subheading')
+                    Article Content is From <a href="https://en.wikipedia.org/wiki/Liberty">Wikipedia, the free encyclopedia</a>
+                @endslot
+                @slot('img')
+                    {!! $article2['img'] !!}
+                @endslot
+                @slot('imgAlt')
+                    {!! $article2['imgAlt'] !!}
+                @endslot
+                @slot('article')
+                    <p>
+                            <strong>Liberty</strong>, in politics, 
+                            consists of the social, political, and 
+                            <strong>economic freedoms</strong> 
+                            to which all community members are entitled.
+                    </p>
+                    <p>
+                            In philosophy, liberty involves 
+                            <a href="https://en.wikipedia.org/wiki/Free_will">free will </a>
+                             as contrasted with 
+                             <a href="https://en.wikipedia.org/wiki/Determinism">determinism</a>.
+                    </p>
+                    <p>
+                        Generally, liberty is distinctly differentiated 
+                        from freedom in that freedom is primarily, 
+                        if not exclusively, the ability to do as one wills 
+                        and what one has the power to do; 
+                        whereas liberty concerns the absence of arbitrary restraints 
+                        and takes into account the rights of all involved. 
+                        As such, the exercise of liberty is subject to capability and 
+                        limited by the rights of others.
+                        <aside>Mill, J.S. (1869)., "Chapter I: Introductory", On Liberty. <a href="http://www.bartleby.com/130/1.html"></a></aside>
+                    </p>
+                    
+                @endslot
+            @endcomponent
         
 
             @if (false)
@@ -121,19 +176,20 @@
             
             @if (false)
                 
-            <div class="row">
-                <div class="col-md-12">
-                    @component('lib.bootstrapious.feature_single_showcase_item')
-                        @foreach ($page['article'] as $key => $item)
-                            @slot($key)
-                                {{ $item }}
-                            @endslot
-                        @endforeach
-                    @endcomponent
+                <div class="row">
+                    <div class="col-md-12">
+                        @component('lib.bootstrapious.feature_single_showcase_item')
+                            @foreach ($page['article'] as $key => $item)
+                                @slot($key)
+                                    {{ $item }}
+                                @endslot
+                            @endforeach
+                        @endcomponent
+                    </div>
                 </div>
-            </div>
 
             @endif
+
             <div class="row margin-bottom-40 ">
 
                 @component('lib.themewagon.sidebar')

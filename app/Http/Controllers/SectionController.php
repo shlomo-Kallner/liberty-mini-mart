@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Section;
+use App\Section,
+    App\Page,
+    App\Categorie;
 use Illuminate\Http\Request;
 
 class SectionController extends MainController
@@ -20,6 +22,8 @@ class SectionController extends MainController
      */
     public function index(Request $request)
     {
+        // wrong view! We NEED a NEW view to display ALL Sections!
+        // (which is what this method does...)
         return self::getView('content.section');
     }
 
@@ -47,12 +51,31 @@ class SectionController extends MainController
     /**
      * Display the specified resource.
      *
-     * @param  \App\Section  $section
+     * @param  \Illuminate\Http\Request $request
+     * 
      * @return \Illuminate\Http\Response
      */
-    public function show(Section $section)
+    public function show(Request $request)
     {
-        //
+        dd($request->section);
+        $section = Section::getNamed($request->section);
+        $section_items = Categorie::getCategoriesOfSection($section->id);
+        $section_data = [
+            'section' => $section,
+            'items' => $section_items
+        ];
+        $breadcumbs = Page::getBreadcrumbs(
+            [
+                Page::genBreadcrumb('Store', 'store'),
+                Page::genBreadcrumb('Our Sections', 'store/section'),
+            ],
+            Page::genBreadcrumb($section->name, 'store/section/'. $section->url)
+        );
+
+        return self::getVeiw(
+            'content.section', $section->title, $section_data, 
+            false, $breadcumbs
+        );
     }
 
     /**

@@ -145,6 +145,7 @@ class Page extends Model
         $preheader = [];
         //dd(session()->all());
         $loggedin = session()->has('user') ? true : false;
+        $is_admin = session()->has('is_admin') ? true : false;
 
         if (!$testing) {
             
@@ -157,6 +158,9 @@ class Page extends Model
                 $preheader[] = self::genURLMenuItem('user', 'My Account', 'fa-id-card', 'text-uppercase');
                 $preheader[] = self::genURLMenuItem('wishlist', 'My Wishlist', 'fa-calendar-o', 'text-uppercase');
                 $preheader[] = self::genURLMenuItem('checkout', 'Checkout', 'fa-shopping-cart', 'text-uppercase');
+                if ($is_admin) {
+                    $preheader[] = self::genURLMenuItem('admin', 'Dashboard', 'fa-bar-chart', 'text-uppercase');
+                }
                 $preheader[] = self::genURLMenuItem('signout', 'Sign out', 'fa-sign-out', 'text-uppercase');
             }
         }
@@ -238,6 +242,48 @@ class Page extends Model
                 'current' => $current ?? static::genBreadcrumb()
             ];
         return $res;
+    }
+
+    static public function genBreadcrumbsFromPath(string $url)
+    {
+        $links = [];
+        if (str_contains($url,'/')) {
+            $paths = explode('/', $url);
+            if ($paths !== false) {
+                for ($i = 0; $i < count($paths); $i++) {
+                    $path = $paths[$i];
+
+                }
+            }
+        } else {
+
+        }
+    }
+
+    static public function getNamedPage($url, $path)
+    {
+        $page = self::where('url', $url)->first();
+        dd($page);
+        return [
+            'title' => $page->title,
+            'content' => [
+                'header' => $page->title,
+                'article' => [
+                    'header' => '',
+                    'subheading' => $page->description,
+                    'img' => $page->image,
+                    'imgAlt' => $page->imageAlt,
+                    'article' => $page->article
+                ]
+            ],
+            'breadcrumbs' => self::getBreadcrumbs(
+                self::genBreadcrumb($page->name, $url),
+                self::genBreadcrumb('Home', '/')
+            )
+
+        ];
+        
+
     }
     
 

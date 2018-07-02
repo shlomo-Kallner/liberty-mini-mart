@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request,
     Illuminate\Support\HtmlString,
     App\Page,
+    App\User,
+    App\Cart,
     App\Utilities\Functions\Functions,
     Session;
 
@@ -20,6 +22,17 @@ class MainController extends Controller {
             'name' => 'Liberty MiniMart',
             'titleNameSep' => ' | ',
             'usingCDNs' => '',
+            'usingMix' => '',
+            'scripts' => [
+                /* Example:
+                    'script-name' => [
+                        'local-path' => '',
+                        'cdn-url' => '',
+                        'mix-path' => '',
+                        'version' => ''
+                    ]
+                */
+            ],
         ],
         'preheader' => [], // the preheader navbar data...
         'navbar' => [], // the header navbar data...
@@ -60,6 +73,7 @@ class MainController extends Controller {
             'email' => '',
             'id' => '',
             'agent' => '',
+            'ip' => '',
         ],
         'cart' => [
             'items' => null,
@@ -124,12 +138,78 @@ class MainController extends Controller {
         }
     }
 
+    // WISHLIST TO-DO ITEM!!! 
+    static public function addSiteScript(
+        string $script, string $local = '', string $cdn = '',
+        string $mix = '', string $version = ''
+    ) {
+        if (! self::hasSiteScript($script)) {
+            self::$data['site']['scripts'][$script] = [
+                    'local-path' => $local,
+                    'cdn-url' => $cdn,
+                    'mix-path' => $mix,
+                    'version' => $version
+            ];
+        } else {
+            if (empty(self::$data['site']['scripts'][$script]['local-path']) && !empty($local)) {
+                self::$data['site']['scripts'][$script]['local-path'] = $local;
+            }
+            if (empty(self::$data['site']['scripts'][$script]['cdn-url']) && !empty($cdn)) {
+                self::$data['site']['scripts'][$script]['cdn-url'] = $cdn;
+            }
+            if (empty(self::$data['site']['scripts'][$script]['mix-path']) && !empty($mix)) {
+                self::$data['site']['scripts'][$script]['mix-path'] = $mix;
+            }
+            if (empty(self::$data['site']['scripts'][$script]['version']) && !empty($version)) {
+                self::$data['site']['scripts'][$script]['version'] = $version;
+            }
+        }
+    }
+
+    // WISHLIST TO-DO ITEM!!!
+    static public function hasSiteScript($script = '')
+    {
+        $res = false;
+        if (!empty($script)) {
+            if (is_array($script)) {
+                if (array_key_exists($script['name'], self::$data['site']['scripts'])) {
+                    $data = self::$data['site']['scripts'][$script['name']];
+                    if (array_key_exists('version', $script)) {
+                        if (is_array($script['version'])) {
+                            $res = Functions::testVersions(
+                                $script['version']['version'], 
+                                $data['version'], 
+                                $script['version']['op']
+                            );
+                        } elseif (is_string($script['version'])) {
+                            $res = Functions::testVersions(
+                                $script['version'], 
+                                $data['version']
+                            );
+                        }
+                    } elseif (array_key_exists('cdn-url', $script)) {
+                        $res = empty($data['cdn-url']);
+                    } elseif (array_key_exists('mix-path', $script)) {
+                        $res = empty($data['mix-path']);
+                    } elseif (array_key_exists('local-path', $script)) {
+                        $res = empty($data['local-path']);
+                    }
+                }
+            } elseif (is_string($script)) {
+                if (array_key_exists($script, self::$data['site']['scripts'])) {
+                    $res = true;
+                }
+            }
+        }
+        return $res; // WISHLIST TO-DO ITEM!!!
+    }
+
     static public function setTitle($title = '') 
     {
         if (!empty($title)) {
             self::$data['title'] = self::$data['site']['name'];
             self::$data['title'] .= self::$data['site']['titleNameSep'];
-            self::$data['title'] .= $title;
+            self::$data['title'] .= Functions::purifyContent($title);
         }
     }
 
@@ -166,6 +246,10 @@ class MainController extends Controller {
         //
         self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
         //
+        self::$data['user'] = User::getUserArray();
+        //
+        self::$data['cart'] = Cart::getCurrentCart();
+
         return view($viewName, self::$data);
     }
 
