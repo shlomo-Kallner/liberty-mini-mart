@@ -81,6 +81,12 @@ class MainController extends Controller {
             'sub-total' => 0,
             'total-items' => 0,
         ],
+        'alert' => [
+            'class' => '',
+            'title' => '',
+            'content' => '',
+            'timeout' => '',
+        ],
     ];
 
     /* OLD CODE... kept in case of problems..
@@ -105,6 +111,16 @@ class MainController extends Controller {
 
     /// Begin Utility Functions
     /// UPDATE: converting all Utility functions to static functions...
+
+    static public function setAlert($css, $title, $content, $timeout)
+    {
+        self::$data['alert'] = [
+            'class' => $css,
+            'title' => Functions::purifyContent($title),
+            'content' => Functions::purifyContent($content),
+            'timeout' => $timeout,
+        ];
+    }
 
     static public function setSiteName($name = '', $titleNameSep = ' | ') 
     {

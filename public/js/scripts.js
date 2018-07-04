@@ -61,7 +61,7 @@ jQuery(function ($) {
             return result;
         };
 
-    var handleCart = function() {
+    var handleCart = function () {
         var cartForStore = {
             // utility 
             getOptionVals: function (options, jquery)
@@ -89,5 +89,13 @@ jQuery(function ($) {
         $.scrolltotop.init2(window.Laravel.upPngPath);
       };
     myInit($);  
+
+  var checkTimeOut = function ($) {
+    if (window.Laravel.alertTimeout !== 0) {
+      $('#masterPageAlert').delay(parseInt(window.Laravel.alertTimeout)).alert('close');
+    }
+  };
+  checkTimeOut($);
+    
   
 });

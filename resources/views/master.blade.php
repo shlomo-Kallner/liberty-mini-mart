@@ -6,6 +6,7 @@
     $scripts = Functions::getBladedString($site['scripts']??'');
     $usingCDNs = Functions::getBladedString($site['usingCDNs']??'');
     $usingMix = Functions::getBladedString($site['usingMix']??'');
+    $alert2 =  Functions::getContent($alert??'');
 ?>
 <!DOCTYPE html>
 @section('license-header')
@@ -44,22 +45,23 @@ use the 'no-js' css class for IE9 and below as well.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         @section('header-metas')
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <script>
-            window.Laravel = { csrfToken: '{{ csrf_token() }}',
-                               upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}" 
-                    };
-        </script>
-        <meta content="Metronic Shop UI description" name="description">
-        <meta content="Metronic Shop UI keywords" name="keywords">
-        <meta content="Shlomo Kallner" name="author">
+            <meta name="csrf-token" content="{{ csrf_token() }}">
+            <script>
+                window.Laravel = { csrfToken: '{{ csrf_token() }}',
+                                upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}",
+                                alertTimeout: {{ Functions::testVar($alert2['timeout']??'') ? $alert2['timeout']  : '0' }} 
+                        };
+            </script>
+            <meta content="Metronic Shop UI description" name="description">
+            <meta content="Metronic Shop UI keywords" name="keywords">
+            <meta content="Shlomo Kallner" name="author">
 
-        <meta property="og:site_name" content="{{ $siteName2 }}">
-        <meta property="og:title" content="-CUSTOMER VALUE-">
-        <meta property="og:description" content="-CUSTOMER VALUE-">
-        <meta property="og:type" content="website">
-        <meta property="og:image" content="-CUSTOMER VALUE-"><!-- link to image for socio -->
-        <meta property="og:url" content="{{ url('') }}">
+            <meta property="og:site_name" content="{{ $siteName2 }}">
+            <meta property="og:title" content="-CUSTOMER VALUE-">
+            <meta property="og:description" content="-CUSTOMER VALUE-">
+            <meta property="og:type" content="website">
+            <meta property="og:image" content="-CUSTOMER VALUE-"><!-- link to image for socio -->
+            <meta property="og:url" content="{{ url('') }}">
         @show
 
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
@@ -74,40 +76,42 @@ use the 'no-js' css class for IE9 and below as well.
 
         
         <!-- CSS START -->
-        <!-- Fonts START -->
-        @section('css-fonts')
-        {{-- This @Section was copied from 'lib.themewagon.fonts'
-             originally, now @Including it in a child view
-             instead of here.. --}}
-        {{-- 
-            These "_Section ... _Include ... _Show" bother me.
-            I dont think that I should be writing code blocks 
-            like this...
-            So, the plan is to phase them out..
-            by moving the content of the _Include to the _Extending
-            Views..
-        --}}
-        @show
-        <!-- Fonts END -->
+            <!-- Fonts START -->
+                @section('css-fonts')
+                    {{-- This @Section was copied from 'lib.themewagon.fonts'
+                        originally, now @Including it in a child view
+                        instead of here.. 
+                    --}}
+                    {{-- 
+                        These "_Section ... _Include ... _Show" bother me.
+                        I dont think that I should be writing code blocks 
+                        like this...
+                        So, the plan is to phase them out..
+                        by moving the content of the _Include to the _Extending
+                        Views..
+                    --}}
+                @show
+            <!-- Fonts END -->
 
-        @section('css-extra-fonts')
+            @section('css-extra-fonts')
 
-        @show
+            @show
 
-        @section('css-preloaded')
+            @section('css-preloaded')
 
-        @yield('css-cdn-files')
+                @yield('css-cdn-files')
 
-        @yield('css-preloaded-global')
+                @yield('css-preloaded-global')
 
-        @yield('css-preloaded-local')
+                @yield('css-preloaded-local')
 
-        @yield('css-themes')
+                @yield('css-themes')
 
 
-        {{-- In the _Extending views place the @Parent directive LAST!! --}}
-        @show
-        <link rel="stylesheet" href="{{ asset('css/styles.css') }}" type="text/css">
+                {{-- In the _Extending views place the @Parent directive LAST!! --}}
+            @show
+
+            <link rel="stylesheet" href="{{ asset('css/styles.css') }}" type="text/css">
         <!-- CSS END -->
 
 
@@ -158,10 +162,31 @@ use the 'no-js' css class for IE9 and below as well.
                 @section('extra-navigation-content')
                     
                 @show
+
+                <div class="container">
+
+                    <div class="row">
+                        <div class="col-md-12" id="masterPageAlertContainer">
+    
+                            @if (Functions::testVar($alert2??''))
+                                <div id="masterPageAlert" class="alert {{ $alert2['class'] }} alert-dismissible fade in">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                        <i class="fa fa-close" aria-hidden="true"></i>
+                                    </button>
+                                    <strong>{{ $alert2['title'] }}</strong> 
+                                    {!! $alert2['content'] !!}
+                                </div>
+                            @endif
+                            
+                        </div>
+                    </div>
+            
+                </div>
         
             </nav>
 
         </header>
+
         @section('modals')
 
             @yield('login-modal')
@@ -177,24 +202,9 @@ use the 'no-js' css class for IE9 and below as well.
         <main>
             <div class="container">
 
-                <div class="row">
-                    <div class="col-md-12" id="masterPageAlertContainer">
-
-                        @if (Functions::testVar($alert??''))
-                            <div id="masterPageAlert" class="alert {{ $alert['class'] }} alert-dismissible fade in">
-                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                                    <i class="fa fa-close" aria-hidden="true"></i>
-                                </button>
-                                <strong>{{ $alert['title'] }}</strong> 
-                                {!! $alert['content'] !!}
-                            </div>
-                        @endif
-                        
-                    </div>
-                </div>
-
                 @section('main-content')
                 @show
+
             </div>  
         </main>
 
@@ -242,7 +252,7 @@ use the 'no-js' css class for IE9 and below as well.
         @endif
 
         {{-- from Laravel.. Vue.js is now ENABLED! --}}
-        {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+        <script src="{{ asset('js/app.js') }}"></script>
         
         {{-- 
             this stuff is ours.. so it should come last.. 

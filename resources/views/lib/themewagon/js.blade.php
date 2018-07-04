@@ -68,7 +68,38 @@
 
     {{-- Other Metronic Scripts --}}
     <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/corporate/scripts/back-to-top.js') }}" type="text/javascript"></script>
+    <script>
+      function checkSlimscroll($) {
+        if ($ === undefined) {
+          alert('no Jquery');
+        } else {
+          if ($.slimscroll === undefined) {
+            alert('no $.slimscroll');
+          } else {
+            alert('we have $.slimscroll');
+          }
+          if ($.slimScroll === undefined) {
+            alert('no $.slimScroll');
+          } else {
+            alert('we have $.slimScroll');
+          }
+          if ($.fn.slimScroll === undefined) {
+            alert('no $.fn.slimScroll');
+          } else {
+            alert('we have $.fn.slimScroll');
+          }
+          if ($.fn.slimScroll === undefined) {
+            alert('no $.fn.slimScroll');
+          } else {
+            alert('we have $.fn.slimScroll');
+          }
+        } 
+      }
+      //checkSlimscroll(jQuery);
+    </script>
     <script src="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/jquery-slimscroll/jquery.slimscroll.js') }}" type="text/javascript"></script>
+    {{-- <script>checkSlimscroll(jQuery);</script> --}}
+    
     
     <!-- END CORE PLUGINS -->
 
@@ -142,5 +173,12 @@
       });
     </script>
   @endif
+
+  <script>
+    jQuery(function($){
+      alert('DOM loaded!');
+      checkSlimscroll($);
+    });
+  </script>
 
 @endsection

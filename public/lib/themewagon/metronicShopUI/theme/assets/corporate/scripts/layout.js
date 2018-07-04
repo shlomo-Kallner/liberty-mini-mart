@@ -1,3 +1,6 @@
+
+/// minor mod by (shlomo.kallner@gmail.com) adding '.fn' to 'slimScroll' function call..
+
 var Layout = function () {
 
      // IE mode
@@ -104,6 +107,7 @@ var Layout = function () {
             } else {
                 height = $(this).css('height');
             }
+            /// minor mod by (shlomo.kallner@gmail.com) adding '.fn' to 'slimScroll' function call..
             $(this).slimScroll({
                 allowPageScroll: true, // allow page scroll when the element scroll is ended
                 size: '7px',

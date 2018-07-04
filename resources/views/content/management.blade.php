@@ -250,7 +250,9 @@
 @section('main-content')
 
     @php
+
     $testing = true;
+
     use \App\Utilities\Functions\Functions,
         \App\Page;
 
@@ -633,21 +635,31 @@
 @section('js-defered')
     @parent
 
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="{{ asset('lib/startbootstrap/admin2/vendor/metisMenu/metisMenu.min.js') }}"></script>
+    @if (false)
+        
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="{{ asset('lib/startbootstrap/admin2/vendor/metisMenu/metisMenu.min.js') }}"></script>
 
-    <!-- Morris Charts JavaScript -->
-    <script src="{{ asset('lib/startbootstrap/admin2/vendor/raphael/raphael.min.js') }}"></script>
-    <script src="{{ asset('lib/startbootstrap/admin2/vendor/morrisjs/morris.min.js') }}"></script>
-    {{-- 
-        temporarily removing this script element so that I can remove or otherwise 
-        initialize the Morris.js components elsewise..
-        <script src="{{ asset('lib/startbootstrap/admin2/data/morris-data.js') }}"></script> 
-    --}}
-    
+        @if (false)
 
-    <!-- Custom Theme JavaScript -->
-    <script src="{{ asset('lib/startbootstrap/admin2/dist/js/sb-admin-2.js') }}"></script>
+            <!-- Morris Charts JavaScript -->
+            <script src="{{ asset('lib/startbootstrap/admin2/vendor/raphael/raphael.min.js') }}"></script>
+            <script src="{{ asset('lib/startbootstrap/admin2/vendor/morrisjs/morris.min.js') }}"></script>
+            {{-- 
+                temporarily removing these script elements so that I can remove or otherwise 
+                initialize the admin2 and Morris.js components elsewise..
+
+                Morris.js data components..
+                <script src="{{ asset('lib/startbootstrap/admin2/data/morris-data.js') }}"></script> 
+            --}}
+            
+        @endif
+
+
+        <!-- Custom Theme JavaScript -->
+        <script src="{{ asset('lib/startbootstrap/admin2/dist/js/sb-admin-2.js') }}"></script>
+
+    @endif
 
 @endsection
 

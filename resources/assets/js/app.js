@@ -17,6 +17,14 @@ window.Vue = require('vue');
 
 Vue.component('example', require('./components/Example.vue'));
 
+/*
 const app = new Vue({
     el: '#app'
+});
+ */
+
+ Vue.component('dismissable-alert', require('./components/dismissable-alert.vue'));
+
+var masterAlert = new Vue({
+  el: '#masterPageAlertContainer'
 });

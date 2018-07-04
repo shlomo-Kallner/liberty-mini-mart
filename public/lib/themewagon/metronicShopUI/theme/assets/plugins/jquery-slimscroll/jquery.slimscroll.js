@@ -494,4 +494,12 @@
         slimscroll: jQuery.fn.slimScroll
     });
 
+    // start shlomo.kallner@gmail.com mod ..
+    // slimScroll not loading mysteriously...
+    $.extend({
+        slimscroll: jQuery.fn.slimScroll,
+        slimScroll: jQuery.fn.slimScroll
+    });
+    // end shlomo.kallner@gmail.com mod ..
+
 })(jQuery);

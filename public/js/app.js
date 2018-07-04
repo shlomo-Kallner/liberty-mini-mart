@@ -1007,7 +1007,12 @@ window._ = __webpack_require__(12);
  */
 
 try {
-  window.$ = window.jQuery = __webpack_require__(14);
+  // modified by shlomo.kalner@gmail.com to include this check for
+  // jQuery having been previously loaded via script tag..
+  if (window.$ === undefined || window.jQuery === undefined || $ === undefined || jQuery === undefined) {
+    //alert('hello from vue-bootstrap!!');
+    window.$ = window.jQuery = __webpack_require__(14);
+  }
 
   __webpack_require__(15);
 } catch (e) {}

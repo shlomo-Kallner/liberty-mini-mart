@@ -8,9 +8,17 @@ window._ = require('lodash');
  */
 
 try {
+  // modified by shlomo.kalner@gmail.com to include this check for
+  // jQuery having been previously loaded via script tag..
+  if (window.$ === undefined || 
+        window.jQuery === undefined || 
+        $ === undefined || 
+        jQuery === undefined) {
+    //alert('hello from vue-bootstrap!!');
     window.$ = window.jQuery = require('jquery');
+  }
 
-    require('bootstrap-sass');
+  require('bootstrap-sass');
 } catch (e) {}
 
 /**
