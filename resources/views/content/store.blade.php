@@ -190,7 +190,7 @@
 
             @endif
 
-            <div class="row margin-bottom-40 ">
+            <div class="row margin-bottom-40">
 
                 @component('lib.themewagon.sidebar')
                     @slot('menu')

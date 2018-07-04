@@ -49,7 +49,8 @@ use the 'no-js' css class for IE9 and below as well.
             <script>
                 window.Laravel = { csrfToken: '{{ csrf_token() }}',
                                 upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}",
-                                alertTimeout: {{ Functions::testVar($alert2['timeout']??'') ? $alert2['timeout']  : '0' }} 
+                                alertTimeout: {{ Functions::testVar($alert2['timeout']??'') ? $alert2['timeout']  : '0' }},
+                                alert: '@json($alert2)' 
                         };
             </script>
             <meta content="Metronic Shop UI description" name="description">
@@ -158,17 +159,13 @@ use the 'no-js' css class for IE9 and below as well.
                     @yield('header-navbar')
     
                 @show
-                
-                @section('extra-navigation-content')
-                    
-                @show
 
                 <div class="container">
 
                     <div class="row">
                         <div class="col-md-12" id="masterPageAlertContainer">
     
-                            @if (Functions::testVar($alert2??''))
+                            @if (Functions::testVar($alert2??'') && Functions::testVar($alert2['class']??''))
                                 <div id="masterPageAlert" class="alert {{ $alert2['class'] }} alert-dismissible fade in">
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
                                         <i class="fa fa-close" aria-hidden="true"></i>
@@ -182,6 +179,10 @@ use the 'no-js' css class for IE9 and below as well.
                     </div>
             
                 </div>
+                
+                @section('extra-navigation-content')
+                    
+                @show
         
             </nav>
 

@@ -4,10 +4,13 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
+import { LaravelAlert } from './lib/LaravelAlert'
 
 require('./bootstrap');
 
 window.Vue = require('vue');
+
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -25,6 +28,11 @@ const app = new Vue({
 
  Vue.component('dismissable-alert', require('./components/dismissable-alert.vue'));
 
+var alertFromLaravel = new LaravelAlert(window.Laravel.alert);
+
 var masterAlert = new Vue({
-  el: '#masterPageAlertContainer'
+  el: '#masterPageAlertContainer',
+  data: {
+      alert: alertFromLaravel.getData()
+  }
 });

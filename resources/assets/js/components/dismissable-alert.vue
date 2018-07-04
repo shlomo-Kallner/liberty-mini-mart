@@ -1,5 +1,5 @@
 <template>
-    <div v-bind:id="alert.alertId" v-bind:class="usedCssClasses" >
+    <div v-if="isSeen" v-bind:id="alert.alertId" v-bind:class="usedCssClasses" >
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
             <i class="fa fa-close" aria-hidden="true"></i>
         </button>
@@ -25,6 +25,9 @@ export default {
     computed: {
         usedCssClasses: function() {
             return "alert" + this.alert.cssClasses.trim() + "alert-dismissible fade in";
+        },
+        isSeen: function() {
+            return this.alert.seen;
         }
     }
 

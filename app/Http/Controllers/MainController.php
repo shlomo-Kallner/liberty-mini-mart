@@ -112,7 +112,7 @@ class MainController extends Controller {
     /// Begin Utility Functions
     /// UPDATE: converting all Utility functions to static functions...
 
-    static public function setAlert($css, $title, $content, $timeout)
+    static public function setAlert($css = '', $title = '', $content = '', int $timeout = 0)
     {
         self::$data['alert'] = [
             'class' => $css,
@@ -247,10 +247,16 @@ class MainController extends Controller {
 
     static public function getView(
         string $viewName = 'content.template', string $title = '', $content = [], 
-        bool $useFakeData = false, array $breadcrumbs = null
+        bool $useFakeData = false, array $breadcrumbs = null, array $alert = null
     ) {
         self::setTitle($title);
         self::setPageContent($content);
+        if ($alert !== null) {
+            self::setAlert($alert['css'], $alert['title'], $alert['content'], $alert['timeout']);
+        } else {
+            self::setAlert();
+        }
+        
         //
 
         self::$data['navbar'] = Page::getNavBar($useFakeData);

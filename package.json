@@ -5,8 +5,10 @@
   "author": "Shlomo Kallner <shlomo.kallner@gmail.com>",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js && npm run development",
+    "dev": "npm run development",
+    "dev-vue": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "start-vue": "npm run dev-vue",
     "start": "npm run dev",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",

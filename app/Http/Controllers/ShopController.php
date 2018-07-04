@@ -17,18 +17,21 @@ class ShopController extends MainController {
         return parent::test2($request);
     }
 
-    public function products() {
+    public function products() 
+    {
         return __METHOD__;
     }
 
-    static public function genProduct(){
+    static public function genProduct()
+    {
         $product = [];
         return $product;
     }
 
-    static public function genProductGallery($name, array &$products, 
-        array &$cssClasses = [] )
-    {
+    static public function genProductGallery(
+        $name, array &$products, 
+        array &$cssClasses = [] 
+    ) {
         $res = [
             // the gallery's name..
             'title' => $name,
