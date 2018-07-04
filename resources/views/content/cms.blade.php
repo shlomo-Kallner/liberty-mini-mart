@@ -28,6 +28,9 @@
 
             @section('cms-content')
                 
+                <div id="users-app">
+
+                </div>
             @show
             
         </div>
