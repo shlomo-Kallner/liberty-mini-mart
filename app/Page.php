@@ -38,7 +38,8 @@ class Page extends Model
     static public function genLink(
         string $type, string $url, string $name, string $cssExtraClasses = '',
         string $icon = '', string $textTransform = '', string $target = '', 
-        array $submenus = null, string $iconAfter = '', string $toggle = ''
+        array $submenus = null, string $iconAfter = '', string $toggle = '',
+        string $role = ''
     ) {
         return [
             'type' => $type, // 'url' for a url link, 'modal' for a modal 
@@ -57,18 +58,19 @@ class Page extends Model
             'iconAfter' => $iconAfter, // 'the Font Awesome 4 icon class' inserted 
             // AFTER the NAME unlike $icon which PRECEDES the NAME.. 
             'toggle' => $toggle, // the data-toggle attribute's parameter...
+            'role' => $role, // the role attribute's parameter...
         ];
     }
 
     static public function genURLMenuItem(
         string $url, string $name, string $icon = '', 
         string $textTransform = '', string $cssExtraClasses = '', 
-        string $iconAfter = ''
+        string $iconAfter = '', string $role = ''
     ) {
         // previously called 'genPreHeaderURL()'
         return static::genLink( 
             'url', $url, $name, $cssExtraClasses, 
-            $icon, $textTransform, '', null, $iconAfter 
+            $icon, $textTransform, '', null, $iconAfter, '', $role 
         );
     }
 
@@ -80,7 +82,7 @@ class Page extends Model
         // previously called 'genPreHeaderModal()'
         return static::genLink( 
             'modal', '#', $name, $cssExtraClasses, $icon,
-            $textTransform, $target, null, $iconAfter, 'modal'
+            $textTransform, $target, null, $iconAfter, 'modal', 'button'
         );
     }
 
@@ -90,8 +92,8 @@ class Page extends Model
         string $url = 'javascript:void(0);', string $iconAfter = 'fa-angle-right'
     ) {
         return static::genLink( 
-            'dropdown', $url, $name, $cssExtraClasses,
-            $icon, $textTransform, '', $submenus, $iconAfter, 'dropdown'
+            'dropdown', $url, $name, "dropdown-toggle " . $cssExtraClasses,
+            $icon, $textTransform, '', $submenus, $iconAfter, 'dropdown', 'button'
         );
     }
 

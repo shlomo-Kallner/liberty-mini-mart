@@ -11,9 +11,12 @@ use \App\Utilities\Functions\Functions,
 
 // BEGIN: the slots of the external dropdown element
 
-$listCSS2 = Functions::getBladedString($listCSS??'','');
+$listCSS2 = Functions::getBladedString($listCSS??'dropdown','dropdown');
  
 $type2 = Functions::getBladedString($type??'','dropdown');
+
+
+
 $target2 = Functions::getBladedString($target??'','#');
 $cssExtraClasses2 = Functions::getBladedString($cssExtraClasses??'','');
 $url2 = Functions::getBladedString($url??'','javascript:void(0);');
@@ -22,7 +25,8 @@ $iconAfter2 = Functions::getBladedString($iconAfter??'','');
 $name2 = Functions::getBladedString($name??'','');
 $transform2 = Functions::getBladedString($transform??'','');
 $submenus2 = Functions::getUnBladedContent($submenus??'','');
-$toggle2 = 'dropdown';
+$toggle2 = Functions::getBladedString($toggle??'dropdown','dropdown');
+$role2 = Functions::getBladedString($role??'button','button');
 
 // END: the slots of the external dropdown element
 
@@ -34,29 +38,71 @@ $toggle2 = 'dropdown';
 
 {{-- begin dropdown menu top-level link --}}
 <li class="dropdown {!! $listCSS2 !!}">
-    <a class="dropdown-toggle {{ $cssExtraClasses2 }}" data-toggle="{{ $toggle2 }}" data-target="{{ $target2 }}" href="{{ url($url2) }}" role="button">
+    @if (true)
+
+        @component('lib.themewagon.links')
+            @slot('type')
+                {!! $type2 !!}
+            @endslot
+            @slot('target')
+                {!! $target2 !!}
+            @endslot
+            @slot('cssExtraClasses')
+                {!! $cssExtraClasses2 !!}
+            @endslot
+            @slot('url')
+                {!! $url2 !!}
+            @endslot
+            @slot('icon')
+                {!! $icon2 !!}
+            @endslot
+            @slot('iconAfter')
+                {!! $iconAfter2 !!}
+            @endslot
+            @slot('name')
+                {!! $name2 !!}
+            @endslot
+            @slot('transform')
+                {!! $transform2 !!}
+            @endslot
+            @slot('toggle')
+                {!! $toggle2 !!}
+            @endslot
+            @slot('role')
+                {!! $role2 !!}
+            @endslot
+        @endcomponent
+
+    @else
         
-        @if( Functions::testVar($icon2) && (mb_strlen($icon2) !== 0) )
-            @if ( !Functions::testVar($name2) || (mb_strlen($name2) === 0)  )
-            <i class="fa {{ $icon2 }}"></i>    
-            @else
-            <i class="fa {{ $icon2 }}" aria-hidden="true"></i>
+        <a class="dropdown-toggle {{ $cssExtraClasses2 }}" 
+            data-toggle="{{ $toggle2 }}" data-target="{{ $target2 }}" 
+            href="{{ url($url2) }}" role="{{$role2}}"
+            >
+        
+            @if( Functions::testVar($icon2) && (mb_strlen($icon2) !== 0) )
+                @if ( !Functions::testVar($name2) || (mb_strlen($name2) === 0)  )
+                <i class="fa {{ $icon2 }}"></i>    
+                @else
+                <i class="fa {{ $icon2 }}" aria-hidden="true"></i>
+                @endif
             @endif
-        @endif
+    
+            @if ( Functions::testVar($name2) && (mb_strlen($name2) !== 0)  ) 
+                @if(mb_strlen($transform2) !== 0)
+                    <span class="hidden-xs {{ $transform2 }}">{{ $name2 }}</span> 
+                @else 
+                    {{ $name2 }} 
+                @endif 
+            @endif
+    
+            @if( Functions::testVar($iconAfter2) && (mb_strlen($iconAfter2) !== 0) )
+                <i class="fa {{ $iconAfter2 }}"></i>
+            @endif
+    
+        </a>
 
-        @if ( Functions::testVar($name2) && (mb_strlen($name2) !== 0)  ) 
-            @if(mb_strlen($transform2) !== 0)
-                <span class="hidden-xs {{ $transform2 }}">{{ $name2 }}</span> 
-            @else 
-                {{ $name2 }} 
-            @endif 
-        @endif
-
-        @if( Functions::testVar($iconAfter2) && (mb_strlen($iconAfter2) !== 0) )
-            <i class="fa {{ $iconAfter2 }}"></i>
-        @endif
-
-    </a>
+    @endif
 
     <!-- BEGIN DROPDOWN MENU -->
     <ul class="dropdown-menu">
@@ -117,6 +163,20 @@ $toggle2 = 'dropdown';
                         @endcomponent
                         
                     @elseif($elem_type === 'dropdown-submenu' || $elem_type === 'dropdown')
+                    @php
+
+                        if ($elem->parent() !== null) {
+                            $parent_type = $elem->parent()->get('type');
+                            if (($parent_type == 'dropdown')||($parent_type == 'dropdown-submenu')) {
+                                $listCssClass = 'dropdown-submenu';
+                            } else {
+                                $listCssClass = 'dropdown';
+                            }
+                        } else {
+                            $listCssClass = 'dropdown';
+                        }
+                            
+                    @endphp
 
                        <!-- BEGIN DROPDOWN sub-MENU -->
                         <li class="dropdown-submenu">
@@ -128,32 +188,74 @@ $toggle2 = 'dropdown';
                                 $elem_name = $elem->get('name');
                                 $elem_transform = $elem->get('transform');
                                 $elem_iconAfter = $elem->get('iconAfter');
+                                $elem_toggle = $elem->get('toggle');
+                                $elem_role = $elem->get('role');
                             @endphp
 
-                            <a class="dropdown-toggle {{ $elem_cssExtraClasses }}" data-toggle="dropdown" 
-                                data-target="{{ $elem_target }}" href="{{ url($elem_url) }}" role="button">
+                            @if (true)
 
-                                @if( Functions::testVar($elem_icon) && (mb_strlen($elem_icon) !== 0) )
-                                    @if ( !Functions::testVar($elem_name) || (mb_strlen($elem_name) === 0)  )
-                                    <i class="fa {{ $elem_icon }}"></i>    
-                                    @else
-                                    <i class="fa {{ $elem_icon }}" aria-hidden="true"></i>
+                                @component('lib.themewagon.links')
+                                    @slot('type')
+                                        {!! $elem_type !!}
+                                    @endslot
+                                    @slot('target')
+                                        {!! $elem_target !!}
+                                    @endslot
+                                    @slot('cssExtraClasses')
+                                        {!! $elem_cssExtraClasses !!}
+                                    @endslot
+                                    @slot('url')
+                                        {!! $elem_url !!}
+                                    @endslot
+                                    @slot('icon')
+                                        {!! $elem_icon !!}
+                                    @endslot
+                                    @slot('iconAfter')
+                                        {!! $elem_iconAfter !!}
+                                    @endslot
+                                    @slot('name')
+                                        {!! $elem_name !!}
+                                    @endslot
+                                    @slot('transform')
+                                        {!! $elem_transform !!}
+                                    @endslot
+                                    @slot('toggle')
+                                        {!! $elem_toggle !!}
+                                    @endslot
+                                    @slot('role')
+                                        {!! $elem_role !!}
+                                    @endslot
+                                @endcomponent
+                                
+                            @else
+                                
+                                <a class="dropdown-toggle {{ $elem_cssExtraClasses }}" data-toggle="{{ $elem_toggle }}" 
+                                    data-target="{{ $elem_target }}" href="{{ url($elem_url) }}" role="{{ $elem_role }}">
+
+                                    @if( Functions::testVar($elem_icon) && (mb_strlen($elem_icon) !== 0) )
+                                        @if ( !Functions::testVar($elem_name) || (mb_strlen($elem_name) === 0)  )
+                                        <i class="fa {{ $elem_icon }}"></i>    
+                                        @else
+                                        <i class="fa {{ $elem_icon }}" aria-hidden="true"></i>
+                                        @endif
                                     @endif
-                                @endif
+                            
+                                    @if ( Functions::testVar($elem_name) && (mb_strlen($elem_name) !== 0)  ) 
+                                        @if(mb_strlen($elem_transform) !== 0)
+                                            <span class="hidden-xs {{ $elem_transform }}">{{ $elem_name }}</span> 
+                                        @else 
+                                            {{ $elem_name }} 
+                                        @endif 
+                                    @endif
+                            
+                                    @if( Functions::testVar($elem_iconAfter) && (mb_strlen($elem_iconAfter) !== 0) )
+                                        <i class="fa {{ $elem_iconAfter }}"></i>
+                                    @endif
                         
-                                @if ( Functions::testVar($elem_name) && (mb_strlen($elem_name) !== 0)  ) 
-                                    @if(mb_strlen($elem_transform) !== 0)
-                                        <span class="hidden-xs {{ $elem_transform }}">{{ $elem_name }}</span> 
-                                    @else 
-                                        {{ $elem_name }} 
-                                    @endif 
-                                @endif
-                        
-                                @if( Functions::testVar($elem_iconAfter) && (mb_strlen($elem_iconAfter) !== 0) )
-                                    <i class="fa {{ $elem_iconAfter }}"></i>
-                                @endif
-                    
-                            </a>
+                                </a>
+
+                            @endif
+
                             <ul class="dropdown-menu" role="menu">
                             {{-- Stack PUSH time! --}}
                             @php

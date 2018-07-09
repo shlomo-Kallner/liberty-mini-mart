@@ -17,18 +17,26 @@
 */
  
  $testing = false;
- use App\Utilities\Functions\Functions;
- 
- $listCSS2 = Functions::getBladedString($listCSS??'','');
+ use App\Utilities\Functions\Functions,
+    \App\Utilities\IterationStack\IterationStack,
+    \App\Utilities\IterationStack\IterationFrame;
  
  $type2 = Functions::getBladedString($type??'','url');
  $target2 = Functions::getBladedString($target??'','');
  $cssExtraClasses2 = Functions::getBladedString($cssExtraClasses??'','');
  $url2 = Functions::getBladedString($url??'','#');
  $icon2 = Functions::getBladedString($icon??'','');
+ $iconAfter2 = Functions::getBladedString($iconAfter??'','');
  $name2 = Functions::getBladedString($name??'','');
  $transform2 = Functions::getBladedString($transform??'','');
+
+ if ($type2 == 'dropdown') {
+    $listCSS2 = "dropdown" . Functions::getBladedString($listCSS??'','');
+ }
  $toggle2 = Functions::getBladedString($toggle??'','');
+ $role2 = Functions::getBladedString($role??'','');
+ $listCSS2 = Functions::getBladedString($listCSS??'','');
+ 
 
 @endphp
 
@@ -37,6 +45,7 @@
     class="{!! $listCSS2 !!}"
 @endif
 >
+
     @component('lib.themewagon.links')
         @slot('type')
             {!! $type2 !!}
@@ -53,14 +62,21 @@
         @slot('icon')
             {!! $icon2 !!}
         @endslot
+        @slot('iconAfter')
+            {!! $iconAfter2 !!}
+        @endslot
         @slot('name')
             {!! $name2 !!}
         @endslot
         @slot('transform')
             {!! $transform2 !!}
-        @
+        @endslot
         @slot('toggle')
             {!! $toggle2 !!}
         @endslot
+        @slot('role')
+            {!! $role2 !!}
+        @endslot
     @endcomponent
+
 </li>
