@@ -8,6 +8,7 @@
 <!-- Global styles START -->          
 <link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet">
 <link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ asset('lib/themewagon/metronicShopUI/theme/assets/plugins/bootstrap/css/bootstrap-theme.min.css') }}" rel="stylesheet">
 <!-- Global styles END -->
 
 @endsection

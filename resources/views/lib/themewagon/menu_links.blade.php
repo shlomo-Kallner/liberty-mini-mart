@@ -28,6 +28,7 @@
  $icon2 = Functions::getBladedString($icon??'','');
  $name2 = Functions::getBladedString($name??'','');
  $transform2 = Functions::getBladedString($transform??'','');
+ $toggle2 = Functions::getBladedString($toggle??'','');
 
 @endphp
 
@@ -57,6 +58,9 @@
         @endslot
         @slot('transform')
             {!! $transform2 !!}
+        @
+        @slot('toggle')
+            {!! $toggle2 !!}
         @endslot
     @endcomponent
 </li>

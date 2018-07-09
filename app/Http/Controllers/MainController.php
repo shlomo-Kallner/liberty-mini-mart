@@ -112,13 +112,15 @@ class MainController extends Controller {
     /// Begin Utility Functions
     /// UPDATE: converting all Utility functions to static functions...
 
-    static public function setAlert($css = '', $title = '', $content = '', int $timeout = 0)
-    {
+    static public function setAlert(
+        $css = '', $title = '', $content = '', int $timeout = 0, string $id = ''
+    ) {
         self::$data['alert'] = [
             'class' => $css,
             'title' => Functions::purifyContent($title),
             'content' => Functions::purifyContent($content),
             'timeout' => $timeout,
+            'id' => $id
         ];
     }
 
@@ -252,7 +254,9 @@ class MainController extends Controller {
         self::setTitle($title);
         self::setPageContent($content);
         if ($alert !== null) {
-            self::setAlert($alert['css'], $alert['title'], $alert['content'], $alert['timeout']);
+            self::setAlert(
+                $alert['class'], $alert['title'], $alert['content'], $alert['timeout'], $alert['id']
+            );
         } else {
             self::setAlert();
         }
@@ -275,14 +279,20 @@ class MainController extends Controller {
         return view($viewName, self::$data);
     }
 
-    static public function getTemplateView(string $title = '', $content = []) 
-    {
-        return self::getView('content.template', $title, $content);
+    static public function getTemplateView(
+        string $title = '', $content = [], 
+        bool $useFakeData = false, array $breadcrumbs = null, array $alert = null
+    ) {
+        return self::getView(
+            'content.template', $title, $content, $useFakeData, $breadcrumbs, $alert
+        );
     }
 
     static public function getLoremIpsum()
     {
-        return 'Lorem ipsum dolor sit amet, 
+        return str_replace(
+            ["\r\n", "\r", "\n"], ' ', e(
+                'Lorem ipsum dolor sit amet, 
         consectetur adipisicing elit. Modi, nulla, 
         porro facilis officiis sequi natus eum nemo 
         totam eius deserunt reprehenderit ducimus quia et 
@@ -299,7 +309,9 @@ class MainController extends Controller {
         aut commodi animi molestiae amet fugit? Tenetur, eligendi, 
         a pariatur laboriosam aliquid cum voluptate nisi 
         laudantium officiis in voluptatum nihil libero consequatur 
-        tempora sunt dolorum beatae dicta quod illo impedit!';
+        tempora sunt dolorum beatae dicta quod illo impedit!'
+            )
+        );
     }
 
     /// End Utility Functions
@@ -343,7 +355,7 @@ class MainController extends Controller {
         return self::getView('content.tests.test2', $title, $content);
     }
 
-    public function test3(Request $request) {
+    public function test3(Request $request, array $alert = null) {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         $title = 'test ' . $requestedPage . ' page';
         $content = [
@@ -365,7 +377,19 @@ class MainController extends Controller {
         //return $this->getTemplateView($title, $content);
         //dd($request->session()->all());
         //dd(session()->all());
-        return self::getView('content.index', $title, $content, $useFakeData, $breadcrumbs);
+        return self::getView('content.index', $title, $content, $useFakeData, $breadcrumbs, $alert);
+    }
+
+    public function test4(Request $request)
+    {
+        $alert = [
+            'class' => 'alert-success',
+            'title' => "HI! I&apos;m the Alert for the $request->page page!",
+            'content' => self::getLoremIpsum(),
+            'timeout' => 100000,
+            'id' => ''
+        ];
+        return $this->test3($request, $alert);
     }
 
 }

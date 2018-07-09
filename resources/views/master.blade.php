@@ -47,11 +47,12 @@ use the 'no-js' css class for IE9 and below as well.
         @section('header-metas')
             <meta name="csrf-token" content="{{ csrf_token() }}">
             <script>
-                window.Laravel = { csrfToken: '{{ csrf_token() }}',
-                                upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}",
-                                alertTimeout: {{ Functions::testVar($alert2['timeout']??'') ? $alert2['timeout']  : '0' }},
-                                alert: '@json($alert2)' 
-                        };
+                window.Laravel = { 
+                    csrfToken: '{{ csrf_token() }}',
+                    upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}",
+                    alert: '@json($alert2)',
+                    page: {}
+                };
             </script>
             <meta content="Metronic Shop UI description" name="description">
             <meta content="Metronic Shop UI keywords" name="keywords">
@@ -100,7 +101,9 @@ use the 'no-js' css class for IE9 and below as well.
 
             @section('css-preloaded')
 
-                @yield('css-cdn-files')
+                @if (Functions::testVar($usingCDNs))
+                    @yield('css-cdn-files')
+                @endif
 
                 @yield('css-preloaded-global')
 

@@ -4,7 +4,7 @@
     Not to be done until the main project is completed! --}}
 @php
 
-$testing = true;
+$testing = false;
 use \App\Utilities\Functions\Functions,
     \App\Utilities\IterationStack\IterationStack,
     \App\Utilities\IterationStack\IterationFrame;
@@ -22,6 +22,7 @@ $iconAfter2 = Functions::getBladedString($iconAfter??'','');
 $name2 = Functions::getBladedString($name??'','');
 $transform2 = Functions::getBladedString($transform??'','');
 $submenus2 = Functions::getUnBladedContent($submenus??'','');
+$toggle2 = 'dropdown';
 
 // END: the slots of the external dropdown element
 
@@ -33,7 +34,7 @@ $submenus2 = Functions::getUnBladedContent($submenus??'','');
 
 {{-- begin dropdown menu top-level link --}}
 <li class="dropdown {!! $listCSS2 !!}">
-    <a class="dropdown-toggle {{ $cssExtraClasses2 }}" data-toggle="dropdown" data-target="{{ $target2 }}" href="{{ url($url2) }}" role="button">
+    <a class="dropdown-toggle {{ $cssExtraClasses2 }}" data-toggle="{{ $toggle2 }}" data-target="{{ $target2 }}" href="{{ url($url2) }}" role="button">
         
         @if( Functions::testVar($icon2) && (mb_strlen($icon2) !== 0) )
             @if ( !Functions::testVar($name2) || (mb_strlen($name2) === 0)  )

@@ -65,7 +65,7 @@ Route::prefix('store')->group(
         // 'product/' goes to 'index()' which returns 'all-products' of the category..
         // a category 'all' should return all products in the catalog/store..
 
-        Route::get('{page}', 'PageController@test2');
+        Route::get('{page}', 'PageController@test4');
         //Route::get('{page}/{page}', 'PageController@test2');
     }
 );

@@ -28,9 +28,10 @@
 
             @section('cms-content')
                 
-                <div id="users-app">
+                <div id="cms-app">
 
                 </div>
+
             @show
             
         </div>

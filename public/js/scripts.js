@@ -91,11 +91,15 @@ jQuery(function ($) {
     myInit($);  
 
   var checkTimeOut = function ($) {
-    if (window.Laravel.alertTimeout !== 0) {
-      $('#masterPageAlert').delay(parseInt(window.Laravel.alertTimeout)).alert('close');
+    var alertTimeout = window.Laravel.page.alert.getTimeout();
+    //console.log("Heloo from checkTimeOut()! timeout = " + alertTimeout);  
+    if (alertTimeout !== 0) {
+      $('#masterPageAlert').show( function() {
+        $(this).delay(alertTimeout).alert('close');
+      });
     }
   };
-  checkTimeOut($);
+  //checkTimeOut($);
     
   
 });

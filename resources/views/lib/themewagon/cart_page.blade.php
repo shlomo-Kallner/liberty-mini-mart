@@ -96,62 +96,67 @@
                 @if (Functions::testVar($cart2))
                     <div class="table-wrapper-responsive">
                         <table summary="Shopping cart">
-                            <tr>
-                                <th class="goods-page-image">Image</th>
-                                <th class="goods-page-description">Description</th>
-                                <th class="goods-page-ref-no">Ref No</th>
-                                <th class="goods-page-quantity">Quantity</th>
-                                <th class="goods-page-price">Unit price</th>
-                                <th class="goods-page-total" colspan="2">Total</th>
-                            </tr>
-
-                            @foreach ($cart2 as $item)
+                            
+                            <thead>
                                 <tr>
-                                    <td class="goods-page-image">
-                                        <a href="{{ url($item['url']) }}">
-                                            <img src="{{ asset($item['img']) }}" alt="{{ $item['imgAlt'] }}">
-                                        </a>
-                                    </td>
-                                    <td class="goods-page-description">
-                                        <h3>
-                                            <a href="{{ url($item['url']) }}">{{ $item['shortDescription'] }}</a>
-                                        </h3>
-                                        <p>
-                                            <strong>Item {{ $loop->index + 1 }}</strong> - 
-                                            @foreach ($item['options'] as $optName => $optVal)
-                                                {{ $optName }}: {{ $optVal }}
-                                            @endforeach
-                                        </p>
-                                        <em>More info is here</em>
-                                    </td>
-                                    <td class="goods-page-ref-no">
-                                            {{ $item['refNo'] }}
-                                    </td>
-                                    <td class="goods-page-quantity">
-                                        <div class="product-quantity">
-                                            <input id="product-quantity" type="text" value="{{ $item['quantity'] }}" readonly class="form-control input-sm">
-                                        </div>
-                                    </td>
-                                    <td class="goods-page-price">
-                                        <strong>
-                                            <span><i class="fa {{ $currency2 }}"></i></span>
-                                            {{ $item['price'] }}
-                                        </strong>
-                                    </td>
-                                    <td class="goods-page-total">
-                                        <strong>
-                                            <span><i class="fa {{ $currency2 }}"></i></span>
-                                            {{ $item['subtotal'] }}
-                                        </strong>
-                                    </td>
-                                    <td class="del-goods-col">
-                                        @foreach ($item['buttons'] as $button)
-                                            <a class="{{ $button['class'] }}" href="{{ url($button['url']) }}"></a>
-                                        @endforeach
-                                    </td>
+                                    <th class="goods-page-image">Image</th>
+                                    <th class="goods-page-description">Description</th>
+                                    <th class="goods-page-ref-no">Ref No</th>
+                                    <th class="goods-page-quantity">Quantity</th>
+                                    <th class="goods-page-price">Unit price</th>
+                                    <th class="goods-page-total" colspan="2">Total</th>
                                 </tr>
-                            @endforeach
-                        
+                            </thead>
+                            <tbody>
+                                @foreach ($cart2 as $item)
+                                    <tr>
+                                        <td class="goods-page-image">
+                                            <a href="{{ url($item['url']) }}">
+                                                <img src="{{ asset($item['img']) }}" alt="{{ $item['imgAlt'] }}">
+                                            </a>
+                                        </td>
+                                        <td class="goods-page-description">
+                                            <h3>
+                                                <a href="{{ url($item['url']) }}">{{ $item['shortDescription'] }}</a>
+                                            </h3>
+                                            <p>
+                                                <strong>Item {{ $loop->index + 1 }}</strong> - 
+                                                @foreach ($item['options'] as $optName => $optVal)
+                                                    {{ $optName }}: {{ $optVal }}
+                                                @endforeach
+                                            </p>
+                                            <em>More info is here</em>
+                                        </td>
+                                        <td class="goods-page-ref-no">
+                                                {{ $item['refNo'] }}
+                                        </td>
+                                        <td class="goods-page-quantity">
+                                            <div class="product-quantity">
+                                                <input id="product-quantity" type="text" value="{{ $item['quantity'] }}" readonly class="form-control input-sm">
+                                            </div>
+                                        </td>
+                                        <td class="goods-page-price">
+                                            <strong>
+                                                <span><i class="fa {{ $currency2 }}"></i></span>
+                                                {{ $item['price'] }}
+                                            </strong>
+                                        </td>
+                                        <td class="goods-page-total">
+                                            <strong>
+                                                <span><i class="fa {{ $currency2 }}"></i></span>
+                                                {{ $item['subtotal'] }}
+                                            </strong>
+                                        </td>
+                                        <td class="del-goods-col">
+                                            @foreach ($item['buttons'] as $button)
+                                                <a class="{{ $button['class'] }}" href="{{ url($button['url']) }}"></a>
+                                            @endforeach
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            
+                            </tbody>
+
                         </table>
                     </div>
                 @else

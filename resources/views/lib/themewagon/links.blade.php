@@ -26,11 +26,12 @@
  $icon2 = Functions::getBladedString($icon??'','');
  $name2 = Functions::getBladedString($name??'','');
  $transform2 = Functions::getBladedString($transform??'','');
+ $toggle2 = Functions::getBladedString($toggle??'modal','modal');
 
 @endphp
 <a href="{{ url($url2) }}"
     @if( Functions::testVar($type2) && ($type2 == 'modal') )
-        data-toggle="modal" data-target="{{ $target2 }}"
+        data-toggle="{{ $toggle2 }}" data-target="{{ $target2 }}"
     @endif
     @if (Functions::testVar($cssExtraClasses2))
         class="{{ $cssExtraClasses2 }}"

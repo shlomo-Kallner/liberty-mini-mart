@@ -26,13 +26,14 @@ const app = new Vue({
 });
  */
 
- Vue.component('dismissable-alert', require('./components/dismissable-alert.vue'));
+Vue.component('dismissable-alert', require('./components/dismissable-alert.vue'));
 
-var alertFromLaravel = new LaravelAlert(window.Laravel.alert);
+
+window.Laravel.page.alert = new LaravelAlert(window.Laravel.alert);
 
 var masterAlert = new Vue({
   el: '#masterPageAlertContainer',
   data: {
-      alert: alertFromLaravel.getData()
+    alert: window.Laravel.page.alert.getData()
   }
 });

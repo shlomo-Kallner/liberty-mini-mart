@@ -23,4 +23,8 @@ export class LaravelAlert {
       this.data.timeout = parseInt(timeout);
     }
   }
+
+  getTimeout () {
+    return this.data.timeout;
+  }
 }

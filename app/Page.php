@@ -31,13 +31,14 @@ class Page extends Model
      *                        // method..  
      * @param string $iconAfter // 'the Font Awesome 4 icon class' inserted AFTER
      *                          // the NAME unlike $icon which PRECEDES the NAME.. 
+     * @param string $toggle // the data-toggle attribute's parameter...
      * 
      * @return array - a descriptor of a link.
      */
     static public function genLink(
         string $type, string $url, string $name, string $cssExtraClasses = '',
         string $icon = '', string $textTransform = '', string $target = '', 
-        array $submenus = null, string $iconAfter = ''
+        array $submenus = null, string $iconAfter = '', string $toggle = ''
     ) {
         return [
             'type' => $type, // 'url' for a url link, 'modal' for a modal 
@@ -55,6 +56,7 @@ class Page extends Model
             // anchor tag... (Bootstrap 3/other..)
             'iconAfter' => $iconAfter, // 'the Font Awesome 4 icon class' inserted 
             // AFTER the NAME unlike $icon which PRECEDES the NAME.. 
+            'toggle' => $toggle, // the data-toggle attribute's parameter...
         ];
     }
 
@@ -78,7 +80,7 @@ class Page extends Model
         // previously called 'genPreHeaderModal()'
         return static::genLink( 
             'modal', '#', $name, $cssExtraClasses, $icon,
-            $textTransform, $target, null, $iconAfter
+            $textTransform, $target, null, $iconAfter, 'modal'
         );
     }
 
@@ -89,7 +91,7 @@ class Page extends Model
     ) {
         return static::genLink( 
             'dropdown', $url, $name, $cssExtraClasses,
-            $icon, $textTransform, '', $submenus, $iconAfter
+            $icon, $textTransform, '', $submenus, $iconAfter, 'dropdown'
         );
     }
 
