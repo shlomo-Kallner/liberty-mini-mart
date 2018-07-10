@@ -49,19 +49,41 @@ Route::prefix('store')->group(
         //Route::get('section/test/category/test/product/test', 'ProductController@test');
         //Route::post('section/test/category/test/product/test', 'ProductController@testPost');
 
-        Route::resource('section', 'SectionController', [
-            'parameters'=> [
-                'section' => 'section'
+        Route::resource(
+            'section', 'SectionController', [
+                'parameters'=> [
+                    'section' => 'section'
+                ],
+                'only' => [
+                    'index', 'show'
+                ],
             ]
-        ]);
+        );
         // 'section/' goes to 'index()' which returns 'all-sections' of the store..
-        Route::resource('section/{section}/category', 'CategorieController', [
-            'parameters'=> [
-                'categorie' => 'category'
+        Route::resource(
+            'section/{section}/category', 'CategorieController', [
+                'parameters'=> [
+                    'categorie' => 'category',
+                    'section' => 'section'
+                ],
+                'only' => [
+                    'index', 'show'
+                ],
             ]
-        ]);
+        );
         // 'category/' goes to 'index()' which returns 'all-categories' of the store..
-        Route::resource('section/{section}/category/{category}/product', 'ProductController');
+        Route::resource(
+            'section/{section}/category/{category}/product', 'ProductController', [
+                'parameters'=> [
+                    'categorie' => 'category',
+                    'section' => 'section',
+                    'product' => 'product',
+                ],
+                'only' => [
+                    'index', 'show'
+                ],
+            ]
+        );
         // 'product/' goes to 'index()' which returns 'all-products' of the category..
         // a category 'all' should return all products in the catalog/store..
 
@@ -74,7 +96,7 @@ Route::resource('cart', 'CartController');
 Route::resource('wishlist', 'WishlistController');
 Route::get('checkout', 'ShopController@checkout');
 
-Route::get('admin', 'UserController@cms');
+Route::get('admin', 'CmsController@index');
 
 //Route::get('user', 'UserController');
 //Route::post('user', 'UserController');

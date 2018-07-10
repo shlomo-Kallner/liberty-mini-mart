@@ -92,18 +92,24 @@ class UserController extends MainController {
         return parent::getView('content.tests.test2', 'New User Registeration Successfull!!');
     }
 
-    public static function pagePathSplit(string $str){
+    public static function pagePathSplit(string $str)
+    {
         $tmp1 = str_replace( '-', '/', $str );
         return str_replace( '_', '-', $tmp1 );
     }
 
-    public static function pagePathJoin(string $str){
+    public static function pagePathJoin(string $str)
+    {
         $tmp1 = str_replace('-', '_', $str);
         return str_replace( '/', '-', $tmp1);
     }
 
     public function cms(Request $request)
     {
+        // get our page data and send it to the view!
+        // page data includes:
+        //      nav/menu-items, users, sections, categories, 
+        //      products, orders, pages
         return parent::getView('content.management', 'MY ADMIN PANEL');
     }
 
@@ -121,7 +127,6 @@ class UserController extends MainController {
         $request->session()->put('user', 'hello');
 
         // redirection stuff..
-        $redirect = '/';
         //// the Laravel Session appears to HATE being 
         //   assigned ANYTHING other than strings!
         //dd(session()->all());
@@ -129,6 +134,8 @@ class UserController extends MainController {
         //return parent::getView('content.tests.test2', 'User Logged In Successfull!!', $content);
         if ($request->session()->has('redirectPage')) {
             $redirect = self::pagePathSplit($request->session()->pull('redirectPage'));
+        } else {
+            $redirect = '/';
         }
 
         return redirect($redirect);
@@ -140,29 +147,35 @@ class UserController extends MainController {
         //  it IS BEING PASSED THROUGH THE Request @param 
         //  ANYWAYS...
 
-        $request->session()->reflash();
+        if ($request->session()->has('redirectPath') && !empty($request->page)) {
+            if ($request->page == self::pagePathJoin($request->session()->get('redirectPath'))) {
+                
+                $request->session()->reflash();
 
-        $redirectData = [
-            'redirectToken'=> str_random(40),
-            'redirectPage' => isset($request->page)?$request->page: '',
-        ];
+                $redirectData = [
+                    'redirectToken'=> str_random(40),
+                    'redirectPage' => isset($request->page)?$request->page: '',
+                ];
 
-        $request->session()->put($redirectData);
+                $request->session()->put($redirectData);
 
-        //$request->session()->put('redirectToken', $token );
-        //self::$data['page']['redirectToken'] = $token;
-        //if(!empty($page) && $page === $request->page){
-        //    $request->session()->put('redirectPage', $page );
-            //self::$data['page']['redirectPage'] = $page;
-        //}else{
-        //    $request->session()->put('redirectPage', $request->page );
-            //self::$data['page']['redirectPage'] = $request->page;
-        //}
+                //$request->session()->put('redirectToken', $token );
+                //self::$data['page']['redirectToken'] = $token;
+                //if(!empty($page) && $page === $request->page){
+                //    $request->session()->put('redirectPage', $page );
+                    //self::$data['page']['redirectPage'] = $page;
+                //}else{
+                //    $request->session()->put('redirectPage', $request->page );
+                    //self::$data['page']['redirectPage'] = $request->page;
+                //}
 
-        // THE redirect view will have to retrieve the $redirect* data 
-        //  from the Session directly.. 
+                // THE redirect view will have to retrieve the $redirect* data 
+                //  from the Session directly.. 
 
-        return parent::getView('forms.redirect', self::$data);
+                return parent::getView('forms.redirect', self::$data);
+            }
+        } 
+        return redirect('/');
     }
 
     public function signout(Request $request) {

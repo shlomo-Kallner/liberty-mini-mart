@@ -38,6 +38,7 @@ $role2 = Functions::getBladedString($role??'button','button');
 
 {{-- begin dropdown menu top-level link --}}
 <li class="dropdown {!! $listCSS2 !!}">
+
     @if (true)
 
         @component('lib.themewagon.links')
@@ -104,10 +105,12 @@ $role2 = Functions::getBladedString($role??'button','button');
 
     @endif
 
-    <!-- BEGIN DROPDOWN MENU -->
-    <ul class="dropdown-menu">
+    
+    @if (Functions::testVar($submenus2))
 
-        @if (Functions::testVar($submenus2))
+        <!-- BEGIN DROPDOWN MENU -->
+        <ul class="dropdown-menu">
+
 
             @if (true)
                 {{-- copying outright from sidebar_menu.blade.php.. --}}
@@ -178,7 +181,7 @@ $role2 = Functions::getBladedString($role??'button','button');
                             
                     @endphp
 
-                       <!-- BEGIN DROPDOWN sub-MENU -->
+                        <!-- BEGIN DROPDOWN sub-MENU -->
                         <li class="dropdown-submenu">
                             @php
                                 $elem_cssExtraClasses = $elem->get('cssExtraClasses');
@@ -262,7 +265,7 @@ $role2 = Functions::getBladedString($role??'button','button');
                                 $frameStack->push('submenu');
                             @endphp
                         @continue
-                             
+                                
                     @endif
 
                     {{-- 
@@ -376,10 +379,11 @@ $role2 = Functions::getBladedString($role??'button','button');
 
             @endif
 
-        @endif
+        </ul>
+        <!-- END DROPDOWN MENU -->
+        
+    @endif
 
-    </ul>
-    <!-- END DROPDOWN MENU -->
 </li>
 {{-- end dropdown menu top-level link --}}
 

@@ -37,27 +37,27 @@ if (!$testing) {
     $currency2 = Functions::getBladedString($currency??'fa-usd');
 } else{
     $fakeID = 'MyFAKESEssionID123';
-        //$myCart = new Cart();
-        \Cart::session($fakeID);
-        \Cart::session($fakeID)->add(123, 'Rolex Classic Watch', 230.5, 5, [
-            'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
-            'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg',
-            'description' => 'Rolex Classic Watch',
-        ]);
-        //$cartContent = \Cart::session($fakeID)->getContent();
-        $cart2 = [
-            'items' => \Cart::session($fakeID)->getContent(),
-            'sub-total' => \Cart::session($fakeID)->getSubTotal(),
-            'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
-        ];
-        $currency2 = Functions::getBladedString($currency??'fa-usd');
+    //$myCart = new Cart();
+    \Cart::session($fakeID);
+    \Cart::session($fakeID)->add(123, 'Rolex Classic Watch', 230.5, 5, [
+        'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+        'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg',
+        'description' => 'Rolex Classic Watch',
+    ]);
+    //$cartContent = \Cart::session($fakeID)->getContent();
+    $cart2 = [
+        'items' => \Cart::session($fakeID)->getContent(),
+        'sub-total' => \Cart::session($fakeID)->getSubTotal(),
+        'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
+    ];
+    $currency2 = Functions::getBladedString($currency??'fa-usd');
 }
 ?>
 
 
 
 @section('user-links-panel')
-{{-- the users-links panel replaces the topbar when scrolled down.. --}}
+    {{-- the users-links panel replaces the topbar when scrolled down.. --}}
 
     @component('lib.themewagon.users_panel')
         @slot('navbar')
@@ -69,7 +69,7 @@ if (!$testing) {
 
 
 @section('pre-header-navbar')
-@parent
+    @parent
 
     @component('lib.themewagon.topbar')
         @slot('preheader')
@@ -117,25 +117,25 @@ if (!$testing) {
                                     <?php //dd($item);     ?>
                                     @component('lib.themewagon.cartItem')
                                         @slot('url')
-                                        {{$item->attributes['url']}}
+                                            {{$item->attributes['url']}}
                                         @endslot
                                         @slot('img')
-                                        {{ $item->attributes['img'] }}
+                                            {{ $item->attributes['img'] }}
                                         @endslot
                                         @slot('description')
-                                        {{ $item->attributes['description'] }}
+                                            {{ $item->attributes['description'] }}
                                         @endslot
                                         @slot('quantity')
-                                        {{ $item->quantity }}
+                                            {{ $item->quantity }}
                                         @endslot
                                         @slot('name')
-                                        {{ $item->name }}
+                                            {{ $item->name }}
                                         @endslot
                                         @slot('currencyIcon')
-                                        {{ $currency2 }}
+                                            {{ $currency2 }}
                                         @endslot
                                         @slot('priceSum')
-                                        {{ $item->getPriceSumWithConditions() }}
+                                            {{ $item->getPriceSumWithConditions() }}
                                         @endslot
                                     @endcomponent
                                 @endforeach
@@ -162,14 +162,17 @@ if (!$testing) {
             <div class="header-navigation">
                 <ul>
 
-                    {{-- Replacing Original 'Kids' menu Item with 
-                        our Blade Foreach loop...  --}}
-                    {{-- Moving our "main level" items to the 'front'.. --}}
+                    {{-- 
+                        Replacing Original 'Kids' menu Item with 
+                        our Blade Foreach loop...  
+
+                        Moving our "main level" items to the 'front'.. 
+                    --}}
                     @foreach($navbar2 as $nav)
 
-                        @if ($nav['type'] == 'url' || $nav['type'] == 'modal')
+                        @if ($nav['type'] == 'url' || $nav['type'] == 'modal' || $nav['type'] == 'dropdown')
 
-                            {{-- BEGIN single "main level" menu --}}
+                            {{-- BEGIN single "main level" AND dropdown menu --}}
                             @component('lib.themewagon.menu_links')
                                 @foreach ($nav as $key => $value)
 
@@ -179,20 +182,8 @@ if (!$testing) {
                                     
                                 @endforeach
                             @endcomponent
-                            {{-- End single "main level" menu --}}
+                            {{-- End single "main level" AND dropdown menu --}}
                             
-                        @elseif ($nav['type'] == 'dropdown')
-                            {{-- begin dropdown menu top-level link --}}
-                            @component('lib.themewagon.menu_dropdowns')
-                                @foreach ($nav as $key => $value)
-
-                                    @slot($key)
-                                        {{ $value }}
-                                    @endslot
-                                    
-                                @endforeach
-                            @endcomponent
-                            {{-- end dropdown menu top-level link --}}
                         @elseif ($nav['type'] == 'dropdown-megamenu')
                             {{-- DROPDOWN-MEGAMENUS ARE A ADVANCED-TASK COMPONENT -> NOT IMPLEMENTED YET! --}}
 

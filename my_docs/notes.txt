@@ -1,0 +1,12 @@
+
+
+Content Managment System
+-> What does it require?
+-> What does it display/do?
+
+1#from cms/categories.blade
+2#->web.php 
+{
+    reassign the web paths in the for the store and the admin.
+    
+}

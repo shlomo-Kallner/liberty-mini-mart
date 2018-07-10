@@ -33,6 +33,8 @@ class Page extends Model
      *                          // the NAME unlike $icon which PRECEDES the NAME.. 
      * @param string $toggle // the data-toggle attribute's parameter...
      * 
+     * @param string $role // the role attribute's parameter...
+     * 
      * @return array - a descriptor of a link.
      */
     static public function genLink(
@@ -262,6 +264,7 @@ class Page extends Model
         } else {
 
         }
+        return $links;
     }
 
     static public function getNamedPage($url, $path)
