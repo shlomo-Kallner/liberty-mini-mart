@@ -8,5 +8,26 @@ Content Managment System
 2#->web.php 
 {
     reassign the web paths in the for the store and the admin.
-    
+
 }
+
+todo in
+[
+    SectionController
+    CategorieController
+    ProductController
+] rewrite
+show() functions.
+that returns the view 
+that displays the {item}.
+ENSURE that ALL other Resource Methods check for,
+ADMIN RIGHTS!!
+
+todo rewrite 
+[
+    cart
+    wishlist
+]
+web routes to gets..
+and rewrite their associated
+Controllers..

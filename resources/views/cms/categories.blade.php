@@ -4,13 +4,19 @@
     use \App\Utilities\Functions\Functions;
     
     $categories2 = Functions::getUnBladedContent($categories??'');
+    $section2 = Functions::getUnBladedContent($section??'');
 @endphp
 
 <div class="panel-group" id="categories-panel-group" role="tablist" aria-multiselectable="true">
     @foreach ($categories2 as $category)
         @php
-            $panelId1 = 'headingCategoryPanel' . $category['url'] . '-of-' . $category['section_name'];
-            $panelId2 = 'collapseCategoryPanel' . $category['url'] . '-of-' . $category['section_name'];
+            $panelId1 = 'headingCategoryPanel' . $category['url'] . '-of-' . $section2['url'];
+            $panelId2 = 'collapseCategoryPanel' . $category['url'] . '-of-' . $section2['url'];
+            $urls = [
+                //'section/{section}/category/{category}/product'
+                'edit' => 'admin/section/' . $section2['url'] . '/category/' . $category['url'] . '/edit',
+                '' => ''
+            ];
         @endphp
         
         <div class="panel panel-default">

@@ -49,14 +49,36 @@ Route::prefix('store')->group(
         //Route::get('section/test/category/test/product/test', 'ProductController@test');
         //Route::post('section/test/category/test/product/test', 'ProductController@testPost');
 
+        Route::get('section/{section?}', 'SectionController@show');
+        //
+        Route::get('section/{section}/category/{category?}', 'CategorieController@show');
+        //
+        Route::get('section/{section}/category/{category}/product/{product?}', 'ProductController@show');
+        //
+        // a category 'all' should return all products in the catalog/store..
+
+        Route::get('{page}', 'PageController@test4');
+        //Route::get('{page}/{page}', 'PageController@test2');
+    }
+);
+
+Route::get('cart', 'CartController@show');
+Route::get('wishlist', 'WishlistController@show');
+Route::get('checkout', 'ShopController@checkout');
+
+Route::prefix('admin')->group( 
+    function () {
+        //Route::get('/', 'ShopController@test');
+        Route::get('/', 'CmsController@index');
+
         Route::resource(
             'section', 'SectionController', [
                 'parameters'=> [
                     'section' => 'section'
                 ],
-                'only' => [
-                    'index', 'show'
-                ],
+                'except' => [
+                    'show'
+                ]
             ]
         );
         // 'section/' goes to 'index()' which returns 'all-sections' of the store..
@@ -66,9 +88,9 @@ Route::prefix('store')->group(
                     'categorie' => 'category',
                     'section' => 'section'
                 ],
-                'only' => [
-                    'index', 'show'
-                ],
+                'except' => [
+                    'show'
+                ]
             ]
         );
         // 'category/' goes to 'index()' which returns 'all-categories' of the store..
@@ -79,25 +101,15 @@ Route::prefix('store')->group(
                     'section' => 'section',
                     'product' => 'product',
                 ],
-                'only' => [
-                    'index', 'show'
-                ],
+                'except' => [
+                    'show'
+                ]
             ]
         );
         // 'product/' goes to 'index()' which returns 'all-products' of the category..
-        // a category 'all' should return all products in the catalog/store..
-
-        Route::get('{page}', 'PageController@test4');
-        //Route::get('{page}/{page}', 'PageController@test2');
+        
     }
 );
-
-Route::resource('cart', 'CartController');
-Route::resource('wishlist', 'WishlistController');
-Route::get('checkout', 'ShopController@checkout');
-
-Route::get('admin', 'CmsController@index');
-
 //Route::get('user', 'UserController');
 //Route::post('user', 'UserController');
 //Route::resource('user', 'UserController');

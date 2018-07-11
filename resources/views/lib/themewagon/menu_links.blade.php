@@ -128,12 +128,12 @@
                     //dd($elem);
                     //dd($elem_type);
 
-                    if ($elem_type === 'url'|| $elem_type === 'modal') {
-                        $elem_listCssClass = ''
+                    if ($elem_type === 'url' || $elem_type === 'modal') {
+                        $elem_listCssClass = '';
                     } elseif ($elem_type === 'dropdown-submenu' || $elem_type === 'dropdown') {
                         if ($elem->parent() !== null) {
                             $parent_type = $elem->parent()->get('type');
-                            if (($parent_type == 'dropdown')||($parent_type == 'dropdown-submenu')) {
+                            if ($parent_type == 'dropdown' || $parent_type == 'dropdown-submenu') {
                                 $elem_listCssClass = 'dropdown-submenu';
                             } else {
                                 $elem_listCssClass = 'dropdown';
