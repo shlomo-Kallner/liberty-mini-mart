@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request,
     Illuminate\Support\Facades\Session;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserController,
+    App\Page,
+    App\Section,
+    App\Categorie,
+    App\Product;
 
 class CmsController extends MainController 
 {
@@ -19,7 +23,7 @@ class CmsController extends MainController
                 } else {
                     $request->session()->reflash();
                     
-                    $request->session()->flash('redirectFullUrl', $request->fullUrl());
+                    //$request->session()->flash('redirectFullUrl', $request->fullUrl());
                     $request->session()->flash('redirectPath', $request->path());
                     
                     return redirect('signin/' . UserController::pagePathJoin($request->path()));
@@ -30,7 +34,22 @@ class CmsController extends MainController
 
     public function index(Request $request)
     {
-        return self::getView('content.cms');
+        //$sections = Section::getAllWithPagination();
+        $sections = Section::all();
+        foreach ($sections as $section) {
+            //$section['categories'] = Categorie::getCategoriesOfSectionWithPagination($section['id'], ... );
+            $section['categories'] = Categorie::getCategoriesOfSection($section['id']);
+        }
+        
+        return self::getView(
+            'content.cms', '', [
+                'article' => [
+                    'title' => 'Welcome to OUR DASHBOARD!',
+                    'subheading' => 'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
+                ],
+                'sections' => $sections,
+            ]
+        );
     }
 
 

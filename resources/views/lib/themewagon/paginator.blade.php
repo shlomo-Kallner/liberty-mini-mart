@@ -8,22 +8,26 @@
     //$paginator2 = Functions::getUnBladedContent($paginator??'');
     $currentRange2 = Functions::getUnBladedContent($currentRange??'','');
     $totalItems2 = intval(Functions::getUnBladedContent($totalItems??'',''));
-    $numRanges2 = intval(Functions::getUnBladedContent($numRanges??'',''));
+    //$numRanges2 = intval(Functions::getUnBladedContent($numRanges??'',''));
     $ranges2 = Functions::getUnBladedContent($ranges??'','');
+    $numPerView2 = intval(Functions::getUnBladedContent($numPerView??'','4'));
+    $pagingFor2 = Functions::getUnBladedContent($pagingFor??'','');
+
     
     //dd($paginator2);
-    //dd($currentRange2, $totalItems2, $numRanges2, $ranges2);
-    //dd($currentRange, $totalItems, $numRanges, $ranges);
+    //dd($currentRange2, $totalItems2, $ranges2);
+    //dd($currentRange, $totalItems, $ranges);
+    //dd($numRanges2, $numRanges);
     //dd($ranges2);
     $paging = true;
-    if ($currentRange2 == '' || $totalItems2 == '' || $numRanges2 == '' || $ranges2 == '') 
+    if ($currentRange2 == '' || $totalItems2 == '' || $ranges2 == '' || $numPerView2 == '') // || $numRanges2 == '' 
     {
         $paging = false;
     } 
     if (Functions::testVar($paging)) {
-        $numPerView = 4;
-        $numViews = Functions::genRowsPerPage(count($ranges2), $numPerView);
-        $viewIdxs = Functions::genPageArray($ranges2, $numPerView);
+        //$numPerView = Functions::testVar($numPerView2) ? $numPerView2 : 4;
+        $numViews = Functions::genRowsPerPage(count($ranges2), $numPerView2);
+        $viewIdxs = Functions::genPageArray($ranges2, $numPerView2);
         $currentView = -1;
         for ($i = 0; $i < count($viewIdxs); $i++) {
             if (in_array($currentRange2['index'],$viewIdxs[$i])) {
@@ -31,11 +35,37 @@
                 break;
             }
         }
-        //dd($numPerView, $numViews, $viewIdxs, $currentView);
+        //dd($numPerView2, $numViews, $viewIdxs, $currentView);
+
+        // view urls..
+        $prevViewUrl = '#?' . http_build_query(
+            [
+                'viewNum' => $currentView - 1, 
+                'pageNum'=> $currentRange2['index'],
+                'pagingFor' => $pagingFor2
+            ]
+        );
+        $nextViewUrl = '#?' . http_build_query(
+            [
+                'viewNum' => $currentView + 1, 
+                'pageNum'=> $currentRange2['index'],
+                'pagingFor' => $pagingFor2 
+            ]
+        );
+        $numberedViewUrls = [];
+        for ($viewIdxs[$currentView] as $item) {
+            $numberedViewUrls[$item] = '#?' . http_build_query(
+                [
+                    'viewNum' => $currentView, 
+                    'pageNum'=> $item + 1,
+                    'pagingFor' => $pagingFor2 
+                ]
+            );
+        }
+
     } else {
         //$testing = true;
     }
-
     
 @endphp
 
@@ -50,11 +80,12 @@
                 to {{ $currentRange2['end'] + 1 }} 
                 of {{ $totalItems2 }} total
             </div>
+
             <div class="col-md-8 col-sm-8">
                 <ul class="pagination pull-right">
                     @if ($numViews > 1 && $currentView > 0 )
                         <li>
-                            <a href="javascript:;" aria-label="Previous">
+                            <a href="{{ $prevViewUrl }}" aria-label="Previous">
                                 <i class="fa fa-chevron-left"></i>
                             </a>
                         </li>
@@ -65,14 +96,14 @@
                             @if ($item === $currentRange2['index'])
                                 <span>{{ $item + 1 }}</span> 
                             @else
-                                <a href="javascript:;">{{ $item + 1 }}</a>
+                                <a href="{{ $numberedViewUrls[$item] }}">{{ $item + 1 }}</a>
                             @endif
                         </li>
                     @endforeach
                     
                     @if ($numViews > 1 && $currentView < $numViews )
                         <li>
-                            <a href="javascript:;" aria-label="Next">
+                            <a href="{{ $nextViewUrl }}" aria-label="Next">
                                     <i class="fa fa-chevron-right"></i>
                             </a>
                         </li>

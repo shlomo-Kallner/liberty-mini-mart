@@ -24,7 +24,7 @@ class SectionController extends MainController
     {
         // wrong view! We NEED a NEW view to display ALL Sections!
         // (which is what this method does...)
-        return self::getView('content.section');
+        //return self::getView('content.section');
     }
 
     /**
@@ -57,25 +57,41 @@ class SectionController extends MainController
      */
     public function show(Request $request)
     {
-        dd($request->section);
-        $section = Section::getNamed($request->section);
-        $section_items = Categorie::getCategoriesOfSection($section->id);
-        $section_data = [
-            'section' => $section,
-            'items' => $section_items
-        ];
-        $breadcumbs = Page::getBreadcrumbs(
-            [
-                Page::genBreadcrumb('Store', 'store'),
-                Page::genBreadcrumb('Our Sections', 'store/section'),
-            ],
-            Page::genBreadcrumb($section->name, 'store/section/'. $section->url)
-        );
+        if (isset($request->section)) {
+            
+            dd($request->section);
+            $section = Section::getNamed($request->section);
+            $section_items = Categorie::getCategoriesOfSection($section->id);
+            $section_data = [
+                'section' => $section,
+                'items' => $section_items
+            ];
+            
+            $breadcumbs = Page::getBreadcrumbs(
+                [
+                    Page::genBreadcrumb('Store', 'store'),
+                    Page::genBreadcrumb('Our Sections', 'store/section'),
+                ],
+                Page::genBreadcrumb($section->name, 'store/section/'. $section->url)
+            );
+            return self::getVeiw(
+                'content.section', $section->title, $section_data, 
+                false, $breadcumbs
+            );
+        } else {
+            // get a listing of all sections... 
+            $breadcumbs = Page::getBreadcrumbs(
+                [
+                    Page::genBreadcrumb('Store', 'store'),
+                ],
+                Page::genBreadcrumb('Our Sections', 'store/section')
+            );
+            // create a special 'content.sections' view for such a listing.. 
+            // optionally add pagination... 
+            return self::getView('', 'Our Sections', null, false, $breadcumbs);
+        }
 
-        return self::getVeiw(
-            'content.section', $section->title, $section_data, 
-            false, $breadcumbs
-        );
+        
     }
 
     /**

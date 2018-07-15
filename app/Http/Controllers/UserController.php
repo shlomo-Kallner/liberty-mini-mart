@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 
 class UserController extends MainController {
 
-    public function __construct($name = '', $titleNameSep = '') {
+    public function __construct($name = '', $titleNameSep = '') 
+    {
         parent::__construct($name, $titleNameSep);
     }
 
@@ -16,7 +17,8 @@ class UserController extends MainController {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index(Request $request) 
+    {
         //
     }
 
@@ -25,7 +27,8 @@ class UserController extends MainController {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() {
+    public function create(Request $request) 
+    {
         //
     }
 
@@ -35,7 +38,8 @@ class UserController extends MainController {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(Request $request) 
+    {
         //
     }
 
@@ -45,7 +49,8 @@ class UserController extends MainController {
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user) {
+    public function show(Request $request) 
+    {
         //
     }
 
@@ -55,7 +60,8 @@ class UserController extends MainController {
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user) {
+    public function edit(Request $request) 
+    {
         //
     }
 
@@ -66,7 +72,8 @@ class UserController extends MainController {
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user) {
+    public function update(Request $request) 
+    {
         //
     }
 
@@ -76,7 +83,8 @@ class UserController extends MainController {
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user) {
+    public function destroy(Request $request) 
+    {
         //
     }
 
@@ -89,7 +97,7 @@ class UserController extends MainController {
     }
 
     public function register(Request $request) {
-        return parent::getView('content.tests.test2', 'New User Registeration Successfull!!');
+        return parent::getView('content.index', 'New User Registeration Successfull!!');
     }
 
     public static function pagePathSplit(string $str)
@@ -124,7 +132,13 @@ class UserController extends MainController {
         //dd(session()->all());
 
         // for testing..
-        $request->session()->put('user', 'hello');
+        $request->session()->put(
+            'user', [
+                'name'=> 'hello',
+                'email' => !empty($request->email) ? $request->email : '[blank]',
+                'is_admin' => 'true',
+            ]
+        );
 
         // redirection stuff..
         //// the Laravel Session appears to HATE being 
@@ -132,7 +146,10 @@ class UserController extends MainController {
         //dd(session()->all());
         //self::$data['user']['loggedin'] = true;
         //return parent::getView('content.tests.test2', 'User Logged In Successfull!!', $content);
-        if ($request->session()->has('redirectPage')) {
+        if ($request->session()->has('redirectPage') && $request->session()->has('redirectToken')) {
+            $redirectToken1 = $request->reTok??'';
+            $redirectToken2 = $request->session()->pull('redirectToken');
+        
             $redirect = self::pagePathSplit($request->session()->pull('redirectPage'));
         } else {
             $redirect = '/';
@@ -147,6 +164,7 @@ class UserController extends MainController {
         //  it IS BEING PASSED THROUGH THE Request @param 
         //  ANYWAYS...
 
+        // 'redirectPath' is set by the middleware ...
         if ($request->session()->has('redirectPath') && !empty($request->page)) {
             if ($request->page == self::pagePathJoin($request->session()->get('redirectPath'))) {
                 
@@ -172,10 +190,25 @@ class UserController extends MainController {
                 // THE redirect view will have to retrieve the $redirect* data 
                 //  from the Session directly.. 
 
-                return parent::getView('forms.redirect', self::$data);
+                return parent::getView('forms.redirect', '', self::$data);
             }
-        } 
+        } elseif (!($request->session()->has('redirectPath')) && !empty($request->page)) {
+
+        }
         return redirect('/');
+    }
+
+    static public function userData(
+        string $name = '', string $email = '', int $id = 0, 
+        string $agent = '', string $ip = ''
+    ) {
+        return [
+            'name' => $name,
+            'email' => $email,
+            'id' => $id,
+            'agent' => $agent,
+            'ip' => $ip,
+        ];
     }
 
     public function signout(Request $request) {

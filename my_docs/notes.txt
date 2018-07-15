@@ -7,27 +7,37 @@ Content Managment System
 1#from cms/categories.blade
 2#->web.php 
 {
-    reassign the web paths in the for the store and the admin.
+   [V] reassign the web paths in the for the store and the admin.
 
 }
+3#<-
+[
+    cms/sections.blade [partial]
+    cms/products.blade [Not Implemented!]
+    cms/categories.blade [partial]
+    app/../CmsController.php [partial]
+]
 
 todo in
 [
     SectionController
     CategorieController
     ProductController
-] rewrite
-show() functions.
-that returns the view 
-that displays the {item}.
-ENSURE that ALL other Resource Methods check for,
-ADMIN RIGHTS!!
+] 
+[ 
+    1 => rewrite show() functions that returns the view 
+         that displays the {item}.
+         ENSURE that ALL other Resource Methods check for,
+         ADMIN RIGHTS!!
+    2 => figure out some way for a given user to CRUD 
+         pagination...
+]
 
 todo rewrite 
 [
     cart
     wishlist
 ]
-web routes to gets..
+web routes to gets.. [V]
 and rewrite their associated
 Controllers..

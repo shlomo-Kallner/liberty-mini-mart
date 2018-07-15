@@ -99,7 +99,7 @@ class Page extends Model
         );
     }
 
-    static public function getNavBar($genFakeData = false) 
+    static public function getNavBar($genFakeData = false, string $area = 'store') 
     {
         //$testing = $genFakeData;
         $testing = true;
@@ -173,7 +173,7 @@ class Page extends Model
         return $preheader;
     }
     
-    static public function getSidebar($genFakeData = false)
+    static public function getSidebar($genFakeData = false, string $area = 'store')
     {
         $res = [];
         if ($genFakeData) {
@@ -293,5 +293,36 @@ class Page extends Model
 
     }
     
+    /**
+     * Function genPagination() - Generate Pagination Information as acceptable by
+     *                            'lib.themewagon.paginator'...
+     *  All Numbers passed are indexes starting from zero, 
+     *  although they are displayed by the component with one added to them..
+     *
+     * @param integer $pageNum  - the current page number
+     * @param integer $firstItemShownOnPage - the index of the first item being shown
+     * @param integer $lastItemShownOnPage - the index of the last item being shown
+     * @param integer $totalItems - the total number of items that can be paged through
+     * @param array $rangeOfAllItemIndexes - an array created by Functions::genRange()
+     *                                       of all the indexes of all the items..
+     * @return array 
+     */
+    static public function genPagination(
+        int $pageNum, int $firstItemShownOnPage, int $lastItemShownOnPage,
+        int $totalItems, array $rangeOfAllItemIndexes, int $numPagesPerPagingView = 4,
+        string $pagingFor = ''
+    ) {
+        return [
+            'currentRange' => [
+                'index' => $pageNum,
+                'begin' => $firstItemShownOnPage,
+                'end' => $lastItemShownOnPage,
+            ],
+            'totalItems' => $totalItems,
+            'ranges' => $rangeOfAllItemIndexes,
+            'numPerView' => $numPagesPerPagingView,
+            'pagingFor' => $pagingFor
+        ];
+    }
 
 }

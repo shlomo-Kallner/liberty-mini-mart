@@ -29,13 +29,6 @@ Route::get('/', 'PageController@test3');
     }
 ); */
 
-//Route::resource('user', 'UserController');
-Route::prefix('user')->group(
-    function () {
-        Route::get('/', 'PageController@index1');
-        Route::get('{page}', 'PageController@index1');
-    }
-);
 
 Route::prefix('store')->group( 
     function () {
@@ -62,8 +55,8 @@ Route::prefix('store')->group(
     }
 );
 
-Route::get('cart', 'CartController@show');
-Route::get('wishlist', 'WishlistController@show');
+Route::get('cart/{cart?}', 'CartController@show');
+Route::get('wishlist/{wishlist?}', 'WishlistController@show');
 Route::get('checkout', 'ShopController@checkout');
 
 Route::prefix('admin')->group( 
@@ -71,6 +64,7 @@ Route::prefix('admin')->group(
         //Route::get('/', 'ShopController@test');
         Route::get('/', 'CmsController@index');
 
+        // 'section/' goes to 'index()' which returns 'all-sections' of the store..
         Route::resource(
             'section', 'SectionController', [
                 'parameters'=> [
@@ -81,7 +75,7 @@ Route::prefix('admin')->group(
                 ]
             ]
         );
-        // 'section/' goes to 'index()' which returns 'all-sections' of the store..
+        // 'category/' goes to 'index()' which returns 'all-categories' of the section..
         Route::resource(
             'section/{section}/category', 'CategorieController', [
                 'parameters'=> [
@@ -93,7 +87,7 @@ Route::prefix('admin')->group(
                 ]
             ]
         );
-        // 'category/' goes to 'index()' which returns 'all-categories' of the store..
+        // 'product/' goes to 'index()' which returns 'all-products' of the category..
         Route::resource(
             'section/{section}/category/{category}/product', 'ProductController', [
                 'parameters'=> [
@@ -106,14 +100,31 @@ Route::prefix('admin')->group(
                 ]
             ]
         );
-        // 'product/' goes to 'index()' which returns 'all-products' of the category..
-        
+        // 'user/' goes to 'index()' which returns 'all-users' of the site..
+        Route::resource(
+            'user', 'UserController', [
+                'parameters'=> [
+                    'user' => 'user',
+                ],
+                'except' => [
+                    'show'
+                ]
+            ]
+        );
     }
 );
 //Route::get('user', 'UserController');
 //Route::post('user', 'UserController');
 //Route::resource('user', 'UserController');
 //Route::get('user', 'UserController');
+
+//Route::resource('user', 'UserController');
+Route::prefix('user')->group(
+    function () {
+        Route::get('/{user?}', 'UserController@show');
+        //Route::get('{user}', 'PageController@index1');
+    }
+);
 
 
 Route::get('signup', 'UserController@signup');
