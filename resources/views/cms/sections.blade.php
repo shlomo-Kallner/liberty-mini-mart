@@ -11,7 +11,11 @@
 
 <div class="panel-group" id="{{ $panelGroupId }}" role="tablist" aria-multiselectable="true">
 
-    @foreach ($sections2 as $section)
+    @foreach ()
+    @endforeach
+
+    @forelse ($sections2 as $section)
+
         @php
             $panelId1 = 'headingSectionPanel-of-' . $section['url'];
             $panelId2 = 'collapseSectionPanel-of-' . $section['url'];
@@ -54,8 +58,8 @@
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="btn-group pull-left">
                                         <a class="btn btn-default" data-toggle="collapse" href="{{'#' . $panelId3}}" aria-expanded="false" aria-controls="{{ $panelId3 }}" role="button">Show Content</a>
-                                        <a class="btn btn-warning" href="{{ $url_edit }}" role="button">Edit</a>
-                                        <button type="button" class="btn btn-danger" onclick="deleteSection('{{$url_delete}}')">Delete</button>
+                                        <a class="btn btn-warning" href="{{ $url_edit }}" role="button">Edit this Section</a>
+                                        <button type="button" class="btn btn-danger" onclick="deleteSection('{{$url_delete}}')">Delete this Section</button>
                                         
                                         {{-- <a class="btn btn-default" href="#" role="button"></a> --}}
                                         {{-- <a class="btn btn-default" href="#" role="button"></a> --}}
@@ -72,15 +76,15 @@
                                 </div>
                             </div>
             
-                            <div class="collapse" id="{{ $panelId3 }}">
+                            <div class="row collapse" id="{{ $panelId3 }}">
                                 @component('cms.categories')
                                     @slot('categories')
                                         {!! serialize($section['categories']) !!}
                                     @endslot
-                                    @slot('section')
-                                        {!! serialize($section) !!}
+                                    @slot('section_url')
+                                        {!! serialize($section['url']) !!}
                                     @endslot
-                                    @if (Functions::testVar($section['paginator']))
+                                    @if (Functions::testVar($section['paginator']??''))
                                         @slot('paginator')
                                             {!! serialize($section['paginator']) !!}
                                         @endslot
@@ -94,7 +98,13 @@
                 </div>
             </div>
         </div>
-    @endforeach
+    @empty
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h4>We Are Sorry! We have no Sections!</h4>
+        </div>
+    </div>
+    @endforelse
     
     @if (Functions::testVar($paginator2))
         <div class="panel panel-default">
