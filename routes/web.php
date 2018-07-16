@@ -11,7 +11,7 @@
   |
  */
 
-Route::get('/', 'PageController@test3');
+Route::get('/', 'PageController@home');
 
 /**
  * Route::get(
@@ -105,6 +105,17 @@ Route::prefix('admin')->group(
             'user', 'UserController', [
                 'parameters'=> [
                     'user' => 'user',
+                ],
+                'except' => [
+                    'show'
+                ]
+            ]
+        );
+        // 'page/' goes to 'index()' which returns 'all-pages' of the site..
+        Route::resource(
+            'page', 'PageController', [
+                'parameters'=> [
+                    'page' => 'page',
                 ],
                 'except' => [
                     'show'

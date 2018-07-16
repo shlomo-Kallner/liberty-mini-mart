@@ -5,18 +5,42 @@
 
     @php
         $testing = true;
-        use \App\Utilities\Functions\Functions;
+        use \App\Utilities\Functions\Functions,
+            \App\Page;
 
-        $sidebar2 = serialize(Functions::getContent($sidebar??''));
+        $sidebar2 = Functions::getContent($sidebar??'');
         $page2 = Functions::getContent($page['article']??'');
         $sections2 = Functions::getContent($page['sections']['items']??'');
-        $paginator2 = Functions::getContent($page['sections']['pagination']??'');
+        $sections_paginator2 = Functions::getContent($page['sections']['pagination']??'');
+        $users2 = Functions::getContent($page['users']['items']??'');
+        $users_paginator2 = Functions::getContent($page['users']['pagination']??'');
+        $pages2 = Functions::getContent($page['pages']['items']??'');
+        $pages_paginator2 = Functions::getContent($page['pages']['pagination']??'');
+        
+        {{--  
+            TODO: use this
+            $sidebar2[] = Page::genLink(
+                string $type, string $url, string $name, string $cssExtraClasses = '',
+                string $icon = '', string $textTransform = '', string $target = '', 
+                array $submenus = null, string $iconAfter = '', string $toggle = '',
+                string $role = '', string $controls = ''
+            );  
+
+            // for generating THIS...
+            <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+               Link with href
+            </a>
+
+            /// for each of the "create" Links below..
+        --}}
+
+        dd($sidebar2);
     @endphp
 
     <div class="row margin-bottom-40">
         @component('lib.themewagon.sidebar')
             @slot('menu')
-                {!! $sidebar2 !!}
+                {!! serialize($sidebar2) !!}
             @endslot
             @slot('sidebarClasses')
                 {!! 'col-md-3 col-sm-5' !!}
@@ -30,36 +54,121 @@
 
             @section('cms-content')
 
-                <div class="row">
-                    
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <h3>Sections:</h3>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapsableSectionsPanel" aria-expanded="false" aria-controls="collapsableSectionsPanel">
+                    Display Sections
+                </button>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapsableUsersPanel" aria-expanded="false" aria-controls="collapsableUsersPanel">
+                    Display Users
+                </button>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapsablePagesPanel" aria-expanded="false" aria-controls="collapsablePagesPanel">
+                    Display Pages
+                </button>
+
+                <div class="collapse" id="collapsableSectionsPanel">
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-primary" href="{{ url('admin/section/create') }}" role="button">Create a New Section</a>
+                        </div>
                     </div>
-                    
-                </div>
-                
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        @if (Functions::testVar($sections2) && false)
-                            @component('cms.sections')
-                                @slot('sections')
-                                    {!! serialize($sections2) !!}
-                                @endslot
-                                @if (Functions::testVar($paginator2))
-                                    @slot('paginator')
-                                        {!! serialize($paginator2) !!}
+                         
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            @if (Functions::testVar($sections2) && false)
+                                @component('cms.sections')
+                                    @slot('sections')
+                                        {!! serialize($sections2) !!}
                                     @endslot
-                                @endif
-                            @endcomponent
-                            
-                        @else
-                            
-                            <div class="well">
-                                <h4>Oooppps! No Sections Available for Display...</h4>
-                            </div>
-                            
-                        @endif
+                                    @if (Functions::testVar($sections_paginator2))
+                                        @slot('paginator')
+                                            {!! serialize($sections_paginator2) !!}
+                                        @endslot
+                                    @endif
+                                @endcomponent
+                                
+                            @else
+                                
+                                <div class="well">
+                                    <h4>Oooppps! No Sections Available for Display...</h4>
+                                </div>
+                                
+                            @endif
+                        </div>
                     </div>
+
+                </div>
+
+                <div class="collapse" id="collapsableUsersPanel">
+                    
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-primary" href="{{ url('admin/user/create') }}" role="button">Create a New User</a>
+                        </div>
+                    </div>
+                            
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            
+                            @if (Functions::testVar($users2) && false)
+                                @component('cms.sections')
+                                    @slot('users')
+                                        {!! serialize($users2) !!}
+                                    @endslot
+                                    @if (Functions::testVar($users_paginator2))
+                                        @slot('paginator')
+                                            {!! serialize($users_paginator2) !!}
+                                        @endslot
+                                    @endif
+                                @endcomponent
+                                
+                            @else
+                                
+                                <div class="well">
+                                    <h4>Oooppps! No Users Available for Display...</h4>
+                                </div>
+                                
+                            @endif
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="collapse" id="collapsablePagesPanel">
+                    
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <a class="btn btn-primary" href="{{ url('admin/page/create') }}" role="button">Create a New Page</a>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            
+                                @if (Functions::testVar($pages2) && false)
+                                    @component('cms.pages')
+                                        @slot('pages')
+                                            {!! serialize($pages2) !!}
+                                        @endslot
+                                        @if (Functions::testVar($pages_paginator2))
+                                            @slot('paginator')
+                                                {!! serialize($pages_paginator2) !!}
+                                            @endslot
+                                        @endif
+                                    @endcomponent
+                                    
+                                @else
+                                    
+                                    <div class="well">
+                                        <h4>Oooppps! No Pages Available for Display...</h4>
+                                    </div>
+                                    
+                                @endif
+    
+                            </div>
+                    </div>
+                    
                 </div>
                 
                 <div id="cms-app">

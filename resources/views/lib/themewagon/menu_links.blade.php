@@ -29,6 +29,7 @@
  $iconAfter2 = Functions::getBladedString($iconAfter??'','');
  $name2 = Functions::getBladedString($name??'','');
  $transform2 = Functions::getBladedString($transform??'','');
+ $controls2 = Functions::getBladedString($controls??'','');
 
  if ($type2 == 'dropdown') {
     $submenus2 = Functions::getUnBladedContent($submenus??'','');
@@ -82,6 +83,9 @@
         @endslot
         @slot('role')
             {!! $role2 !!}
+        @endslot
+        @slot('controls')
+            {!! $controls2 !!}
         @endslot
     @endcomponent
 
@@ -151,6 +155,7 @@
                     $elem_iconAfter = $elem->get('iconAfter');
                     $elem_toggle = $elem->get('toggle');
                     $elem_role = $elem->get('role');
+                    $elem_controls = $elem->get('controls');
 
                 @endphp
                     {{-- the 'render' loop --}}
@@ -195,6 +200,9 @@
                         @endslot
                         @slot('role')
                             {!! $elem_role !!}
+                        @endslot
+                        @slot('controls')
+                            {!! $elem_controls !!}
                         @endslot
                     @endcomponent
 

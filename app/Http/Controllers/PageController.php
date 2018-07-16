@@ -18,7 +18,8 @@ class PageController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index() 
+    {
         //
     }
 
@@ -27,7 +28,8 @@ class PageController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() {
+    public function create() 
+    {
         //
     }
 
@@ -37,7 +39,8 @@ class PageController extends MainController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(Request $request) 
+    {
         //
     }
 
@@ -62,7 +65,8 @@ class PageController extends MainController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request) {
+    public function edit(Request $request) 
+    {
         //
     }
 
@@ -73,7 +77,8 @@ class PageController extends MainController
      * @param  \App\Page  $page
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $page) {
+    public function update(Request $request, $page) 
+    {
         //
     }
 
@@ -83,8 +88,15 @@ class PageController extends MainController
      * @param  \App\Page  $pages
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Page $pages) {
+    public function destroy(Page $pages) 
+    {
         //
+    }
+
+    public function home(Request $request) 
+    {
+        // for now...
+        return $this->test3($request);
     }
 
     /// UTILITY METHODS:

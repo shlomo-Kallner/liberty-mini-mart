@@ -28,11 +28,14 @@
  $iconAfter2 = Functions::getBladedString($iconAfter??'','');
  $name2 = Functions::getBladedString($name??'','');
  $transform2 = Functions::getBladedString($transform??'','');
+ $controls2 = Functions::getBladedString($controls??'','');
 
  if (Functions::testVar($type2) && ($type2 == 'modal')) {
     $toggle2 = Functions::getBladedString($toggle??'modal','modal');
  } elseif (Functions::testVar($type2) && ($type2 == 'dropdown')) {
     $toggle2 = Functions::getBladedString($toggle??'dropdown','dropdown');
+ } elseif(Functions::testVar($type2) && ($type2 == 'collapse')) {
+    $toggle2 = Functions::getBladedString($toggle??'collapse','collapse');
  } else {
     $toggle2 = Functions::getBladedString($toggle??'','');
  }
@@ -61,6 +64,15 @@
     @if (Functions::testVar($role2))
         role="{{ $role2 }}"
     @endif
+
+    @if (Functions::testVar($controls2))
+        aria-controls="{{ $controls2 }}"
+    @endif
+
+    @if (Functions::testVar($type2) && ($type2 == 'collapse'))
+        aria-expanded="false"
+    @endif
+
     >
 
 

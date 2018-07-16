@@ -41,7 +41,7 @@ class Page extends Model
         string $type, string $url, string $name, string $cssExtraClasses = '',
         string $icon = '', string $textTransform = '', string $target = '', 
         array $submenus = null, string $iconAfter = '', string $toggle = '',
-        string $role = ''
+        string $role = '', string $controls = ''
     ) {
         return [
             'type' => $type, // 'url' for a url link, 'modal' for a modal 
@@ -61,6 +61,7 @@ class Page extends Model
             // AFTER the NAME unlike $icon which PRECEDES the NAME.. 
             'toggle' => $toggle, // the data-toggle attribute's parameter...
             'role' => $role, // the role attribute's parameter...
+            'controls' => $controls, // for collapse toggles..
         ];
     }
 

@@ -134,7 +134,6 @@
 @section('js-extra')
     @parent
 
-    <script></script>
     
 @endsection
 

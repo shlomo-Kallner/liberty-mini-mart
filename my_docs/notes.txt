@@ -13,10 +13,19 @@ Content Managment System
 3#<-
 [
     cms/sections.blade [partial]
-    cms/products.blade [Not Implemented!]
+    cms/products.blade [partial]
     cms/categories.blade [partial]
     app/../CmsController.php [partial]
 ]
+
+todo in 
+[
+    PageController@home
+]
+rewrite to return getView of the actual
+Home Page (perhaps from the database?)
+with any breadcrumbs and alerts, etc..
+
 
 todo in
 [
@@ -30,7 +39,7 @@ todo in
          ENSURE that ALL other Resource Methods check for,
          ADMIN RIGHTS!!
     2 => figure out some way for a given user to CRUD 
-         pagination...
+         or PERSIST pagination within views...
 ]
 
 todo rewrite 

@@ -11,9 +11,6 @@
 
 <div class="panel-group" id="{{ $panelGroupId }}" role="tablist" aria-multiselectable="true">
 
-    @foreach ()
-    @endforeach
-
     @forelse ($sections2 as $section)
 
         @php
@@ -27,10 +24,11 @@
                 'delete' => 'admin/section/' . $section['url'] ,
                 //'show' => 'store/section/' . $section['url']  ,
             ];
-            $url_edit = 'admin/section/' . $section['url'] . '/edit';
-            $url_delete = 'admin/section/' . $section['url'];
+            $sectionEditUrl = 'admin/section/' . $section['url'] . '/edit';
+            $sectionDeleteUrl = 'admin/section/' . $section['url'];
+            $newCategoryCreateUrl = 'admin/section/' . $section['url'] . '/category/create';
         
-            $sectionPanelID = '';
+            //$sectionPanelID = '';
         @endphp
 
         <div class="panel panel-default">
@@ -57,9 +55,10 @@
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="btn-group pull-left">
-                                        <a class="btn btn-default" data-toggle="collapse" href="{{'#' . $panelId3}}" aria-expanded="false" aria-controls="{{ $panelId3 }}" role="button">Show Content</a>
-                                        <a class="btn btn-warning" href="{{ $url_edit }}" role="button">Edit this Section</a>
-                                        <button type="button" class="btn btn-danger" onclick="deleteSection('{{$url_delete}}')">Delete this Section</button>
+                                        <a class="btn btn-default" data-toggle="collapse" href="{{'#' . $panelId3}}" aria-expanded="false" aria-controls="{{ $panelId3 }}" role="button">Show Categories</a>
+                                        <a class="btn btn-primary" href="{{ $newCategoryCreateUrl }}" role="button">Create a New Category</a>
+                                        <a class="btn btn-warning" href="{{ $sectionEditUrl }}" role="button">Edit this Section</a>
+                                        <button type="button" class="btn btn-danger" onclick="deleteSection('{{$sectionDeleteUrl}}')">Delete this Section</button>
                                         
                                         {{-- <a class="btn btn-default" href="#" role="button"></a> --}}
                                         {{-- <a class="btn btn-default" href="#" role="button"></a> --}}
@@ -99,11 +98,11 @@
             </div>
         </div>
     @empty
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <h4>We Are Sorry! We have no Sections!</h4>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h4>We Are Sorry! We have no Sections!</h4>
+            </div>
         </div>
-    </div>
     @endforelse
     
     @if (Functions::testVar($paginator2))

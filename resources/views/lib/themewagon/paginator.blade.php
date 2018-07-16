@@ -24,43 +24,52 @@
     {
         $paging = false;
     } 
+    //dd($paging, $currentRange2, $totalItems2, $ranges2, $numPerView2);
     if (Functions::testVar($paging)) {
         //$numPerView = Functions::testVar($numPerView2) ? $numPerView2 : 4;
         $numViews = Functions::genRowsPerPage(count($ranges2), $numPerView2);
         $viewIdxs = Functions::genPageArray($ranges2, $numPerView2);
         $currentView = -1;
         for ($i = 0; $i < count($viewIdxs); $i++) {
-            if (in_array($currentRange2['index'],$viewIdxs[$i])) {
+            if (in_array($currentRange2['index'], $viewIdxs[$i])) {
                 $currentView = $i;
+                //dd($i, $currentView);
                 break;
             }
         }
         //dd($numPerView2, $numViews, $viewIdxs, $currentView);
 
-        // view urls..
-        $prevViewUrl = '#?' . http_build_query(
-            [
-                'viewNum' => $currentView - 1, 
-                'pageNum'=> $currentRange2['index'],
-                'pagingFor' => $pagingFor2
-            ]
-        );
-        $nextViewUrl = '#?' . http_build_query(
-            [
-                'viewNum' => $currentView + 1, 
-                'pageNum'=> $currentRange2['index'],
-                'pagingFor' => $pagingFor2 
-            ]
-        );
-        $numberedViewUrls = [];
-        for ($viewIdxs[$currentView] as $item) {
-            $numberedViewUrls[$item] = '#?' . http_build_query(
+        if ($currentView != -1) {
+
+            // view urls..
+            $prevViewUrl = '#?' . http_build_query(
                 [
-                    'viewNum' => $currentView, 
-                    'pageNum'=> $item + 1,
+                    'viewNum' => $currentView - 1, 
+                    'pageNum'=> $currentRange2['index'],
+                    'pagingFor' => $pagingFor2
+                ]
+            );
+            $nextViewUrl = '#?' . http_build_query(
+                [
+                    'viewNum' => $currentView + 1, 
+                    'pageNum'=> $currentRange2['index'],
                     'pagingFor' => $pagingFor2 
                 ]
             );
+            $numberedViewUrls = [];
+            //dd($prevViewUrl, $nextViewUrl, $numberedViewUrls, $viewIdxs, $currentView);
+            foreach ($viewIdxs[$currentView] as $item) {
+                $numberedViewUrls[$item] = '#?' . http_build_query(
+                    [
+                        'viewNum' => $currentView, 
+                        'pageNum'=> $item + 1,
+                        'pagingFor' => $pagingFor2 
+                    ]
+                );
+            }
+
+        } else {
+            $paging = false;
         }
 
     } else {
