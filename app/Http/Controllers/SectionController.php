@@ -22,9 +22,8 @@ class SectionController extends MainController
      */
     public function index(Request $request)
     {
-        // wrong view! We NEED a NEW view to display ALL Sections!
-        // (which is what this method does...)
-        //return self::getView('content.section');
+        // display ALL Sections...
+        return self::getView('content.catalog');
     }
 
     /**
@@ -34,7 +33,7 @@ class SectionController extends MainController
      */
     public function create()
     {
-        return self::getView('forms.new_section', 'Create a New Store Section');
+        return self::getView('cms.forms.new.section', 'Create a New Store Section');
     }
 
     /**

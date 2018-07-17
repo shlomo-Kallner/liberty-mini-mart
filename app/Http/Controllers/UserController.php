@@ -29,7 +29,7 @@ class UserController extends MainController {
      */
     public function create(Request $request) 
     {
-        //
+        return self::getView('cms.forms.new.user', 'Create a New User');
     }
 
     /**
@@ -51,7 +51,10 @@ class UserController extends MainController {
      */
     public function show(Request $request) 
     {
-        //
+        if ($request->session()->has('user.id')) {
+            $user = User::where('id', $request->session()->get('user.id'))->first();
+            return self::getView('content.user', 'User Profile Page', $user);
+        }
     }
 
     /**

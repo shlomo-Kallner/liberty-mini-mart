@@ -30,7 +30,7 @@ class PageController extends MainController
      */
     public function create() 
     {
-        //
+        return self::getView('cms.forms.new.page', 'Create a New Content Page');
     }
 
     /**

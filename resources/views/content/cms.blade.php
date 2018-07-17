@@ -17,24 +17,48 @@
         $pages2 = Functions::getContent($page['pages']['items']??'');
         $pages_paginator2 = Functions::getContent($page['pages']['pagination']??'');
         
-        {{--  
-            TODO: use this
-            $sidebar2[] = Page::genLink(
-                string $type, string $url, string $name, string $cssExtraClasses = '',
-                string $icon = '', string $textTransform = '', string $target = '', 
-                array $submenus = null, string $iconAfter = '', string $toggle = '',
-                string $role = '', string $controls = ''
-            );  
+          
+           
+        /*
 
-            // for generating THIS...
-            <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-               Link with href
-            </a>
+            //TODO: use this
+            $sidebar2[] = Page::genURLMenuItem(
+                string $url, string $name, string $icon = '', 
+                string $textTransform = '', string $cssExtraClasses = '', 
+                string $iconAfter = '', string $role = ''
+            ); 
 
             /// for each of the "create" Links below..
-        --}}
 
-        dd($sidebar2);
+        */
+
+        $sidebar2[] = Page::genURLMenuItem(
+            'admin/section/create', 'Create a New Section', 'fa-shopping-cart', 
+            '', '', 'fa-plus', 'button'
+        );  
+        $sidebar2[] = Page::genURLMenuItem(
+            'admin/category/create', 'Create a New Category', 'fa-shopping-basket', 
+            '', '', 'fa-plus', 'button'
+        );  
+        $sidebar2[] = Page::genURLMenuItem(
+            'admin/product/create', 'Create a New Product', 'fa-shopping-bag', 
+            '', '', 'fa-plus', 'button'
+        );  
+        $sidebar2[] = Page::genURLMenuItem(
+            'admin/user/create', 'Create a New User', 'fa-address-book', 
+            '', '', 'fa-plus', 'button'
+        );  
+        $sidebar2[] = Page::genURLMenuItem(
+            'admin/page/create', 'Create a New Content Page', 'fa-newspaper-o', 
+            '', '', 'fa-plus', 'button'
+        );  
+        $sidebar2[] = Page::genURLMenuItem(
+            'admin/plan/create', 'Create a New Membership Plan', 'fa-lightbulb-o', 
+            '', '', 'fa-plus','button'
+        );  
+            
+
+        //dd($sidebar2);
     @endphp
 
     <div class="row margin-bottom-40">
@@ -68,7 +92,9 @@
 
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a class="btn btn-primary" href="{{ url('admin/section/create') }}" role="button">Create a New Section</a>
+                            <a class="btn btn-primary" href="{{ url('admin/section/create') }}" role="button">
+                                Create a New Section
+                            </a>
                         </div>
                     </div>
                          

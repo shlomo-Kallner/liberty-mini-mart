@@ -31,9 +31,9 @@ class CategorieController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        return self::getView('cms.forms.new.category', 'Create a New Category');
     }
 
     /**

@@ -100,6 +100,29 @@ class Page extends Model
         );
     }
 
+    /** 
+     * For generating Bootstrap 3 Collapse.js Link tags.
+     * 
+     * @param string $id                - the link's "target" 
+     *                                  (without any '#' as the method 
+     *                                  will add it as appropriate)
+     * @param string $name              - the link's content
+     * @param string $cssExtraClasses
+     * @param string $icon
+     * @param string $textTransform
+     * @param string $iconAfter
+    */
+    static public function genCollapseLink(
+        string $id, string $name, string $cssExtraClasses = '',
+        string $icon = '', string $textTransform = '', string $iconAfter = ''
+    ) {
+        return self::genLink(
+            'collapse', '#' . $id, $name, $cssExtraClasses,
+            $icon, $textTransform, '', null, $iconAfter, 'collapse',
+            'button', $id
+        );
+    }
+
     static public function getNavBar($genFakeData = false, string $area = 'store') 
     {
         //$testing = $genFakeData;

@@ -19,7 +19,7 @@ class ProductController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
     }
@@ -29,9 +29,10 @@ class ProductController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        // PARTIAL!! Requires further Implementation!
+        return self::getView('cms.forms.new.product', 'Create a New Product');
     }
 
     /**

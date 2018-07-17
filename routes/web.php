@@ -76,6 +76,7 @@ Route::prefix('admin')->group(
             ]
         );
         // 'category/' goes to 'index()' which returns 'all-categories' of the section..
+        Route::get('category/create', 'CategorieController@create');
         Route::resource(
             'section/{section}/category', 'CategorieController', [
                 'parameters'=> [
@@ -88,6 +89,7 @@ Route::prefix('admin')->group(
             ]
         );
         // 'product/' goes to 'index()' which returns 'all-products' of the category..
+        Route::get('product/create', 'ProductController@create');
         Route::resource(
             'section/{section}/category/{category}/product', 'ProductController', [
                 'parameters'=> [
@@ -122,17 +124,34 @@ Route::prefix('admin')->group(
                 ]
             ]
         );
+        // 'plan/' goes to 'index()' which returns 'all-pages' of the site..
+        Route::resource(
+            'plan', 'PlanController', [
+                'parameters'=> [
+                    'plan' => 'plan',
+                ],
+                'except' => [
+                    'show', 'index'
+                ]
+            ]
+        );
     }
 );
 //Route::get('user', 'UserController');
 //Route::post('user', 'UserController');
 //Route::resource('user', 'UserController');
 //Route::get('user', 'UserController');
+Route::prefix('plans')->group(
+    function () {
+        Route::get('/', 'PlanController@index');
+        Route::get('{plan}', 'PlanController@show');
+    }
+);
 
 //Route::resource('user', 'UserController');
 Route::prefix('user')->group(
     function () {
-        Route::get('/{user?}', 'UserController@show');
+        Route::get('{user?}', 'UserController@show');
         //Route::get('{user}', 'PageController@index1');
     }
 );
