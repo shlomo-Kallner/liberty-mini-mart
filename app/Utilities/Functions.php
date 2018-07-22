@@ -4,7 +4,7 @@ namespace App\Utilities\Functions;
 
 use Illuminate\Support\Collection,
     Illuminate\Support\HtmlString,
-    HTMLPurifier;
+    HTMLPurifier, DB;
 use Composer\Semver\Comparator;
 
 class Functions
@@ -152,6 +152,38 @@ class Functions
                 break;
         }
         return $res;
+    }
+
+    static public function dbModel2ViewModel(array &$dbModel) 
+    {
+        if (array_key_exists('image', $dbModel) && is_int($dbModel['image'])) {
+            $img = DB::table('images')->where('id', $dbModel['image'])->first();
+            $dbModel['img'] = $img->path . '/' . $img->name;
+            $dbModel['imgAlt'] = $img->alt;
+        } elseif (array_key_exists('image', $dbModel) && is_string($dbModel['image'])) {
+            if (!array_key_exists('img', $dbModel) && array_key_exists('image', $dbModel)) {
+                $dbModel['img'] = $dbModel['image'];
+            }
+            if (!array_key_exists('imgAlt', $dbModel) && array_key_exists('title', $dbModel)) {
+                $dbModel['imgAlt'] = $dbModel['title'];
+            }
+        } else {
+            $res = [];
+            foreach ($dbModel as $key => $val) {
+                if ($key == 'image' && is_int($val)) {
+                    if (!array_key_exists('img', $dbModel) && !array_key_exists('imgAlt', $dbModel)) {
+                        $img = DB::table('images')->where('id', $val)->first();
+                        $res['img'] = $img->path . '/' . $img->name;
+                        $res['imgAlt'] = $img->alt;
+                    } 
+                } else {
+                    $res[$key] = $val;
+                }
+            }
+            return $res;
+        }
+        
+        return $dbModel; // just as a convenience as we received the param by reference.. 
     }
 
     static public function genMultipleFromArray(array $arr, int $num)

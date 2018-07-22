@@ -58,12 +58,12 @@ class CategorieController extends MainController
         //dd($categorie);
         //dd($request->section, $request->category);
         //$categorie
-        $sect = Section::where('url',$request->section)->first();
+        $sect = Section::where('url', $request->section)->first();
         //dd($sect->id);
         $cat = Categorie::where(
             [
-                ['section_id',$sect->id],
-                ['url',$request->category]
+                ['section_id', $sect->id],
+                ['url', $request->category]
             ]
         )->first();
         // 'store/section/{section}/category/{category}/product/{product}'...

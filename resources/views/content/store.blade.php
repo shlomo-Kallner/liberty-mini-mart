@@ -9,7 +9,7 @@
 
 @php
 
-    $testing = true;
+    $testing = false;
     $fakeData = ''; // the old data was '123FAKEDATA321'..
 
     use \App\Utilities\Functions\Functions;
@@ -111,17 +111,18 @@
                     {!! $article2['imgAlt'] !!}
                 @endslot
                 @slot('article')
+                
                     <p>
-                            <strong>Liberty</strong>, in politics, 
-                            consists of the social, political, and 
-                            <strong>economic freedoms</strong> 
-                            to which all community members are entitled.
+                        <strong>Liberty</strong>, in politics, 
+                        consists of the social, political, and 
+                        <strong>economic freedoms</strong> 
+                        to which all community members are entitled.
                     </p>
                     <p>
-                            In philosophy, liberty involves 
-                            <a href="https://en.wikipedia.org/wiki/Free_will">free will </a>
-                             as contrasted with 
-                             <a href="https://en.wikipedia.org/wiki/Determinism">determinism</a>.
+                        In philosophy, liberty involves 
+                        <a href="https://en.wikipedia.org/wiki/Free_will">free will</a>
+                        as contrasted with 
+                        <a href="https://en.wikipedia.org/wiki/Determinism">determinism</a>.
                     </p>
                     <p>
                         Generally, liberty is distinctly differentiated 
@@ -132,7 +133,8 @@
                         and takes into account the rights of all involved. 
                         As such, the exercise of liberty is subject to capability and 
                         limited by the rights of others.
-                        <aside>Mill, J.S. (1869)., "Chapter I: Introductory", On Liberty. <a href="http://www.bartleby.com/130/1.html"></a></aside>
+                        <aside>Mill, J.S. (1869)., "Chapter I: Introductory", On Liberty. 
+                        <a href="http://www.bartleby.com/130/1.html"></a></aside>
                     </p>
                     
                 @endslot

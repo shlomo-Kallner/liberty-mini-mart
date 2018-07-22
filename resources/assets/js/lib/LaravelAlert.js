@@ -27,4 +27,12 @@ export class LaravelAlert {
   getTimeout () {
     return this.data.timeout;
   }
+
+  hide() {
+    this.data.seen = false;
+  }
+
+  show() {
+    this.data.seen = true;
+  }
 }

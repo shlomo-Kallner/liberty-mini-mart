@@ -16,7 +16,17 @@
         $users_paginator2 = Functions::getContent($page['users']['pagination']??'');
         $pages2 = Functions::getContent($page['pages']['items']??'');
         $pages_paginator2 = Functions::getContent($page['pages']['pagination']??'');
+        $plans2 = Functions::getContent($page['plans']['items']??'');
+        $plans_paginator2 = Functions::getContent($page['plans']['pagination']??'');
         
+
+        //dd($sidebar2);
+        //dd($page2);
+        //dd($page['sections']);
+        dd($sections2, $sections_paginator2);
+        //dd($users2, $users_paginator2);
+        //dd($pages2, $pages_paginator2);
+        //dd($plans2, $plans_paginator2);
           
            
         /*
@@ -90,17 +100,19 @@
 
                 <div class="collapse" id="collapsableSectionsPanel">
 
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a class="btn btn-primary" href="{{ url('admin/section/create') }}" role="button">
-                                Create a New Section
-                            </a>
+                    @if (false)
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <a class="btn btn-primary" href="{{ url('admin/section/create') }}" role="button">
+                                    Create a New Section
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                         
+                    @endif
+
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            @if (Functions::testVar($sections2) && false)
+                            @if (Functions::testVar($sections2))
                                 @component('cms.sections')
                                     @slot('sections')
                                         {!! serialize($sections2) !!}

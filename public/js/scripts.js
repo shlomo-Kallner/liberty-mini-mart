@@ -52,14 +52,13 @@ jQuery(function ($) {
     };
     handleSearch();
 
-    var getOptionVals = function (options, jquery)
-        {
-            var result = {};
-            for (var i in options) {
-                result[i] = jquery(options[i]).val();
-            }
-            return result;
-        };
+    var getOptionVals = function (options, jquery) {
+        var result = {};
+        for (var i in options) {
+            result[i] = jquery(options[i]).val();
+        }
+        return result;
+    };
 
     var handleCart = function () {
         var cartForStore = {
@@ -92,14 +91,22 @@ jQuery(function ($) {
 
   var checkTimeOut = function ($) {
     var alertTimeout = window.Laravel.page.alert.getTimeout();
-    //console.log("Heloo from checkTimeOut()! timeout = " + alertTimeout);  
+    // console.log("Heloo from checkTimeOut()! timeout = " + alertTimeout);  
     if (alertTimeout !== 0) {
-      $('#masterPageAlert').show( function() {
-        $(this).delay(alertTimeout).alert('close');
+      $('#masterPageAlert').show(function ($) {
+        var jMe = $(this);
+        $(this).delay(function() {
+             //jMe.alert('close');
+             window.Laravel.page.alert.hide();
+            }, alertTimeout);  
+        // $(this).delay(alertTimeout).alert('close');
+        // var jMe = $(this);
+        // setTimeout(function() {
+        //  jMe.alert('close');
+        // }, alertTimeout);
       });
     }
   };
-  //checkTimeOut($);
-    
-  
+  checkTimeOut($);
+
 });

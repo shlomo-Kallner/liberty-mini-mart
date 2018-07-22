@@ -35,19 +35,29 @@ class CmsController extends MainController
     public function index(Request $request)
     {
         //$sections = Section::getAllWithPagination();
-        $sections = Section::all();
+        $sections = Section::getAllModels();
         foreach ($sections as $section) {
             //$section['categories'] = Categorie::getCategoriesOfSectionWithPagination($section['id'], ... );
             $section['categories'] = Categorie::getCategoriesOfSection($section['id']);
+            dd($section);
         }
-        
+        dd($sections);
         return self::getView(
             'content.cms', '', [
                 'article' => [
                     'title' => 'Welcome to OUR DASHBOARD!',
                     'subheading' => 'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
                 ],
-                'sections' => $sections,
+                'sections' => [
+                    'items' => $sections,
+                    'pagination' => ''
+                ],
+                /*
+                    ''=> [
+                        'items' => $->toArray(),
+                        'pagination' => ''
+                    ],
+                */
             ]
         );
     }

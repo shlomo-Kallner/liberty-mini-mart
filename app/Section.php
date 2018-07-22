@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model,
+    App\Utilities\Functions\Functions,
     App\Page;
 
 class Section extends Model
@@ -11,12 +12,20 @@ class Section extends Model
     {
         return self::where('url', $name)->first();
     }
+    static public function getAllModels() 
+    {
+        $tmp = self::all()->toArray();
+        foreach ($tmp as $section) {
+            $section = Functions::dbModel2ViewModel($section);
+        }
+        return $tmp;
+    }
 
     static public function getAllWithPagination(
         $pageNum, $firstIndex, $lastIndex, int $numShown = 4,
         string $pagingFor = ''
     ) {
-        $tmp = self::all();
+        $tmp = self::getAllModels();
         $num = count($tmp);
         return [
             'sections' => $tmp,

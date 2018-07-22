@@ -1,6 +1,6 @@
 
 
-Content Managment System
+Content Management System
 -> What does it require?
 -> What does it display/do?
 
@@ -17,6 +17,16 @@ Content Managment System
     cms/categories.blade [partial]
     app/../CmsController.php [partial]
 ]
+
+todo rewrite 
+[
+    Section.php
+    Category.php
+    Product.php
+    {etc..}
+]
+to transform results of querying the DB 
+into View-Usable results!
 
 todo in 
 [
