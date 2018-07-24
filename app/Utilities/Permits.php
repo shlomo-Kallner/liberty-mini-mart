@@ -8,7 +8,8 @@ use Illuminate\Support\Collection,
     Illuminate\Support\Facades\Crypt,
     HTMLPurifier, DB,
     Composer\Semver\Comparator,
-    App\Utilities\Functions\Functions;
+    App\Utilities\Functions\Functions,
+    App\UserRole;
 
 /**
  * Undocumented class
@@ -17,15 +18,15 @@ class Permits
 {
     // OUR Permissions Utilities FUNCTIONS!
 
-    protected static $_roles_table = 'userRoles';
-    protected $_user_id, $_perms;
+    //protected static $_roles_table = 'userRoles';
+    protected $user_id, $perms;
 
     // permit retrieval zone..
 
     public function __construct(int $user_id)
     {
-        $this->_user_id = $user_id;
-        $this->_perms = self::getPermissions($user_id);
+        $this->user_id = $user_id;
+        $this->perms = self::getPermissions($user_id);
     }
     
     /**
@@ -37,11 +38,11 @@ class Permits
     static protected function getPermissions(int $user_id)
     {
         //$user_id = self::getUserId($user);
+        // $tmp = DB::table(self::$_roles_table)
+        //  ->where('user_id', $user_id)->get();
         
-        $tmp = DB::table(self::$_roles_table)
-            ->where('user_id', $user_id)
-            ->get();
-        return $tmp->count() > 0 ? $tmp->toArray() : null;
+        $tmp = UserRole::getForUser($user_id);
+        return $tmp->count() > 0 ? $tmp->toArray() : [];
     }
 
     
@@ -49,15 +50,32 @@ class Permits
     // permit Creation zone..
 
     protected function __construct(
-        int $user_id, string $role, int $level, $extra, bool $save = false
+        int $user_id, string $role, int $level = 1, array $extra = null
+        //, bool $save = false
         ) {
-        $this->_user_id = $user_id;
+        $this->user_id = $user_id;
+        $this->perms = [];
+        $perm = self::translate2perm($role, $level);
+        $hash = self::genHashedPermStr($user_id, $perm[0]);
+        if (!Functions::testVar($extra)) {
+            $extra = [];
+        }
+        if (is_array($extra) && !isset($extra[$hash])) {
+            $extra[$hash] = str_random($perm[1]);
+        }
+
+        $this->perms[] = UserRole::createNewRole(
+            $user_id, $hash,
+            Crypt::encrypt($extra)
+        );
+        /* 
         $perm = [
             'user_id' => $user_id,
             'extra' => Crypt::encrypt($extra),
             'role' => '',
             // todo finish!! should use genHashedPermStr below..
-        ];
+        ]; 
+        */
         //$perm->user_id = $user_id;
         //$perm->extra = Crypt::encrypt($extra);
         // todo finish!!
@@ -79,13 +97,16 @@ class Permits
         return Hash::make(self::genPermStr($user_id, $perm));
     }
 
-    static protected function testIfInPerms(
-        $perms, int $user_id, string $role, int $level = 1
+    protected function testIfInPerms(
+        string $role, int $level = 1
     ) {
         $bol = false;
-        foreach ($perms as $perm) {
+        foreach ($this->perms as $perm) {
             $roleStr = $perm['role'];
-            $plain = self::genPermStr($user_id, self::translate2perm($role, $level));
+            $tmp = Crypt::decrypt($perm['extra'])[$roleStr] ?? -1;
+            $prev = is_string($tmp) ? strlen($tmp) : -1;
+            $perm = self::translate2perm($role, $level, $prev);
+            $plain = self::genPermStr($this->user_id, $perm[0]);
             if (Hash::check($plain, $roleStr)) {
                 $bol = true;
                 break;
@@ -94,8 +115,9 @@ class Permits
         return $bol;
     }
 
-    static protected function translate2perm(string $role, int $level = 1)
-    {
+    static protected function translate2perm(
+        string $role, int $level = 1, int $prev = -1
+    ) {
         $tmp = 0;
         if ($role == 'admin') {
             // site admin
@@ -141,7 +163,8 @@ class Permits
             // fake data...
             $tmp = random_int(0, 1);
         }
-        return ($tmp * 10) + random_int(0, 9);
+        $ran = $prev < 0 ? random_int(0, 9) : $prev;
+        return [($tmp * 10) + $ran, $ran];
     }
 
     static protected function setPermission(int $user_id, $role, int $level = 1)
@@ -150,12 +173,12 @@ class Permits
         $role
     }
 
-    static public function isAdmin(int $user_id, $perms) 
+    public function isAdmin(int $user_id, $perms) 
     {
         //$user_id = self::getUserId($user);
-        return self::testIfInPerms($perms, $user, 'admin', 1) ||
-            self::testIfInPerms($perms, $user, 'admin', 2) ||
-            self::testIfInPerms($perms, $user, 'admin', 3);
+        return $this->testIfInPerms('admin', 1) ||
+            $this->testIfInPerms('admin', 2) ||
+            $this->testIfInPerms('admin', 3);
     }
     
 }
