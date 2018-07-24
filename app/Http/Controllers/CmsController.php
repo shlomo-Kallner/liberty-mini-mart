@@ -35,6 +35,7 @@ class CmsController extends MainController
     public function index(Request $request)
     {
         //$sections = Section::getAllWithPagination();
+        //dd(Page::get()->count());
         $sections = Section::getAllModels();
         foreach ($sections as $section) {
             //$section['categories'] = Categorie::getCategoriesOfSectionWithPagination($section['id'], ... );
@@ -61,6 +62,7 @@ class CmsController extends MainController
             ]
         );
     }
+
 
 
 }

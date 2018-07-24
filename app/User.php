@@ -3,8 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model,
-    Session,
-    App\Utilities\Functions\Functions;
+    Session, DB,
+    Illuminate\Support\Facades\Hash,
+    App\Utilities\Functions\Functions,
+    App\Utilities\Permits\Permits;
 
 class User extends Model
 {
@@ -39,4 +41,28 @@ class User extends Model
     {
         return session()->has('is_admin') ? true : false;
     }
+
+    static public function getUserFromId($id) 
+    {
+
+    }
+
+    static public function testIfUser($email, $password, array $extra = null)
+    {
+
+    }
+
+    
+    static public function getUserId($user)
+    {
+        $user_id = null;
+        if ($user instanceof self) {
+            $user_id = $user->id;
+        } elseif (is_array($user)) {
+            $user_id = $user['id'];
+        } 
+        return $user_id;
+    }
+
+    
 }

@@ -117,6 +117,7 @@ class UserController extends MainController {
 
     public function cms(Request $request)
     {
+        // OBSOLETE!! SEE CmsController!
         // get our page data and send it to the view!
         // page data includes:
         //      nav/menu-items, users, sections, categories, 
