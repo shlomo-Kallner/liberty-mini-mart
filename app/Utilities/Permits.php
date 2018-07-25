@@ -56,28 +56,19 @@ class Permits
 
     // permit Creation zone..
 
-    protected function __construct(
-        int $user_id, string $role, int $level = 1, array $extra = null
-        //, bool $save = false
+    public function addPermit(
+        string $role, int $level = 1, array $extra = null
     ) {
-        $this->user_id = $user_id;
-        $this->perms = collect([]);
         $tmp = self::makePermit($this->user_id, $role, $level, $extra);
         if ($tmp !== false) {
             $this->perms->push($tmp);
+            return true;
         }
         
-        /* 
-        $perm = [
-            'user_id' => $user_id,
-            'extra' => Crypt::encrypt($extra),
-            'role' => '',
-            // todo finish!! should use genHashedPermStr below..
-        ]; 
-        */
-        //$perm->user_id = $user_id;
-        //$perm->extra = Crypt::encrypt($extra);
         // todo finish!!
+
+        //ERROR RETURN!
+        return false;
     }
 
     static protected function makePermit(
@@ -107,55 +98,6 @@ class Permits
         //$user_id = self::getUserId($user);
         $tmp = '_perm_' . $perm . '_user_' . $user_id;
         return $tmp;
-    }
-
-    static protected function genHashedPermStr(int $user_id, int $perm = 0)
-    {
-        //$faked = random_int(0, 100);
-        //$permit = ($perm * 10) + random_int(0, 9);
-        return Hash::make(self::genPermStr($user_id, $perm));
-    }
-
-    protected function testPerm(
-        $permit, string $role, int $level = 1
-    ) {
-        if (is_array($permit)) {
-            $extraStr = $permit['extra'];
-            $roleStr = $permit['role'];
-        } elseif ($permit instanceof UserRole) {
-            $extraStr = $permit->extra;
-            $roleStr = $permit->role;
-        }
-        $tmp = Crypt::decrypt($extraStr)[$roleStr] ?? -1;
-        $prev = is_string($tmp) ? strlen($tmp) : -1;
-        $perm = self::translate2perm($role, $level, $prev);
-        $plain = self::genPermStr($this->user_id, $perm[0]);
-        return Hash::check($plain, $roleStr);
-    }
-
-    protected function testIfInPerms(
-        string $role, int $level = 1
-    ) {
-        $bol = false;
-        foreach ($this->perms as $perm) {
-            if ($this->testPerm($perm, $role, $level)) {
-                $bol = true;
-                break;
-            }
-        }
-        return $bol;
-    }
-
-    protected function getIfIsInPerms(
-        string $role, int $level = 1
-    ) {
-        $res = [];
-        foreach ($this->perms as $perm) {
-            if ($this->testPerm($perm, $role, $level)) {
-                $res[] = $perm;
-            }
-        }
-        return $res;
     }
 
     static protected function translate2perm(
@@ -210,12 +152,76 @@ class Permits
         return [($tmp * 10) + $ran, $ran];
     }
 
-    public function isAdmin(int $user_id, $perms) 
+
+    // permission Testing methods..
+
+    protected function testPerm(
+        $permit, string $role, int $level = 1
+    ) {
+        if (is_array($permit)) {
+            $extraStr = $permit['extra'];
+            $roleStr = $permit['role'];
+        } elseif ($permit instanceof UserRole) {
+            $extraStr = $permit->extra;
+            $roleStr = $permit->role;
+        }
+        $tmp = Crypt::decrypt($extraStr)[$roleStr] ?? -1;
+        $prev = is_string($tmp) ? strlen($tmp) : -1;
+        $perm = self::translate2perm($role, $level, $prev);
+        $plain = self::genPermStr($this->user_id, $perm[0]);
+        return Hash::check($plain, $roleStr);
+    }
+
+    protected function testIfInPerms(
+        string $role, int $level = 1
+    ) {
+        $bol = false;
+        foreach ($this->perms as $perm) {
+            if ($this->testPerm($perm, $role, $level)) {
+                $bol = true;
+                break;
+            }
+        }
+        return $bol;
+    }
+
+    protected function getIfIsInPerms(
+        string $role, int $level = 1
+    ) {
+        $res = [];
+        foreach ($this->perms as $perm) {
+            if ($this->testPerm($perm, $role, $level)) {
+                $res[] = $perm;
+            }
+        }
+        return $res;
+    }
+
+    // BASIC PUBLIC permission Testing methods..
+
+    public function isAdmin() 
     {
         //$user_id = self::getUserId($user);
         return $this->testIfInPerms('admin', 1) ||
             $this->testIfInPerms('admin', 2) ||
             $this->testIfInPerms('admin', 3);
+    }
+
+    public function isContentCreator() 
+    {
+        return $this->testIfInPerms('creator', 1) ||
+            $this->testIfInPerms('creator', 2) ||
+            $this->testIfInPerms('creator', 3);
+    }
+
+    public function isAuthUser()
+    {
+        return $this->testIfInPerms('user', 1);
+    }
+
+    public function isGuestUser()
+    {
+        return $this->testIfInPerms('guest', 1);
     }
     
 }
