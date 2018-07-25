@@ -38,11 +38,11 @@ class UserRole extends Model
     {
         $bol = false;
         if (Functions::testVar($role)) {
-            $tmp->role = $role;
+            $this->role = $role;
             $bol = true;
         }
         if (Functions::testVar($extra)) {
-            $tmp->extra = $extra;
+            $this->extra = $extra;
             $bol = true;
         }
         if ($bol) {

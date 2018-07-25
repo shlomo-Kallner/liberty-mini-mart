@@ -4,10 +4,10 @@ namespace App\Utilities\Permits;
 
 
 use Illuminate\Support\Collection,
-    Illuminate\Support\HtmlString,
+    // Illuminate\Support\HtmlString,
     Illuminate\Support\Facades\Crypt,
-    HTMLPurifier, DB,
-    Composer\Semver\Comparator,
+    // HTMLPurifier, DB,
+    // Composer\Semver\Comparator,
     App\Utilities\Functions\Functions,
     App\UserRole;
 
@@ -20,7 +20,7 @@ class Permits
 
     protected $user_id, $perms, $basics;
 
-    const BASIC_TYPE = ['type'=> 'BASIC'];
+    const BASIC_TYPE = ['_internal_:type' => 'BASIC'];
 
     const ADMIN_ROLE = 'admin';
     const CONTENT_ROLE = 'creator';
@@ -65,7 +65,6 @@ class Permits
         //ERROR RETURN!
         return false;
     }
-
 
     public function addPermitBasicPlus(
         string $role, int $level = 1, array $extra = null, 
@@ -119,6 +118,44 @@ class Permits
         }
         return false;
     }
+
+    // permission deletion methods..
+
+    public function removePermitSpecial(
+        string $role, int $level = 1, array $extra = null
+    ) {
+        $this->delIfIsInPerms($role, $level, $extra);
+    }
+
+    public function removePermit(string $role, int $level = 1) 
+    {
+        $this->removePermitSpecial($role, $level, BASIC_TYPE);
+    }
+
+    public function removePermitRegen(string $role, int $level = 1)
+    {
+        $this->removePermit($role, $level);
+        $this->regenBasics();
+    }
+
+    public function removePermitBasicPlus(
+        string $role, int $level = 1, array $extra = null, 
+        bool $regen = false
+    ) {
+        if (Functions::testVar($extra)) {
+            foreach (BASIC_TYPE as $key => $val) {
+                $extra[$key] = $val;
+            }
+        } else {
+            $extra = BASIC_TYPE;
+        }
+        $this->removePermitSpecial($role, $level, $extra);
+        if ($regen) {
+            $this->regenBasics();
+        }
+        return $tmp;
+    }
+
 
     // general private utilities zone..
 
@@ -177,7 +214,7 @@ class Permits
             // fake data...
             $tmp = random_int(0, 1);
         }
-        $ran = $prev < 0 ? random_int(0, 9) : $prev;
+        $ran = ($prev < 1 || $prev > 9) ? random_int(1, 9) : $prev;
         return [($tmp * 10) + $ran, $ran];
     }
 
@@ -233,7 +270,7 @@ class Permits
         }
     }
 
-    protected function testPermExtraHelper($extraData, $key, $val = null) 
+    static protected function testPermExtraHelper($extraData, $key, $val = null) 
     {
         $bol = false;
         if (Functions::testVar($extraData)) {
@@ -254,7 +291,7 @@ class Permits
     {
         $tmp = $this->getExtras($permit);
         if ($tmp !== false) {
-            return $this->testPermExtraHelper($tmp, $key, $val);
+            return self::testPermExtraHelper($tmp, $key, $val);
         } else {
             return false;
         }
@@ -266,7 +303,7 @@ class Permits
         if (Functions::testVar($extra)) {
             $tmp = $this->getExtras($permit);
             foreach ($extra as $key => $val) {
-                if (!$this->testPermExtraHelper($tmp, $key, $val)) {
+                if (!self::testPermExtraHelper($tmp, $key, $val)) {
                     $bol = false;
                 }
             }
@@ -310,6 +347,30 @@ class Permits
             }
         }
         return $res;
+    }
+
+    protected function delPerm($key, $perm)
+    {
+        if ($this->perms->get($key) === $perm) {
+            $this->perms->pull($key);
+            $perm->deleteRole();
+        }
+    }
+
+    protected function delIfIsInPerms(
+        string $role, int $level = 1, array $extra = null
+    ) {
+        foreach ($this->perms as $key => $perm) {
+            if ($this->testPermHash($perm, $role, $level)) {
+                if (Functions::testVar($extra)) {
+                    if ($this->testPermExtra($permit, $extra)) {
+                        $this->delPerm($key, $perm);
+                    }
+                } else {
+                    $this->delPerm($key, $perm);
+                }
+            }
+        }
     }
 
     // BASIC Private/Protected Testing method
