@@ -115,6 +115,40 @@ class Permits
         return $bol;
     }
 
+    static protected testPerm(
+        $permit, string $role, int $level = 1
+    ) {
+        if (is_array($permit)) {
+            $extraStr = $permit['extra'];
+            $roleStr = $permit['role'];
+        } elseif ($permit instanceof UserRole) {
+            $extraStr = $permit->extra;
+            $roleStr = $permit->role;
+        }
+        $tmp = Crypt::decrypt($extraStr)[$roleStr] ?? -1;
+        $prev = is_string($tmp) ? strlen($tmp) : -1;
+        $perm = self::translate2perm($role, $level, $prev);
+        $plain = self::genPermStr($this->user_id, $perm[0]);
+        return Hash::check($plain, $roleStr);
+    }
+
+    protected function getIfIsInPerms(
+        string $role, int $level = 1
+    ) {
+        $res = [];
+        foreach ($this->perms as $perm) {
+            $roleStr = $perm['role'];
+            $tmp = Crypt::decrypt($perm['extra'])[$roleStr] ?? -1;
+            $prev = is_string($tmp) ? strlen($tmp) : -1;
+            $perm = self::translate2perm($role, $level, $prev);
+            $plain = self::genPermStr($this->user_id, $perm[0]);
+            if (Hash::check($plain, $roleStr)) {
+                $res[] = $perm;
+            }
+        }
+        return $res;
+    }
+
     static protected function translate2perm(
         string $role, int $level = 1, int $prev = -1
     ) {
@@ -165,12 +199,6 @@ class Permits
         }
         $ran = $prev < 0 ? random_int(0, 9) : $prev;
         return [($tmp * 10) + $ran, $ran];
-    }
-
-    static protected function setPermission(int $user_id, $role, int $level = 1)
-    {
-        $permit = self::translate2perm($role, $level);
-        $role
     }
 
     public function isAdmin(int $user_id, $perms) 
