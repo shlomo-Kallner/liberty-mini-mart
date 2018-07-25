@@ -115,7 +115,7 @@ class Permits
         return $bol;
     }
 
-    static protected testPerm(
+    protected function testPerm(
         $permit, string $role, int $level = 1
     ) {
         if (is_array($permit)) {
