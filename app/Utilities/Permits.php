@@ -23,10 +23,16 @@ class Permits
 
     // permit retrieval zone..
 
-    public function __construct(int $user_id)
+    public function __construct(int $user_id = -1)
     {
         $this->user_id = $user_id;
-        $this->perms = self::getPermissions($user_id);
+        //$this->perms = self::getPermissions($user_id);
+        if ($user_id > 0) {
+            $this->perms = UserRole::getForUser($user_id);
+        } else {
+            $this->perms = collect([]);
+        }
+        
     }
     
     /**
@@ -37,6 +43,7 @@ class Permits
      */
     static protected function getPermissions(int $user_id)
     {
+        // OBSOLETE!!
         //$user_id = self::getUserId($user);
         // $tmp = DB::table(self::$_roles_table)
         //  ->where('user_id', $user_id)->get();
@@ -52,22 +59,14 @@ class Permits
     protected function __construct(
         int $user_id, string $role, int $level = 1, array $extra = null
         //, bool $save = false
-        ) {
+    ) {
         $this->user_id = $user_id;
-        $this->perms = [];
-        $perm = self::translate2perm($role, $level);
-        $hash = self::genHashedPermStr($user_id, $perm[0]);
-        if (!Functions::testVar($extra)) {
-            $extra = [];
+        $this->perms = collect([]);
+        $tmp = self::makePermit($this->user_id, $role, $level, $extra);
+        if ($tmp !== false) {
+            $this->perms->push($tmp);
         }
-        if (is_array($extra) && !isset($extra[$hash])) {
-            $extra[$hash] = str_random($perm[1]);
-        }
-
-        $this->perms[] = UserRole::createNewRole(
-            $user_id, $hash,
-            Crypt::encrypt($extra)
-        );
+        
         /* 
         $perm = [
             'user_id' => $user_id,
@@ -79,6 +78,26 @@ class Permits
         //$perm->user_id = $user_id;
         //$perm->extra = Crypt::encrypt($extra);
         // todo finish!!
+    }
+
+    static protected function makePermit(
+        int $user_id, string $role, int $level = 1, 
+        array $extra = null
+    ) {
+        $perm = self::translate2perm($role, $level);
+        // this renders 'genHashedPermStr' OBSOLETE!
+        $hash = Hash::make(self::genPermStr($user_id, $perm[0]));
+        if (!Functions::testVar($extra)) {
+            $extra = [];
+        }
+        if (is_array($extra) && !isset($extra[$hash])) {
+            $extra[$hash] = str_random($perm[1]);
+            return UserRole::createNewRole(
+                $user_id, $hash,
+                Crypt::encrypt($extra)
+            );
+        }
+        return false;
     }
 
     // general private utilities zone..
@@ -95,24 +114,6 @@ class Permits
         //$faked = random_int(0, 100);
         //$permit = ($perm * 10) + random_int(0, 9);
         return Hash::make(self::genPermStr($user_id, $perm));
-    }
-
-    protected function testIfInPerms(
-        string $role, int $level = 1
-    ) {
-        $bol = false;
-        foreach ($this->perms as $perm) {
-            $roleStr = $perm['role'];
-            $tmp = Crypt::decrypt($perm['extra'])[$roleStr] ?? -1;
-            $prev = is_string($tmp) ? strlen($tmp) : -1;
-            $perm = self::translate2perm($role, $level, $prev);
-            $plain = self::genPermStr($this->user_id, $perm[0]);
-            if (Hash::check($plain, $roleStr)) {
-                $bol = true;
-                break;
-            }
-        }
-        return $bol;
     }
 
     protected function testPerm(
@@ -132,17 +133,25 @@ class Permits
         return Hash::check($plain, $roleStr);
     }
 
+    protected function testIfInPerms(
+        string $role, int $level = 1
+    ) {
+        $bol = false;
+        foreach ($this->perms as $perm) {
+            if ($this->testPerm($perm, $role, $level)) {
+                $bol = true;
+                break;
+            }
+        }
+        return $bol;
+    }
+
     protected function getIfIsInPerms(
         string $role, int $level = 1
     ) {
         $res = [];
         foreach ($this->perms as $perm) {
-            $roleStr = $perm['role'];
-            $tmp = Crypt::decrypt($perm['extra'])[$roleStr] ?? -1;
-            $prev = is_string($tmp) ? strlen($tmp) : -1;
-            $perm = self::translate2perm($role, $level, $prev);
-            $plain = self::genPermStr($this->user_id, $perm[0]);
-            if (Hash::check($plain, $roleStr)) {
+            if ($this->testPerm($perm, $role, $level)) {
                 $res[] = $perm;
             }
         }
