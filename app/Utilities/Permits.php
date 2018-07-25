@@ -18,8 +18,7 @@ class Permits
 {
     // OUR Permissions Utilities FUNCTIONS!
 
-    //protected static $_roles_table = 'userRoles';
-    protected $user_id, $perms;
+    protected $user_id, $perms, $basics;
 
     // permit retrieval zone..
 
@@ -32,24 +31,8 @@ class Permits
         } else {
             $this->perms = collect([]);
         }
+        $this->basics = $this->getBasics();
         
-    }
-    
-    /**
-     * Function getPermisions  - just gets all permissions of a user.
-     *
-     * @param [type] $user
-     * @return void
-     */
-    static protected function getPermissions(int $user_id)
-    {
-        // OBSOLETE!!
-        //$user_id = self::getUserId($user);
-        // $tmp = DB::table(self::$_roles_table)
-        //  ->where('user_id', $user_id)->get();
-        
-        $tmp = UserRole::getForUser($user_id);
-        return $tmp->count() > 0 ? $tmp->toArray() : [];
     }
 
     
@@ -69,6 +52,17 @@ class Permits
 
         //ERROR RETURN!
         return false;
+    }
+
+    public function addPermitRegen(
+        string $role, int $level = 1, array $extra = null
+    ) {
+        if ($this->addPermit($role, $level, $extra)) {
+            $this->regenBasics();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     static protected function makePermit(
@@ -197,31 +191,59 @@ class Permits
         return $res;
     }
 
+    // BASIC Private/Protected Testing method
+
+    protected function getBasics()
+    {
+        $res = [];
+        if ($this->testIfInPerms('admin', 1) 
+            || $this->testIfInPerms('admin', 2) 
+            || $this->testIfInPerms('admin', 3)
+        ) {
+            $res[] = 'admin';
+        }
+        if ($this->testIfInPerms('creator', 1) 
+            || $this->testIfInPerms('creator', 2) 
+            || $this->testIfInPerms('creator', 3)
+        ) {
+            $res[] = 'creator';
+        }
+        if ($this->testIfInPerms('user', 1)) {
+            $res[] = 'user';
+        }
+        if ($this->testIfInPerms('guest', 1)) {
+            $res[] = 'guest';
+        }
+        return $res;
+    }
+
+
     // BASIC PUBLIC permission Testing methods..
+
+    public function regenBasics()
+    {
+        $this->basics = $this->getBasics();
+    }
 
     public function isAdmin() 
     {
         //$user_id = self::getUserId($user);
-        return $this->testIfInPerms('admin', 1) ||
-            $this->testIfInPerms('admin', 2) ||
-            $this->testIfInPerms('admin', 3);
+        return in_array('admin', $this->basics, true);
     }
 
     public function isContentCreator() 
     {
-        return $this->testIfInPerms('creator', 1) ||
-            $this->testIfInPerms('creator', 2) ||
-            $this->testIfInPerms('creator', 3);
+        return in_array('creator', $this->basics, true); 
     }
 
     public function isAuthUser()
     {
-        return $this->testIfInPerms('user', 1);
+        return in_array('user', $this->basics, true); 
     }
 
     public function isGuestUser()
     {
-        return $this->testIfInPerms('guest', 1);
+        return in_array('guest', $this->basics, true); 
     }
     
 }
