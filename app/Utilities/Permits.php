@@ -20,6 +20,18 @@ class Permits
 
     protected $user_id, $perms, $basics;
 
+    const BASIC_TYPE = ['type'=> 'BASIC'];
+
+    const ADMIN_ROLE = 'admin';
+    const CONTENT_ROLE = 'creator';
+    const AUTH_USER_ROLE = 'user';
+    const GUEST_USER_ROLE = 'guest';
+
+    const READ_LEVEL = 1;
+    const WRITE_LEVEL = 2; // also OVERWRITE, so ...
+    const UPDATE_LEVEL = 2;
+    const DELETE_LEVEL = 3;
+
     // permit retrieval zone..
 
     public function __construct(int $user_id = -1)
@@ -39,7 +51,7 @@ class Permits
 
     // permit Creation zone..
 
-    public function addPermit(
+    public function addPermitSpecial(
         string $role, int $level = 1, array $extra = null
     ) {
         $tmp = self::makePermit($this->user_id, $role, $level, $extra);
@@ -54,10 +66,33 @@ class Permits
         return false;
     }
 
-    public function addPermitRegen(
-        string $role, int $level = 1, array $extra = null
+
+    public function addPermitBasicPlus(
+        string $role, int $level = 1, array $extra = null, 
+        bool $regen = false
     ) {
-        if ($this->addPermit($role, $level, $extra)) {
+        if (Functions::testVar($extra)) {
+            foreach (BASIC_TYPE as $key => $val) {
+                $extra[$key] = $val;
+            }
+        } else {
+            $extra = BASIC_TYPE;
+        }
+        $tmp = $this->addPermitSpecial($role, $level, $extra);
+        if ($regen && $tmp) {
+            $this->regenBasics();
+        }
+        return $tmp;
+    } 
+
+    public function addPermit(string $role, int $level = 1) 
+    {
+        return $this->addPermitSpecial($role, $level, BASIC_TYPE);
+    }
+
+    public function addPermitRegen(string $role, int $level = 1) 
+    {
+        if ($this->addPermit($role, $level)) {
             $this->regenBasics();
             return true;
         } else {
@@ -146,46 +181,132 @@ class Permits
         return [($tmp * 10) + $ran, $ran];
     }
 
+    // Special Getters..
+
+    protected function getExtras($permit)
+    {
+        if (Functions::testVar($permit)) {
+            if (is_array($permit)) {
+                $extraStr = $permit['extra'];
+            } elseif ($permit instanceof UserRole) {
+                $extraStr = $permit->extra;
+            } else {
+                return false;
+            }
+            return Crypt::decrypt($extraStr);
+        } else {
+            return false;
+        }
+    }
+
+    protected function getRole($permit) 
+    {
+        if (Functions::testVar($permit)) {
+            if (is_array($permit)) {
+                $roleStr = $permit['role'];
+            } elseif ($permit instanceof UserRole) {
+                $roleStr = $permit->role;
+            } else {
+                $roleStr = false;
+            }
+            return $roleStr;
+        } else {
+            return false;
+        }
+    }
 
     // permission Testing methods..
 
-    protected function testPerm(
+    protected function testPermHash(
         $permit, string $role, int $level = 1
     ) {
-        if (is_array($permit)) {
-            $extraStr = $permit['extra'];
-            $roleStr = $permit['role'];
-        } elseif ($permit instanceof UserRole) {
-            $extraStr = $permit->extra;
-            $roleStr = $permit->role;
+        $extraStr = $this->getExtras($permit);
+        $roleStr = $this->getRole($permit);
+        if ($extraStr !== false && $roleStr !== false) {
+            $tmp = $extraStr[$roleStr] ?? -1;
+            $prev = is_string($tmp) ? strlen($tmp) : -1;
+            $perm = self::translate2perm($role, $level, $prev);
+            $plain = self::genPermStr($this->user_id, $perm[0]);
+            return Hash::check($plain, $roleStr);
+        } else {
+            return false;
         }
-        $tmp = Crypt::decrypt($extraStr)[$roleStr] ?? -1;
-        $prev = is_string($tmp) ? strlen($tmp) : -1;
-        $perm = self::translate2perm($role, $level, $prev);
-        $plain = self::genPermStr($this->user_id, $perm[0]);
-        return Hash::check($plain, $roleStr);
+    }
+
+    protected function testPermExtraHelper($extraData, $key, $val = null) 
+    {
+        $bol = false;
+        if (Functions::testVar($extraData)) {
+            if ((is_int($key) || is_string($key) ) 
+                && array_key_exists($key, $extraData)
+                && Functions::testVar($extraData[$key])
+                && Functions::testVar($val)
+            ) {
+                $bol = $extraData[$key] === $val;
+            } elseif (in_array($key, $extraData)) {
+                $bol = true; 
+            }
+        }
+        return $bol;
+    }
+
+    protected function testPermExtraSingle($permit, $key, $val = null) 
+    {
+        $tmp = $this->getExtras($permit);
+        if ($tmp !== false) {
+            return $this->testPermExtraHelper($tmp, $key, $val);
+        } else {
+            return false;
+        }
+    }
+    
+    protected function testPermExtra($permit, array $extra = null) 
+    {
+        $bol = true;
+        if (Functions::testVar($extra)) {
+            $tmp = $this->getExtras($permit);
+            foreach ($extra as $key => $val) {
+                if (!$this->testPermExtraHelper($tmp, $key, $val)) {
+                    $bol = false;
+                }
+            }
+        }
+        return $bol;
     }
 
     protected function testIfInPerms(
-        string $role, int $level = 1
+        string $role, int $level = 1, array $extra = null
     ) {
         $bol = false;
         foreach ($this->perms as $perm) {
-            if ($this->testPerm($perm, $role, $level)) {
-                $bol = true;
-                break;
+            if ($this->testPermHash($perm, $role, $level)) {
+                if (Functions::testVar($extra)) {
+                    if ($this->testPermExtra($permit, $extra)) {
+                        $bol = true;
+                        break;
+                    }
+                } else {
+                    $bol = true;
+                    break;
+                }
             }
         }
         return $bol;
     }
 
     protected function getIfIsInPerms(
-        string $role, int $level = 1
+        string $role, int $level = 1, array $extra = null
     ) {
         $res = [];
         foreach ($this->perms as $perm) {
-            if ($this->testPerm($perm, $role, $level)) {
-                $res[] = $perm;
+            if ($this->testPermHash($perm, $role, $level)) {
+                if (Functions::testVar($extra)) {
+                    if ($this->testPermExtra($permit, $extra)) {
+                        $res[] = $perm;
+                    }
+                } else {
+                    $res[] = $perm;
+                }
             }
         }
         return $res;
@@ -196,22 +317,22 @@ class Permits
     protected function getBasics()
     {
         $res = [];
-        if ($this->testIfInPerms('admin', 1) 
-            || $this->testIfInPerms('admin', 2) 
-            || $this->testIfInPerms('admin', 3)
+        if ($this->testIfInPerms('admin', 1, BASIC_TYPE) 
+            || $this->testIfInPerms('admin', 2, BASIC_TYPE) 
+            || $this->testIfInPerms('admin', 3, BASIC_TYPE)
         ) {
             $res[] = 'admin';
         }
-        if ($this->testIfInPerms('creator', 1) 
-            || $this->testIfInPerms('creator', 2) 
-            || $this->testIfInPerms('creator', 3)
+        if ($this->testIfInPerms('creator', 1, BASIC_TYPE) 
+            || $this->testIfInPerms('creator', 2, BASIC_TYPE) 
+            || $this->testIfInPerms('creator', 3, BASIC_TYPE)
         ) {
             $res[] = 'creator';
         }
-        if ($this->testIfInPerms('user', 1)) {
+        if ($this->testIfInPerms('user', 1, BASIC_TYPE)) {
             $res[] = 'user';
         }
-        if ($this->testIfInPerms('guest', 1)) {
+        if ($this->testIfInPerms('guest', 1, BASIC_TYPE)) {
             $res[] = 'guest';
         }
         return $res;
