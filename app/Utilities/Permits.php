@@ -220,7 +220,7 @@ class Permits
 
     // Special Getters..
 
-    protected function getExtras($permit)
+    static protected function getExtras($permit)
     {
         if (Functions::testVar($permit)) {
             if (is_array($permit)) {
@@ -236,7 +236,7 @@ class Permits
         }
     }
 
-    protected function getRole($permit) 
+    static protected function getRole($permit) 
     {
         if (Functions::testVar($permit)) {
             if (is_array($permit)) {
@@ -257,8 +257,8 @@ class Permits
     protected function testPermHash(
         $permit, string $role, int $level = 1
     ) {
-        $extraStr = $this->getExtras($permit);
-        $roleStr = $this->getRole($permit);
+        $extraStr = self::getExtras($permit);
+        $roleStr = self::getRole($permit);
         if ($extraStr !== false && $roleStr !== false) {
             $tmp = $extraStr[$roleStr] ?? -1;
             $prev = is_string($tmp) ? strlen($tmp) : -1;
@@ -274,14 +274,45 @@ class Permits
     {
         $bol = false;
         if (Functions::testVar($extraData)) {
-            if ((is_int($key) || is_string($key) ) 
-                && array_key_exists($key, $extraData)
-                && Functions::testVar($extraData[$key])
-                && Functions::testVar($val)
-            ) {
-                $bol = $extraData[$key] === $val;
-            } elseif (in_array($key, $extraData)) {
-                $bol = true; 
+            if (is_array($extraData)) {
+
+                if ((is_int($key) || is_string($key) )
+                    && array_key_exists($key, $extraData)
+                    && Functions::testVar($extraData[$key])
+                    && Functions::testVar($val)
+                ) {
+                    if (is_array($extraData[$key]) && is_array($val)) {
+                        $bTmp = true;
+                        foreach ($val as $kTmp => $vTmp) {
+                            if (! self::testPermExtraHelper($extraData[$key], $kTmp, $vTmp)) {
+                                $bTmp = false;
+                            }
+                        }
+                        $bol = $bTmp;
+                    } else {
+                        $bol = $extraData[$key] === $val;
+                    }
+                } elseif (in_array($key, $extraData)) {
+                    $bol = true; 
+                }
+            } elseif (is_object($extraData)) {
+                if (is_string($key) 
+                    && (isset($extraData->$key) && !empty($extraData->$key))
+                ) {
+                    if (Functions::testVar($val)) {
+                        // $val must not be NULL!
+                        if ((is_array($extraData->$key) && is_array($val))
+                            || (is_object($extraData->$key) && is_object($val) 
+                                && $extraData->$key instanceof $val)
+                        ) {
+                            
+                        }
+                    } 
+                } else {
+                    foreach ($extraData as $oVal) {
+                        if ($oVal === )
+                    }
+                }
             }
         }
         return $bol;
