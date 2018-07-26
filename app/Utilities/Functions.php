@@ -201,6 +201,10 @@ class Functions
      * @return bool|int  -1 for smaller than, 0 for equal to and 1 for greater than
      *                   false for incomparable. 
      *                   Can only return 0 or false for Objects or Arrays..
+     *                   Compares $var2 to $var1 and if they are arrays or Objects
+     *                   _ALL_ of $var2's keys/property_names and values _MUST_ Exist 
+     *                   in $var1 and be equal to the keys/properties and values 
+     *                   in $var1 for the method to return 0.
      */
     static public function compValues($var1, $var2) 
     {
@@ -251,38 +255,6 @@ class Functions
         return $res;
     }
 
-    static public function compObjOrArrays($var1, $var2) 
-    {
-        $res = false;
-        if (self::testVar($var1) && self::testVar($var2)) {
-            
-            /* 
-            foreach ($arr1 as $key => $val) {
-                if (array_key_exists($key, $arr2)) {
-
-                }
-            } 
-            */
-
-            /* 
-            $diff1 = array_diff_assoc($arr1, $arr2);
-            $diff2 = array_diff_assoc($arr2, $arr1);
-            $res = array_merge_recursive($diff1, $diff2); 
-            */
-            if ((is_array($var1) && is_array($var2)) 
-                || (is_object($var1) && is_object($var2) && $var1 instanceof $var2)
-            ) {
-                $bol = true;
-                foreach ($var1 as $key => $val) {
-                    if (self::isPropKeyIn($var2, $key)) {
-
-                    }
-                }
-            }
-        } 
-        return $res;
-    }
-
     static public function isPropKeyIn($data, $name) 
     {
         $bol = null;
@@ -315,32 +287,22 @@ class Functions
     {
         $bol = null;
         if (self::testVar($data)) {
+            $bol = false;
             if (self::isPropKeyIn($data, $key) && self::testVar($val)) {
                 $nTmp = self::getPropKey($data, $key) ?? null;
                 if (self::testVar($nTmp)) {
-                    $bol =  $nTmp === $val;
+                    $cTmp = self::compValues($nTmp, $val);
+                    if ($cTmp === 0) {
+                        $bol = true;
+                    } 
                 }
             } elseif (self::testVar($key) && !self::testVar($val)) {
-                $bol = false;
                 foreach ($data as $kTmp => $vTmp) {
-                    $cTmp = self::compValues($key, $vTmp);
+                    $cTmp = self::compValues($vTmp, $key);
                     if ($cTmp === 0) {
                         $bol = true;
                         break;
-                    } elseif ($cTmp === false) {
-                        if ((is_array($vTmp) && is_array($key)) 
-                            || (is_object($vTmp) && is_object($key))
-                        ) {
-                            foreach ($vTmp as )
-                            $cTmp = self::compArrays($key, $vTmp);
-                            if ($cTmp === 0) {
-                                $bol = true;
-                                break;
-                            } 
-                        } elseif () {
-
-                        }
-                    }
+                    } 
                 }
             }
         }
