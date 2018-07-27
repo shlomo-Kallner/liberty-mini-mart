@@ -20,6 +20,7 @@ class CreatePlansTable extends Migration
             $table->mediumText('content');
             $table->decimal('price');
             $table->integer('visible');
+            $table->mediumText('extra');
             $table->timestamps();
             $table->softDeletes();
         });

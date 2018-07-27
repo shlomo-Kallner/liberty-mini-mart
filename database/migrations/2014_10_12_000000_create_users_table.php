@@ -18,15 +18,15 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('image'); 
-            //$table->integer('image_id')->unsigned();
+            //$table->string('image'); 
+            $table->integer('image_id')->unsigned();
             $table->integer('plan_id')->unsigned();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('plan_id')->references('id')->on('plans');
-            // $table->foreign('image_id')->references('id')->on('images');
+            $table->foreign('image_id')->references('id')->on('images');
         });
     }
 
