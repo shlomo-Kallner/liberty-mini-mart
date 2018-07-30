@@ -172,6 +172,12 @@
         $filters2 = Functions::getContent($filters2??'');
         $bestsellers2 = Functions::getContent($bestsellers??'');
 
+        if (Functions::testVar($pricing2)) {
+            $usePricings = true;
+        } else {
+            $usePricings = false;
+        }
+
     @endphp
 
     @component('lib.themewagon.article')
@@ -216,29 +222,32 @@
 
     @endif
 
-
-    @component('lib.themewagon.article')
-        @foreach ($page['article'] as $key => $item)
-            @slot($key)
-                {{ $item }}
-            @endslot
-        @endforeach
-    @endcomponent
-
-
-
-    @component('lib.bootstrapmade.pricing')
-        @if(Functions::testVar($pricing2))
-
-            @foreach ($pricing2 as $key => $item)
+    @if ($usePricings)
+    
+        @component('lib.themewagon.article')
+            @foreach ($page['article'] as $key => $item)
                 @slot($key)
-                    {{$item}}
-                @endslot    
+                    {{ $item }}
+                @endslot
             @endforeach
-        
-        @endif
-    @endcomponent
+        @endcomponent
 
+        @component('lib.bootstrapmade.pricing')
+            @if(Functions::testVar($pricing2))
+
+                @foreach ($pricing2 as $key => $item)
+                    @slot($key)
+                        {{$item}}
+                    @endslot    
+                @endforeach
+            
+            @endif
+        @endcomponent
+
+    
+    @endif
+
+    
 @endsection
 
 @section('js-defered')

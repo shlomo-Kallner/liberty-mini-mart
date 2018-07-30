@@ -18,7 +18,8 @@ class CreatePlansTable extends Migration
             $table->string('name');
             $table->string('url')->unique();
             $table->mediumText('content');
-            $table->decimal('price');
+            $table->decimal('price', 12, 2);
+            $table->decimal('sale', 12, 2);
             $table->integer('visible');
             $table->mediumText('extra');
             $table->timestamps();
