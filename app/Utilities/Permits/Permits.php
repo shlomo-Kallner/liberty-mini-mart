@@ -18,9 +18,7 @@ class Permits
 {
     // OUR Permissions Utilities FUNCTIONS!
 
-    protected $user_id, $perms, $basics;
-
-    const BASIC_TYPE = ['_internal_:type' => 'BASIC'];
+    protected $user_id, $perms;
 
     const ADMIN_ROLE = 'admin';
     const CONTENT_ROLE = 'creator';
@@ -43,7 +41,6 @@ class Permits
         } else {
             $this->perms = collect([]);
         }
-        $this->basics = $this->getBasics();
         
     }
 
@@ -51,7 +48,7 @@ class Permits
 
     // permit Creation zone..
 
-    public function addPermitSpecial(
+    public function addPermit(
         string $role, int $level = 1, array $extra = null
     ) {
         $tmp = self::makePermit($this->user_id, $role, $level, $extra);
@@ -64,39 +61,6 @@ class Permits
 
         //ERROR RETURN!
         return false;
-    }
-
-    public function addPermitBasicPlus(
-        string $role, int $level = 1, array $extra = null, 
-        bool $regen = false
-    ) {
-        if (Functions::testVar($extra)) {
-            foreach (BASIC_TYPE as $key => $val) {
-                $extra[$key] = $val;
-            }
-        } else {
-            $extra = BASIC_TYPE;
-        }
-        $tmp = $this->addPermitSpecial($role, $level, $extra);
-        if ($regen && $tmp) {
-            $this->regenBasics();
-        }
-        return $tmp;
-    } 
-
-    public function addPermit(string $role, int $level = 1) 
-    {
-        return $this->addPermitSpecial($role, $level, BASIC_TYPE);
-    }
-
-    public function addPermitRegen(string $role, int $level = 1) 
-    {
-        if ($this->addPermit($role, $level)) {
-            $this->regenBasics();
-            return true;
-        } else {
-            return false;
-        }
     }
 
     static protected function makePermit(
@@ -121,41 +85,13 @@ class Permits
 
     // permission deletion methods..
 
-    public function removePermitSpecial(
+    public function removePermit(
         string $role, int $level = 1, array $extra = null
     ) {
         $this->delIfIsInPerms($role, $level, $extra);
     }
 
-    public function removePermit(string $role, int $level = 1) 
-    {
-        $this->removePermitSpecial($role, $level, BASIC_TYPE);
-    }
-
-    public function removePermitRegen(string $role, int $level = 1)
-    {
-        $this->removePermit($role, $level);
-        $this->regenBasics();
-    }
-
-    public function removePermitBasicPlus(
-        string $role, int $level = 1, array $extra = null, 
-        bool $regen = false
-    ) {
-        if (Functions::testVar($extra)) {
-            foreach (BASIC_TYPE as $key => $val) {
-                $extra[$key] = $val;
-            }
-        } else {
-            $extra = BASIC_TYPE;
-        }
-        $this->removePermitSpecial($role, $level, $extra);
-        if ($regen) {
-            $this->regenBasics();
-        }
-        return $tmp;
-    }
-
+    
 
     // general private utilities zone..
 
@@ -365,59 +301,6 @@ class Permits
         }
     }
 
-    // BASIC Private/Protected Testing method
-
-    protected function getBasics()
-    {
-        $res = [];
-        if ($this->testIfInPerms('admin', 1, BASIC_TYPE) 
-            || $this->testIfInPerms('admin', 2, BASIC_TYPE) 
-            || $this->testIfInPerms('admin', 3, BASIC_TYPE)
-        ) {
-            $res[] = 'admin';
-        }
-        if ($this->testIfInPerms('creator', 1, BASIC_TYPE) 
-            || $this->testIfInPerms('creator', 2, BASIC_TYPE) 
-            || $this->testIfInPerms('creator', 3, BASIC_TYPE)
-        ) {
-            $res[] = 'creator';
-        }
-        if ($this->testIfInPerms('user', 1, BASIC_TYPE)) {
-            $res[] = 'user';
-        }
-        if ($this->testIfInPerms('guest', 1, BASIC_TYPE)) {
-            $res[] = 'guest';
-        }
-        return $res;
-    }
-
-
-    // BASIC PUBLIC permission Testing methods..
-
-    public function regenBasics()
-    {
-        $this->basics = $this->getBasics();
-    }
-
-    public function isAdmin() 
-    {
-        //$user_id = self::getUserId($user);
-        return in_array('admin', $this->basics, true);
-    }
-
-    public function isContentCreator() 
-    {
-        return in_array('creator', $this->basics, true); 
-    }
-
-    public function isAuthUser()
-    {
-        return in_array('user', $this->basics, true); 
-    }
-
-    public function isGuestUser()
-    {
-        return in_array('guest', $this->basics, true); 
-    }
+    
     
 }

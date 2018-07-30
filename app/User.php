@@ -42,9 +42,9 @@ class User extends Model
         return session()->has('is_admin') ? true : false;
     }
 
-    static public function getUserFromId($id) 
+    static public function getUserFromId(int $id) 
     {
-
+        return self::where('id', $id)->first();
     }
 
     static public function testIfUser($email, $password, array $extra = null)
