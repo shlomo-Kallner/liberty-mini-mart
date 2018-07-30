@@ -15,7 +15,13 @@ class CreatePageImagesTable extends Migration
     {
         Schema::create('page_images', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('image')->unsigned();
+            $table->integer('page')->unsigned();
             $table->timestamps();
+            $table->softDeletes();
+
+            //$table->foreign('image')->references('id')->on('images');
+            //$table->foreign('page')->references('id')->on('pages');
         });
     }
 

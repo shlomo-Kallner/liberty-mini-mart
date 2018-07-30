@@ -13,8 +13,21 @@ class CreateCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::table('categories', function (Blueprint $table) {
-            //
+        Schema::create('categories', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name', 255);
+            $table->integer('image')->unsigned();
+            $table->string('title', 255);
+            $table->mediumText('article');
+            $table->string('url', 255);
+            $table->integer('section_id')->unsigned();
+            $table->string('sticker', 255);
+            $table->string('description', 255);
+            $table->timestamps();
+            $table->softDeletes();
+
+            //$table->foreign('image')->references('id')->on('images');
+            //$table->foreign('section_id')->references('id')->on('sections');
         });
     }
 

@@ -31,17 +31,23 @@ class CreateSectionsTable extends Migration
         Schema::create(
             'sections', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('name', 255);               
+                $table->string('name', 255)
+                    ->charset('utf8')
+                    ->collation('utf8_unicode_ci');               
                 $table->integer('image')->unsigned();
-                $table->string('title', 255);
-                $table->string('sub_title', 255);                
+                $table->string('title', 255)
+                    ->charset('utf8')
+                    ->collation('utf8_unicode_ci');
+                $table->string('sub_title', 255)
+                    ->charset('utf8')
+                    ->collation('utf8_unicode_ci');                
                 $table->text('article', 255);
                 $table->string('url', 255)->unique();
                 $table->string('description', 255);
                 $table->timestamps();
                 $table->softDeletes();
 
-                $table->foreign('image')->references('id')->on('images');
+                //$table->foreign('image')->references('id')->on('images');
                 
             }
         );

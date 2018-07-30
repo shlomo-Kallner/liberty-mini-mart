@@ -13,7 +13,7 @@ class CreateProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 255);
             $table->integer('image')->unsigned();
@@ -27,6 +27,9 @@ class CreateProductsTable extends Migration
             $table->string('description', 255);
             $table->timestamps();
             $table->softDeletes();
+
+            //$table->foreign('image')->references('id')->on('images');
+            //$table->foreign('category_id')->references('id')->on('categories');
         });
     }
 

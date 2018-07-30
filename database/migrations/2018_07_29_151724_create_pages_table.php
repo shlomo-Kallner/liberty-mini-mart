@@ -13,8 +13,19 @@ class CreatePagesTable extends Migration
      */
     public function up()
     {
-        Schema::table('pages', function (Blueprint $table) {
-            //
+        Schema::create('pages', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name', 255);
+            $table->integer('image')->unsigned();
+            $table->string('title', 255);
+            $table->mediumText('article');
+            $table->string('url', 255);
+            $table->string('sticker', 255);
+            $table->string('description', 255);
+            $table->timestamps();
+            $table->softDeletes();
+
+            //$table->foreign('image')->references('id')->on('images');
         });
     }
 
