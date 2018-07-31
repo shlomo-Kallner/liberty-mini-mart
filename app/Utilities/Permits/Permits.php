@@ -10,6 +10,7 @@ use Illuminate\Support\Collection,
     // Composer\Semver\Comparator,
     App\Utilities\Functions\Functions,
     App\UserRole;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Undocumented class

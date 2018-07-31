@@ -154,6 +154,14 @@ class Page extends Model
         if (!$testing) {
             //$navbar = DB::table('pages')::all()->toArray();
             $navbar = [];
+            if ($area == 'store') {
+                
+            } else {
+                $tmp = self::where('visible', 1)
+                    ->groupBy('group_id')
+                    ->orderBy('order', 'asc')
+                    ->get();
+            }
         } else {
             // for pre-database testing:
             $navbar = [
@@ -161,7 +169,7 @@ class Page extends Model
                 self::genURLMenuItem('store', 'Store'),
                 //self::genURLMenuItem('store/section/test', 'TEST-SECTION'),
                 //self::genURLMenuItem('store/section/test/category/test', 'TEST-CATEGORY'),
-                self::genURLMenuItem('store/section/test/category/test/product/test', 'TEST-PRODUCT'),
+                //self::genURLMenuItem('store/section/test/category/test/product/test', 'TEST-PRODUCT'),
                 //self::genURLMenuItem('template', 'My Template'),
             ];
         }
