@@ -35,6 +35,7 @@ return array(
     'App\\Image' => $baseDir . '/app/Image.php',
     'App\\Order' => $baseDir . '/app/Order.php',
     'App\\Page' => $baseDir . '/app/Page.php',
+    'App\\PageGroup' => $baseDir . '/app/PageGroup.php',
     'App\\PageImage' => $baseDir . '/app/PageImage.php',
     'App\\PasswordReset' => $baseDir . '/app/PasswordReset.php',
     'App\\Plan' => $baseDir . '/app/Plan.php',

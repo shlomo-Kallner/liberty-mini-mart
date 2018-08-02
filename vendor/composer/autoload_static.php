@@ -392,6 +392,7 @@ class ComposerStaticInitc8f191e383c8b428bdb2d9ef6beb446c
         'App\\Image' => __DIR__ . '/../..' . '/app/Image.php',
         'App\\Order' => __DIR__ . '/../..' . '/app/Order.php',
         'App\\Page' => __DIR__ . '/../..' . '/app/Page.php',
+        'App\\PageGroup' => __DIR__ . '/../..' . '/app/PageGroup.php',
         'App\\PageImage' => __DIR__ . '/../..' . '/app/PageImage.php',
         'App\\PasswordReset' => __DIR__ . '/../..' . '/app/PasswordReset.php',
         'App\\Plan' => __DIR__ . '/../..' . '/app/Plan.php',

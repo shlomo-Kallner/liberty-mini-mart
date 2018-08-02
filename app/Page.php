@@ -360,9 +360,42 @@ class Page extends Model
         ];
     }
 
-    static public function createNew()
-    {
-
+    static public function createNew(
+        string $name, string $url, array $img,
+        string $title, string $article, string $description,
+        int $visible = 1, string $sticker = '',
+        int $group_id = -1, int $order = -1
+    ) {
+        $tP = self::where(
+            [
+                ['url', '=', $url],
+                ['name', '=', $name],
+            ]
+        )->get();
+        if (!Functions::testVar($tP) || count($tP) === 0) {
+            $tImg = Image::createNewFrom($img);
+            if (Functions::testVar($tImg)) {
+                $data = new self;
+                $data->name = $name;
+                $data->url = $url;
+                $data->image = $tImg;
+                $data->title = Functions::purifyContent($title);
+                $data->article = Functions::purifyContent($article);
+                $data->description = Functions::purifyContent($description);
+                // need to do some special checking on group_id..
+                if ($group_id < 0) {
+                    $gID = self::max('group_id') + 1;
+                } else {
+                    $tgo = self::where('group_id', $group_id)->get();
+                }
+                $data->group_id = $group_id;
+                $data->order = $order;
+                if ($data->save()) {
+                    return $data->id;
+                }
+            }
+        }
+        return null;
     }
 
     static public function createNewFrom(array $array) 
