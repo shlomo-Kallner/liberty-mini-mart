@@ -15,16 +15,16 @@ class CreatePagesTable extends Migration
     {
         Schema::create('pages', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('group_id')->unsigned();
-            $table->integer('order')->unsigned();
-            $table->integer('visible')->unsigned();
             $table->string('name', 255);
+            $table->string('url', 255);
             $table->integer('image')->unsigned();
             $table->string('title', 255);
             $table->mediumText('article');
-            $table->string('url', 255);
-            $table->string('sticker', 255);
             $table->string('description', 255);
+            $table->integer('group_id')->unsigned();
+            $table->integer('order')->unsigned();
+            $table->integer('visible')->unsigned();
+            $table->string('sticker', 255);
             $table->timestamps();
             $table->softDeletes();
 

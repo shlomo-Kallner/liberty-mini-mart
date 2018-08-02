@@ -161,6 +161,7 @@ class Page extends Model
                     ->groupBy('group_id')
                     ->orderBy('order', 'asc')
                     ->get();
+                dd($tmp);
             }
         } else {
             // for pre-database testing:
@@ -299,10 +300,12 @@ class Page extends Model
         return $links;
     }
 
-    static public function getNamedPage($url, $path)
+    static public function getNamedPage($url, $path = null)
     {
         $page = self::where('url', $url)->first();
         dd($page);
+        $image = Image::where('id', $page->image)->first();
+        $imgPath = Functions::testVar($image->path) ? $image->path . '/' : '';
         return [
             'title' => $page->title,
             'content' => [
@@ -310,8 +313,8 @@ class Page extends Model
                 'article' => [
                     'header' => '',
                     'subheading' => $page->description,
-                    'img' => $page->image,
-                    'imgAlt' => $page->imageAlt,
+                    'img' => $imgPath . $image->name,
+                    'imgAlt' => $image->alt,
                     'article' => $page->article
                 ]
             ],
@@ -357,4 +360,13 @@ class Page extends Model
         ];
     }
 
+    static public function createNew()
+    {
+
+    }
+
+    static public function createNewFrom(array $array) 
+    {
+        return self::createNew();
+    }
 }

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model,
+    Illuminate\Http\Request,
     Session, DB,
     Illuminate\Support\Facades\Hash,
     App\Utilities\Functions\Functions,
@@ -15,44 +16,121 @@ class User extends Model
 {
     //
 
-    static public function getUserArray()
+    static public function getUserArray(Request $request = null)
     {
-        $user_array = [];
-        if (session()->has('user')) {
-            $user = session()->get('user');
-            if (Functions::testVar($user)) {
-                if (is_array($user)) {
-                    foreach ($user as $key => $value) {
-                        $user_array[$key] = Functions::purifyContent($value);
-                    }
+        $user_array = [
+            'name' => '',
+            'email' => '',
+            'id' => '',
+            'agent' => '',
+            'ip' => '',
+            'role' => ['guest']
+        ];
+        if (Functions::testVar($request)) {
+            if ($request->session()->has('user')) {
+                $user = session()->get('user');
+                if (Functions::testVar($user)) {
+                    return $user;
                 }
+            } else {
+                $user_array['ip'] = $request->ip();
+                $user_array['agent'] = $request->userAgent();
             }
-            
-        } else {
-            $user_array = [
-                'name' => '',
-                'email' => '',
-                'id' => '',
-                'agent' => '',
-                'ip' => '',
-            ];
-        }
+        } 
         return $user_array;
     }
 
-    static public function getUserIsAdmin()
+    public function setUserArray(Request $request) 
     {
-        return session()->has('is_admin') ? true : false;
+        $data = [
+            'name' => $this->name,
+            'email' => $this->email,
+            'id' => $this->id,
+            'agent' => $request->userAgent(),
+            'ip' => $request->ip(),
+            'role' => ['guest']
+        ];
+        $perm = new Basic($this->id);
+        if ($perm->isAdmin()) {
+            $data['role'][] = 'admin';
+        }
+        if ($perm->isContentCreator()) {
+            $data['role'][] = 'creator';
+        }
+        if ($perm->isAuthUser()) {
+            $data['role'][] = 'user';
+        }
+        $request->session()->put('user', $data);
+        return $data;
     }
 
-    static public function getUserFromId(int $id) 
+    static public function getIsAdmin()
+    {
+        if (session()->has('user.role')) {
+            $tmp = session()->get('user.role');
+            return in_array('admin', $tmp, true);
+        }
+        return false;
+    }
+
+    static public function getIsUser()
+    {
+        if (session()->has('user.role')) {
+            $tmp = session()->get('user.role');
+            if (Functions::testVar($tmp)) {
+                return in_array('user', $tmp, true);
+            }
+        }
+        return false;
+    }
+
+    static public function getFromId(int $id) 
     {
         return self::where('id', $id)->first();
     }
 
-    static public function testIfUser($email, $password, array $extra = null)
+    static public function getFromUserArray() 
     {
+        if (session()->has('user.id')) {
+            $tmp = intval(session()->get('user.id'));
+            if (Functions::testVar($tmp) && $tmp !== 0) {
+                return self::where('id', $tmp)->first();
+            }
+        } else {
+            return null;
+        }
+    }
 
+    static public function testIfUser(
+        string $email, string $password, 
+        Request $request
+    ) {
+        $ua = self::getUserArray($request);
+        if (Functions::testVar($ua['email']) 
+            && $ua['email'] !== $email
+        ) {
+            return false;
+        }
+        // these two tests should not fail!
+        if (Functions::testVar($ua['agent']) 
+            && $ua['agent'] !== $request->userAgent()
+        ) {
+            return false;
+        }
+        if (Functions::testVar($ua['ip']) 
+            && $ua['ip'] !== $request->ip()
+        ) {
+            return false;
+        }
+        $tmpCol = self::where('email', $email)->get();
+        if (Functions::testVar($tmpCol) && count($tmpCol) == 1) {
+            $tmp = $tmpCol[0];
+            if (Hash::check($password, $tmp->password)) {
+                $tmp->setUserArray($request);
+                return true;
+            }
+        }
+        return false;
     }
 
     
@@ -94,6 +172,15 @@ class User extends Model
             UserImage::createNewFromUser($tmp);
             return $tmp;
         }
+    }
+
+    static public function createNewFrom(array $array) 
+    {
+        return self::createNew(
+            $array['name'], $array['email'], 
+            $array['password'], $array['img'], 
+            $array['plan']
+        );
     }
 
     

@@ -4,7 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model,
     App\Utilities\Functions\Functions,
-    App\Page;
+    App\Page,
+    App\Image,
+    App\SectionImage;
 
 class Section extends Model
 {
@@ -37,5 +39,42 @@ class Section extends Model
                 Page::genRange(0, $num), $numShown, $pagingFor
             )
         ];
+    }
+
+    static public function createNew(
+        string $name, string $url, string $title, string $article,
+        string $description, array $img, string $sub_title = ''
+    ) {
+        $tmp = self::where('name', $name)
+            ->orWhere('url', $url)
+            ->get();
+        if (!Functions::testVar($tmp) || count($tmp) === 0) {
+            $tImg = Image::createNewFrom($img);
+            if (Functions::testVar($tImg)) {
+                $data = new self;
+                $data->name = $name;
+                $data->image = $tImg;
+                $data->sub_title = $sub_title;
+                $data->article = $article;
+                $data->url = $url;
+                $data->description = $description;
+                if ($data->save()) {
+                    if (Functions::testVar(SectionImage::createNewFrom($data))) {
+                        return $data->id;
+                    }
+                }
+            }
+             
+        }
+        return null;
+    }
+
+    static public function createNewFrom(Array $array)
+    {
+        return self::createNew(
+            $array['name'], $array['url'], $array['title'], 
+            $array['article'], $array['description'], 
+            $array['img'], $array['sub_title']
+        );
     }
 }

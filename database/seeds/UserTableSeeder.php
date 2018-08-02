@@ -2,13 +2,17 @@
 
 use Illuminate\Database\Seeder;
 use App\Utilities\Permits\Basic;
+use Illuminate\Support\Facades\Storage;
 use Faker\Generator as Faker;
+use App\Utilities\Functions\Functions;
+use App\Image;
 use App\User; 
 use App\UserImage;
-use App\Image;
+
 
 class UserTableSeeder extends Seeder
 {
+    
     /**
      * Run the database seeds.
      *
@@ -33,7 +37,7 @@ class UserTableSeeder extends Seeder
 
         $admin = User::createNew(
             'artisan', 'artisan@liberty-mini-mart.bit.il',
-            'phpmyadmin', [
+            'phpMyAdmin127', [
                 'name' => 'liberty-bell-30065_640.png',
                 'path' => 'images\site',
                 'alt' => 'User Avatar',
@@ -46,6 +50,34 @@ class UserTableSeeder extends Seeder
         $perm->addPermit(Basic::CONTENT_ROLE, Basic::READ_LEVEL);
         $perm->addPermit(Basic::ADMIN_ROLE, Basic::READ_LEVEL);
 
-        // create several regular users and content creators!!
+        // create several content creators..
+        $creator = User::createNew(
+            'painter', 'finger.painter@example.com',
+            'fingerPainter123', [
+                'name' => 'liberty-bell-30065_640.png',
+                'path' => 'images\site',
+                'alt' => 'User Avatar',
+                'caption' => 'A Outline of the Liberty Bell.'
+            ]
+        );
+        $perm = new Basic($creator->id);
+        $perm->addPermit(Basic::GUEST_USER_ROLE, Basic::READ_LEVEL);
+        $perm->addPermit(Basic::AUTH_USER_ROLE, Basic::READ_LEVEL);
+        $perm->addPermit(Basic::CONTENT_ROLE, Basic::READ_LEVEL);
+        
+        // create several regular users..
+        $user = User::createNew(
+            'critic', 'indulgent.critic@example.com',
+            'criticalReveiwer123', [
+                'name' => 'liberty-bell-30065_640.png',
+                'path' => 'images\site',
+                'alt' => 'User Avatar',
+                'caption' => 'A Outline of the Liberty Bell.'
+            ]
+        );
+        $perm = new Basic($user->id);
+        $perm->addPermit(Basic::GUEST_USER_ROLE, Basic::READ_LEVEL);
+        $perm->addPermit(Basic::AUTH_USER_ROLE, Basic::READ_LEVEL);
+        
     }
 }
