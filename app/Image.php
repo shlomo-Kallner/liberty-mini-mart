@@ -62,4 +62,9 @@ class Image extends Model
             return null;
         }
     }
+
+    static public function getFromId(int $id)
+    {
+        return self::where('id', $id)->find();
+    }
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model,
     DB,
     App\Section,
     App\Categorie,
+    App\PageGroup,
     Session;
 
 class Page extends Model
@@ -382,16 +383,24 @@ class Page extends Model
                 $data->title = Functions::purifyContent($title);
                 $data->article = Functions::purifyContent($article);
                 $data->description = Functions::purifyContent($description);
-                // need to do some special checking on group_id..
-                if ($group_id < 0) {
-                    $gID = self::max('group_id') + 1;
-                } else {
-                    $tgo = self::where('group_id', $group_id)->get();
-                }
-                $data->group_id = $group_id;
-                $data->order = $order;
+                /* 
+                    // need to do some special checking on group_id..
+                    if ($group_id < 0) {
+                        $gID = self::max('group_id') + 1;
+                    } else {
+                        $tgo = self::where('group_id', $group_id)->get();
+                    }
+                    $data->group_id = $group_id;
+                    $data->order = $order; 
+                */
                 if ($data->save()) {
-                    return $data->id;
+                    if (PageGroup::reorderAround($group_id, $data->id, $order)) {
+                        if (Functions::testVar(PageGroup::createNew($group_id, $data->id, $order)
+                            )
+                        ) {
+                            return $data->id;
+                        }
+                    }
                 }
             }
         }
@@ -400,6 +409,11 @@ class Page extends Model
 
     static public function createNewFrom(array $array) 
     {
-        return self::createNew();
+        return self::createNew(
+            $array['name'], $array['url'], $array['img'], 
+            $array['title'], $array['article'], $array['description'], 
+            $array['visible'], $array['sticker'], $array['group_id'], 
+            $array['order']
+        );
     }
 }

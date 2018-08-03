@@ -9,6 +9,29 @@ use Illuminate\Database\Eloquent\Model,
 
 class Categorie extends Model
 {
+
+    static public function createNew(
+        string $name, string $url, string $description, 
+        string $title, string $article, int $section_id,
+        array $image, string $sticker
+    ) {
+        //
+    }
+
+    static public function createNewFrom(array $array)
+    {
+        return self::createNew(
+            $array['name'], $array['url'], $array['description'], 
+            $array['title'], $array['article'], $array['section_id'], 
+            $array['image'], $array['sticker']
+        );
+    }
+
+    static public function getFromId(int $id)
+    {
+        return self::where('id', $id)->find();
+    }
+
     static public function getNamed(string $name, $section_id)
     {
         return Functions::dbModel2ViewModel(
@@ -44,11 +67,17 @@ class Categorie extends Model
 
     static public function getCategoriesOfSection($section_id)
     {
-        $tmp = self::where('section_id', $section_id)->get()->toArray();
         $res = [];
+        $tmp = self::where('section_id', $section_id)->get()->toArray();
         foreach ($tmp as $category) {
             //dd($category);
-            $res[] = Functions::dbModel2ViewModel($category);
+            $tCat = [];
+            foreach ($category as $key => $val) {
+                if (is_string($key) && $key === 'image') {
+                    $tCat[$key] = Image::get
+                }
+            }
+            //$res[] = Functions::dbModel2ViewModel($category);
             //dd($category);
         }
         dd($res);
