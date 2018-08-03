@@ -21,8 +21,6 @@ class CreatePagesTable extends Migration
             $table->string('title', 255);
             $table->mediumText('article');
             $table->string('description', 255);
-            $table->integer('group_id')->unsigned();
-            $table->integer('order')->unsigned();
             $table->integer('visible')->unsigned();
             $table->string('sticker', 255);
             $table->timestamps();
