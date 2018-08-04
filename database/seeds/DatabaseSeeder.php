@@ -26,29 +26,35 @@ class DatabaseSeeder extends Seeder
 
     public function loadJSONseeds()
     {
-        $filepath = 'file.txt';
+        $filepath = 'file.txt';// TODO! rewite file name & path!
         $disk = Storage::disk('local');
         if ($disk->exists($filepath)) {
             $content = $disk->get($filepath);
             if (Functions::testVar($content)) {
-                $data = json_decode($content);
+                $data = json_decode($content, true);
                 if (Functions::testVar($data)) {
                     // Sections
                     if (Functions::testVar($data['sections']??'')) {
-                        foreach ($data['sections'] as $item) {
-                            Section::createNewFrom($item);
-                        }
-                    }
-                    // Categories
-                    if (Functions::testVar($data['categories']??'')) {
-                        foreach ($data['categories'] as $item) {
-                            
-                        }
-                    }
-                    // Products
-                    if (Functions::testVar($data['products']??'')) {
-                        foreach ($data['products'] as $item) {
-                            
+                        foreach ($data['sections'] as $sect) {
+                            $t = Section::createNewFrom($sect);
+                            if (Functions::testVar($t) 
+                                && Functions::testVar($sect['categories']??'')
+                            ) {
+                                // Categories
+                                foreach ($sect['categories'] as $cat) {
+                                    $cat['section_id'] = $t;
+                                    $c = Categorie::createNewFrom($cat);
+                                    if (Functions::testVar($c)
+                                    && Functions::testVar($cat['products'])
+                                    ) {
+                                        // Products
+                                        foreach ($cat['products'] as $prod) {
+                                            $prod['category_id'] = $c;
+                                            $p = Product::createNewFrom($prod);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

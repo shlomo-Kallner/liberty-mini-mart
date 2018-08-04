@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model,
     App\Utilities\Functions\Functions,
     App\Section,
+    App\Image,
+    App\CategoryImage,
     App\Page;
 
 class Categorie extends Model
@@ -15,7 +17,36 @@ class Categorie extends Model
         string $title, string $article, int $section_id,
         array $image, string $sticker
     ) {
-        //
+        $tmp = self::where(
+            [
+                ['name', '=', $name],
+                ['section_id', '=', $section_id],
+                ['url', '=', $url]
+            ]
+        )->get();
+        if ((!Functions::testVar($tmp) || count($tmp) === 0) 
+            && Section::existsId($section_id)
+        ) {
+            $tImg = Image::createNewFrom($image);
+            if (Functions::testVar($tImg)) {
+                $res = new self;
+                $res->name = $name;
+                $res->image = $tImg;
+                $res->title = Functions::purifyContent($title);
+                $res->article = Functions::purifyContent($article);
+                $res->url = $url;
+                $res->section_id = $section_id;
+                $res->sticker = $sticker;
+                $res->description = Functions::purifyContent($description);
+                if ($res->save()) {
+                    $ci = CategoryImage::createNewFrom($res);
+                    if (Functions::testVar($ci)) {
+                        return $res->id;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     static public function createNewFrom(array $array)
@@ -30,6 +61,11 @@ class Categorie extends Model
     static public function getFromId(int $id)
     {
         return self::where('id', $id)->find();
+    }
+
+    static public function existsId(int $id)
+    {
+        return Functions::testVar(self::getFromId($id));
     }
 
     static public function getNamed(string $name, $section_id)
