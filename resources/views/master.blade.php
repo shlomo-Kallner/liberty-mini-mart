@@ -1,4 +1,5 @@
 <?php
+
     // put any special code here..
     use \App\Utilities\Functions\Functions;
     $title2 =  Functions::getBladedString($title ?? '');// . '-- dummy Title -- for testing Master Page 2';
@@ -8,29 +9,30 @@
     $usingMix = Functions::getBladedString($site['usingMix']??'');
     $alert2 =  Functions::getContent($alert??'');
 ?>
+
 <!DOCTYPE html>
 @section('license-header')
-<!--
+    <!--
 
-My license header. 
-Copyright {{ date('Y') }} Shlomo Kallner , shlomo.kallner@gmail.com
+        My license header. 
+        Copyright {{ date('Y') }} Shlomo Kallner , shlomo.kallner@gmail.com
 
--->
+    -->
 
-@include('inc.licenses')
+    @include('inc.licenses')
 
 
 @show
 
 
 {{--
-"lifting" some IE conditional comments from Metronic...
-Although im not quite sure if it will effect material 
-from other templates... 
-and anyways, who still uses IE8?
-******
-UPDATE(23/04/2018): discovered that the other template pages 
-use the 'no-js' css class for IE9 and below as well.
+    "lifting" some IE conditional comments from Metronic...
+    Although im not quite sure if it will effect material 
+    from other templates... 
+    and anyways, who still uses IE8?
+    ******
+    UPDATE(23/04/2018): discovered that the other template pages 
+    use the 'no-js' css class for IE9 and below as well.
 --}}
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
@@ -130,6 +132,7 @@ use the 'no-js' css class for IE9 and below as well.
                 html5shiv script tag in the head tag...
             --}}
             @include('inc.js.compatibility')
+
             {{-- <== 'inc.js.compatibility' is from 
                         bootstrap and others...
                         its all in its own file in case
@@ -139,8 +142,8 @@ use the 'no-js' css class for IE9 and below as well.
             --}}
 
             @section('js-preloaded')
-            {{-- Not using Font Awesome v5! --}}
-            {{-- Include('inc.js.preloaded') --}}{{--  <-- This file is pure HTML.. --}}
+                {{-- Not using Font Awesome v5! --}}
+                {{-- Include('inc.js.preloaded') --}}{{--  <-- This file is pure HTML.. --}}
             @show
         <!-- Preloaded JS END -->
     </head>
@@ -163,26 +166,42 @@ use the 'no-js' css class for IE9 and below as well.
     
                 @show
 
-                <div class="container">
+                @if ($errors->any())
+                    @component('lib.site.alert')
+                        @slot('class')
+                            {!! 'alert-danger' !!}
+                        @endslot
+                        @slot('title')
+                            {!! 'Errors Detected!' !!}
+                        @endslot
+                        @slot('content')
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        @endslot
+                        @slot('timeout')
+                            {!! 'zero' !!}
+                        @endslot
+                    @endcomponent
+                @else
+                    @component('lib.site.alert')
+                        @slot('class')
+                            {!! $alert2['class']??'' !!}
+                        @endslot
+                        @slot('title')
+                            {!! $alert2['title']??'' !!}
+                        @endslot
+                        @slot('content')
+                            {!! $alert2['content']??'' !!}
+                        @endslot
+                        @slot('timeout')
+                            {!! $alert2['timeout']??'' !!}
+                        @endslot
+                    @endcomponent
+                @endif
 
-                    <div class="row">
-                        <div class="col-md-12" id="masterPageAlertContainer">
-    
-                            @if (Functions::testVar($alert2??'') && Functions::testVar($alert2['class']??''))
-                                <div id="masterPageAlert" class="alert {{ $alert2['class'] }} alert-dismissible fade in">
-                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                                        <i class="fa fa-close" aria-hidden="true"></i>
-                                    </button>
-                                    <strong>{{ $alert2['title'] }}</strong> 
-                                    {!! $alert2['content'] !!}
-                                </div>
-                            @endif
-                            
-                        </div>
-                    </div>
-            
-                </div>
-                
                 @section('extra-navigation-content')
                     
                 @show
@@ -241,7 +260,10 @@ use the 'no-js' css class for IE9 and below as well.
             <script src="{{ asset('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
         @endif
 
-        {{-- a method for tracking used scripts and including them! --}}
+        {{-- 
+            a method for tracking used scripts and including them! 
+            (from within LARAVEL!)
+        --}}
         {{-- A WISHLIST ITEM!!! --}}
         @if (Functions::testVar($scripts))
             @foreach ($scripts as $script)

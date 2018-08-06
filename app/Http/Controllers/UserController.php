@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
-use Illuminate\Http\Request;
+use App\User,
+    App\Image;
+use Illuminate\Http\Request,
+    App\Http\Requests\SigninRequest,
+    App\Http\Requests\RegisterRequest;
+use App\Utilities\Functions\Functions;
 
 class UserController extends MainController {
 
@@ -51,8 +55,8 @@ class UserController extends MainController {
      */
     public function show(Request $request) 
     {
-        if ($request->session()->has('user.id')) {
-            $user = User::where('id', $request->session()->get('user.id'))->first();
+        $user = User::getIdFromUserArray();
+        if (Functions::testVar($user)) {
             return self::getView('content.user', 'User Profile Page', $user);
         }
     }
@@ -95,12 +99,33 @@ class UserController extends MainController {
      *  USER SIGNIN, SIGNOUT and REGISTRATION:
      */
 
-    public function signup() {
-        return parent::getView('forms.register', 'New User Registeration Page');
+    public function signup(Request $request) {
+        if (User::getIsUser()) {
+            return redirect('/');
+        } else {
+            return parent::getView('forms.register', 'New User Registration Page');
+        }
     }
 
-    public function register(Request $request) {
-        return parent::getView('content.index', 'New User Registeration Successfull!!');
+    public function register(RegisterRequest $request) {
+        //dd($request);
+        $name = $request->lastname . ' , ' . $request->firstname;
+        $user = User::createNew(
+            $name, $request->email, $request->password, 
+            Image::find(1), 1
+        );
+        //dd($user);
+        if (Functions::testVar($user)) {
+            $user->setIsAuthUser();
+            $user->setUserArray($request);
+        }
+        //return redirect('/');
+        parent::setAlert(
+            'alert-success', 'New User Registration Successfull!!', 
+            '<strong>You Have Successfully Registered Your Account, now just sign in to enter!</strong>',
+            9000
+        );
+        return parent::getView('content.index');
     }
 
     public static function pagePathSplit(string $str)
@@ -115,17 +140,7 @@ class UserController extends MainController {
         return str_replace( '/', '-', $tmp1);
     }
 
-    public function cms(Request $request)
-    {
-        // OBSOLETE!! SEE CmsController!
-        // get our page data and send it to the view!
-        // page data includes:
-        //      nav/menu-items, users, sections, categories, 
-        //      products, orders, pages
-        return parent::getView('content.management', 'MY ADMIN PANEL');
-    }
-
-    public function signin(Request $request) 
+    public function signin(SigninRequest $request) 
     {
         //        $email = !empty($request->email) ? $request->email : '[blank]';
         //        $password = !empty($request->password) ? $request->password : '[empty-string]';
@@ -136,13 +151,21 @@ class UserController extends MainController {
         //dd(session()->all());
 
         // for testing..
-        $ua = User::getUserArray($request);
-        $ua['name'] = 'hello';
-        $ua['email'] = !empty($request->email) ? $request->email : '';
-        $ua['role'][] = 'admin';
-        $ua['role'][] = 'creator';
-        $ua['role'][] = 'user';
-        $request->session()->put('user', $ua);
+        $testing = true;
+        if ($testing) {
+            $ua = User::getUserArray($request);
+            $ua['name'] = 'hello';
+            $ua['email'] = !empty($request->email) ? $request->email : '';
+            //$ua['role'][] = 'admin';
+            //$ua['role'][] = 'creator';
+            $ua['role'][] = 'user';
+            $request->session()->put('user', $ua);
+        } else {
+            if (!User::validateUser($request->email, $request->password, $request)) {
+
+            }
+        }
+        
         /// in the REAL PRODUCTION implementation
         ///  will use other User Class methods..
         /* 
@@ -211,19 +234,6 @@ class UserController extends MainController {
 
         }
         return redirect('/');
-    }
-
-    static public function userData(
-        string $name = '', string $email = '', int $id = 0, 
-        string $agent = '', string $ip = ''
-    ) {
-        return [
-            'name' => $name,
-            'email' => $email,
-            'id' => $id,
-            'agent' => $agent,
-            'ip' => $ip,
-        ];
     }
 
     public function signout(Request $request) {

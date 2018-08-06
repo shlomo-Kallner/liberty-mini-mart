@@ -94,6 +94,22 @@ class DatabaseSeeder extends Seeder
         return false;
     }
 
+    static protected function loadImages(array $images)
+    {
+        if (Functions::testVar($images)) {
+            $bol = true;
+            // Products
+            foreach ($images as $img) {
+                $i = Image::createNewFrom($img);
+                if (!Functions::testVar($i)) {
+                    $bol = false;
+                }
+            }
+            return $bol;
+        }
+        return false;
+    }
+
     public function loadJSONseeds()
     {
         $filepath = 'db/seedFile.json';// TODO! create file name & path!
@@ -104,6 +120,7 @@ class DatabaseSeeder extends Seeder
                 $data = json_decode($content, true);
                 if (Functions::testVar($data)) {
                     self::loadSections($data['sections'], 0);
+                    self::loadImages($data['images']);
                 }
             }
             

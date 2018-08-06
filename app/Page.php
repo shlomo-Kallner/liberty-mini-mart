@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model,
     App\Section,
     App\Categorie,
     App\PageGroup,
+    App\User,
     Session;
 
 class Page extends Model
@@ -183,9 +184,14 @@ class Page extends Model
         //$testing = $genFakeData;
         $testing = true;
         $preheader = [];
+
         //dd(session()->all());
-        $loggedin = session()->has('user') ? true : false;
-        $is_admin = session()->has('is_admin') ? true : false;
+        //$loggedin = session()->has('user') ? true : false;
+        //$is_admin = session()->has('is_admin') ? true : false;
+
+        $loggedin = User::getIsUser();
+        $is_admin = User::getIsAdmin();
+
 
         if (!$testing) {
             

@@ -53,6 +53,8 @@ class Section extends Model
                 $tImg = $img;
             } elseif (is_array($img)) {
                 $tImg = Image::createNewFrom($img);
+            } elseif ($img instanceof Image) {
+                $tImg = $img->id;
             } else {
                 $tImg = null;
             }

@@ -18,7 +18,9 @@ try {
     window.$ = window.jQuery = require('jquery');
   }
 
-  require('bootstrap-sass');
+  // we are appearing to have some conflict between this and
+  //  and our local import... so commenting this out..
+  // require('bootstrap-sass'); 
 } catch (e) {}
 
 /**

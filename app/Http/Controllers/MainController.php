@@ -257,7 +257,7 @@ class MainController extends Controller {
             self::setAlert(
                 $alert['class'], $alert['title'], $alert['content'], $alert['timeout'], $alert['id']
             );
-        } else {
+        } elseif (self::$data['alert']['class'] === '') {
             self::setAlert();
         }
         

@@ -7,7 +7,7 @@ export class LaravelAlert {
       cssClasses: decoded.class !== null || decoded.class !== '' ? decoded.class : '',
       title: decoded.title !== null || decoded.title !== '' ? decoded.title : '',
       content: decoded.content !== null || decoded.content !== '' ? decoded.content : '',
-      timeout: decoded.timeout !== null || decoded.timeout !== '' ? decoded.timeout : '',
+      timeout: decoded.timeout !== null || decoded.timeout !== '' ? LaravelAlert.getNumber(decoded.timeout) : '',
       seen: decoded.class !== null || decoded.class !== ''
     };
   }
@@ -21,6 +21,16 @@ export class LaravelAlert {
       this.data.timeout = Math.trunc(timeout);
     } else if (typeof timeout === 'string') {
       this.data.timeout = parseInt(timeout);
+    } 
+  }
+
+  static getNumber (num) {
+    if (typeof num === 'number') {
+      return Math.trunc(timeout);
+    } else if (typeof num === 'string') {
+      return parseInt(timeout);
+    } else {
+      return 0;
     }
   }
 
@@ -34,5 +44,25 @@ export class LaravelAlert {
 
   show() {
     this.data.seen = true;
+  }
+
+  isSeen() {
+    return this.data.seen;
+  }
+
+  getClass() {
+    return this.data.cssClasses;
+  }
+
+  getTitle() {
+    return this.data.title;
+  }
+
+  getAlertID() {
+    return this.data.alertId;
+  }
+
+  getContent() {
+    return this.data.content;
   }
 }

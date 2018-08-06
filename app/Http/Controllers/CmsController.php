@@ -6,6 +6,7 @@ use Illuminate\Http\Request,
     Illuminate\Support\Facades\Session;
 use App\Http\Controllers\UserController,
     App\Page,
+    App\User,
     App\Section,
     App\Categorie,
     App\Product;
@@ -18,12 +19,12 @@ class CmsController extends MainController
         parent::__construct($name, $titleNameSep);
         $this->middleware(
             function ($request, $next) {
-                if ($request->session()->has('user.is_admin')) {
+                if (User::getIsAdmin()) {
                     return $next($request);
                 } else {
                     $request->session()->reflash();
                     
-                    //$request->session()->flash('redirectFullUrl', $request->fullUrl());
+                    $request->session()->flash('redirectFullUrl', $request->fullUrl());
                     $request->session()->flash('redirectPath', $request->path());
                     
                     return redirect('signin/' . UserController::pagePathJoin($request->path()));

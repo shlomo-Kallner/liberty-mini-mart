@@ -33,7 +33,7 @@ class User extends Model
     {
         if (Functions::testVar($request)) {
             if ($request->session()->has('user')) {
-                $user = session()->get('user');
+                $user = $request->session()->get('user');
                 if (Functions::testVar($user)) {
                     return $user;
                 }
@@ -42,8 +42,14 @@ class User extends Model
                     $request->userAgent(), $request->ip()
                 );
             }
-        } 
-        return self::getNewUserArray('', '');
+        } elseif (session()->has('user')) {
+            $user = session()->get('user');
+            if (Functions::testVar($user)) {
+                return $user;
+            }
+        } else {
+            return self::getNewUserArray('', '');
+        }
     }
 
     public function setUserArray(Request $request) 
@@ -77,7 +83,7 @@ class User extends Model
             $request->userAgent(), $request->ip()
         );
         /// reseting the user array..
-        $request->session()->put('user', $data);
+        $request->session()->put('user', $new_data);
         /// and returning the new array..
         return $new_data;
     }
@@ -102,18 +108,45 @@ class User extends Model
         return false;
     }
 
-    static public function getIdFromUserArray() 
+    static public function getIdFromUserArray(bool $getUser = true) 
     {
         if (session()->has('user.id')) {
             $tmp = intval(session()->get('user.id'));
             if (Functions::testVar($tmp) && $tmp !== 0) {
-                return self::getFromId($tmp);
+                if ($getUser) {
+                    return self::getFromId($tmp);
+                } else {
+                    return $tmp;
+                }
             }
         } else {
             return null;
         }
     }
 
+    static public function validateUser(
+        string $email, string $password, 
+        Request $request
+    ) {
+        $tmpCol = self::where('email', $email)->get();
+        if (Functions::testVar($tmpCol) && count($tmpCol) === 1) {
+            $tmp = $tmpCol[0];
+            if (Hash::check($password, $tmp->password)) {
+                $tmp->setUserArray($request);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Function testIfUser - TO BE USD FOR CHECKOUT PAGE USER VALIDATION!
+     *
+     * @param string $email
+     * @param string $password
+     * @param Request $request
+     * @return void
+     */
     static public function testIfUser(
         string $email, string $password, 
         Request $request
@@ -135,15 +168,7 @@ class User extends Model
         ) {
             return false;
         }
-        $tmpCol = self::where('email', $email)->get();
-        if (Functions::testVar($tmpCol) && count($tmpCol) === 1) {
-            $tmp = $tmpCol[0];
-            if (Hash::check($password, $tmp->password)) {
-                $tmp->setUserArray($request);
-                return true;
-            }
-        }
-        return false;
+        return self::validateUser($email, $password, $request);
     }
 
     
@@ -162,11 +187,14 @@ class User extends Model
         string $name, string $email, string $password, $img, 
         int $plan = 1
     ) {
-        if (self::where('email', $email)::count() === 0) {
+        $tu = self::where('email', $email)->get();
+        if (count($tu) === 0) {
             if (is_int($img) && Image::existsId($img)) {
                 $tImg = $img;
             } elseif (is_array($img)) {
                 $tImg = Image::createNewFrom($img);
+            } elseif ($img instanceof Image) {
+                $tImg = $img->id;
             } else {
                 return null;
             }
@@ -180,7 +208,7 @@ class User extends Model
                 $perm = new Basic($tmp->id);
                 if (Functions::testVar($perm)) {
                     $perm->makeFakes(1);
-                    $ui = UserImage::createNewFromUser($tmp);
+                    $ui = UserImage::createNewFrom($tmp);
                     if (Functions::testVar($ui)) {
                         return $tmp;
                     }
@@ -209,5 +237,20 @@ class User extends Model
         return Functions::testVar(self::getFromId($id));
     }
 
+    public function setIsAdmin(bool $regen = false)
+    {
+        $perm = new Basic($this->id);
+        $perm->makeFakes(random_int(1, 9), false);
+        $perm->setAdmin();
+        $perm->makeFakes(random_int(1, 9), $regen);
+    }
+
+    public function setIsAuthUser(bool $regen = false)
+    {
+        $perm = new Basic($this->id);
+        $perm->makeFakes(random_int(1, 9), false);
+        $perm->setAuthUser();
+        $perm->makeFakes(random_int(1, 9), $regen);
+    }
     
 }

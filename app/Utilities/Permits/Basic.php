@@ -55,7 +55,7 @@ class Basic extends Permits
         );
     }
 
-    public function setCreator(bool $regen = false)
+    public function setContentCreator(bool $regen = false)
     {
         return $this->addPermitPlus(
             parent::CONTENT_ROLE, parent::READ_LEVEL,
@@ -121,7 +121,7 @@ class Basic extends Permits
         );
     }
 
-    public function remCreator(bool $regen = false)
+    public function remContentCreator(bool $regen = false)
     {
         return $this->removePermitPlus(
             parent::CONTENT_ROLE, parent::READ_LEVEL,
@@ -200,7 +200,7 @@ class Basic extends Permits
         return in_array(parent::GUEST_USER_ROLE, $this->basics, true); 
     }
 
-    public function makeFakes(int $num = 1)
+    public function makeFakes(int $num = 1, bool $regen = true)
     {
         if ($num > 0 && $num < 10) {
             $num_to = $num;
@@ -228,7 +228,12 @@ class Basic extends Permits
                 }
             }
         }
-        $this->addPermitRegen('^^^', 5);
+        if ($regen) {
+            $this->addPermitRegen('^^^', 5);
+        } else {
+            $this->addPermit('^^^', 5);
+        }
+        
     }
 
 }
