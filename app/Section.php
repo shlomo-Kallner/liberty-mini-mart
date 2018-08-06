@@ -43,13 +43,19 @@ class Section extends Model
 
     static public function createNew(
         string $name, string $url, string $title, string $article,
-        string $description, array $img, string $sub_title = ''
+        string $description, $img, string $sub_title = ''
     ) {
         $tmp = self::where('name', $name)
             ->orWhere('url', $url)
             ->get();
         if (!Functions::testVar($tmp) || count($tmp) === 0) {
-            $tImg = Image::createNewFrom($img);
+            if (is_int($img) && Image::existsId($img)) {
+                $tImg = $img;
+            } elseif (is_array($img)) {
+                $tImg = Image::createNewFrom($img);
+            } else {
+                $tImg = null;
+            }
             if (Functions::testVar($tImg)) {
                 $data = new self;
                 $data->name = $name;

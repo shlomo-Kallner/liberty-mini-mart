@@ -15,7 +15,7 @@ class Categorie extends Model
     static public function createNew(
         string $name, string $url, string $description, 
         string $title, string $article, int $section_id,
-        array $image, string $sticker
+        $image, string $sticker
     ) {
         $tmp = self::where(
             [
@@ -27,7 +27,13 @@ class Categorie extends Model
         if ((!Functions::testVar($tmp) || count($tmp) === 0) 
             && Section::existsId($section_id)
         ) {
-            $tImg = Image::createNewFrom($image);
+            if (is_int($img) && Image::existsId($img)) {
+                $tImg = $img;
+            } elseif (is_array($img)) {
+                $tImg = Image::createNewFrom($img);
+            } else {
+                $tImg = null;
+            }
             if (Functions::testVar($tImg)) {
                 $res = new self;
                 $res->name = $name;

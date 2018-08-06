@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Model,
     App\Categorie;
 use DB;
 
-class Product extends Model {
+class Product extends Model 
+{
 
     static public function createNew(
         string $name, string $url, float $price, 
         float $sale, int $category_id, string $sticker,
-        array $image, string $description,
+        $image, string $description,
         string $title, string $article
     ) {
         $tmp = self::where(
@@ -27,7 +28,13 @@ class Product extends Model {
         if ((!Functions::testVar($tmp) || count($tmp) === 0)
             && Categorie::existsId($category_id)
         ) {
-            $tImg = Image::createNewFrom($image);
+            if (is_int($img) && Image::existsId($img)) {
+                $tImg = $img;
+            } elseif (is_array($img)) {
+                $tImg = Image::createNewFrom($img);
+            } else {
+                $tImg = null;
+            }
             if (Functions::testVar($tImg)) {
                 $data = new self;
                 $data->name = $data;
@@ -71,24 +78,24 @@ class Product extends Model {
         return Functions::testVar(self::getFromId($id));
     }
 
-    static public function getAllProducts($curl) 
+    static public function getAllProducts($surl, $curl, bool $toArray = true) 
     {
-        if (false) {
-            $products = DB::table('products')
-                ->join('categories', 'categories.id', '=', 'products.category_id')
-                ->select('products.*')
-                ->where('categories.url', '=', $curl)
-                ->get()
-                ->toArray();
-            return $products; 
-        } elseif (false) {
-            // ALTERNATIVE CODE..
-            $tmp = Categorie::where('url', $curl)->get();
-            if (count($tmp) == 1) {
-                return $tmp[0];
-            }
-        }
-        return null;
+        $products = self::join(
+            'categories', 'categories.id', '=', 'products.category_id'
+        )
+            ->join('sections', 'sections.id', '=', 'categories.section_id')
+            ->select('products.*')
+            ->where(
+                [
+                    ['categories.url', '=', $curl],
+                    ['sections.url', '=', $surl]
+                ]
+            )
+            ->get();
+        if ($toArray) {
+            return $products->toArray(); 
+        } 
+        return $products;
     }
 
     static public function getProductsForCategory($category_id, $transform, $curl) 

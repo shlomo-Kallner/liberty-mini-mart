@@ -362,7 +362,7 @@ class Page extends Model
     }
 
     static public function createNew(
-        string $name, string $url, array $img,
+        string $name, string $url, $img,
         string $title, string $article, string $description,
         int $visible = 1, string $sticker = '',
         int $group_id = -1, int $order = -1
@@ -374,7 +374,13 @@ class Page extends Model
             ]
         )->get();
         if (!Functions::testVar($tP) || count($tP) === 0) {
-            $tImg = Image::createNewFrom($img);
+            if (is_int($img) && Image::existsId($img)) {
+                $tImg = $img;
+            } elseif (is_array($img)) {
+                $tImg = Image::createNewFrom($img);
+            } else {
+                $tImg = null;
+            }
             if (Functions::testVar($tImg)) {
                 $data = new self;
                 $data->name = $name;

@@ -165,8 +165,8 @@ class User extends Model
         if (self::where('email', $email)::count() === 0) {
             if (is_int($img) && Image::existsId($img)) {
                 $tImg = $img;
-            } elseif ($img instanceof Image) {
-                $tImg = Image::createNewFromArray($img);
+            } elseif (is_array($img)) {
+                $tImg = Image::createNewFrom($img);
             } else {
                 return null;
             }
