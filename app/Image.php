@@ -51,7 +51,7 @@ class Image extends Model
             $res = [];
             foreach ($pivots as $pivot) {
                 if ($pivot instanceof Pivot) {
-                    $t = self::where('id', $pivot->image)->find();
+                    $t = self::getFromId($pivot->image);
                     if (Functions::testVar($t)) {
                         $res[] = $t;
                     }
@@ -66,5 +66,10 @@ class Image extends Model
     static public function getFromId(int $id)
     {
         return self::where('id', $id)->find();
+    }
+
+    static public function existsId(int $id)
+    {
+        return Functions::testVar(self::getFromId($id));
     }
 }

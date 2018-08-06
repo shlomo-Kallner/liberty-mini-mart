@@ -31,19 +31,14 @@ class CreateSectionsTable extends Migration
         Schema::create(
             'sections', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('name', 255)
-                    ->charset('utf8')
-                    ->collation('utf8_unicode_ci');               
+                $table->string('name', 255);
+                $table->string('url', 255)->unique();               
                 $table->integer('image')->unsigned();
-                $table->string('title', 255)
-                    ->charset('utf8')
-                    ->collation('utf8_unicode_ci');
-                $table->string('sub_title', 255)
-                    ->charset('utf8')
-                    ->collation('utf8_unicode_ci');                
+                $table->string('title', 255);
+                $table->string('sub_title', 255);                
                 $table->text('article', 255);
-                $table->string('url', 255)->unique();
                 $table->string('description', 255);
+                //$table->integer('catalog_id')->unsigned(); // WISHLIST ITEM!!!
                 $table->timestamps();
                 $table->softDeletes();
 

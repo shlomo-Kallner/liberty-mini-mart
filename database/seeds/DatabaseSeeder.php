@@ -24,39 +24,86 @@ class DatabaseSeeder extends Seeder
          $this->loadJSONseeds();
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param array $sections
+     * @param integer $catalog_id - WISHLIST ITEM!!!
+     * @return void
+     */
+    static protected function loadSections(array $sections, int $catalog_id = 0)
+    {
+        // Sections
+        if (Functions::testVar($sections??'')) {
+            $bol = true;
+            foreach ($sections as $sect) {
+                // $sect['catalog_id'] = $catalog_id; // <<=- WISHLIST ITME!!
+                $s = Section::createNewFrom($sect);
+                if (Functions::testVar($s) 
+                    && Functions::testVar($sect['categories']??'')
+                ) {
+                    if (!self::loadCategories($sect['categories'], $s)) {
+                        $bol = false;
+                    }
+                } else {
+                    $bol = false;
+                }
+            }
+            return $bol;
+        }
+        return false;
+    }
+
+    static protected function loadCategories(array $categories, int $section_id = 0)
+    {
+        // Categories
+        if (Functions::testVar($categories)) {
+            $bol = true;
+            foreach ($categories as $cat) {
+                $cat['section_id'] = $section_id;
+                $c = Categorie::createNewFrom($cat);
+                if (Functions::testVar($c)
+                && Functions::testVar($cat['products'])
+                ) {
+                    if (!self::loadProducts($cat['products'], $c)) {
+                        $bol = false;
+                    }
+                } else {
+                    $bol = false;
+                }
+            }
+            return $bol;
+        }
+        return false;
+    }
+
+    static protected function loadProducts(array $products, int $category_id = 0)
+    {
+        if (Functions::testVar($products)) {
+            $bol = true;
+            // Products
+            foreach ($products as $prod) {
+                $prod['category_id'] = $category_id;
+                $p = Product::createNewFrom($prod);
+                if (!Functions::testVar($p)) {
+                    $bol = false;
+                }
+            }
+            return $bol;
+        }
+        return false;
+    }
+
     public function loadJSONseeds()
     {
-        $filepath = 'file.txt';// TODO! rewite file name & path!
+        $filepath = 'db/seedFile.json';// TODO! create file name & path!
         $disk = Storage::disk('local');
         if ($disk->exists($filepath)) {
             $content = $disk->get($filepath);
             if (Functions::testVar($content)) {
                 $data = json_decode($content, true);
                 if (Functions::testVar($data)) {
-                    // Sections
-                    if (Functions::testVar($data['sections']??'')) {
-                        foreach ($data['sections'] as $sect) {
-                            $t = Section::createNewFrom($sect);
-                            if (Functions::testVar($t) 
-                                && Functions::testVar($sect['categories']??'')
-                            ) {
-                                // Categories
-                                foreach ($sect['categories'] as $cat) {
-                                    $cat['section_id'] = $t;
-                                    $c = Categorie::createNewFrom($cat);
-                                    if (Functions::testVar($c)
-                                    && Functions::testVar($cat['products'])
-                                    ) {
-                                        // Products
-                                        foreach ($cat['products'] as $prod) {
-                                            $prod['category_id'] = $c;
-                                            $p = Product::createNewFrom($prod);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    self::loadSections($data['sections'], 0);
                 }
             }
             

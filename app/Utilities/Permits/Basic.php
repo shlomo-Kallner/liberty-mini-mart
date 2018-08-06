@@ -45,6 +45,40 @@ class Basic extends Permits
         return $tmp;
     } 
 
+    // some Permit addition shortcuts.. YIKES!!
+
+    public function setAdmin(bool $regen = false)
+    {
+        return $this->addPermitPlus(
+            parent::ADMIN_ROLE, parent::READ_LEVEL,
+            null, $regen
+        );
+    }
+
+    public function setCreator(bool $regen = false)
+    {
+        return $this->addPermitPlus(
+            parent::CONTENT_ROLE, parent::READ_LEVEL,
+            null, $regen
+        );
+    }
+
+    public function setAuthUser(bool $regen = false)
+    {
+        return $this->addPermitPlus(
+            parent::AUTH_USER_ROLE, parent::READ_LEVEL,
+            null, $regen
+        );
+    }
+
+    public function setGuestUser(bool $regen = false)
+    {
+        return $this->addPermitPlus(
+            parent::GUEST_USER_ROLE, parent::READ_LEVEL,
+            null, $regen
+        );
+    }
+
     
 
     // Permit Removal..
@@ -75,6 +109,40 @@ class Basic extends Permits
             $this->regen();
         }
         return $tmp;
+    } 
+
+    // some Permit removal shortcuts.. YIKES!!
+
+    public function remAdmin(bool $regen = false)
+    {
+        return $this->removePermitPlus(
+            parent::ADMIN_ROLE, parent::READ_LEVEL,
+            null, $regen
+        );
+    }
+
+    public function remCreator(bool $regen = false)
+    {
+        return $this->removePermitPlus(
+            parent::CONTENT_ROLE, parent::READ_LEVEL,
+            null, $regen
+        );
+    }
+
+    public function remAuthUser(bool $regen = false)
+    {
+        return $this->removePermitPlus(
+            parent::AUTH_USER_ROLE, parent::READ_LEVEL,
+            null, $regen
+        );
+    }
+
+    public function remGuestUser(bool $regen = false)
+    {
+        return $this->removePermitPlus(
+            parent::GUEST_USER_ROLE, parent::READ_LEVEL,
+            null, $regen
+        );
     }
 
     // BASIC Private/Protected Testing method
@@ -130,6 +198,37 @@ class Basic extends Permits
     public function isGuestUser()
     {
         return in_array(parent::GUEST_USER_ROLE, $this->basics, true); 
+    }
+
+    public function makeFakes(int $num = 1)
+    {
+        if ($num > 0 && $num < 10) {
+            $num_to = $num;
+        } else {
+            $num_to = random_int(1, 6);
+        }
+        for ($i = 0; $i < $num_to; $i++) {
+            $this->addPermit('***', 9);
+            $this->addPermit('@@@', 8);
+            $this->addPermit('+++', 7);
+            $num_x = random_int(3, 8);
+            if ($num_x > 3) {
+                $this->addPermit('&&&', 6);
+                if ($num_x > 4) {
+                    $this->addPermit('!!!', 9);
+                    if ($num_x > 5) {
+                        $this->addPermit('###', 8);
+                        if ($num_x > 6) {
+                            $this->addPermit('$$$', 7);
+                            if ($num_x > 7) {
+                                $this->addPermit('%%%', 6);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $this->addPermitRegen('^^^', 5);
     }
 
 }

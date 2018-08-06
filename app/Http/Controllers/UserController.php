@@ -136,14 +136,25 @@ class UserController extends MainController {
         //dd(session()->all());
 
         // for testing..
-        $request->session()->put(
-            'user', [
-                'name'=> 'hello',
-                'email' => !empty($request->email) ? $request->email : '[blank]',
-                'is_admin' => 'true',
-            ]
-        );
-
+        $ua = User::getUserArray($request);
+        $ua['name'] = 'hello';
+        $ua['email'] = !empty($request->email) ? $request->email : '';
+        $ua['role'][] = 'admin';
+        $ua['role'][] = 'creator';
+        $ua['role'][] = 'user';
+        $request->session()->put('user', $ua);
+        /// in the REAL PRODUCTION implementation
+        ///  will use other User Class methods..
+        /* 
+                $request->session()->put(
+                    'user', [
+                        'name'=> 'hello',
+                        'email' => !empty($request->email) ? $request->email : '[blank]',
+                        'is_admin' => 'true',
+                    ]
+                );
+        */
+        
         // redirection stuff..
         //// the Laravel Session appears to HATE being 
         //   assigned ANYTHING other than strings!
@@ -217,7 +228,8 @@ class UserController extends MainController {
 
     public function signout(Request $request) {
         //dd(session()->all());
-        $request->session()->forget('user');
+        //$request->session()->forget('user');
+        User::resetUserArray($request);
         //dd(session()->all());
         //self::$data['user']['loggedin'] = false;
         //session(['user.loggedin' => false]);

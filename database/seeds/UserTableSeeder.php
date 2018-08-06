@@ -45,10 +45,11 @@ class UserTableSeeder extends Seeder
             ]
         );
         $perm = new Basic($admin->id);
-        $perm->addPermit(Basic::GUEST_USER_ROLE, Basic::READ_LEVEL);
-        $perm->addPermit(Basic::AUTH_USER_ROLE, Basic::READ_LEVEL);
-        $perm->addPermit(Basic::CONTENT_ROLE, Basic::READ_LEVEL);
-        $perm->addPermit(Basic::ADMIN_ROLE, Basic::READ_LEVEL);
+        $perm->setGuestUser();
+        $perm->setAuthUser();
+        $perm->setCreator();
+        $perm->setAdmin(true);
+        $perm->makeFakes(random_int(1, 4));
 
         // create several content creators..
         $creator = User::createNew(
@@ -61,9 +62,10 @@ class UserTableSeeder extends Seeder
             ]
         );
         $perm = new Basic($creator->id);
-        $perm->addPermit(Basic::GUEST_USER_ROLE, Basic::READ_LEVEL);
-        $perm->addPermit(Basic::AUTH_USER_ROLE, Basic::READ_LEVEL);
-        $perm->addPermit(Basic::CONTENT_ROLE, Basic::READ_LEVEL);
+        $perm->setGuestUser();
+        $perm->setAuthUser();
+        $perm->setCreator(true);
+        $perm->makeFakes(random_int(1, 4));
         
         // create several regular users..
         $user = User::createNew(
@@ -76,8 +78,9 @@ class UserTableSeeder extends Seeder
             ]
         );
         $perm = new Basic($user->id);
-        $perm->addPermit(Basic::GUEST_USER_ROLE, Basic::READ_LEVEL);
-        $perm->addPermit(Basic::AUTH_USER_ROLE, Basic::READ_LEVEL);
+        $perm->setGuestUser();
+        $perm->setAuthUser(true);
+        $perm->makeFakes(random_int(1, 4));
         
     }
 }

@@ -15,10 +15,11 @@ use App\Image;
 class User extends Model
 {
     //
-
-    static public function getUserArray(Request $request = null)
-    {
-        $user_array = [
+    static public function getNewUserArray(
+        string $agent, string $ip,
+        string $name = '', string $email = '', string $id = ''
+    ) {
+        return [
             'name' => '',
             'email' => '',
             'id' => '',
@@ -26,6 +27,10 @@ class User extends Model
             'ip' => '',
             'role' => ['guest']
         ];
+    }
+
+    static public function getUserArray(Request $request = null)
+    {
         if (Functions::testVar($request)) {
             if ($request->session()->has('user')) {
                 $user = session()->get('user');
@@ -33,23 +38,20 @@ class User extends Model
                     return $user;
                 }
             } else {
-                $user_array['ip'] = $request->ip();
-                $user_array['agent'] = $request->userAgent();
+                return self::getNewUserArray(
+                    $request->userAgent(), $request->ip()
+                );
             }
         } 
-        return $user_array;
+        return self::getNewUserArray('', '');
     }
 
     public function setUserArray(Request $request) 
     {
-        $data = [
-            'name' => $this->name,
-            'email' => $this->email,
-            'id' => $this->id,
-            'agent' => $request->userAgent(),
-            'ip' => $request->ip(),
-            'role' => ['guest']
-        ];
+        $data = self::getNewUserArray( 
+            $request->userAgent(), $request->ip(),
+            $this->name, $this->email, (string)$this->id
+        );
         $perm = new Basic($this->id);
         if ($perm->isAdmin()) {
             $data['role'][] = 'admin';
@@ -62,6 +64,22 @@ class User extends Model
         }
         $request->session()->put('user', $data);
         return $data;
+    }
+
+    static public function resetUserArray(Request $request)
+    {
+        //$request->session()->get('user');
+        /// remove the old data..
+        $request->session()->forget('user');
+        /// create a new user array, 
+        ///  while keeping the userAgent and ip..
+        $new_data = self::getNewUserArray( 
+            $request->userAgent(), $request->ip()
+        );
+        /// reseting the user array..
+        $request->session()->put('user', $data);
+        /// and returning the new array..
+        return $new_data;
     }
 
     static public function getIsAdmin()
@@ -84,17 +102,12 @@ class User extends Model
         return false;
     }
 
-    static public function getFromId(int $id) 
-    {
-        return self::where('id', $id)->first();
-    }
-
-    static public function getFromUserArray() 
+    static public function getIdFromUserArray() 
     {
         if (session()->has('user.id')) {
             $tmp = intval(session()->get('user.id'));
             if (Functions::testVar($tmp) && $tmp !== 0) {
-                return self::where('id', $tmp)->first();
+                return self::getFromId($tmp);
             }
         } else {
             return null;
@@ -123,7 +136,7 @@ class User extends Model
             return false;
         }
         $tmpCol = self::where('email', $email)->get();
-        if (Functions::testVar($tmpCol) && count($tmpCol) == 1) {
+        if (Functions::testVar($tmpCol) && count($tmpCol) === 1) {
             $tmp = $tmpCol[0];
             if (Hash::check($password, $tmp->password)) {
                 $tmp->setUserArray($request);
@@ -146,32 +159,35 @@ class User extends Model
     }
 
     static public function createNew(
-        string $name, string $email, string $password, array $img, 
+        string $name, string $email, string $password, $img, 
         int $plan = 1
     ) {
-        if (self::where('email', $email)::count() !== 0) {
-            return null;
-        } else {
-
+        if (self::where('email', $email)::count() === 0) {
+            if (is_int($img) && Image::existsId($img)) {
+                $tImg = $img;
+            } elseif ($img instanceof Image) {
+                $tImg = Image::createNewFromArray($img);
+            } else {
+                return null;
+            }
             $tmp = new self;
             $tmp->name = $name;
             $tmp->email = $email ;
             $tmp->password = Hash::make($password);
-            $tmp->image = Image::createNewFromArray($img);
+            $tmp->image = $tImg;
             $tmp->plan_id = $plan;
-            $tmp->save();
-            $perm = new Basic($tmp->id);
-            $perm->addPermit('***', 9);
-            $perm->addPermit('@@@', 8);
-            $perm->addPermit('+++', 7);
-            $perm->addPermit('&&&', 6);
-            $perm->addPermit('!!!', 9);
-            $perm->addPermit('###', 8);
-            $perm->addPermit('$$$', 7);
-            $perm->addPermitRegen('%%%', 6);
-            UserImage::createNewFromUser($tmp);
-            return $tmp;
+            if ($tmp->save()) {
+                $perm = new Basic($tmp->id);
+                if (Functions::testVar($perm)) {
+                    $perm->makeFakes(1);
+                    $ui = UserImage::createNewFromUser($tmp);
+                    if (Functions::testVar($ui)) {
+                        return $tmp;
+                    }
+                }
+            }
         }
+        return null;
     }
 
     static public function createNewFrom(array $array) 
@@ -181,6 +197,16 @@ class User extends Model
             $array['password'], $array['img'], 
             $array['plan']
         );
+    }
+
+    static public function getFromId(int $id) 
+    {
+        return self::where('id', $id)->first();
+    }
+
+    static public function existsId(int $id)
+    {
+        return Functions::testVar(self::getFromId($id));
     }
 
     

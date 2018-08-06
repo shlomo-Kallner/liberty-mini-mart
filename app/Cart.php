@@ -32,6 +32,11 @@ class Cart extends Model
         return self::where('id', $id)->find();
     }
 
+    static public function existsId(int $id)
+    {
+        return Functions::testVar(self::getFromId($id));
+    }
+
     static public function createNew()
     {
         //

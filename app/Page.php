@@ -395,9 +395,7 @@ class Page extends Model
                 */
                 if ($data->save()) {
                     if (PageGroup::reorderAround($group_id, $data->id, $order)) {
-                        if (Functions::testVar(PageGroup::createNew($group_id, $data->id, $order)
-                            )
-                        ) {
+                        if (Functions::testVar(PageGroup::createNew($group_id, $data->id, $order))) {
                             return $data->id;
                         }
                     }
@@ -415,5 +413,15 @@ class Page extends Model
             $array['visible'], $array['sticker'], $array['group_id'], 
             $array['order']
         );
+    }
+
+    static public function getFromId(int $id)
+    {
+        return self::where('id', $id)->find();
+    }
+
+    static public function existsId(int $id)
+    {
+        return Functions::testVar(self::getFromId($id));
     }
 }
