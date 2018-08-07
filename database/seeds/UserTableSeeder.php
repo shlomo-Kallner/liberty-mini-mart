@@ -20,12 +20,13 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        $faker = new Faker();
+        //$faker = new Faker();
+        $faker = \Faker\Factory::create();
         for ($i = 0; $i < 50; $i++) {
             User::createNew(
-                $faker->name() . '.@#$%^&*',
+                $faker->name . '.@#$%^&*',
                 $faker->email,
-                '123456',
+                '123456789',
                 [
                     'name' => $faker->imageUrl(),
                     'path' => '',
@@ -37,45 +38,31 @@ class UserTableSeeder extends Seeder
 
         $admin = User::createNew(
             'artisan', 'artisan@liberty-mini-mart.bit.il',
-            'phpMyAdmin127', [
-                'name' => 'liberty-bell-30065_640.png',
-                'path' => 'images\site',
-                'alt' => 'User Avatar',
-                'caption' => 'A Outline of the Liberty Bell.'
-            ]
+            'phpMyAdmin127', 1, 1
         );
+        
         $perm = new Basic($admin->id);
         $perm->setGuestUser();
         $perm->setAuthUser();
-        $perm->setCreator();
+        $perm->setContentCreator();
         $perm->setAdmin(true);
         $perm->makeFakes(random_int(1, 4));
 
         // create several content creators..
         $creator = User::createNew(
             'painter', 'finger.painter@example.com',
-            'fingerPainter123', [
-                'name' => 'liberty-bell-30065_640.png',
-                'path' => 'images\site',
-                'alt' => 'User Avatar',
-                'caption' => 'A Outline of the Liberty Bell.'
-            ]
+            'fingerPainter123',  1, 1
         );
         $perm = new Basic($creator->id);
         $perm->setGuestUser();
         $perm->setAuthUser();
-        $perm->setCreator(true);
+        $perm->setContentCreator(true);
         $perm->makeFakes(random_int(1, 4));
         
         // create several regular users..
         $user = User::createNew(
             'critic', 'indulgent.critic@example.com',
-            'criticalReveiwer123', [
-                'name' => 'liberty-bell-30065_640.png',
-                'path' => 'images\site',
-                'alt' => 'User Avatar',
-                'caption' => 'A Outline of the Liberty Bell.'
-            ]
+            'criticalReveiwer123',  1, 1
         );
         $perm = new Basic($user->id);
         $perm->setGuestUser();

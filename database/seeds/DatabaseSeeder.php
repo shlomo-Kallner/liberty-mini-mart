@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Utilities\Functions\Functions;
 use Illuminate\Support\Facades\Storage;
+use App\Image;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,8 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         $this->call(UserTableSeeder::class);
-
          /// TODO: write a function that will load the initial data 
          //     from a json file to be placed at 'public\site\db\seeds'
          //     AND create and fill such a JSON file!!!
@@ -22,6 +21,8 @@ class DatabaseSeeder extends Seeder
          //         'path' is empty, if so -> the image is non-local!
          //         else -> image is local, so append 'path' to the 'name'!
          $this->loadJSONseeds();
+         $this->call(UserTableSeeder::class);
+         
     }
 
     /**
@@ -119,8 +120,8 @@ class DatabaseSeeder extends Seeder
             if (Functions::testVar($content)) {
                 $data = json_decode($content, true);
                 if (Functions::testVar($data)) {
-                    self::loadSections($data['sections'], 0);
                     self::loadImages($data['images']);
+                    //self::loadSections($data['sections'], 0);
                 }
             }
             

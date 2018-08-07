@@ -17,9 +17,9 @@ class Section extends Model
     static public function getAllModels() 
     {
         $tmp = self::all()->toArray();
-        foreach ($tmp as $section) {
+        /* foreach ($tmp as $section) {
             $section = Functions::dbModel2ViewModel($section);
-        }
+        } */
         return $tmp;
     }
 

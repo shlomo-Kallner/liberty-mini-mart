@@ -26,9 +26,9 @@ export class LaravelAlert {
 
   static getNumber (num) {
     if (typeof num === 'number') {
-      return Math.trunc(timeout);
+      return Math.trunc(num);
     } else if (typeof num === 'string') {
-      return parseInt(timeout);
+      return parseInt(num);
     } else {
       return 0;
     }

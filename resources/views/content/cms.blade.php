@@ -23,7 +23,7 @@
         //dd($sidebar2);
         //dd($page2);
         //dd($page['sections']);
-        dd($sections2, $sections_paginator2);
+        //dd($sections2, $sections_paginator2);
         //dd($users2, $users_paginator2);
         //dd($pages2, $pages_paginator2);
         //dd($plans2, $plans_paginator2);
@@ -62,10 +62,12 @@
             'admin/page/create', 'Create a New Content Page', 'fa-newspaper-o', 
             '', '', 'fa-plus', 'button'
         );  
-        $sidebar2[] = Page::genURLMenuItem(
-            'admin/plan/create', 'Create a New Membership Plan', 'fa-lightbulb-o', 
-            '', '', 'fa-plus','button'
-        );  
+        if (Functions::testVar($plans2)) {
+            $sidebar2[] = Page::genURLMenuItem(
+                'admin/plan/create', 'Create a New Membership Plan', 'fa-lightbulb-o', 
+                '', '', 'fa-plus','button'
+            );  
+        }
             
 
         //dd($sidebar2);
@@ -98,9 +100,11 @@
                     Display Pages
                 </button>
 
+                <hr>
+
                 <div class="collapse" id="collapsableSectionsPanel">
 
-                    @if (false)
+                    @if (true)
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <a class="btn btn-primary" href="{{ url('admin/section/create') }}" role="button">
@@ -113,6 +117,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             @if (Functions::testVar($sections2))
+
                                 @component('cms.sections')
                                     @slot('sections')
                                         {!! serialize($sections2) !!}

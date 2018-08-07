@@ -156,27 +156,27 @@ class UserController extends MainController {
             $ua = User::getUserArray($request);
             $ua['name'] = 'hello';
             $ua['email'] = !empty($request->email) ? $request->email : '';
-            //$ua['role'][] = 'admin';
+            $ua['role'][] = 'admin';
             //$ua['role'][] = 'creator';
             $ua['role'][] = 'user';
             $request->session()->put('user', $ua);
         } else {
+            /* 
+                /// in the REAL PRODUCTION implementation
+                ///  will use other User Class methods..
+                    $request->session()->put(
+                        'user', [
+                            'name'=> 'hello',
+                            'email' => !empty($request->email) ? $request->email : '[blank]',
+                            'is_admin' => 'true',
+                        ]
+                    );
+            */
             if (!User::validateUser($request->email, $request->password, $request)) {
 
             }
         }
         
-        /// in the REAL PRODUCTION implementation
-        ///  will use other User Class methods..
-        /* 
-                $request->session()->put(
-                    'user', [
-                        'name'=> 'hello',
-                        'email' => !empty($request->email) ? $request->email : '[blank]',
-                        'is_admin' => 'true',
-                    ]
-                );
-        */
         
         // redirection stuff..
         //// the Laravel Session appears to HATE being 
@@ -184,15 +184,20 @@ class UserController extends MainController {
         //dd(session()->all());
         //self::$data['user']['loggedin'] = true;
         //return parent::getView('content.tests.test2', 'User Logged In Successfull!!', $content);
+        $redirect = '/';
         if ($request->session()->has('redirectPage') && $request->session()->has('redirectToken')) {
             $redirectToken1 = $request->reTok??'';
+            //dd(session(), $redirectToken1, $request);
             $redirectToken2 = $request->session()->pull('redirectToken');
-        
-            $redirect = self::pagePathSplit($request->session()->pull('redirectPage'));
-        } else {
-            $redirect = '/';
-        }
-
+            //dd(session()->all(), $redirectToken1, $redirectToken2);
+            if ($redirectToken1 === $redirectToken2) {
+                $redirect = self::pagePathSplit($request->session()->pull('redirectPage'));
+            } else {
+                //dd($request->session(), $request, $redirectToken1, $redirectToken2);
+                $request->session()->pull('redirectPage');
+            }
+        } 
+        $request->session()->regenerate();
         return redirect($redirect);
     }
 
@@ -201,19 +206,22 @@ class UserController extends MainController {
         // the old @param string $page ... was REMOVED as 
         //  it IS BEING PASSED THROUGH THE Request @param 
         //  ANYWAYS...
-
+        //dd($request, $request->page);
         // 'redirectPath' is set by the middleware ...
         if ($request->session()->has('redirectPath') && !empty($request->page)) {
-            if ($request->page == self::pagePathJoin($request->session()->get('redirectPath'))) {
+            if ($request->page == self::pagePathJoin($request->session()->pull('redirectPath'))) {
                 
                 $request->session()->reflash();
 
                 $redirectData = [
-                    'redirectToken'=> str_random(40),
+                    'redirectToken' => e(str_random(40)),
                     'redirectPage' => isset($request->page)?$request->page: '',
                 ];
+                //$request->session()->pull('redirectPath');
 
                 $request->session()->put($redirectData);
+
+                //$request->session()->regenerate();
 
                 //$request->session()->put('redirectToken', $token );
                 //self::$data['page']['redirectToken'] = $token;
@@ -228,11 +236,15 @@ class UserController extends MainController {
                 // THE redirect view will have to retrieve the $redirect* data 
                 //  from the Session directly.. 
 
-                return parent::getView('forms.redirect', '', self::$data);
+                return parent::getView('forms.redirect');
             }
-        } elseif (!($request->session()->has('redirectPath')) && !empty($request->page)) {
-
+        } 
+        /* 
+        elseif (!($request->session()->has('redirectPath')) && !empty($request->page)) {
+            //dd('hello world..');
         }
+         */
+        $request->session()->regenerate();
         return redirect('/');
     }
 
@@ -243,6 +255,7 @@ class UserController extends MainController {
         //dd(session()->all());
         //self::$data['user']['loggedin'] = false;
         //session(['user.loggedin' => false]);
+        $request->session()->regenerate();
         return redirect('/');
     }
 

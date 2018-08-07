@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model, 
     Illuminate\Http\Request,
+    App\Utilities\Functions\Functions,
     DB,
     App\Section,
     App\Categorie,
@@ -201,7 +202,7 @@ class Page extends Model
                 $preheader[] = self::genModalMenuItem('Sign In', '#login-modal', 'fa-sign-in', 'text-uppercase');
                 $preheader[] = self::genURLMenuItem('signup', 'Sign up', 'fa-user', 'text-uppercase');
             } else {
-                $preheader[] = self::genURLMenuItem('user', 'My Account', 'fa-id-card', 'text-uppercase');
+                $preheader[] = self::genURLMenuItem('user', 'My Account', 'fa-id-card-o', 'text-uppercase');
                 $preheader[] = self::genURLMenuItem('wishlist', 'My Wishlist', 'fa-calendar-o', 'text-uppercase');
                 $preheader[] = self::genURLMenuItem('checkout', 'Checkout', 'fa-shopping-cart', 'text-uppercase');
                 if ($is_admin) {
@@ -272,8 +273,10 @@ class Page extends Model
     }
 
     static public function getNameForURL($url)
-    { // to be implemented with a db query!
-        return $url === '' ? 'index' : '' ;
+    { 
+        // to be implemented with a db query!
+        //return $url === '' ? 'index' : '' ;
+        return  null;
     }
 
     static public function genBreadcrumb(string $name = '', string $url = '')
@@ -310,29 +313,39 @@ class Page extends Model
     static public function getNamedPage($url, $path = null)
     {
         $page = self::where('url', $url)->first();
-        dd($page);
-        $image = Image::where('id', $page->image)->first();
-        $imgPath = Functions::testVar($image->path) ? $image->path . '/' : '';
-        return [
-            'title' => $page->title,
-            'content' => [
-                'header' => $page->title,
-                'article' => [
-                    'header' => '',
-                    'subheading' => $page->description,
-                    'img' => $imgPath . $image->name,
-                    'imgAlt' => $image->alt,
-                    'article' => $page->article
-                ]
-            ],
-            'breadcrumbs' => self::getBreadcrumbs(
-                self::genBreadcrumb($page->name, $url),
-                self::genBreadcrumb('Home', '/')
-            )
+        //dd($page, $url, __METHOD__);
+        if (Functions::testVar($page)) {
+            $image = Image::where('id', $page->image)->first();
+            if (Functions::testVar($image)) {
+                $imgPath = Functions::testVar($image->path) ? $image->path . '/' : '';
+                $img = $imgPath . $image->name;
+                $imgAlt = $image->alt;
+            } else {
+                $img = '';
+                $imgAlt = '';
+            }
+            return [
+                'title' => $page->title,
+                'content' => [
+                    'header' => $page->title,
+                    'article' => [
+                        'header' => '',
+                        'subheading' => $page->description,
+                        'img' => $img,
+                        'imgAlt' => $imgAlt,
+                        'article' => $page->article
+                    ]
+                ],
+                'breadcrumbs' => self::getBreadcrumbs(
+                    self::genBreadcrumb($page->name, $url),
+                    self::genBreadcrumb('Home', '/')
+                )
 
-        ];
-        
-
+            ];
+        } else {
+            //abort(404);
+            return [];
+        }
     }
     
     /**

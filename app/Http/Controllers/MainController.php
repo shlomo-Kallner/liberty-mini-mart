@@ -112,6 +112,29 @@ class MainController extends Controller {
     /// Begin Utility Functions
     /// UPDATE: converting all Utility functions to static functions...
 
+    static public function addMsg(string $msg)
+    {
+        if (session()->has('msgs')) {
+            session()->push('msgs', $msg);
+        } else {
+            $tmp = [];
+            $tmp[] = $msg;
+            session()->put('msgs', $msg);
+        }
+    }
+
+    static public function getMsgs()
+    {
+        if (session()->has('msgs')) {
+            $msgs = session()->get('msgs');
+            if (Functions::testVar($msgs)) {
+                return $msgs;
+            }
+        } else {
+            return null;
+        }
+    }
+
     static public function setAlert(
         $css = '', $title = '', $content = '', int $timeout = 0, string $id = ''
     ) {
@@ -258,7 +281,17 @@ class MainController extends Controller {
                 $alert['class'], $alert['title'], $alert['content'], $alert['timeout'], $alert['id']
             );
         } elseif (self::$data['alert']['class'] === '') {
-            self::setAlert();
+            $mgs = self::getMsgs();
+            if (Functions::testVar($mgs)) {
+                $tStr = '<ul>';
+                foreach ($mgs as $msg) {
+                    $tStr .= '<li>' . Functions::purifyContent($msg) . '</li>';
+                }
+                $tStr .= '</ul>';
+                self::setAlert('alert-info', 'Here are Your Messages:', $tStr, 0);
+            } else {
+                self::setAlert();
+            }
         }
         
         //
@@ -275,6 +308,8 @@ class MainController extends Controller {
         self::$data['user'] = User::getUserArray();
         //
         self::$data['cart'] = Cart::getCurrentCart();
+
+        session()->regenerate();
 
         return view($viewName, self::$data);
     }

@@ -9,6 +9,13 @@ use App\User;
 
 class UserImage extends Pivot
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'user_images';
+
     static public function createNew($user, $image)
     {
         if ($user instanceof User) {
@@ -31,14 +38,16 @@ class UserImage extends Pivot
                 ['image', '=', $image_id],
                 ['user', '=', $user_id]
             ]
-        );
+        )->first();
         if (Functions::testVar($t2)) {
+            //dd('$t2');
             return $t2->id;
         } else {
             $tmp = new self;
             $tmp->user = $user_id;
             $tmp->image = $image_id;
             if ($tmp->save()) {
+                //dd('$tmp');
                 return $tmp->id;
             } else {
                 return null;

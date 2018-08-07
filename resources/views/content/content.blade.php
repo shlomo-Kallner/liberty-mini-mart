@@ -22,22 +22,22 @@
                 {!! 'col-md-9 col-sm-9' !!}
             @endslot
             @slot('pageHeader')
-                {!! $page['header'] !!}
+                {!! $page['header']??'' !!}
             @endslot
             @slot('articleHeader')
-                {!! $page['article']['header'] !!}
+                {!! $page['article']['header']??'' !!}
             @endslot
             @slot('subheading')
-                {!! $page['article']['subheading'] !!}
+                {!! $page['article']['subheading']??'' !!}
             @endslot
             @slot('img')
-                {!! $page['article']['img'] !!}
+                {!! $page['article']['img']??'' !!}
             @endslot
             @slot('imgAlt')
-                {!! $page['article']['imgAlt'] !!}
+                {!! $page['article']['imgAlt']??'' !!}
             @endslot
             @slot('article')
-                {!! $page['article']['article'] !!}
+                {!! $page['article']['article']??'' !!}
             @endslot
         @endcomponent
 

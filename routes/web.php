@@ -30,36 +30,62 @@ Route::get('/', 'PageController@home');
 ); */
 
 
-Route::prefix('store')->group( 
+Route::middleware('userguard')->group(
     function () {
-        //Route::get('/', 'ShopController@test');
-        Route::get('/', 'ShopController@index');
-        //Route::get('all', 'ShopController@products');
+        //Route::resource('user', 'UserController');
+        Route::get('signout', 'UserController@signout');
 
-        // some pre-database-filling testing routes..
-        //Route::get('section/test', 'SectionController@test');
-        //Route::get('section/test/category/test', 'CategorieController@test');
-        //Route::get('section/test/category/test/product/test', 'ProductController@test');
-        //Route::post('section/test/category/test/product/test', 'ProductController@testPost');
+        Route::prefix('store')->group( 
+            function () {
+                //Route::get('/', 'ShopController@test');
+                Route::get('/', 'ShopController@index');
+                //Route::get('all', 'ShopController@products');
 
-        Route::get('section/{section?}', 'SectionController@show');
-        //
-        Route::get('section/{section}/category/{category?}', 'CategorieController@show');
-        //
-        Route::get('section/{section}/category/{category}/product/{product?}', 'ProductController@show');
-        //
-        // a category 'all' should return all products in the catalog/store..
+                // some pre-database-filling testing routes..
+                //Route::get('section/test', 'SectionController@test');
+                //Route::get('section/test/category/test', 'CategorieController@test');
+                //Route::get('section/test/category/test/product/test', 'ProductController@test');
+                //Route::post('section/test/category/test/product/test', 'ProductController@testPost');
 
-        Route::get('{page}', 'PageController@test4');
-        //Route::get('{page}/{page}', 'PageController@test2');
+                Route::get('section/{section?}', 'SectionController@show');
+                //
+                Route::get('section/{section}/category/{category?}', 'CategorieController@show');
+                //
+                Route::get('section/{section}/category/{category}/product/{product?}', 'ProductController@show');
+                //
+                // a category 'all' should return all products in the catalog/store..
+
+                //Route::get('{page}', 'PageController@test4');
+                //Route::get('{page}/{page}', 'PageController@test2');
+            }
+        );
+
+        Route::get('cart/{cart?}', 'CartController@show');
+        Route::get('wishlist/{wishlist?}', 'WishlistController@show');
+        Route::get('checkout', 'ShopController@checkout');
+
+        Route::prefix('user')->group(
+            function () {
+                Route::get('{user?}', 'UserController@show');
+                //Route::get('{user}', 'PageController@index1');
+            }
+        );
+
+                
+        //Route::get('user', 'UserController');
+        //Route::post('user', 'UserController');
+        //Route::resource('user', 'UserController');
+        //Route::get('user', 'UserController');
+        Route::prefix('plans')->group(
+            function () {
+                Route::get('/', 'PlanController@index');
+                Route::get('{plan}', 'PlanController@show');
+            }
+        );
     }
 );
 
-Route::get('cart/{cart?}', 'CartController@show');
-Route::get('wishlist/{wishlist?}', 'WishlistController@show');
-Route::get('checkout', 'ShopController@checkout');
-
-Route::prefix('admin')->group( 
+Route::middleware('adminguard')->prefix('admin')->group( 
     function () {
         //Route::get('/', 'ShopController@test');
         Route::get('/', 'CmsController@index');
@@ -137,33 +163,19 @@ Route::prefix('admin')->group(
         );
     }
 );
-//Route::get('user', 'UserController');
-//Route::post('user', 'UserController');
-//Route::resource('user', 'UserController');
-//Route::get('user', 'UserController');
-Route::prefix('plans')->group(
+
+
+Route::middleware('signedguard')->group(
     function () {
-        Route::get('/', 'PlanController@index');
-        Route::get('{plan}', 'PlanController@show');
+        
+        Route::get('signup', 'UserController@signup');
+        Route::post('signup', 'UserController@register');
+
+        Route::get('signin/{page?}', 'UserController@signinRedirect');
+        Route::post('signin/{page?}', 'UserController@signin');
+
     }
 );
-
-//Route::resource('user', 'UserController');
-Route::prefix('user')->group(
-    function () {
-        Route::get('{user?}', 'UserController@show');
-        //Route::get('{user}', 'PageController@index1');
-    }
-);
-
-
-Route::get('signup', 'UserController@signup');
-Route::post('signup', 'UserController@register');
-
-Route::get('signin/{page?}', 'UserController@signinRedirect');
-Route::post('signin/{page?}', 'UserController@signin');
-
-Route::get('signout', 'UserController@signout');
 
 Route::get('{page}', 'PageController@show');
 

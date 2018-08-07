@@ -11,6 +11,7 @@
 
     @php
         $redirectToken = session()->get('redirectToken');
+        //dd($redirectToken);
     @endphp
 
     <script>

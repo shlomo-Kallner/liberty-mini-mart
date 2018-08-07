@@ -46,7 +46,7 @@
                     'timeout' => $timeout2
                 ];
             @endphp
-            window.Laravel.alert = "@json($js_data)";
+            window.Laravel.alert = '@json($js_data)';
         </script>
     </div>
 </div>

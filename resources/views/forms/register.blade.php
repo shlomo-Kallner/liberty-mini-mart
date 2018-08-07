@@ -254,6 +254,8 @@
 @section('js-extra')
     @parent
 
-    <script src="{{ asset('js/lib/register.js') }}"></script>
+    @if (false)
+        <script src="{{ asset('js/lib/register.js') }}"></script>    
+    @endif
     
 @endsection

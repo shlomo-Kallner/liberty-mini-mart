@@ -79,7 +79,7 @@ class Categorie extends Model
     static public function getNamed(string $name, $section_id)
     {
         return Functions::dbModel2ViewModel(
-            $tmpself::where(
+            self::where(
                 [
                     'url' => $name,
                     'section_id' => $section_id
@@ -118,7 +118,7 @@ class Categorie extends Model
             $tCat = [];
             foreach ($category as $key => $val) {
                 if (is_string($key) && $key === 'image') {
-                    $tCat[$key] = Image::get
+                    $tCat[$key] = Image::getFromId(intval($val));
                 }
             }
             //$res[] = Functions::dbModel2ViewModel($category);

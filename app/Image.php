@@ -19,7 +19,7 @@ class Image extends Model
                 ['path', '=', $path]
             ]
         )->get();
-        if (!Functions::testVar($tC) || count() === 0) {       
+        if (!Functions::testVar($tC) || count($tC) === 0) {       
             $tmp = new self;
             $tmp->name = $name;
             $tmp->path = $path;
@@ -65,7 +65,7 @@ class Image extends Model
 
     static public function getFromId(int $id)
     {
-        return self::where('id', $id)->find();
+        return self::where('id', $id)->first();
     }
 
     static public function existsId(int $id)

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Page;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request,
+    App\Utilities\Functions\Functions;
 
 class PageController extends MainController 
 {
@@ -53,10 +54,15 @@ class PageController extends MainController
     public function show(Request $request, $page) 
     {
         $page_info = Page::getNamedPage($page, $request->path());
-        return self::getView(
-            'content.content', $page_info['title'], $page_info['content'],
-            false, $page_info['breadcrumbs']
-        );
+        if (Functions::testVar($page_info)) {
+            return self::getView(
+                'content.content', $page_info['title'], $page_info['content'],
+                false, $page_info['breadcrumbs']
+            );
+        } else {
+            abort(404);
+        }
+        
     }
 
     /**

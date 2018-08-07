@@ -11721,9 +11721,9 @@ var LaravelAlert = function () {
     key: 'getNumber',
     value: function getNumber(num) {
       if (typeof num === 'number') {
-        return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_math_trunc___default()(timeout);
+        return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_math_trunc___default()(num);
       } else if (typeof num === 'string') {
-        return parseInt(timeout);
+        return parseInt(num);
       } else {
         return 0;
       }

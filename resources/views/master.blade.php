@@ -166,7 +166,7 @@
     
                 @show
 
-                @if ($errors->any())
+                @if (isset($errors) && $errors->any())
                     @component('lib.site.alert')
                         @slot('class')
                             {!! 'alert-danger' !!}

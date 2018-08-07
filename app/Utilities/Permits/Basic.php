@@ -2,6 +2,8 @@
 
 namespace App\Utilities\Permits;
 
+use App\Utilities\Functions\Functions;
+
 class Basic extends Permits
 {
     protected  $basics;
@@ -32,13 +34,13 @@ class Basic extends Permits
         bool $regen = false
     ) {
         if (Functions::testVar($extra)) {
-            foreach (BASIC_TYPE as $key => $val) {
+            foreach (self::BASIC_TYPE as $key => $val) {
                 $extra[$key] = $val;
             }
         } else {
-            $extra = BASIC_TYPE;
+            $extra = self::BASIC_TYPE;
         }
-        $tmp = parent::addPermit($role, $level, $extra);
+        $tmp = parent::addPermitExtra($role, $level, $extra);
         if ($regen && $tmp) {
             $this->regen();
         }
@@ -98,13 +100,13 @@ class Basic extends Permits
         bool $regen = false
     ) {
         if (Functions::testVar($extra)) {
-            foreach (BASIC_TYPE as $key => $val) {
+            foreach (self::BASIC_TYPE as $key => $val) {
                 $extra[$key] = $val;
             }
         } else {
-            $extra = BASIC_TYPE;
+            $extra = self::BASIC_TYPE;
         }
-        parent::removePermit($role, $level, $extra);
+        parent::removePermitExtra($role, $level, $extra);
         if ($regen) {
             $this->regen();
         }
@@ -150,22 +152,22 @@ class Basic extends Permits
     private function getBasics()
     {
         $res = [];
-        if ($this->testIfInPerms(parent::ADMIN_ROLE, 1, BASIC_TYPE) 
-            || $this->testIfInPerms(parent::ADMIN_ROLE, 2, BASIC_TYPE) 
-            || $this->testIfInPerms(parent::ADMIN_ROLE, 3, BASIC_TYPE)
+        if ($this->testIfInPerms(parent::ADMIN_ROLE, 1, self::BASIC_TYPE) 
+            || $this->testIfInPerms(parent::ADMIN_ROLE, 2, self::BASIC_TYPE) 
+            || $this->testIfInPerms(parent::ADMIN_ROLE, 3, self::BASIC_TYPE)
         ) {
             $res[] = parent::ADMIN_ROLE;
         }
-        if ($this->testIfInPerms(parent::CONTENT_ROLE, 1, BASIC_TYPE) 
-            || $this->testIfInPerms(parent::CONTENT_ROLE, 2, BASIC_TYPE) 
-            || $this->testIfInPerms(parent::CONTENT_ROLE, 3, BASIC_TYPE)
+        if ($this->testIfInPerms(parent::CONTENT_ROLE, 1, self::BASIC_TYPE) 
+            || $this->testIfInPerms(parent::CONTENT_ROLE, 2, self::BASIC_TYPE) 
+            || $this->testIfInPerms(parent::CONTENT_ROLE, 3, self::BASIC_TYPE)
         ) {
             $res[] = parent::CONTENT_ROLE;
         }
-        if ($this->testIfInPerms(parent::AUTH_USER_ROLE, 1, BASIC_TYPE)) {
+        if ($this->testIfInPerms(parent::AUTH_USER_ROLE, 1, self::BASIC_TYPE)) {
             $res[] = parent::AUTH_USER_ROLE;
         }
-        if ($this->testIfInPerms(parent::GUEST_USER_ROLE, 1, BASIC_TYPE)) {
+        if ($this->testIfInPerms(parent::GUEST_USER_ROLE, 1, self::BASIC_TYPE)) {
             $res[] = parent::GUEST_USER_ROLE;
         }
         return $res;

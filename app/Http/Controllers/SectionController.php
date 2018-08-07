@@ -87,7 +87,7 @@ class SectionController extends MainController
             );
             // create a special 'content.sections' view for such a listing.. 
             // optionally add pagination... 
-            return self::getView('', 'Our Sections', null, false, $breadcumbs);
+            return self::getView('content.catalog', 'Our Sections', null, false, $breadcumbs);
         }
 
         

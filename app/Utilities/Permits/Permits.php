@@ -49,7 +49,7 @@ class Permits
 
     // permit Creation zone..
 
-    public function addPermit(
+    public function addPermitExtra(
         string $role, int $level = 1, array $extra = null
     ) {
         $tmp = self::makePermit($this->user_id, $role, $level, $extra);
@@ -86,7 +86,7 @@ class Permits
 
     // permission deletion methods..
 
-    public function removePermit(
+    public function removePermitExtra(
         string $role, int $level = 1, array $extra = null
     ) {
         $this->delIfIsInPerms($role, $level, $extra);
@@ -247,7 +247,7 @@ class Permits
         foreach ($this->perms as $perm) {
             if ($this->testPermHash($perm, $role, $level)) {
                 if (Functions::testVar($extra)) {
-                    if ($this->testPermExtra($permit, $extra)) {
+                    if ($this->testPermExtra($perm, $extra)) {
                         $bol = true;
                         break;
                     }
@@ -267,7 +267,7 @@ class Permits
         foreach ($this->perms as $perm) {
             if ($this->testPermHash($perm, $role, $level)) {
                 if (Functions::testVar($extra)) {
-                    if ($this->testPermExtra($permit, $extra)) {
+                    if ($this->testPermExtra($perm, $extra)) {
                         $res[] = $perm;
                     }
                 } else {
@@ -292,7 +292,7 @@ class Permits
         foreach ($this->perms as $key => $perm) {
             if ($this->testPermHash($perm, $role, $level)) {
                 if (Functions::testVar($extra)) {
-                    if ($this->testPermExtra($permit, $extra)) {
+                    if ($this->testPermExtra($perm, $extra)) {
                         $this->delPerm($key, $perm);
                     }
                 } else {

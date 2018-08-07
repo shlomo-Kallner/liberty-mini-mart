@@ -34,7 +34,7 @@ if (!Functions::testVar($langs2)) {
             //Page::genURLMenuItem('javascript:void(0);', '', string $icon = ''),
             Page::genURLMenuItem('javascript:void(0);', 'Hebrew'),
             Page::genURLMenuItem('javascript:void(0);', 'French'),
-            Page::genURLMenuItem('javascript:void(0);', 'Germany'),
+            Page::genURLMenuItem('javascript:void(0);', 'German'),
             Page::genURLMenuItem('javascript:void(0);', 'Turkish'),
         ]
     ];
@@ -46,7 +46,7 @@ if (!Functions::testVar($langs2)) {
     <div class="container">
         <div class="row">
             <!-- BEGIN TOP BAR LEFT PART -->
-            <div class="col-md-6 col-sm-6 additional-shop-info">
+            <div class="col-md-4 col-sm-4 additional-shop-info">
                 
                 {{-- 
                      TO DO: Convert CURRENCIES LIST 
@@ -134,7 +134,7 @@ if (!Functions::testVar($langs2)) {
                  menu items is inspired by/copied from 
                  'bootstrapious/universal-1-0' TOP BAR MENU.
             -->
-            <div class="col-md-6 col-sm-6 additional-nav">
+            <div class="col-md-8 col-sm-8 additional-nav">
                 <ul class="list-unstyled list-inline pull-right">
 
                     @if(Functions::testVar($preheader2))
