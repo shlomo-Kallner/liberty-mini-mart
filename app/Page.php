@@ -170,7 +170,7 @@ class Page extends Model
             if ($area == 'store') {
                 
             } else {
-                $tmp = self::where('visible', 1)
+                $tmp = self::where('visible', '>',  0)
                     ->groupBy('group_id')
                     ->orderBy('order', 'asc')
                     ->get();

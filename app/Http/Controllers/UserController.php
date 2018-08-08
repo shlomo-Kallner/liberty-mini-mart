@@ -107,7 +107,8 @@ class UserController extends MainController {
         }
     }
 
-    public function register(RegisterRequest $request) {
+    public function register(RegisterRequest $request) 
+    {
         //dd($request);
         $name = $request->lastname . ' , ' . $request->firstname;
         $user = User::createNew(
@@ -118,14 +119,22 @@ class UserController extends MainController {
         if (Functions::testVar($user)) {
             $user->setIsAuthUser();
             $user->setUserArray($request);
+            parent::addMsg(
+                '<h3>New User Registration Successfull!!</h3>'
+                . '<p><strong>You Have Successfully Registered Your Account, now just sign in to enter!</strong></p>'
+            );
         }
-        //return redirect('/');
-        parent::setAlert(
-            'alert-success', 'New User Registration Successfull!!', 
-            '<strong>You Have Successfully Registered Your Account, now just sign in to enter!</strong>',
-            9000
-        );
-        return parent::getView('content.index');
+        $request->session()->regenerate();
+        return redirect('/');
+
+        /*     
+            parent::setAlert(
+                'alert-success', 'New User Registration Successfull!!', 
+                '<strong>You Have Successfully Registered Your Account, now just sign in to enter!</strong>',
+                9000
+            );
+            return parent::getView('content.index');
+        */
     }
 
     public static function pagePathSplit(string $str)

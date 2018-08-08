@@ -54,7 +54,9 @@ class PageController extends MainController
     public function show(Request $request, $page) 
     {
         $page_info = Page::getNamedPage($page, $request->path());
-        if (Functions::testVar($page_info)) {
+        if (Functions::testVar($page_info) && $page_info['visible'] > 0) {
+            // WISHLIST ITEM: a more sophisticated user role based
+            //  Visibility / Access Control Method..
             return self::getView(
                 'content.content', $page_info['title'], $page_info['content'],
                 false, $page_info['breadcrumbs']
