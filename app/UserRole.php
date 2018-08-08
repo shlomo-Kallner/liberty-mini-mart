@@ -11,6 +11,7 @@ class UserRole extends Model
     use SoftDeletes;
 
     /**
+    * use Illuminate\Database\Eloquent\SoftDeletes;
      * The attributes that should be mutated to dates.
      *
      * @var array

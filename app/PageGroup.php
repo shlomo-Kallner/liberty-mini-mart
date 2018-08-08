@@ -9,6 +9,13 @@ use Illuminate\Database\Eloquent\Relations\Pivot,
 class PageGroup extends Pivot
 {
     use SoftDeletes;
+    
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'page_groups';
 
     /**
      * The attributes that should be mutated to dates.

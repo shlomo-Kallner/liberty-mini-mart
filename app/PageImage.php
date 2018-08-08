@@ -3,12 +3,29 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Utilities\Functions\Functions;
 use App\Image;
 use App\Page;
 
 class PageImage extends Pivot
 {
+    use SoftDeletes;
+    
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'page_images';
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+
     static public function createNew($page, $image)
     {
         if ($page instanceof Page) {

@@ -3,18 +3,30 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Utilities\Functions\Functions;
 use App\Image;
 use App\User;
 
 class UserImage extends Pivot
 {
+    
+    use SoftDeletes;
+    
     /**
      * The table associated with the model.
      *
      * @var string
      */
     protected $table = 'user_images';
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+
 
     static public function createNew($user, $image)
     {

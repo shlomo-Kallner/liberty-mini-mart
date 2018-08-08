@@ -8,13 +8,22 @@ use Illuminate\Database\Eloquent\Model,
     Illuminate\Support\Facades\Hash,
     App\Utilities\Functions\Functions,
     App\Utilities\Permits\Permits;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Utilities\Permits\Basic;
 use App\UserImage;
 use App\Image;
 
 class User extends Model
 {
-    //
+    use SoftDeletes;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+    
     static public function getNewUserArray(
         string $agent, string $ip,
         string $name = '', string $email = '', string $id = ''

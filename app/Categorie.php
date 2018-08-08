@@ -8,9 +8,19 @@ use Illuminate\Database\Eloquent\Model,
     App\Image,
     App\CategoryImage,
     App\Page;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Categorie extends Model
 {
+
+    use SoftDeletes;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     static public function createNew(
         string $name, string $url, string $description, 

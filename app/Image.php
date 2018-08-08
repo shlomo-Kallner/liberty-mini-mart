@@ -5,10 +5,20 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Utilities\Functions\Functions;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class Image extends Model
 {
+    use SoftDeletes;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+
     static public function createNew(
         string $name, string $path, string $alt, 
         string $caption

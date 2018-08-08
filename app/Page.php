@@ -11,9 +11,19 @@ use Illuminate\Database\Eloquent\Model,
     App\PageGroup,
     App\User,
     Session;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Page extends Model
 {
+    use SoftDeletes;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+
 
     /** 
      * A template for a menu item ..
@@ -346,7 +356,8 @@ class Page extends Model
                 'breadcrumbs' => self::getBreadcrumbs(
                     self::genBreadcrumb($page->name, $url),
                     self::genBreadcrumb('Home', '/')
-                )
+                ),
+                'visible' => $page->visible,
 
             ];
         } else {
@@ -415,6 +426,8 @@ class Page extends Model
                 $data->title = Functions::purifyContent($title);
                 $data->article = Functions::purifyContent($article);
                 $data->description = Functions::purifyContent($description);
+                $data->visible = $visible;
+                $data->sticker = $sticker;
                 /* 
                     // need to do some special checking on group_id..
                     if ($group_id < 0) {
