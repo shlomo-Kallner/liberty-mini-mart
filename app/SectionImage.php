@@ -31,7 +31,7 @@ class SectionImage extends Pivot
                 ['image', '=', $image_id],
                 ['section', '=', $section_id]
             ]
-        );
+        )->first();
         if (Functions::testVar($t2)) {
             return $t2->id;
         } else {
@@ -73,7 +73,7 @@ class SectionImage extends Pivot
         } else {
             return null;
         }
-        $t = self::where('image', $image_id)->find();
+        $t = self::where('image', $image_id)->first();
         if (Functions::testVar($t)) {
             return $t->section;
         } else {

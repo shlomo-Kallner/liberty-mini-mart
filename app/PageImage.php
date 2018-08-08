@@ -31,7 +31,7 @@ class PageImage extends Pivot
                 ['image', '=', $image_id],
                 ['page', '=', $page_id]
             ]
-        );
+        )->first();
         if (Functions::testVar($t2)) {
             return $t2->id;
         } else {
@@ -74,7 +74,7 @@ class PageImage extends Pivot
         } else {
             return null;
         }
-        $t = self::where('image', $img_id)->find();
+        $t = self::where('image', $img_id)->first();
         if (Functions::testVar($t)) {
             return $t->page;
         } else {

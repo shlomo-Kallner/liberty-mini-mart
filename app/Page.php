@@ -276,7 +276,14 @@ class Page extends Model
     { 
         // to be implemented with a db query!
         //return $url === '' ? 'index' : '' ;
-        return  null;
+        if (is_string($url)) {
+            $tmp = self::where('url', $url)->first();
+            return $tmp->name;
+        } elseif ($url instanceof self) {
+            return $url->name;
+        } else {
+            return null;
+        }
     }
 
     static public function genBreadcrumb(string $name = '', string $url = '')
@@ -442,7 +449,7 @@ class Page extends Model
 
     static public function getFromId(int $id)
     {
-        return self::where('id', $id)->find();
+        return self::where('id', $id)->first();
     }
 
     static public function existsId(int $id)

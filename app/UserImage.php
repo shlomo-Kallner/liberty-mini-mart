@@ -83,7 +83,7 @@ class UserImage extends Pivot
         } else {
             return null;
         }
-        $t = self::where('image', $img_id)->find();
+        $t = self::where('image', $img_id)->first();
         if (Functions::testVar($t)) {
             return $t->user;
         } else {

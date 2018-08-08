@@ -32,7 +32,7 @@ class ProductImage extends Pivot
                 ['image', '=', $image_id],
                 ['product', '=', $product_id]
             ]
-        );
+        )->first();
         if (Functions::testVar($t2)) {
             return $t2->id;
         } else {

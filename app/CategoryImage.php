@@ -31,7 +31,7 @@ class CategoryImage extends Pivot
                 ['image', '=', $image_id],
                 ['category', '=', $category_id]
             ]
-        );
+        )->first();
         if (Functions::testVar($t2)) {
             return $t2->id;
         } else {
@@ -74,7 +74,8 @@ class CategoryImage extends Pivot
         } else {
             return null;
         }
-        $t = self::where('image', $img_id)->find();
+        $t = self::where('image', $img_id)->first();
+        // redo!! return an array!
         if (Functions::testVar($t)) {
             return $t->category;
         } else {

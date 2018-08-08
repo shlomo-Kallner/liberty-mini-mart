@@ -68,7 +68,7 @@ class Categorie extends Model
 
     static public function getFromId(int $id)
     {
-        return self::where('id', $id)->find();
+        return self::where('id', $id)->first();
     }
 
     static public function existsId(int $id)
