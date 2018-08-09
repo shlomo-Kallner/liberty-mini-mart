@@ -9,7 +9,16 @@ use Illuminate\Http\Request,
     App\Http\Requests\RegisterRequest;
 use App\Utilities\Functions\Functions;
 
-class UserController extends MainController {
+class UserController extends MainController 
+{
+    protected static $redirectVersion = 2; 
+    // this has now been 'bumped up' ti switch off showing the user
+    // the redirect route..
+
+    public static function getRedVer()
+    {
+        return self::$redirectVersion;
+    }
 
     public function __construct($name = '', $titleNameSep = '') 
     {
@@ -160,7 +169,8 @@ class UserController extends MainController {
         //dd(session()->all());
 
         // for testing..
-        $testing = true;
+        $testing = false;
+        $errors = [];
         if ($testing) {
             $ua = User::getUserArray($request);
             $ua['name'] = 'hello';
@@ -182,7 +192,7 @@ class UserController extends MainController {
                     );
             */
             if (!User::validateUser($request->email, $request->password, $request)) {
-
+                $errors[] = 'Incorrect User Email & Password Combination!';
             }
         }
         
@@ -199,15 +209,23 @@ class UserController extends MainController {
             //dd(session(), $redirectToken1, $request);
             $redirectToken2 = $request->session()->pull('redirectToken');
             //dd(session()->all(), $redirectToken1, $redirectToken2);
+            $redirectPage = $request->session()->pull('redirectPage');
             if ($redirectToken1 === $redirectToken2) {
-                $redirect = self::pagePathSplit($request->session()->pull('redirectPage'));
-            } else {
+                $redirect = self::pagePathSplit($redirectPage);
+            } 
+            /* 
+                else {
                 //dd($request->session(), $request, $redirectToken1, $redirectToken2);
-                $request->session()->pull('redirectPage');
-            }
+                /// this was just for some debugging during some testing.. 
+                } 
+            */
         } 
         $request->session()->regenerate();
-        return redirect($redirect);
+        if (Functions::testVar($errors)) {
+            return redirect($redirect)->withErrors($errors);
+        } else {
+            return redirect($redirect);
+        }
     }
 
     public function signinRedirect(Request $request)
@@ -217,20 +235,31 @@ class UserController extends MainController {
         //  ANYWAYS...
         //dd($request, $request->page);
         // 'redirectPath' is set by the middleware ...
-        if ($request->session()->has('redirectPath') && !empty($request->page)) {
-            if ($request->page == self::pagePathJoin($request->session()->pull('redirectPath'))) {
+        if ($request->session()->has('redirectPath')) {
+            $redirectPage = self::pagePathJoin(
+                $request->session()->pull('redirectPath')
+            );
+            $bol = false;
+            if (self::getRedVer() == 1 && !empty($request->page)) {
+                if ($request->page == $redirectPage) {
+                    $bol = true;
+                }
+            } else {
+                $bol = true;
+            }
+            if ($bol) {
                 
                 $request->session()->reflash();
 
                 $redirectData = [
                     'redirectToken' => e(str_random(40)),
-                    'redirectPage' => isset($request->page)?$request->page: '',
+                    'redirectPage' => isset($redirectPage)?$redirectPage: '',
                 ];
                 //$request->session()->pull('redirectPath');
 
                 $request->session()->put($redirectData);
 
-                //$request->session()->regenerate();
+                //$request->session()->regenerate(); /// done by getView()..
 
                 //$request->session()->put('redirectToken', $token );
                 //self::$data['page']['redirectToken'] = $token;
@@ -249,15 +278,16 @@ class UserController extends MainController {
             }
         } 
         /* 
-        elseif (!($request->session()->has('redirectPath')) && !empty($request->page)) {
-            //dd('hello world..');
-        }
+            elseif (!($request->session()->has('redirectPath')) && !empty($request->page)) {
+                //dd('hello world..');
+            }
          */
         $request->session()->regenerate();
         return redirect('/');
     }
 
-    public function signout(Request $request) {
+    public function signout(Request $request) 
+    {
         //dd(session()->all());
         //$request->session()->forget('user');
         User::resetUserArray($request);

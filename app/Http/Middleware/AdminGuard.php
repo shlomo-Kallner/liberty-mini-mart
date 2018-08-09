@@ -28,7 +28,17 @@ class AdminGuard
             $request->session()->flash('redirectPath', $request->path());
             $request->session()->regenerate();
             //dd($request->session()->all(), $request->reTok);
-            return redirect('signin/' . UserController::pagePathJoin($request->path()));
+            $ver = UserController::getRedVer();
+            if ($ver === 1) {
+                // the old version .. (reveals contained request path..)
+                $new_path = UserController::pagePathJoin($request->path());
+                return redirect('signin/' . $new_path);
+            } else {
+                // the new version -> depends on us having flashed to the session
+                //  the redirect route in the first place... 
+                //  so why show the user the path?
+                return redirect('signin');
+            }
         }
     }
 }

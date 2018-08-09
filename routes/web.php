@@ -150,6 +150,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 ]
             ]
         );
+        Route::get('page/{page}/delete', 'PageController@showDelete');
         // 'plan/' goes to 'index()' which returns 'all-pages' of the site..
         Route::resource(
             'plan', 'PlanController', [

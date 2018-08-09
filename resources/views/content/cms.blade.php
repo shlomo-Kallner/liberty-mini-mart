@@ -10,14 +10,16 @@
 
         $sidebar2 = Functions::getContent($sidebar??'');
         $page2 = Functions::getContent($page['article']??'');
-        $sections2 = Functions::getContent($page['sections']['items']??'');
-        $sections_paginator2 = Functions::getContent($page['sections']['pagination']??'');
-        $users2 = Functions::getContent($page['users']['items']??'');
-        $users_paginator2 = Functions::getContent($page['users']['pagination']??'');
-        $pages2 = Functions::getContent($page['pages']['items']??'');
-        $pages_paginator2 = Functions::getContent($page['pages']['pagination']??'');
-        $plans2 = Functions::getContent($page['plans']['items']??'');
-        $plans_paginator2 = Functions::getContent($page['plans']['pagination']??'');
+        $sections2 = Functions::getContent($page['sections']['items']??[],[]);
+        $sections_paginator2 = Functions::getContent($page['sections']['pagination']??[],[]);
+        $users2 = Functions::getContent($page['users']['items']??[],[]);
+        $users_paginator2 = Functions::getContent($page['users']['pagination']??[],[]);
+        $pages2 = Functions::getContent($page['pages']['items']??[],[]);
+        $pages_paginator2 = Functions::getContent($page['pages']['pagination']??[],[]);
+
+        /// THESE TWO ARE WISHLIST ITEMS!!
+        $plans2 = Functions::getContent($page['plans']['items']??[],[]);
+        $plans_paginator2 = Functions::getContent($page['plans']['pagination']??[],[]);
         
 
         //dd($sidebar2);
@@ -62,6 +64,8 @@
             'admin/page/create', 'Create a New Content Page', 'fa-newspaper-o', 
             '', '', 'fa-plus', 'button'
         );  
+
+        /// THIS IS A WISHLIST ITEM!!
         if (Functions::testVar($plans2)) {
             $sidebar2[] = Page::genURLMenuItem(
                 'admin/plan/create', 'Create a New Membership Plan', 'fa-lightbulb-o', 
@@ -116,7 +120,7 @@
 
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            @if (Functions::testVar($sections2))
+                            @if (Functions::testVar($sections2) || true)
 
                                 @component('cms.sections')
                                     @slot('sections')
@@ -129,7 +133,7 @@
                                     @endif
                                 @endcomponent
                                 
-                            @else
+                            @elseif (false)
                                 
                                 <div class="well">
                                     <h4>Oooppps! No Sections Available for Display...</h4>
@@ -152,8 +156,8 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             
-                            @if (Functions::testVar($users2) && false)
-                                @component('cms.sections')
+                            @if (Functions::testVar($users2) || true)
+                                @component('cms.users')
                                     @slot('users')
                                         {!! serialize($users2) !!}
                                     @endslot
@@ -164,7 +168,7 @@
                                     @endif
                                 @endcomponent
                                 
-                            @else
+                            @elseif (false)
                                 
                                 <div class="well">
                                     <h4>Oooppps! No Users Available for Display...</h4>
@@ -189,7 +193,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             
-                                @if (Functions::testVar($pages2) && false)
+                                @if (Functions::testVar($pages2) || true)
                                     @component('cms.pages')
                                         @slot('pages')
                                             {!! serialize($pages2) !!}
@@ -201,7 +205,7 @@
                                         @endif
                                     @endcomponent
                                     
-                                @else
+                                @elseif (false)
                                     
                                     <div class="well">
                                         <h4>Oooppps! No Pages Available for Display...</h4>

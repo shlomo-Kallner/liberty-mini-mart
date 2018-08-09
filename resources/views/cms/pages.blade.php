@@ -3,8 +3,8 @@
     $testing = true;
     use \App\Utilities\Functions\Functions;
 
-    $pages2 = Functions::getUnBladedContent($pages??'');
-    $paginator2 = Functions::getUnBladedContent($paginator??'');
+    $pages2 = Functions::getUnBladedContent($pages??[],[]);
+    $paginator2 = Functions::getUnBladedContent($paginator??[],[]);
 
     $panelGroupId = 'pages-panel-group';
 @endphp
@@ -43,9 +43,15 @@
                 <div class="panel-body">
                     <div class="row">
                         
-                        <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 thumbnail">
-                            <img src="{{ asset($page['img']) }}" class="img-responsive" alt="{{$page['imgAlt']}}">
-                        </div>
+                        @if (Functions::testVar($page['img']))
+
+                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 thumbnail">
+                                <img src="{{ asset($page['img']) }}" class="img-responsive" alt="{{$page['imgAlt']}}">
+                            </div>
+                            
+                        @else
+                            {{-- a "no image for this __" to be created! --}}
+                        @endif
                                 
                         <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
                             <div class="row">
@@ -55,10 +61,9 @@
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="btn-group pull-left">
-                                        <a class="btn btn-default" data-toggle="collapse" href="{{'#' . $panelId3}}" aria-expanded="false" aria-controls="{{ $panelId3 }}" role="button">Show Categories</a>
-                                        <a class="btn btn-primary" href="{{ $newCategoryCreateUrl }}" role="button">Create a New Category</a>
-                                        <a class="btn btn-warning" href="{{ $pageEditUrl }}" role="button">Edit this Section</a>
-                                        <button type="button" class="btn btn-danger" onclick="deleteSection('{{$sectionDeleteUrl}}')">Delete this Section</button>
+                                        <a class="btn btn-default" data-toggle="collapse" href="{{'#' . $panelId3}}" aria-expanded="false" aria-controls="{{ $panelId3 }}" role="button">Show Content</a>
+                                        <a class="btn btn-warning" href="{{ $pageEditUrl }}" role="button">Edit this Page</a>
+                                        <button type="button" class="btn btn-danger" onclick="deleteSection('{{$sectionDeleteUrl}}')">Delete this Page</button>
                                         
                                         {{-- <a class="btn btn-default" href="#" role="button"></a> --}}
                                         {{-- <a class="btn btn-default" href="#" role="button"></a> --}}
@@ -67,7 +72,7 @@
                                     </div>
                                     
                                     <div class="btn-group pull-right">
-                                        <button type="button" class="btn btn-default">{{ !$section['visible'] ? 'Show' : 'Hide' }}</button>
+                                        <button type="button" class="btn btn-default">{{ !$page['visible'] ? 'Show' : 'Hide' }}</button>
                                         <button type="button" class="btn btn-default">Move Up</button>
                                         <button type="button" class="btn btn-default">Move Down</button>
                                     </div>
@@ -76,18 +81,12 @@
                             </div>
             
                             <div class="row collapse" id="{{ $panelId3 }}">
-                                @component('cms.categories')
-                                    @slot('categories')
-                                        {!! serialize($section['categories']) !!}
-                                    @endslot
-                                    @slot('section_url')
-                                        {!! serialize($section['url']) !!}
-                                    @endslot
-                                    @if (Functions::testVar($section['paginator']??''))
-                                        @slot('paginator')
-                                            {!! serialize($section['paginator']) !!}
+                                @component('lib.themewagon.article')
+                                    @foreach ($page as $key => $item)
+                                        @slot($key)
+                                            {{ $item }}
                                         @endslot
-                                    @endif
+                                    @endforeach
                                 @endcomponent
                             </div>
                             

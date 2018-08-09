@@ -310,7 +310,7 @@ class Page extends Model
         return $res;
     }
 
-    static public function genBreadcrumbsFromPath(string $url)
+    static public function genBreadcrumbsFromPath(string $url = '')
     {
         $links = [];
         if (str_contains($url,'/')) {
@@ -318,48 +318,109 @@ class Page extends Model
             if ($paths !== false) {
                 for ($i = 0; $i < count($paths); $i++) {
                     $path = $paths[$i];
+                    $links[] = $path;
 
                 }
             }
-        } else {
-
         }
         return $links;
     }
 
-    static public function getNamedPage($url, $path = null)
+    public function toContentArray(
+        array $img = null, array $otherImages = null,
+        array $links = null
+    ) {
+        if (!Functions::testVar($img)) {
+            $i = Image::getImageArray($this->image);
+        } else {
+            $i = $img;
+        }
+        if (!Functions::testVar($links)) {
+            $b = self::genBreadcrumb('Home', '/');
+        } else {
+            $b = $links;
+        }
+        if (!Functions::testVar($otherImages)) {
+            $o = [];
+            $oit = PageImage::getAllImages($this->id);
+            if (Functions::testVar($oit)) {
+                foreach ($oit as $i) {
+                    $t = Image::getImageArray($i);
+                    if (Functions::testVar($t)) {
+                        $o[] = $t;
+                    }
+                }
+            }
+        } else {
+            $o = $otherImages;
+        }
+        return [
+            'title' => $this->title,
+            'content' => [
+                'header' => $this->title,
+                'article' => [
+                    'header' => $this->description,
+                    'subheading' => $i['cap'],
+                    'img' => $i['img'],
+                    'imgAlt' => $i['alt'],
+                    'article' => $this->article
+                ]
+            ],
+            'breadcrumbs' => self::getBreadcrumbs(
+                self::genBreadcrumb($this->name, $this->url),
+                $b
+            ),
+            'visible' => $this->visible,
+            'otherImages' => $o,
+
+        ]; 
+    }
+
+    static public function getNamedPage($url, $path = null, bool $getObj = false)
     {
         $page = self::where('url', $url)->first();
         //dd($page, $url, __METHOD__);
         if (Functions::testVar($page)) {
-            $image = Image::where('id', $page->image)->first();
-            if (Functions::testVar($image)) {
-                $imgPath = Functions::testVar($image->path) ? $image->path . '/' : '';
-                $img = $imgPath . $image->name;
-                $imgAlt = $image->alt;
-            } else {
-                $img = '';
-                $imgAlt = '';
+            $image = Image::getImageArray($page->image);
+            $otherImages = [];
+            $oit = PageImage::getAllImages($page->id);
+            if (Functions::testVar($oit)) {
+                foreach ($oit as $i) {
+                    $t = Image::getImageArray($i);
+                    if (Functions::testVar($t)) {
+                        $otherImages[] = $t;
+                    }
+                }
             }
-            return [
-                'title' => $page->title,
-                'content' => [
-                    'header' => $page->title,
-                    'article' => [
-                        'header' => '',
-                        'subheading' => $page->description,
-                        'img' => $img,
-                        'imgAlt' => $imgAlt,
-                        'article' => $page->article
-                    ]
-                ],
-                'breadcrumbs' => self::getBreadcrumbs(
-                    self::genBreadcrumb($page->name, $url),
-                    self::genBreadcrumb('Home', '/')
-                ),
-                'visible' => $page->visible,
+            if (!$getObj) {
+                
+                return [
+                    'title' => $page->title,
+                    'content' => [
+                        'pageHeader' => $page->title,
+                        'article' => [
+                            'header' => $page->description,
+                            'subheading' => $image['cap'],
+                            'img' => $image['img'],
+                            'imgAlt' => $image['alt'],
+                            'article' => $page->article
+                        ]
+                    ],
+                    'breadcrumbs' => self::getBreadcrumbs(
+                        self::genBreadcrumb($page->name, $url),
+                        self::genBreadcrumb('Home', '/')
+                    ),
+                    'visible' => $page->visible,
+                    'otherImages' => $otherImages,
 
-            ];
+                ];
+            } else {
+                return [
+                    'page' => $page,
+                    'image' => $image,
+                    'otherImages' => $otherImages
+                ];
+            }
         } else {
             //abort(404);
             return [];

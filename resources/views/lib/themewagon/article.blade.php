@@ -29,16 +29,16 @@
             </h2>
         @endif
         
+        
+        @if (Functions::testVar($img2))
+            <img src="{{ asset($img2) }}" alt="{{ $imgAlt2 }}">
+        @endif
+        
 
         @if (Functions::testVar($subheading2))
             <h3>
                 {!! $subheading2 !!}
             </h3>
-        @endif
-        
-        
-        @if (Functions::testVar($img2))
-            <img src="{{ asset($img2) }}" alt="{{ $imgAlt2 }}">
         @endif
         
     </div>

@@ -149,7 +149,7 @@ class User extends Model
     }
 
     /**
-     * Function testIfUser - TO BE USD FOR CHECKOUT PAGE USER VALIDATION!
+     * Function testIfUser - TO BE USED FOR CHECKOUT PAGE USER VALIDATION!
      *
      * @param string $email
      * @param string $password

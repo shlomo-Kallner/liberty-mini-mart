@@ -101,6 +101,25 @@ class PageController extends MainController
         //
     }
 
+    public function showDelete(Request $request) 
+    {
+        $page = Page::getNamedPage($request->page, $request->path, true);
+        if (Functions::testVar($page)) {
+            return self::getView(
+                'cms.forms.delete.page', 
+                'Are You Sure That You Want To Delete This Page?',
+                [ 'data' => $page],
+                false,
+                Page::getBreadcrumbs(
+                    Page::genBreadcrumb('Delete Page', $request->path()),
+                    Page::genBreadcrumb('Admin Dashboard', 'admin')
+                ) 
+            );
+        } else {
+            abort(404);
+        }
+    }
+
     public function home(Request $request) 
     {
         // for now...

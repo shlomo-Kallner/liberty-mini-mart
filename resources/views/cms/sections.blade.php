@@ -3,10 +3,12 @@
     $testing = true;
     use \App\Utilities\Functions\Functions;
 
-    $sections2 = Functions::getUnBladedContent($sections??'');
-    $paginator2 = Functions::getUnBladedContent($paginator??'');
+    $sections2 = Functions::getUnBladedContent($sections??[],[]);
+    $paginator2 = Functions::getUnBladedContent($paginator??[],[]);
 
     $panelGroupId = 'sections-panel-group';
+
+    //dd($sections2, $paginator2);
 @endphp
 
 <div class="panel-group" id="{{ $panelGroupId }}" role="tablist" aria-multiselectable="true">

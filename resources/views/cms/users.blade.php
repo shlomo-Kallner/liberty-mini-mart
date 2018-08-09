@@ -4,8 +4,8 @@
     $testing = true;
     use \App\Utilities\Functions\Functions;
 
-    $users2 = Functions::getUnBladedContent($users??'');
-    $paginator2 = Functions::getUnBladedContent($paginator??'');
+    $users2 = Functions::getUnBladedContent($users??[],[]);
+    $paginator2 = Functions::getUnBladedContent($paginator??[],[]);
 
     $panelGroupId = 'users-panel-group';
 @endphp

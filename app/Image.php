@@ -55,6 +55,37 @@ class Image extends Model
         return self::createNewFromArray($array);
     }
 
+    static public function getImage($image)
+    {
+        if (is_int($image)) {
+            return self::getFromId($image);
+        } elseif ($image instanceof self) {
+            return $image;
+        } else {
+            return null;
+        }
+    }
+
+    static public function getImageArray($image)
+    {
+        $tmp = self::getImage($image);
+        if (Functions::testVar($tmp)) {
+            $imgPath = Functions::testVar($tmp->path) ? $tmp->path . '/' : '';
+            $img = $imgPath . $tmp->name;
+            $alt = $tmp->alt;
+            $cap = $tmp->caption;
+        } else {
+            $img = '';
+            $alt = '';
+            $cap = '';
+        }
+        return [
+            'img' => $img,
+            'alt' => $alt,
+            'cap' => $cap
+        ];
+    }
+
     static public function getAllForPivots($pivots)
     {
         if (Functions::testVar($pivots)) {
