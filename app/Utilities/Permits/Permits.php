@@ -244,16 +244,36 @@ class Permits
         string $role, int $level = 1, array $extra = null
     ) {
         $bol = false;
-        foreach ($this->perms as $perm) {
-            if ($this->testPermHash($perm, $role, $level)) {
-                if (Functions::testVar($extra)) {
-                    if ($this->testPermExtra($perm, $extra)) {
+        if (is_string($role) && $role !== '') {
+            
+            foreach ($this->perms as $perm) {
+                if ($this->testPermHash($perm, $role, $level)) {
+                    if (Functions::testVar($extra)) {
+                        if ($this->testPermExtra($perm, $extra)) {
+                            $bol = true;
+                            break;
+                        }
+                    } else {
                         $bol = true;
                         break;
                     }
-                } else {
-                    $bol = true;
-                    break;
+                }
+            }
+        } elseif (is_array($role) && !empty($role)) {
+            $tmp = [];
+            foreach ($role as $arr) {
+                if (count($arr) == 3 
+                    && (!empty($arr[0]) && is_string($arr[0]))
+                    && (!empty($arr[1]) && is_int($arr[1]))
+                    && (!empty($arr[2]) && is_array($arr[2]))
+                ) {
+                    $tmp[] = $arr;
+                }
+            }
+            $bol2 = true;
+            foreach ($tmp as $ro) {
+                if (!$this->testIfInPerms($ro[0], $ro[1], $ro[2])) {
+                    $bol2 = false;
                 }
             }
         }

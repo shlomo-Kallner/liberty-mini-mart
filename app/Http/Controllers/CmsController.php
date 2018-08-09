@@ -45,8 +45,9 @@ class CmsController extends MainController
             $section['categories'] = Categorie::getCategoriesOfSection($section['id']);
             //dd($section);
         }
-        $users = [];
-        $pages = [];
+        $users = User::getAllUsers();
+        dd($users);
+        $pages = []; // Page::getAllPages();
         //dd($sections);
         return self::getView(
             'content.cms', 'Admin Dashboard', 

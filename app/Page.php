@@ -341,16 +341,7 @@ class Page extends Model
             $b = $links;
         }
         if (!Functions::testVar($otherImages)) {
-            $o = [];
-            $oit = PageImage::getAllImages($this->id);
-            if (Functions::testVar($oit)) {
-                foreach ($oit as $i) {
-                    $t = Image::getImageArray($i);
-                    if (Functions::testVar($t)) {
-                        $o[] = $t;
-                    }
-                }
-            }
+            $o = PageImage::getAllImages($this->id, true);
         } else {
             $o = $otherImages;
         }
@@ -392,10 +383,9 @@ class Page extends Model
                     }
                 }
             }
-            $ca = $page->toContentArray($image, $otherImages);
+            //  $ca = $page->toContentArray($image, $otherImages);
             if (!$getObj) {
-                
-                return $ca;
+                return $page->toContentArray($image, $otherImages);
             } else {
                 return [
                     'page' => $page,
@@ -407,6 +397,40 @@ class Page extends Model
             //abort(404);
             return [];
         }
+    }
+
+    public function groups()
+    {
+        return $this->hasMany('App\PageGroup', 'page');
+    }
+
+    static public function getAllPages(bool $getObj = true, $order = 'asc')
+    {
+        /* $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
+            //->orderBy('page_groups.group', $order)
+            ->select('pages.*', 'page_groups.page', 'page_groups.group', 'page_groups.order')
+            ->groupBy('pages.id', 'page_groups.group')
+            ->orderBy('page_groups.order', $order)
+            ->get(); */
+        $tmp = self::all();
+        $pages = [];
+        if (Functions::testVar($tmp)) {
+            dd($tmp);
+            // TODO BASICLIST ITEM:
+            // create a manual groupBy function
+            // as PDO '@BARFED@' on the query above...
+            // Optional: create a 'PageGroupInfo' 
+            //  Table + Migration for use with PageGroup..
+            foreach ($tmp as $page) {
+                $g = $page->groups
+                    ->orderBy('group', 'order')
+                    ->get();
+                dd($g);
+                //$pages[] = '';
+            }
+            //dd($pages);
+        }
+        return $pages;
     }
     
     /**

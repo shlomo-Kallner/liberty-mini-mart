@@ -195,10 +195,12 @@ class User extends Model
     static public function getAllUsers(bool $paginate = false, int $num_pages = 0)
     {
         $tmp = self::all();
+        //dd($tmp);
         $users = [];
         if (Functions::testVar($tmp) && count($tmp) > 0) {
             foreach ($tmp as $user) {
                 $perm = new Basic($user->id);
+                dd($perm);
                 if ($perm->isAdmin() 
                     || $perm->isContentCreator()
                     || $perm->isAuthUser() ) {
