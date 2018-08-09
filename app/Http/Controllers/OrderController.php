@@ -82,4 +82,9 @@ class OrderController extends Controller
     {
         //
     }
+
+    public function showDelete(Request $request)
+    {
+        // display 'ARE YOU SURE' PAGE...
+    }
 }

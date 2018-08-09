@@ -104,6 +104,11 @@ class UserController extends MainController
         //
     }
 
+    public function showDelete(Request $request)
+    {
+        // display 'ARE YOU SURE' PAGE...
+    }
+
     /*
      *  USER SIGNIN, SIGNOUT and REGISTRATION:
      */

@@ -4,12 +4,12 @@
     @parent
 
     @php
-        $testing = true;
+        //$testing = true;
         use \App\Utilities\Functions\Functions,
             \App\Page;
 
-        $sidebar2 = Functions::getContent($sidebar??'');
-        $page2 = Functions::getContent($page['article']??'');
+        $sidebar2 = Functions::getContent($sidebar??[],[]);
+        $page2 = Functions::getContent($page['article']??[],[]);
         $sections2 = Functions::getContent($page['sections']['items']??[],[]);
         $sections_paginator2 = Functions::getContent($page['sections']['pagination']??[],[]);
         $users2 = Functions::getContent($page['users']['items']??[],[]);
@@ -108,38 +108,28 @@
 
                 <div class="collapse" id="collapsableSectionsPanel">
 
-                    @if (true)
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <a class="btn btn-primary" href="{{ url('admin/section/create') }}" role="button">
-                                    Create a New Section
-                                </a>
-                            </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-primary" href="{{ url('admin/section/create') }}" role="button">
+                                Create a New Section
+                            </a>
                         </div>
-                    @endif
+                    </div>
 
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            @if (Functions::testVar($sections2) || true)
-
-                                @component('cms.sections')
-                                    @slot('sections')
-                                        {!! serialize($sections2) !!}
+                            
+                            @component('cms.sections')
+                                @slot('sections')
+                                    {!! serialize($sections2) !!}
+                                @endslot
+                                @if (Functions::testVar($sections_paginator2))
+                                    @slot('paginator')
+                                        {!! serialize($sections_paginator2) !!}
                                     @endslot
-                                    @if (Functions::testVar($sections_paginator2))
-                                        @slot('paginator')
-                                            {!! serialize($sections_paginator2) !!}
-                                        @endslot
-                                    @endif
-                                @endcomponent
+                                @endif
+                            @endcomponent
                                 
-                            @elseif (false)
-                                
-                                <div class="well">
-                                    <h4>Oooppps! No Sections Available for Display...</h4>
-                                </div>
-                                
-                            @endif
                         </div>
                     </div>
 
@@ -156,25 +146,16 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             
-                            @if (Functions::testVar($users2) || true)
-                                @component('cms.users')
-                                    @slot('users')
-                                        {!! serialize($users2) !!}
+                            @component('cms.users')
+                                @slot('users')
+                                    {!! serialize($users2) !!}
+                                @endslot
+                                @if (Functions::testVar($users_paginator2))
+                                    @slot('paginator')
+                                        {!! serialize($users_paginator2) !!}
                                     @endslot
-                                    @if (Functions::testVar($users_paginator2))
-                                        @slot('paginator')
-                                            {!! serialize($users_paginator2) !!}
-                                        @endslot
-                                    @endif
-                                @endcomponent
-                                
-                            @elseif (false)
-                                
-                                <div class="well">
-                                    <h4>Oooppps! No Users Available for Display...</h4>
-                                </div>
-                                
-                            @endif
+                                @endif
+                            @endcomponent
 
                         </div>
                     </div>
@@ -189,38 +170,26 @@
                         </div>
                     </div>
                     
-                    
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             
-                                @if (Functions::testVar($pages2) || true)
-                                    @component('cms.pages')
-                                        @slot('pages')
-                                            {!! serialize($pages2) !!}
-                                        @endslot
-                                        @if (Functions::testVar($pages_paginator2))
-                                            @slot('paginator')
-                                                {!! serialize($pages_paginator2) !!}
-                                            @endslot
-                                        @endif
-                                    @endcomponent
-                                    
-                                @elseif (false)
-                                    
-                                    <div class="well">
-                                        <h4>Oooppps! No Pages Available for Display...</h4>
-                                    </div>
-                                    
+                            @component('cms.pages')
+                                @slot('pages')
+                                    {!! serialize($pages2) !!}
+                                @endslot
+                                @if (Functions::testVar($pages_paginator2))
+                                    @slot('paginator')
+                                        {!! serialize($pages_paginator2) !!}
+                                    @endslot
                                 @endif
-    
-                            </div>
+                            @endcomponent
+
+                        </div>
                     </div>
                     
                 </div>
                 
-                <div id="cms-app">
-
-                </div>
+                <div id="cms-app"></div>
 
             @show
             

@@ -68,7 +68,7 @@ class SectionImage extends Pivot
         return self::createNew($section->id, $section->image);
     }
 
-    static public function getAllImages($section) 
+    static public function getAllImages($section, bool $toArray = false) 
     {
         if ($section instanceof Section) {
             $section_id = $section->id;
@@ -78,7 +78,7 @@ class SectionImage extends Pivot
             return null;
         }
         $t = self::where('section', $section_id)->get();
-        return Image::getAllForPivots($t);
+        return Image::getAllForPivots($t, $toArray);
     }
 
     static public function getFromImage($image) 

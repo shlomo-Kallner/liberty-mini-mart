@@ -392,28 +392,10 @@ class Page extends Model
                     }
                 }
             }
+            $ca = $page->toContentArray($image, $otherImages);
             if (!$getObj) {
                 
-                return [
-                    'title' => $page->title,
-                    'content' => [
-                        'pageHeader' => $page->title,
-                        'article' => [
-                            'header' => $page->description,
-                            'subheading' => $image['cap'],
-                            'img' => $image['img'],
-                            'imgAlt' => $image['alt'],
-                            'article' => $page->article
-                        ]
-                    ],
-                    'breadcrumbs' => self::getBreadcrumbs(
-                        self::genBreadcrumb($page->name, $url),
-                        self::genBreadcrumb('Home', '/')
-                    ),
-                    'visible' => $page->visible,
-                    'otherImages' => $otherImages,
-
-                ];
+                return $ca;
             } else {
                 return [
                     'page' => $page,

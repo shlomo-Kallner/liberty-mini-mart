@@ -68,7 +68,7 @@ class PageImage extends Pivot
         return self::createNew($page->id, $page->image);
     }
 
-    static public function getAllImages($page) 
+    static public function getAllImages($page, bool $toArray = false) 
     {
         
         if ($page instanceof Page) {
@@ -79,7 +79,7 @@ class PageImage extends Pivot
             return null;
         }
         $tmp = self::where('page', $page_id)->get();
-        return Image::getAllForPivots($tmp);
+        return Image::getAllForPivots($tmp, $toArray);
     }
 
     static public function getForImage($img)

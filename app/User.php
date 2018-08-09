@@ -192,6 +192,24 @@ class User extends Model
         return $user_id;
     }
 
+    static public function getAllUsers(bool $paginate = false, int $num_pages = 0)
+    {
+        $tmp = self::all();
+        $users = [];
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            foreach ($tmp as $user) {
+                $perm = new Basic($user->id);
+                if ($perm->isAdmin() 
+                    || $perm->isContentCreator()
+                    || $perm->isAuthUser() ) {
+                        $users[] = $user;
+                }
+            }
+            
+        } 
+        return $users;
+    }
+
     static public function createNew(
         string $name, string $email, string $password, $img, 
         int $plan = 1

@@ -45,9 +45,12 @@ class CmsController extends MainController
             $section['categories'] = Categorie::getCategoriesOfSection($section['id']);
             //dd($section);
         }
+        $users = [];
+        $pages = [];
         //dd($sections);
         return self::getView(
-            'content.cms', '', [
+            'content.cms', 'Admin Dashboard', 
+            [
                 'article' => [
                     'title' => 'Welcome to OUR DASHBOARD!',
                     'subheading' => 'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
@@ -56,13 +59,25 @@ class CmsController extends MainController
                     'items' => $sections,
                     'pagination' => ''
                 ],
+                'users'=> [
+                    'items' => $users,
+                    'pagination' => ''
+                ],
+                'pages'=> [
+                    'items' => $pages,
+                    'pagination' => ''
+                ],
                 /*
                     ''=> [
                         'items' => $->toArray(),
                         'pagination' => ''
                     ],
                 */
-            ]
+            ], false, 
+            Page::getBreadcrumbs(
+                Page::genBreadcrumb('Admin DashBoard', $request->path()),
+                Page::genBreadcrumb('Home', '/')
+            )
         );
     }
 

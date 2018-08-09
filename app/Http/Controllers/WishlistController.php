@@ -86,4 +86,9 @@ class WishlistController extends MainController {
         //
     }
 
+    public function showDelete(Request $request)
+    {
+        // display 'ARE YOU SURE' PAGE...
+    }
+
 }

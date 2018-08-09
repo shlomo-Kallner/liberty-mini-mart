@@ -86,7 +86,7 @@ class Image extends Model
         ];
     }
 
-    static public function getAllForPivots($pivots)
+    static public function getAllForPivots($pivots, bool $toArray = false)
     {
         if (Functions::testVar($pivots)) {
             $res = [];
@@ -94,7 +94,12 @@ class Image extends Model
                 if ($pivot instanceof Pivot) {
                     $t = self::getFromId($pivot->image);
                     if (Functions::testVar($t)) {
-                        $res[] = $t;
+                        if ($toArray) {
+                            $res[] = self::getImageArray($t);
+                        } else {
+                            $res[] = $t;
+                        }
+                        
                     }
                 }
             }

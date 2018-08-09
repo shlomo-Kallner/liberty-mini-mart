@@ -69,7 +69,7 @@ class ProductImage extends Pivot
         return self::createNew($product->id, $product->image);
     }
 
-    static public function getAllImages($product) 
+    static public function getAllImages($product, bool $toArray = false) 
     {
         
         if ($product instanceof Product) {
@@ -80,7 +80,7 @@ class ProductImage extends Pivot
             return null;
         }
         $tmp = self::where('product', $product_id)->get();
-        return Image::getAllForPivots($tmp);
+        return Image::getAllForPivots($tmp, $toArray);
     }
 
     static public function getForImage($img)

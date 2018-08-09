@@ -91,6 +91,11 @@ class ProductController extends MainController
         //
     }
 
+    public function showDelete(Request $request)
+    {
+        // display 'ARE YOU SURE' PAGE...
+    }
+
     public function test(Request $request)
     {
         return static::getView('content.product', 'TEST-PRODUCT', [], true);

@@ -127,6 +127,11 @@ class SectionController extends MainController
         //
     }
 
+    public function showDelete(Request $request)
+    {
+        // display 'ARE YOU SURE' PAGE...
+    }
+
     public function test(Request $request)
     {
         return static::getView('content.section', 'TEST-SECTION', [], true);

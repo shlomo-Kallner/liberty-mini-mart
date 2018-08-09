@@ -12,7 +12,7 @@ class UserImage extends Pivot
 {
     
     use SoftDeletes;
-    
+
     /**
      * The table associated with the model.
      *
@@ -72,7 +72,7 @@ class UserImage extends Pivot
         return self::createNew($user->id, $user->image);
     }
 
-    static public function getAllImages($user) 
+    static public function getAllImages($user, bool $toArray = false) 
     {
         
         if ($user instanceof User) {
@@ -83,7 +83,7 @@ class UserImage extends Pivot
             return null;
         }
         $tmp = self::where('user', $user_id)->get();
-        return Image::getAllForPivots($tmp);
+        return Image::getAllForPivots($tmp, $toArray);
     }
 
     static public function getForImage($img)

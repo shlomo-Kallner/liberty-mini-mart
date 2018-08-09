@@ -128,6 +128,11 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 ]
             ]
         );
+        Route::get(
+            'section/{section}/category/{category}/product/{product}/delete', 
+            'ProductController@showDelete'
+        );
+
         // 'user/' goes to 'index()' which returns 'all-users' of the site..
         Route::resource(
             'user', 'UserController', [
@@ -139,6 +144,8 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 ]
             ]
         );
+        Route::get('user/{user}/delete', 'UserController@showDelete');
+
         // 'page/' goes to 'index()' which returns 'all-pages' of the site..
         Route::resource(
             'page', 'PageController', [
@@ -151,8 +158,10 @@ Route::middleware('adminguard')->prefix('admin')->group(
             ]
         );
         Route::get('page/{page}/delete', 'PageController@showDelete');
+
+        // MEMBERSHIP PLANS ARE A WISHLIST ITEM!!!
         // 'plan/' goes to 'index()' which returns 'all-pages' of the site..
-        Route::resource(
+        /* Route::resource(
             'plan', 'PlanController', [
                 'parameters'=> [
                     'plan' => 'plan',
@@ -161,7 +170,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
                     'show', 'index'
                 ]
             ]
-        );
+        ); */
     }
 );
 

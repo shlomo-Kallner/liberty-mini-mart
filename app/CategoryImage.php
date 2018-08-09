@@ -68,7 +68,7 @@ class CategoryImage extends Pivot
         return self::createNew($category->id, $category->image);
     }
 
-    static public function getAllImages($category) 
+    static public function getAllImages($category, bool $toArray = false) 
     {
         
         if ($category instanceof Categorie) {
@@ -79,7 +79,7 @@ class CategoryImage extends Pivot
             return null;
         }
         $tmp = self::where('category', $category_id)->get();
-        return Image::getAllForPivots($tmp);
+        return Image::getAllForPivots($tmp, $toArray);
     }
 
     static public function getForImage($img)
