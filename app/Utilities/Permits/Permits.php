@@ -96,14 +96,14 @@ class Permits
 
     // general private utilities zone..
 
-    static protected function genPermStr(int $user_id, int $perm = 0)
+    static private function genPermStr(int $user_id, int $perm = 0)
     {
         //$user_id = self::getUserId($user);
         $tmp = '_perm_' . $perm . '_user_' . $user_id;
         return $tmp;
     }
 
-    static protected function translate2perm(
+    static private function translate2perm(
         string $role, int $level = 1, int $prev = -1
     ) {
         $tmp = 0;
@@ -241,43 +241,67 @@ class Permits
     }
 
     protected function testIfInPerms(
-        string $role, int $level = 1, array $extra = null
+        $role, int $level = 1, array $extra = null
     ) {
-        $bol = false;
+        $bol = [];
+        $bol2 = true;
+        $tmp = [];
         if (is_string($role) && $role !== '') {
-            
-            foreach ($this->perms as $perm) {
-                if ($this->testPermHash($perm, $role, $level)) {
-                    if (Functions::testVar($extra)) {
-                        if ($this->testPermExtra($perm, $extra)) {
-                            $bol = true;
-                            break;
-                        }
-                    } else {
-                        $bol = true;
-                        break;
+            $t = [];
+            $t[] = $role;
+            if (!empty($level)) {
+                $t[] = $level;
+                if (!empty($extra)) {
+                    $t[] = $extra;
+                }
+                $tmp[] = $t;
+            } else {
+                $bol2 = false;
+            }
+        } elseif (is_array($role) && !empty($role)) {
+            foreach ($role as $arr) {
+                if ((count($arr) < 4 && count($arr) > 1) 
+                    && (!empty($arr[0]) && is_string($arr[0]))
+                    && (!empty($arr[1]) && is_int($arr[1]))
+                ) {
+                    if (count($arr) == 3 
+                        && (!empty($arr[2]) && is_array($arr[2]))
+                    ) {
+                        $tmp[] = $arr;
+                    } elseif (count($arr) == 2) {
+                        $tmp[] = $arr;
                     }
                 }
             }
-        } elseif (is_array($role) && !empty($role)) {
-            $tmp = [];
-            foreach ($role as $arr) {
-                if (count($arr) == 3 
-                    && (!empty($arr[0]) && is_string($arr[0]))
-                    && (!empty($arr[1]) && is_int($arr[1]))
-                    && (!empty($arr[2]) && is_array($arr[2]))
-                ) {
-                    $tmp[] = $arr;
-                }
-            }
-            $bol2 = true;
+        } else {
+            $bol2 = false;
+        }
+        if ($bol2 && count($tmp) > 0) {
             foreach ($tmp as $ro) {
-                if (!$this->testIfInPerms($ro[0], $ro[1], $ro[2])) {
-                    $bol2 = false;
+                $tBol = false;
+                foreach ($this->perms as $perm) {
+                    if ($this->testPermHash($perm, $ro[0], $ro[1])) {
+                        if (!empty($ro[2])) {
+                            if ($this->testPermExtra($perm, $ro[2])) {
+                                $tBol = true;
+                                break;
+                            }
+                        } else {
+                            $tBol = true;
+                            break;
+                        }
+                    } 
                 }
+                $bol[] = $tBol;
             }
         }
-        return $bol;
+        if (count($bol) == 0) {
+            return false;
+        } elseif (count($bol) == 1) {
+            return $bol[0];
+        } else {
+            return $bol;
+        }
     }
 
     protected function getIfIsInPerms(

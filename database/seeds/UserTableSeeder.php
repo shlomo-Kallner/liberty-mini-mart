@@ -22,7 +22,8 @@ class UserTableSeeder extends Seeder
     {
         //$faker = new Faker();
         $faker = \Faker\Factory::create();
-        for ($i = 0; $i < 50; $i++) {
+        $u = User::getNumForVer()
+        for ($i = 0; $i < $u; $i++) {
             User::createNew(
                 $faker->name . '.@#$%^&*',
                 $faker->email,

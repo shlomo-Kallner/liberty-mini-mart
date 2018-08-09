@@ -192,22 +192,46 @@ class User extends Model
         return $user_id;
     }
 
-    static public function getAllUsers(bool $paginate = false, int $num_pages = 0)
+    static public function getNumForVer()
     {
-        $tmp = self::all();
+        return 50;
+    }
+
+    public function toContentArray() 
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'img' => Image::getImageArray($this->image),
+            'otherImages' => UserImage::getAllImages($this->id, true),
+        ];
+    }
+
+
+    static public function getAllUsers(
+        bool $toArray = true, bool $paginate = false, int $num_pages = 0
+    ) {
+        $tmp = self::where('id', '>', self::getNumForVer())->get();
         //dd($tmp);
         $users = [];
         if (Functions::testVar($tmp) && count($tmp) > 0) {
             foreach ($tmp as $user) {
                 $perm = new Basic($user->id);
-                dd($perm);
+                //dd($perm);
                 if ($perm->isAdmin() 
                     || $perm->isContentCreator()
-                    || $perm->isAuthUser() ) {
+                    || $perm->isAuthUser() 
+                ) {
+                    if ($toArray) {
+                        $users[] = $user->toContentArray();
+                    } else {
                         $users[] = $user;
+                    }
                 }
+                //dd($perm);
             }
-            
+            //dd($users);
         } 
         return $users;
     }
