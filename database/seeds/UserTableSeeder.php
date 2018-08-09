@@ -22,7 +22,7 @@ class UserTableSeeder extends Seeder
     {
         //$faker = new Faker();
         $faker = \Faker\Factory::create();
-        $u = User::getNumForVer()
+        $u = User::getNumForVer() + random_int(3, 9);
         for ($i = 0; $i < $u; $i++) {
             User::createNew(
                 $faker->name . '.@#$%^&*',
@@ -37,6 +37,18 @@ class UserTableSeeder extends Seeder
             );
         }
 
+        // create several content creators..
+        $creator = User::createNew(
+            'painter', 'finger.painter@example.com',
+            'fingerPainter123',  1, 1
+        );
+        $perm = new Basic($creator->id);
+        $perm->setGuestUser();
+        $perm->setAuthUser();
+        $perm->setContentCreator(true);
+        $perm->makeFakes(random_int(1, 4));
+        
+        // create my..
         $admin = User::createNew(
             'artisan', 'artisan@liberty-mini-mart.bit.il',
             'phpMyAdmin127', 1, 1
@@ -49,17 +61,6 @@ class UserTableSeeder extends Seeder
         $perm->setAdmin(true);
         $perm->makeFakes(random_int(1, 4));
 
-        // create several content creators..
-        $creator = User::createNew(
-            'painter', 'finger.painter@example.com',
-            'fingerPainter123',  1, 1
-        );
-        $perm = new Basic($creator->id);
-        $perm->setGuestUser();
-        $perm->setAuthUser();
-        $perm->setContentCreator(true);
-        $perm->makeFakes(random_int(1, 4));
-        
         // create several regular users..
         $user = User::createNew(
             'critic', 'indulgent.critic@example.com',
