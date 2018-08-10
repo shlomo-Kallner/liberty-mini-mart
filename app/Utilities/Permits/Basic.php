@@ -10,9 +10,9 @@ class Basic extends Permits
     
     const BASIC_TYPE = ['_internal_:type' => 'BASIC'];
 
-    public function __construct(int $user_id = -1)
+    public function __construct(int $user_id = -1, bool $p = false)
     {
-        parent::__construct($user_id);
+        parent::__construct($user_id, $p);
         $this->basics = $this->getBasics();
     }
 

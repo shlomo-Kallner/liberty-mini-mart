@@ -74,12 +74,15 @@ class Image extends Model
             $img = $imgPath . $tmp->name;
             $alt = $tmp->alt;
             $cap = $tmp->caption;
+            $id = $tmp->id;
         } else {
             $img = '';
             $alt = '';
             $cap = '';
+            $id = '';
         }
         return [
+            'id' => $id,
             'img' => $img,
             'alt' => $alt,
             'cap' => $cap

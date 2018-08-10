@@ -208,6 +208,15 @@ class User extends Model
         ];
     }
 
+    public function orders()
+    {
+        return $this->hasMany('App\Order', 'user_id');
+    }
+
+    public function carts()
+    {
+        //return $this->hasMany('App\Cart', 'user_id');
+    }
 
     static public function getAllUsers(
         bool $toArray = true, bool $paginate = false, int $num_pages = 0

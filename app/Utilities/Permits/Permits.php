@@ -33,12 +33,17 @@ class Permits
 
     // permit retrieval zone..
 
-    public function __construct(int $user_id = -1)
+    public function __construct(int $user_id = -1, bool $p = false)
     {
         $this->user_id = $user_id;
         //$this->perms = self::getPermissions($user_id);
         if ($user_id > 0) {
-            $this->perms = UserRole::getForUser($user_id);
+            $tmp = UserRole::getForUser($user_id);
+            if ($p) {
+                $this->perms = collect($this->p($tmp));
+            } else {
+                $this->perms = $tmp;
+            }
         } else {
             $this->perms = collect([]);
         }
@@ -155,6 +160,36 @@ class Permits
         return [($tmp * 10) + $ran, $ran];
     }
 
+    private function p($arr) 
+    {
+        $res = [];
+        foreach ($arr as $t) {
+            // IMPLEMENT!!!
+            $pa = [
+                [self::ADMIN_ROLE, self::READ_LEVEL],
+                [self::ADMIN_ROLE, self::WRITE_LEVEL],
+                [self::ADMIN_ROLE, self::UPDATE_LEVEL],
+                [self::ADMIN_ROLE, self::DELETE_LEVEL],
+
+                [self::CONTENT_ROLE, self::READ_LEVEL],
+                [self::CONTENT_ROLE, self::WRITE_LEVEL],
+                [self::CONTENT_ROLE, self::UPDATE_LEVEL],
+                [self::CONTENT_ROLE, self::DELETE_LEVEL],
+
+                [self::AUTH_USER_ROLE, self::READ_LEVEL],
+
+                [self::GUEST_USER_ROLE, self::READ_LEVEL]
+            ];
+            foreach ($pa as $ps) {
+                if ($this->testPermHash($t, $ps[0], $ps[1])) {
+                    $res[] = $t;
+                    break;
+                }
+            }
+        }
+        return $res;
+    }
+
     // Special Getters..
 
     static protected function getExtras($permit)
@@ -244,7 +279,6 @@ class Permits
         $role, int $level = 1, array $extra = null
     ) {
         $bol = [];
-        $bol2 = true;
         $tmp = [];
         if (is_string($role) && $role !== '') {
             $t = [];
@@ -255,9 +289,7 @@ class Permits
                     $t[] = $extra;
                 }
                 $tmp[] = $t;
-            } else {
-                $bol2 = false;
-            }
+            } 
         } elseif (is_array($role) && !empty($role)) {
             foreach ($role as $arr) {
                 if ((count($arr) < 4 && count($arr) > 1) 
@@ -273,10 +305,8 @@ class Permits
                     }
                 }
             }
-        } else {
-            $bol2 = false;
-        }
-        if ($bol2 && count($tmp) > 0) {
+        } 
+        if (count($tmp) > 0 && count($this->perms) > 0) {
             foreach ($tmp as $ro) {
                 $tBol = false;
                 foreach ($this->perms as $perm) {
@@ -295,9 +325,9 @@ class Permits
                 $bol[] = $tBol;
             }
         }
-        if (count($bol) == 0) {
+        if (count($bol) === 0) {
             return false;
-        } elseif (count($bol) == 1) {
+        } elseif (count($bol) === 1) {
             return $bol[0];
         } else {
             return $bol;

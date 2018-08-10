@@ -36,4 +36,14 @@ class Order extends Model
     {
         return self::createNew();//
     }
+
+    public function validate()
+    {
+        //
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'user_id', 'id');
+    }
 }
