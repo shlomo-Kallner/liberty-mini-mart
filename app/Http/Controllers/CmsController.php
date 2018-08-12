@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request,
     Illuminate\Support\Facades\Session;
 use App\Http\Controllers\UserController,
+    App\Utilities\Functions\Functions,
     App\Page,
     App\User,
     App\Section,
     App\Categorie,
+    App\Article,
     App\Product;
 
 class CmsController extends MainController 
@@ -45,17 +47,23 @@ class CmsController extends MainController
             $section['categories'] = Categorie::getCategoriesOfSection($section['id']);
             //dd($section);
         }
-        $users = User::getAllUsers();
-        dd($users);
+        $users = User::getAllUsers(true, true);
+        //dd($users);
         $pages = []; // Page::getAllPages();
         //dd($sections);
         return self::getView(
             'content.cms', 'Admin Dashboard', 
             [
-                'article' => [
-                    'title' => 'Welcome to OUR DASHBOARD!',
+                'header' => 'Admin Dashboard',
+                'article' => Article::makeContentArray(
+                    '', 'Welcome to OUR DASHBOARD!',
+                    null, 'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
+                    )
+                /* [
+                    'header' => 'Welcome to OUR DASHBOARD!',
                     'subheading' => 'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
-                ],
+                ] */
+                ,
                 'sections' => [
                     'items' => $sections,
                     'pagination' => ''

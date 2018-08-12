@@ -15,9 +15,9 @@
     @forelse ($users2 as $user)
 
         @php
-            $panelId1 = 'headingSectionPanel-of-' . $section['url'];
-            $panelId2 = 'collapseSectionPanel-of-' . $section['url'];
-            $panelId3 = 'sectionContentCollapsedDiv-of-' . $section['url'];
+            $panelId1 = 'headingSectionPanel-of-User-' . $user['id'];
+            $panelId2 = 'collapseSectionPanel-of-User-' . $user['id'];
+            $panelId3 = 'sectionContentCollapsedDiv-of-User-' . $user['id'];
             $urls = [
                 //'user/{user}/'
                 'edit' => 'admin/user/' . $user['id'] . '/edit',
@@ -26,16 +26,15 @@
                 //'show' => 'store/user/' . $user['url']  ,
             ];
             $url_edit = 'admin/user/' . $user['id'] . '/edit';
-            $url_delete = 'admin/user/' . $user['id'];
-        
-            $sectionPanelID = '';
+            $url_delete = 'admin/user/' . $user['id'] . '/delete';
+
         @endphp
 
         <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="{{ $panelId1 }}">
                 <h4 class="panel-title">
                     <a role="button" data-toggle="collapse" data-parent="{{'#'. $panelGroupId}}" href="{{'#' . $panelId2}}" aria-expanded="true" aria-controls="{{$panelId2}}">
-                        {{ $section['name'] }}
+                        {{ $user['name'] }}
                     </a>
                 </h4>
             </div>
@@ -44,12 +43,12 @@
                     <div class="row">
                         
                         <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 thumbnail">
-                            <img src="{{ asset($section['img']) }}" class="img-responsive" alt="{{$section['imgAlt']}}">
+                            <img src="{{ asset($user['img']['img']) }}" class="img-responsive" alt="{{$user['img']['alt']}}">
                         </div>
                                 
                         <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
                             <div class="row">
-                                <h4>{!! $section['title'] !!}</h4>
+                                <h4>{!! 'NAME: ' . $user['name'] . '<hr>Email: ' . $user['email'] !!}</h4>
                             </div>
                                     
                             <div class="row">
@@ -57,7 +56,7 @@
                                     <div class="btn-group pull-left">
                                         <a class="btn btn-default" data-toggle="collapse" href="{{'#' . $panelId3}}" aria-expanded="false" aria-controls="{{ $panelId3 }}" role="button">Show User</a>
                                         <a class="btn btn-warning" href="{{ $url_edit }}" role="button">Edit this User</a>
-                                        <button type="button" class="btn btn-danger" onclick="deleteSection('{{$url_delete}}')">Delete this User</button>
+                                        <a class="btn btn-danger" href="{{ $url_delete }}" role="button">Delete this User</a>
                                         
                                         {{-- <a class="btn btn-default" href="#" role="button"></a> --}}
                                         {{-- <a class="btn btn-default" href="#" role="button"></a> --}}
@@ -65,28 +64,19 @@
                                             
                                     </div>
                                     
-                                    <div class="btn-group pull-right">
-                                        <button type="button" class="btn btn-default">{{ !$section['visible'] ? 'Show' : 'Hide' }}</button>
-                                        <button type="button" class="btn btn-default">Move Up</button>
-                                        <button type="button" class="btn btn-default">Move Down</button>
-                                    </div>
+                                    
                                     
                                 </div>
                             </div>
             
                             <div class="row collapse" id="{{ $panelId3 }}">
-                                @component('cms.categories')
-                                    @slot('categories')
-                                        {!! serialize($section['categories']) !!}
+                                @component('inc.carousel')
+                                    @slot('images')
+                                        {!! serialize($user['otherImages']) !!}
                                     @endslot
-                                    @slot('section_url')
-                                        {!! serialize($section['url']) !!}
+                                    @slot('carouselID')
+                                        {{ $panelId3 }}
                                     @endslot
-                                    @if (Functions::testVar($section['paginator']??''))
-                                        @slot('paginator')
-                                            {!! serialize($section['paginator']) !!}
-                                        @endslot
-                                    @endif
                                 @endcomponent
                             </div>
                             

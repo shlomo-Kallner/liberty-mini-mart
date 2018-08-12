@@ -29,21 +29,31 @@
 
 @section('main-content')
     @parent
+
+    @php
+        use \App\Utilities\Functions\Functions;
+        $pageHeader2 = Functions::getBladedString($page['header']??'','');
+    @endphp
+
+    @if (Functions::testVar($pageHeader2))
+    
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="page-header">
+                    <h1 class="text-center">
+                        {!! $pageHeader2 !!}
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+    @endif
+
     @component('lib.themewagon.breadcrumbs')
         @slot('breadcrumbs')
             {!! serialize($breadcrumbs??'') !!} 
         @endslot
     @endcomponent
-
-    @if (false)
-        @component('lib.themewagon.article')
-            @foreach ($page as $key => $item)
-                @slot($key)
-                    {{ $item }}
-                @endslot
-            @endforeach
-        @endcomponent
-    @endif
 
 @endsection
 

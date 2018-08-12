@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Cart;
 use Illuminate\Http\Request;
 use Darryldecode\Cart;
 
-class CartController extends MainController {
+class CartController extends MainController
+{
 
     public function __construct($name = '', $titleNameSep = '') {
         parent::__construct($name, $titleNameSep);
@@ -16,10 +18,9 @@ class CartController extends MainController {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() 
+    public function index(Request $request)
     {
-        //
-        return parent::getView('content.cart');
+        //return parent::getView('content.cart');
     }
 
     /**
@@ -27,7 +28,7 @@ class CartController extends MainController {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() 
+    public function create(Request $request)
     {
         //
     }
@@ -38,7 +39,7 @@ class CartController extends MainController {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) 
+    public function store(Request $request)
     {
         //
     }
@@ -46,10 +47,10 @@ class CartController extends MainController {
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Cart  $cart
      * @return \Illuminate\Http\Response
      */
-    public function show($id) 
+    public function show(Request $request)
     {
         //
     }
@@ -57,10 +58,10 @@ class CartController extends MainController {
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Cart  $cart
      * @return \Illuminate\Http\Response
      */
-    public function edit($id) 
+    public function edit(Request $request)
     {
         //
     }
@@ -69,10 +70,10 @@ class CartController extends MainController {
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Cart  $cart
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) 
+    public function update(Request $request)
     {
         //
     }
@@ -80,10 +81,10 @@ class CartController extends MainController {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Cart  $cart
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) 
+    public function destroy(Request $request)
     {
         //
     }
@@ -92,5 +93,4 @@ class CartController extends MainController {
     {
         // display 'ARE YOU SURE' PAGE...
     }
-
 }

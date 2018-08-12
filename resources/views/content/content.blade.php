@@ -17,28 +17,15 @@
             @endslot
         @endcomponent
 
-        @component('lib.themewagon.content')
+        @component('lib.themewagon.article')
             @slot('containerCss')
                 {!! 'col-md-9 col-sm-9' !!}
             @endslot
-            @slot('pageHeader')
-                {!! $page['header']??'' !!}
-            @endslot
-            @slot('articleHeader')
-                {!! $page['article']['header']??'' !!}
-            @endslot
-            @slot('subheading')
-                {!! $page['article']['subheading']??'' !!}
-            @endslot
-            @slot('img')
-                {!! $page['article']['img']??'' !!}
-            @endslot
-            @slot('imgAlt')
-                {!! $page['article']['imgAlt']??'' !!}
-            @endslot
-            @slot('article')
-                {!! $page['article']['article']??'' !!}
-            @endslot
+            @foreach ($page['article'] as $key => $item)
+                @slot($key)
+                    {!! $item !!}
+                @endslot
+            @endforeach
         @endcomponent
 
     </div>

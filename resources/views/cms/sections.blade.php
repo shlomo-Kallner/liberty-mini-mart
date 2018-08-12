@@ -19,6 +19,7 @@
             $panelId1 = 'headingSectionPanel-of-' . $section['url'];
             $panelId2 = 'collapseSectionPanel-of-' . $section['url'];
             $panelId3 = 'sectionContentCollapsedDiv-of-' . $section['url'];
+            $panelId4 = 'sectionImagesCollapsedDiv-of-' . $section['url'];
             $urls = [
                 //'section/{section}/category/{category}/product'
                 'edit' => 'admin/section/' . $section['url'] . '/edit',
@@ -75,6 +76,17 @@
                                     </div>
                                     
                                 </div>
+                            </div>
+
+                            <div class="row collapse" id="{{ $panelId4 }}">
+                                @component('inc.carousel')
+                                    @slot('images')
+                                        {!! serialize($section['otherImages']??'') !!}
+                                    @endslot
+                                    @slot('carouselID')
+                                        {{ $panelId4 }}
+                                    @endslot
+                                @endcomponent
                             </div>
             
                             <div class="row collapse" id="{{ $panelId3 }}">

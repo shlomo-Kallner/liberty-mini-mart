@@ -5,23 +5,16 @@
     //dd($page);
     //$page2 = Functions::getUnBladedContent($page??'');
 
-    $pageHeader2 = Functions::getBladedString($pageHeader??'');
+    $containerCss2 = Functions::getBladedString($containerCss??'col-md-5','col-md-5');
     $header2 = Functions::getBladedString($header??'');
     $subheading2 = Functions::getBladedString($subheading??'');
-    $img2 = Functions::getBladedString($img??'');
-    $imgAlt2 = Functions::getBladedString($imgAlt??'');
+    $img2 = Functions::getUnBladedContent($img??[],[]);
     $article2 = Functions::getBladedString($article??'');
 
 @endphp
 
 <div class="row">
-    <div class="col-md-5">
-
-        @if (Functions::testVar($pageHeader2))
-            <h1>
-                {!! $pageHeader2 !!}
-            </h1>
-        @endif
+    <div class="{{$containerCss2}}">
 
         @if (Functions::testVar($header2))
             <h2>
@@ -31,7 +24,13 @@
         
         
         @if (Functions::testVar($img2))
-            <img src="{{ asset($img2) }}" alt="{{ $imgAlt2 }}">
+            @component('inc.figure')
+                @foreach ($img as $key => $item)
+                    @slot($key)
+                        {!! $item !!}
+                    @endslot
+                @endforeach
+            @endcomponent
         @endif
         
 

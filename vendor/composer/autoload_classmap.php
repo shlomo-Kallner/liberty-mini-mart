@@ -6,12 +6,14 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Article' => $baseDir . '/app/Article.php',
     'App\\Cart' => $baseDir . '/app/Cart.php',
     'App\\Catalog' => $baseDir . '/app/Catalog.php',
     'App\\Categorie' => $baseDir . '/app/Categorie.php',
     'App\\CategoryImage' => $baseDir . '/app/CategoryImage.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
+    'App\\Http\\Controllers\\ArticleController' => $baseDir . '/app/Http/Controllers/ArticleController.php',
     'App\\Http\\Controllers\\CartController' => $baseDir . '/app/Http/Controllers/CartController.php',
     'App\\Http\\Controllers\\CategorieController' => $baseDir . '/app/Http/Controllers/CategorieController.php',
     'App\\Http\\Controllers\\CmsController' => $baseDir . '/app/Http/Controllers/CmsController.php',
@@ -41,6 +43,7 @@ return array(
     'App\\Order' => $baseDir . '/app/Order.php',
     'App\\Page' => $baseDir . '/app/Page.php',
     'App\\PageGroup' => $baseDir . '/app/PageGroup.php',
+    'App\\PageGrouping' => $baseDir . '/app/PageGrouping.php',
     'App\\PageImage' => $baseDir . '/app/PageImage.php',
     'App\\PasswordReset' => $baseDir . '/app/PasswordReset.php',
     'App\\Plan' => $baseDir . '/app/Plan.php',

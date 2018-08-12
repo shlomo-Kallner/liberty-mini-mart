@@ -60,12 +60,13 @@ class MainController extends Controller {
         ///                 dynamically generated component
         ///                 and Blade Foreach using code block.
         'page' => [
+            'header' => '', // page 'h1' content header..
             'article' => [
-                'header' => '', // 'h1' page article content
-                'subheading' => '', // 'h2' page article content
+                'header' => '', // 'h2' page article content
+                'subheading' => '', // 'h3' page article content
                 'article' => '', // 'div' page article content
-                'img' => '', // page article img content
-                'imgAlt' => '', // page img alt content
+                'img' => '', // page article img array content
+                // 'imgAlt' => '', // page img alt content // old img alt..
             ],
         ],
         'user' => [
@@ -259,7 +260,9 @@ class MainController extends Controller {
         if (!empty($content)) {
             //$purifier = new HTMLPurifier();
             if (is_string($content) || $content instanceof HtmlString ) {
+                // if $content is a key..
                 if (!empty($val)) {
+                    // $val is the value thereof..
                     self::$data['page'][$content] = Functions::purifyContent($val);
                 }
             } elseif (is_array($content) || is_object($content)) {
@@ -278,7 +281,8 @@ class MainController extends Controller {
         self::setPageContent($content);
         if ($alert !== null) {
             self::setAlert(
-                $alert['class'], $alert['title'], $alert['content'], $alert['timeout'], $alert['id']
+                $alert['class'], $alert['title'], $alert['content'], 
+                $alert['timeout'], $alert['id']
             );
         } elseif (self::$data['alert']['class'] === '') {
             $mgs = self::getMsgs();
@@ -353,14 +357,16 @@ class MainController extends Controller {
     //  
     /// Begin Test Views Functions
 
-    public function test(Request $request) {
+    public function test(Request $request) 
+    {
         self::$data['requestedPage'] = !empty($request->page) ? $request->page : 'index';
         self::setTitle('test ' . self::$data['requestedPage'] . ' page');
         //dd($request);
         return view('content.tests.test', self::$data);
     }
 
-    public function test1(Request $request) {
+    public function test1(Request $request) 
+    {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         self::setTitle('test ' . $requestedPage . ' page');
         //dd($request);
@@ -369,7 +375,8 @@ class MainController extends Controller {
         return view('content.tests.test1', self::$data);
     }
 
-    public function test2(Request $request) {
+    public function test2(Request $request) 
+    {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         $title = 'test ' . $requestedPage . ' page';
         $content = [
@@ -390,7 +397,8 @@ class MainController extends Controller {
         return self::getView('content.tests.test2', $title, $content);
     }
 
-    public function test3(Request $request, array $alert = null) {
+    public function test3(Request $request, array $alert = null) 
+    {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         $title = 'test ' . $requestedPage . ' page';
         $content = [

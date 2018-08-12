@@ -59,15 +59,7 @@ class Section extends Model
             ->orWhere('url', $url)
             ->get();
         if (!Functions::testVar($tmp) || count($tmp) === 0) {
-            if (is_int($img) && Image::existsId($img)) {
-                $tImg = $img;
-            } elseif (is_array($img)) {
-                $tImg = Image::createNewFrom($img);
-            } elseif ($img instanceof Image) {
-                $tImg = $img->id;
-            } else {
-                $tImg = null;
-            }
+            $tImg = Image::getImageToID($img);
             if (Functions::testVar($tImg)) {
                 $data = new self;
                 $data->name = $name;

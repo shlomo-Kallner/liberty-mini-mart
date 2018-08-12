@@ -38,15 +38,7 @@ class Product extends Model
         if ((!Functions::testVar($tmp) || count($tmp) === 0)
             && Categorie::existsId($category_id)
         ) {
-            if (is_int($img) && Image::existsId($img)) {
-                $tImg = $img;
-            } elseif (is_array($img)) {
-                $tImg = Image::createNewFrom($img);
-            } elseif ($img instanceof Image) {
-                $tImg = $img->id;
-            } else {
-                $tImg = null;
-            }
+            $tImg = Image::getImageToID($img);
             if (Functions::testVar($tImg)) {
                 $data = new self;
                 $data->name = $data;

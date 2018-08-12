@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Order;
+use App\PageGrouping;
 use Illuminate\Http\Request;
 
-class OrderController extends MainController
+class PageGroupingController extends MainController
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class OrderController extends MainController
     /**
      * Display the specified resource.
      *
-     * @param  \App\Order  $order
+     * @param  \App\PageGrouping  $pageGrouping
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order)
+    public function show(PageGrouping $pageGrouping)
     {
         //
     }
@@ -52,10 +52,10 @@ class OrderController extends MainController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Order  $order
+     * @param  \App\PageGrouping  $pageGrouping
      * @return \Illuminate\Http\Response
      */
-    public function edit(Order $order)
+    public function edit(PageGrouping $pageGrouping)
     {
         //
     }
@@ -64,10 +64,10 @@ class OrderController extends MainController
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Order  $order
+     * @param  \App\PageGrouping  $pageGrouping
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Order $order)
+    public function update(Request $request, PageGrouping $pageGrouping)
     {
         //
     }
@@ -75,16 +75,11 @@ class OrderController extends MainController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Order  $order
+     * @param  \App\PageGrouping  $pageGrouping
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Order $order)
+    public function destroy(PageGrouping $pageGrouping)
     {
         //
-    }
-
-    public function showDelete(Request $request)
-    {
-        // display 'ARE YOU SURE' PAGE...
     }
 }

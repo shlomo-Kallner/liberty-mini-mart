@@ -90,6 +90,9 @@ Route::middleware('adminguard')->prefix('admin')->group(
         //Route::get('/', 'ShopController@test');
         Route::get('/', 'CmsController@index');
 
+        Route::resource('article', 'ArticleController');
+        Route::get('article/{article}/delete', 'ArticleController@showDelete');
+
         // 'section/' goes to 'index()' which returns 'all-sections' of the store..
         Route::resource(
             'section', 'SectionController', [

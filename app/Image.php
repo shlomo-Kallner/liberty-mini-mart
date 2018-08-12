@@ -38,7 +38,9 @@ class Image extends Model
             if ($tmp->save()) {
                 return $tmp->id;
             }
-        } 
+        } elseif (Functions::testVar($tC) || count($tC) === 1) {
+            return $tC[0]->id;
+        }
         return null;
     }
 
@@ -55,9 +57,22 @@ class Image extends Model
         return self::createNewFromArray($array);
     }
 
+    static public function getImageToID($image)
+    {
+        if (is_array($image)) {
+            return self::createNewFrom($image);
+        } elseif (is_int($image) && self::existsId($image)) {
+            return $image;
+        } elseif ($image instanceof self && self::existsId($image->id)) {
+            return $image->id;
+        } else {
+            return null;
+        }
+    }
+
     static public function getImage($image)
     {
-        if (is_int($image)) {
+        if (is_int($image) && self::existsId($image)) {
             return self::getFromId($image);
         } elseif ($image instanceof self) {
             return $image;

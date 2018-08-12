@@ -30,6 +30,15 @@ class Functions
         return false;
     }
 
+    /**
+     * Function getBladedContent -  Get the content of a 
+     *                              Blade Escaped Serialized
+     *                              variable..
+     *
+     * @param mixed|string $var
+     * @param mixed $default
+     * @return void
+     */
     static public function getBladedContent($var, $default = null)
     {
         if (self::testVar($var)) {

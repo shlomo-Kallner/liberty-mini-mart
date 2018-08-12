@@ -88,9 +88,18 @@
         @endcomponent
 
         <div class="col-md-9 col-sm-7">
-            
-            <h1>{{ $page2['title'] }}</h1>
-            <h2>{{ $page2['subheading'] }}</h2>
+            @if (true)
+                @component('lib.themewagon.article')
+                    @foreach ($page2 as $key => $item)
+                        @slot($key)
+                            {!! $item !!}
+                        @endslot
+                    @endforeach
+                @endcomponent
+            @else
+                <h1>{{ $page2['header'] }}</h1>
+                <h2>{{ $page2['subheading'] }}</h2>
+            @endif
 
             @section('cms-content')
 

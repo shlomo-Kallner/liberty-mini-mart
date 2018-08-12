@@ -61,22 +61,33 @@ class User extends Model
         }
     }
 
+    public function getRolesArray(Basic $permit = null)
+    {
+        $res = [];
+        if (Functions::testVar($permit)) {
+            $perm = $permit;
+        } else {
+            $perm = new Basic($this->id);
+        }
+        if ($perm->isAdmin()) {
+            $res[] = 'admin';
+        }
+        if ($perm->isContentCreator()) {
+            $res[] = 'creator';
+        }
+        if ($perm->isAuthUser()) {
+            $res[] = 'user';
+        }
+        return $res;
+    }
+
     public function setUserArray(Request $request) 
     {
         $data = self::getNewUserArray( 
             $request->userAgent(), $request->ip(),
             $this->name, $this->email, (string)$this->id
         );
-        $perm = new Basic($this->id);
-        if ($perm->isAdmin()) {
-            $data['role'][] = 'admin';
-        }
-        if ($perm->isContentCreator()) {
-            $data['role'][] = 'creator';
-        }
-        if ($perm->isAuthUser()) {
-            $data['role'][] = 'user';
-        }
+        $data['role'] = $this->getRolesArray();
         $request->session()->put('user', $data);
         return $data;
     }
@@ -205,6 +216,14 @@ class User extends Model
             'email' => $this->email,
             'img' => Image::getImageArray($this->image),
             'otherImages' => UserImage::getAllImages($this->id, true),
+            'date' => [
+                'created' => $this->created_at,
+                'modified' => $this->updated_at,
+                'deleted' => $this->deleted_at
+            ],
+            'orders' => [],
+            'carts' => [],
+            'wishlist' => [],
         ];
     }
 
@@ -219,7 +238,8 @@ class User extends Model
     }
 
     static public function getAllUsers(
-        bool $toArray = true, bool $paginate = false, int $num_pages = 0
+        bool $toArray = true, bool $forA = false, 
+        bool $paginate = false, int $num_pages = 0
     ) {
         $tmp = self::where('id', '>', self::getNumForVer())->get();
         //dd($tmp);
@@ -232,11 +252,16 @@ class User extends Model
                     || $perm->isContentCreator()
                     || $perm->isAuthUser() 
                 ) {
+                    $ur = $user->getRolesArray($perm);
                     if ($toArray) {
-                        $users[] = $user->toContentArray();
+                        $tu = $user->toContentArray();
+                        $tu['roles'] = $ur;
+                        $users[] = $tu;
                     } else {
+                        $user->roles = $ur;
                         $users[] = $user;
                     }
+
                 }
                 //dd($perm);
             }
@@ -251,15 +276,7 @@ class User extends Model
     ) {
         $tu = self::where('email', $email)->get();
         if (count($tu) === 0) {
-            if (is_int($img) && Image::existsId($img)) {
-                $tImg = $img;
-            } elseif (is_array($img)) {
-                $tImg = Image::createNewFrom($img);
-            } elseif ($img instanceof Image) {
-                $tImg = $img->id;
-            } else {
-                return null;
-            }
+            $tImg = Image::getImageToID($img);
             $tmp = new self;
             $tmp->name = $name;
             $tmp->email = $email ;

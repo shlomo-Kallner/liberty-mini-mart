@@ -478,13 +478,7 @@ class Page extends Model
             ]
         )->get();
         if (!Functions::testVar($tP) || count($tP) === 0) {
-            if (is_int($img) && Image::existsId($img)) {
-                $tImg = $img;
-            } elseif (is_array($img)) {
-                $tImg = Image::createNewFrom($img);
-            } else {
-                $tImg = null;
-            }
+            $tImg = Image::getImageToID($img);
             if (Functions::testVar($tImg)) {
                 $data = new self;
                 $data->name = $name;

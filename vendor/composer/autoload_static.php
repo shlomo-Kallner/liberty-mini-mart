@@ -432,12 +432,14 @@ class ComposerStaticInitc8f191e383c8b428bdb2d9ef6beb446c
     );
 
     public static $classMap = array (
+        'App\\Article' => __DIR__ . '/../..' . '/app/Article.php',
         'App\\Cart' => __DIR__ . '/../..' . '/app/Cart.php',
         'App\\Catalog' => __DIR__ . '/../..' . '/app/Catalog.php',
         'App\\Categorie' => __DIR__ . '/../..' . '/app/Categorie.php',
         'App\\CategoryImage' => __DIR__ . '/../..' . '/app/CategoryImage.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Http\\Controllers\\ArticleController' => __DIR__ . '/../..' . '/app/Http/Controllers/ArticleController.php',
         'App\\Http\\Controllers\\CartController' => __DIR__ . '/../..' . '/app/Http/Controllers/CartController.php',
         'App\\Http\\Controllers\\CategorieController' => __DIR__ . '/../..' . '/app/Http/Controllers/CategorieController.php',
         'App\\Http\\Controllers\\CmsController' => __DIR__ . '/../..' . '/app/Http/Controllers/CmsController.php',
@@ -467,6 +469,7 @@ class ComposerStaticInitc8f191e383c8b428bdb2d9ef6beb446c
         'App\\Order' => __DIR__ . '/../..' . '/app/Order.php',
         'App\\Page' => __DIR__ . '/../..' . '/app/Page.php',
         'App\\PageGroup' => __DIR__ . '/../..' . '/app/PageGroup.php',
+        'App\\PageGrouping' => __DIR__ . '/../..' . '/app/PageGrouping.php',
         'App\\PageImage' => __DIR__ . '/../..' . '/app/PageImage.php',
         'App\\PasswordReset' => __DIR__ . '/../..' . '/app/PasswordReset.php',
         'App\\Plan' => __DIR__ . '/../..' . '/app/Plan.php',
