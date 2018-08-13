@@ -15,8 +15,8 @@ class CreateUserImagesTable extends Migration
     {
         Schema::create('user_images', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('image')->unsigned();
-            $table->integer('user')->unsigned();
+            $table->integer('image_id')->unsigned();
+            $table->integer('user_id')->unsigned();
             $table->timestamps();
             $table->softDeletes();
 

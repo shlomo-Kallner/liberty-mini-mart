@@ -51,13 +51,16 @@ class CmsController extends MainController
         //dd($users);
         $pages = []; // Page::getAllPages();
         //dd($sections);
+        $sidebar = self::getAdminSidebar();
         return self::getView(
             'content.cms', 'Admin Dashboard', 
             [
                 'header' => 'Admin Dashboard',
                 'article' => Article::makeContentArray(
-                    '', 'Welcome to OUR DASHBOARD!',
-                    null, 'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
+                    '', 
+                    'Welcome to OUR DASHBOARD!',
+                    null,
+                    'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
                     )
                 /* [
                     'header' => 'Welcome to OUR DASHBOARD!',
@@ -86,10 +89,48 @@ class CmsController extends MainController
             Page::getBreadcrumbs(
                 Page::genBreadcrumb('Admin DashBoard', $request->path()),
                 Page::genBreadcrumb('Home', '/')
-            )
+            ), null,
+            $sidebar
         );
     }
 
+    static public function getAdminSidebar()
+    {
+        $sidebar = [];
+        /*
+            //TODO: use this
+            $sidebar[] = Page::genURLMenuItem(
+                string $url, string $name, string $icon = '', 
+                string $textTransform = '', string $cssExtraClasses = '', 
+                string $iconAfter = '', string $role = ''
+            ); 
+
+            /// for each of the "create" Links below..
+
+        */
+
+        $sidebar[] = Page::genURLMenuItem(
+            'admin/section/create', 'Create a New Section', 'fa-shopping-cart', 
+            '', '', 'fa-plus', 'button'
+        );  
+        $sidebar[] = Page::genURLMenuItem(
+            'admin/category/create', 'Create a New Category', 'fa-shopping-basket', 
+            '', '', 'fa-plus', 'button'
+        );  
+        $sidebar[] = Page::genURLMenuItem(
+            'admin/product/create', 'Create a New Product', 'fa-shopping-bag', 
+            '', '', 'fa-plus', 'button'
+        );  
+        $sidebar[] = Page::genURLMenuItem(
+            'admin/user/create', 'Create a New User', 'fa-address-book', 
+            '', '', 'fa-plus', 'button'
+        );  
+        $sidebar[] = Page::genURLMenuItem(
+            'admin/page/create', 'Create a New Content Page', 'fa-newspaper-o', 
+            '', '', 'fa-plus', 'button'
+        );  
+        return $sidebar;
+    }
 
 
 }

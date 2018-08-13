@@ -15,13 +15,13 @@ class CreateSectionImagesTable extends Migration
     {
         Schema::create('section_images', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('image')->unsigned();
-            $table->integer('section')->unsigned();
+            $table->integer('image_id')->unsigned();
+            $table->integer('section_id')->unsigned();
             $table->timestamps();
             $table->softDeletes();
 
-            //$table->foreign('image')->references('id')->on('images');
-            //$table->foreign('section')->references('id')->on('sections');
+            //$table->foreign('image_id')->references('id')->on('images');
+            //$table->foreign('section_id')->references('id')->on('sections');
         });
     }
 

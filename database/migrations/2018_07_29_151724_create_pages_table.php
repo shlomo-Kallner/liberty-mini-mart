@@ -17,11 +17,11 @@ class CreatePagesTable extends Migration
             $table->increments('id');
             $table->string('name', 255);
             $table->string('url', 255);
-            $table->integer('image')->unsigned();
             $table->string('title', 255);
-            $table->mediumText('article');
             $table->string('description', 255);
-            $table->integer('visible')->unsigned();
+            $table->integer('image_id')->unsigned();
+            $table->integer('article_id')->unsigned()->nullable();
+            $table->integer('visible')->unsigned()->nullable();
             $table->string('sticker', 255);
             $table->timestamps();
             $table->softDeletes();

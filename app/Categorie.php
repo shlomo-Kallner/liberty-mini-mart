@@ -80,14 +80,12 @@ class Categorie extends Model
 
     static public function getNamed(string $name, $section_id)
     {
-        return Functions::dbModel2ViewModel(
-            self::where(
-                [
-                    'url' => $name,
-                    'section_id' => $section_id
-                ]
-            )->first()
-        );
+        return self::where(
+            [
+                'url' => $name,
+                'section_id' => $section_id
+            ]
+        )->first();
     }
 
     /**
@@ -109,6 +107,11 @@ class Categorie extends Model
         } else {
             return null;
         }
+    }
+
+    public function image()
+    {
+        return $this->hasOne('App\Image', 'image');
     }
 
     static public function getCategoriesOfSection($section_id)

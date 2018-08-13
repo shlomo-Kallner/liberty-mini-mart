@@ -275,11 +275,12 @@ class MainController extends Controller {
 
     static public function getView(
         string $viewName = 'content.template', string $title = '', $content = [], 
-        bool $useFakeData = false, array $breadcrumbs = null, array $alert = null
+        bool $useFakeData = false, array $breadcrumbs = null, array $alert = null,
+        array $sidebar = null
     ) {
         self::setTitle($title);
         self::setPageContent($content);
-        if ($alert !== null) {
+        if ($alert !== null || count($alert) > 0) {
             self::setAlert(
                 $alert['class'], $alert['title'], $alert['content'], 
                 $alert['timeout'], $alert['id']
@@ -297,15 +298,13 @@ class MainController extends Controller {
                 self::setAlert();
             }
         }
-        
-        //
 
         self::$data['navbar'] = Page::getNavBar($useFakeData);
         //dd(session()->all());
         self::$data['preheader'] = Page::getPreHeader($useFakeData);
         //dd(session()->all());
         //dd(self::$data['preheader']); 
-        self::$data['sidebar'] = Page::getSidebar($useFakeData);
+        self::$data['sidebar'] = $sidebar ?? Page::getSidebar($useFakeData);
         //
         self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
         //

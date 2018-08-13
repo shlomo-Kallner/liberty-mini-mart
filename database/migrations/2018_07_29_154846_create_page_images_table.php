@@ -15,13 +15,13 @@ class CreatePageImagesTable extends Migration
     {
         Schema::create('page_images', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('image')->unsigned();
-            $table->integer('page')->unsigned();
+            $table->integer('image_id')->unsigned();
+            $table->integer('page_id')->unsigned();
             $table->timestamps();
             $table->softDeletes();
 
-            //$table->foreign('image')->references('id')->on('images');
-            //$table->foreign('page')->references('id')->on('pages');
+            //$table->foreign('image_id')->references('id')->on('images');
+            //$table->foreign('page_id')->references('id')->on('pages');
         });
     }
 

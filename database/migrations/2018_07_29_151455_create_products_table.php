@@ -16,10 +16,10 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 255);
-            $table->integer('image')->unsigned();
-            $table->string('title', 255);
-            $table->mediumText('article');
             $table->string('url', 255);
+            $table->string('title', 255);
+            $table->integer('image_id')->unsigned()->nullable();
+            $table->integer('article_id')->unsigned()->nullable();
             $table->integer('category_id')->unsigned();
             $table->decimal('price', 12, 2);
             $table->decimal('sale', 12, 2)->nullable();
@@ -28,7 +28,7 @@ class CreateProductsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            //$table->foreign('image')->references('id')->on('images');
+            //$table->foreign('image_id')->references('id')->on('images');
             //$table->foreign('category_id')->references('id')->on('categories');
         });
     }

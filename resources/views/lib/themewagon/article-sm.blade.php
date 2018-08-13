@@ -5,7 +5,7 @@
     //dd($page);
     //$page2 = Functions::getUnBladedContent($page??'');
 
-    $containerCss2 = Functions::getBladedString($containerCss??'col-md-12','col-md-12');
+    $containerCss2 = Functions::getBladedString($containerCss??'col-md-5','col-md-5');
     $header2 = Functions::getBladedString($header??'');
     $subheading2 = Functions::getBladedString($subheading??'');
     $img2 = Functions::getUnBladedContent($img??[],[]);
@@ -22,6 +22,7 @@
             </h2>
         @endif
         
+        
         @if (Functions::testVar($img2))
             @component('inc.figure')
                 @foreach ($img as $key => $item)
@@ -31,21 +32,20 @@
                 @endforeach
             @endcomponent
         @endif
+        
 
         @if (Functions::testVar($subheading2))
-            <h4>
+            <h3>
                 {!! $subheading2 !!}
-            </h4>
+            </h3>
         @endif
         
     </div>
-</div>
-@if (Functions::testVar($article2))
-    <div class="row">
-        <div class="{{$containerCss2}}">
-                {!! $article2 !!}
+    @if (Functions::testVar($article2))
+        <div class="col-md-5">
+            {!! $article2 !!}
         </div>
-    </div>
-@endif
-
+    @endif
+    
+</div>
 

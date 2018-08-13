@@ -224,7 +224,7 @@ class Page extends Model
         return $preheader;
     }
     
-    static public function getSidebar($genFakeData = false, string $area = 'store')
+    static public function getSidebar($genFakeData = false)
     {
         $res = [];
         if ($genFakeData) {

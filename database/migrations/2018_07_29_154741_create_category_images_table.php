@@ -15,8 +15,8 @@ class CreateCategoryImagesTable extends Migration
     {
         Schema::create('category_images', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('image')->unsigned();
-            $table->integer('category')->unsigned();
+            $table->integer('image_id')->unsigned();
+            $table->integer('category_id')->unsigned();
             $table->timestamps();
             $table->softDeletes();
 

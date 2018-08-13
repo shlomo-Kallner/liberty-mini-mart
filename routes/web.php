@@ -66,8 +66,20 @@ Route::middleware('userguard')->group(
 
         Route::prefix('user')->group(
             function () {
+                Route::resource(
+                    'search', 'SearchResultController', [
+                        'parameters'=> [
+                            'search' => 'search',
+                        ],
+                        'except' => [
+                            'create', 'destroy', 'edit', 'update'
+                        ]
+                    ]
+                );
+                
                 Route::get('{user?}', 'UserController@show');
                 //Route::get('{user}', 'PageController@index1');
+
             }
         );
 
@@ -76,12 +88,7 @@ Route::middleware('userguard')->group(
         //Route::post('user', 'UserController');
         //Route::resource('user', 'UserController');
         //Route::get('user', 'UserController');
-        Route::prefix('plans')->group(
-            function () {
-                Route::get('/', 'PlanController@index');
-                Route::get('{plan}', 'PlanController@show');
-            }
-        );
+        
     }
 );
 
@@ -162,6 +169,19 @@ Route::middleware('adminguard')->prefix('admin')->group(
         );
         Route::get('page/{page}/delete', 'PageController@showDelete');
 
+        
+        Route::resource(
+            'search', 'SearchResultController', [
+                'parameters'=> [
+                    'search' => 'search',
+                ],
+                'except' => [
+                    'create', 'edit', 'update'
+                ]
+            ]
+        );
+        Route::get('search/{search}/delete', 'SearchResultController@showDelete');
+
         // MEMBERSHIP PLANS ARE A WISHLIST ITEM!!!
         // 'plan/' goes to 'index()' which returns 'all-pages' of the site..
         /* Route::resource(
@@ -173,7 +193,8 @@ Route::middleware('adminguard')->prefix('admin')->group(
                     'show', 'index'
                 ]
             ]
-        ); */
+        );
+        Route::get('plan/{plan}/delete', 'PlanController@showDelete'); */
     }
 );
 
@@ -189,6 +210,31 @@ Route::middleware('signedguard')->group(
 
     }
 );
+
+Route::resource(
+    'search', 'SearchResultController', [
+        'parameters'=> [
+            'search' => 'search',
+        ],
+        'only' => [
+            'index', 'show', 'store'
+        ]
+    ]
+);
+
+/// MEMBERSHIP PLANS ARE A WISHLIST ITEM!!
+/* 
+Route::resource(
+    'plan', 'PlanController', [
+        'parameters'=> [
+            'plan' => 'plan',
+        ],
+        'only' => [
+            'index', 'show'
+        ]
+    ]
+); 
+*/
 
 Route::get('{page}', 'PageController@show');
 

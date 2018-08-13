@@ -15,8 +15,8 @@ class CreatePageGroupsTable extends Migration
     {
         Schema::create('page_groups', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('group')->unsigned();
-            $table->integer('page')->unsigned();
+            $table->integer('group_id')->unsigned();
+            $table->integer('page_id')->unsigned();
             $table->integer('order')->unsigned();
             $table->timestamps();
             $table->softDeletes();

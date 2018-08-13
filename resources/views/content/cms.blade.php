@@ -31,39 +31,7 @@
         //dd($plans2, $plans_paginator2);
           
            
-        /*
-
-            //TODO: use this
-            $sidebar2[] = Page::genURLMenuItem(
-                string $url, string $name, string $icon = '', 
-                string $textTransform = '', string $cssExtraClasses = '', 
-                string $iconAfter = '', string $role = ''
-            ); 
-
-            /// for each of the "create" Links below..
-
-        */
-
-        $sidebar2[] = Page::genURLMenuItem(
-            'admin/section/create', 'Create a New Section', 'fa-shopping-cart', 
-            '', '', 'fa-plus', 'button'
-        );  
-        $sidebar2[] = Page::genURLMenuItem(
-            'admin/category/create', 'Create a New Category', 'fa-shopping-basket', 
-            '', '', 'fa-plus', 'button'
-        );  
-        $sidebar2[] = Page::genURLMenuItem(
-            'admin/product/create', 'Create a New Product', 'fa-shopping-bag', 
-            '', '', 'fa-plus', 'button'
-        );  
-        $sidebar2[] = Page::genURLMenuItem(
-            'admin/user/create', 'Create a New User', 'fa-address-book', 
-            '', '', 'fa-plus', 'button'
-        );  
-        $sidebar2[] = Page::genURLMenuItem(
-            'admin/page/create', 'Create a New Content Page', 'fa-newspaper-o', 
-            '', '', 'fa-plus', 'button'
-        );  
+        
 
         /// THIS IS A WISHLIST ITEM!!
         if (Functions::testVar($plans2)) {

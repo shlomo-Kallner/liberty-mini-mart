@@ -33,16 +33,16 @@ class CreateSectionsTable extends Migration
                 $table->increments('id');
                 $table->string('name', 255);
                 $table->string('url', 255)->unique();               
-                $table->integer('image')->unsigned();
+                $table->integer('image_id')->unsigned()->nullable();
                 $table->string('title', 255);
-                $table->string('sub_title', 255);                
-                $table->text('article', 255);
+                //$table->string('sub_title', 255);                
+                $table->integer('article_id')->unsigned()->nullable();
                 $table->string('description', 255);
-                //$table->integer('catalog_id')->unsigned(); // WISHLIST ITEM!!!
+                $table->integer('catalog_id')->unsigned()->nullable(); // WISHLIST ITEM!!!
                 $table->timestamps();
                 $table->softDeletes();
 
-                //$table->foreign('image')->references('id')->on('images');
+                //$table->foreign('image_id')->references('id')->on('images');
                 
             }
         );
