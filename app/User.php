@@ -214,7 +214,7 @@ class User extends Model
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'img' => Image::getImageArray($this->image),
+            'img' => Image::getImageArray($this->image_id),
             'otherImages' => UserImage::getAllImages($this->id, true),
             'date' => [
                 'created' => $this->created_at,
