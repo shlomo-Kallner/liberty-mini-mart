@@ -178,13 +178,25 @@
             $usePricings = false;
         }
 
+        //dd($page);
+
     @endphp
 
-    @component('lib.themewagon.article')
+    @component('lib.themewagon.article-sm')
         @foreach ($page['article'] as $key => $item)
-            @slot($key)
-                {{ $item }}
-            @endslot
+            @if ($key === 'img')
+                @php
+                    //dd($item);
+                    //dd(serialize($item));
+                @endphp
+                @slot($key)
+                    {!! serialize($item) !!}
+                @endslot
+            @else
+                @slot($key)
+                    {!! $item !!}
+                @endslot
+            @endif
         @endforeach
     @endcomponent
 

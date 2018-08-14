@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request,
+    App\Article,
     App\Page;
 
 class ShopController extends MainController {
@@ -79,11 +80,13 @@ class ShopController extends MainController {
         );
         $title = 'test Store page';
         $content = [
-            'article' => [
-                'header' => 'Welcome To Our Store!',
-                'subheading' => 'Here you will find a wealth of products that only LIBERTY can PROVIDE!',
-                //'article' => self::getLoremIpsum(),
-            ]
+            'article' => Article::makeContentArray(
+                self::getLoremIpsum(),
+                'Welcome To Our Store!',
+                2,
+                'Here you will find a wealth of products that only LIBERTY can PROVIDE!',
+                true
+            ),
         ];
         return parent::getView('content.store', $title, $content, $useFakeData, $breadcrumbs);
     }

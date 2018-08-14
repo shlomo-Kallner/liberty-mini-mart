@@ -39,6 +39,8 @@ class CmsController extends MainController
 
     public function index(Request $request)
     {
+        //dd($request->session());
+        //dd($request->session()->getId());
         //$sections = Section::getAllWithPagination();
         //dd(Page::get()->count());
         $sections = Section::getAllModels();

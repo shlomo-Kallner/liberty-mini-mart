@@ -25,7 +25,7 @@
         
         @if (Functions::testVar($img2))
             @component('inc.figure')
-                @foreach ($img as $key => $item)
+                @foreach ($img2 as $key => $item)
                     @slot($key)
                         {!! $item !!}
                     @endslot
@@ -42,7 +42,7 @@
         
     </div>
     @if (Functions::testVar($article2))
-        <div class="col-md-5">
+        <div class="{{$containerCss2}}">
             {!! $article2 !!}
         </div>
     @endif

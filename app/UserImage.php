@@ -47,8 +47,8 @@ class UserImage extends Pivot
         // duplication avoidance..
         $t2 = self::where(
             [
-                ['image', '=', $image_id],
-                ['user', '=', $user_id]
+                ['image_id', '=', $image_id],
+                ['user_id', '=', $user_id]
             ]
         )->first();
         if (Functions::testVar($t2)) {
@@ -56,8 +56,8 @@ class UserImage extends Pivot
             return $t2->id;
         } else {
             $tmp = new self;
-            $tmp->user = $user_id;
-            $tmp->image = $image_id;
+            $tmp->user_id = $user_id;
+            $tmp->image_id = $image_id;
             if ($tmp->save()) {
                 //dd('$tmp');
                 return $tmp->id;
@@ -69,7 +69,7 @@ class UserImage extends Pivot
 
     static public function createNewFrom(User $user)
     {
-        return self::createNew($user->id, $user->image);
+        return self::createNew($user->id, $user->image_id);
     }
 
     static public function getAllImages($user, bool $toArray = false) 
@@ -82,7 +82,7 @@ class UserImage extends Pivot
         } else {
             return null;
         }
-        $tmp = self::where('user', $user_id)->get();
+        $tmp = self::where('user_id', $user_id)->get();
         return Image::getAllForPivots($tmp, $toArray);
     }
 
@@ -95,7 +95,7 @@ class UserImage extends Pivot
         } else {
             return null;
         }
-        $t = self::where('image', $img_id)->first();
+        $t = self::where('image_id', $img_id)->first();
         if (Functions::testVar($t)) {
             return $t->user;
         } else {

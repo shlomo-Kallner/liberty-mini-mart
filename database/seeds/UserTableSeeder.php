@@ -12,6 +12,31 @@ use App\UserImage;
 
 class UserTableSeeder extends Seeder
 {
+    static protected function genFake($faker, bool $asUser = false)
+    {
+        $tmp = User::createNew(
+            $faker->name . '.@#$%^&*',
+            $faker->email,
+            $asUser ? 'aB123456789' : '12345678912',
+            [
+                'name' => $faker->imageUrl(),
+                'path' => '',
+                'alt' => $faker->text(20),
+                'caption' => $faker->text(80),
+            ]
+        );
+        if (Functions::testVar($tmp)) {
+            if ($asUser) {
+                $perm = new Basic($tmp->id);
+                $perm->setGuestUser();
+                $perm->setAuthUser(true);
+                $perm->makeFakes(random_int(1, 4));
+            }
+            return $tmp;
+        } else {
+            dd($tmp);
+        }
+    }
     
     /**
      * Run the database seeds.
@@ -22,7 +47,8 @@ class UserTableSeeder extends Seeder
     {
         //$faker = new Faker();
         $faker = \Faker\Factory::create();
-        $u = User::getNumForVer() + random_int(3, 9);
+        $a = false ? random_int(3, 9) : 0;
+        $u = User::getNumForVer() + $a;
         for ($i = 0; $i < $u; $i++) {
             User::createNew(
                 $faker->name . '.@#$%^&*',
@@ -42,6 +68,7 @@ class UserTableSeeder extends Seeder
             'painter', 'finger.painter@example.com',
             'fingerPainter123',  1, 1
         );
+        //dd($creator);
         $perm = new Basic($creator->id);
         $perm->setGuestUser();
         $perm->setAuthUser();

@@ -61,13 +61,13 @@ class User extends Model
         }
     }
 
-    public function getRolesArray(Basic $permit = null)
+    public function getRolesArray(Basic $permit = null, bool $p = false)
     {
         $res = [];
         if (Functions::testVar($permit)) {
             $perm = $permit;
         } else {
-            $perm = new Basic($this->id);
+            $perm = new Basic($this->id, $p);
         }
         if ($perm->isAdmin()) {
             $res[] = 'admin';
@@ -246,13 +246,14 @@ class User extends Model
         $users = [];
         if (Functions::testVar($tmp) && count($tmp) > 0) {
             foreach ($tmp as $user) {
-                $perm = new Basic($user->id);
+                $p = false ? true : false;
+                $perm = new Basic($user->id, $p);
                 //dd($perm);
                 if ($perm->isAdmin() 
                     || $perm->isContentCreator()
                     || $perm->isAuthUser() 
                 ) {
-                    $ur = $user->getRolesArray($perm);
+                    $ur = $user->getRolesArray($perm, $p);
                     if ($toArray) {
                         $tu = $user->toContentArray();
                         $tu['roles'] = $ur;
@@ -281,7 +282,7 @@ class User extends Model
             $tmp->name = $name;
             $tmp->email = $email ;
             $tmp->password = Hash::make($password);
-            $tmp->image = $tImg;
+            $tmp->image_id = $tImg;
             $tmp->plan_id = $plan;
             if ($tmp->save()) {
                 $perm = new Basic($tmp->id);

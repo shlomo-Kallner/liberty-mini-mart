@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Page;
+use App\Page,
+    App\Article;
 use Illuminate\Http\Request,
     App\Utilities\Functions\Functions;
 
@@ -134,7 +135,9 @@ class PageController extends MainController
         $title = 'test ' . $requestedPage . ' page';
         $content = [
             'header' => "<b>$requestedPage</b>",
-            'article' => "<p><i>HEllloo WORLD!!</i></p>"
+            'article' => [
+                'header' => "<p><i>HEllloo WORLD!!</i></p>"
+                ]
         ];
 
         return self::getView('content.tests.index2', $title, $content);
@@ -145,10 +148,10 @@ class PageController extends MainController
         $title = 'test ' . $requestedPage . ' page';
         $content = [
             'header' => "<b>$requestedPage</b>",
-            'subheading' => "<p>'Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'</p>",
-            'article'=> "<p>" . e('World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919') . "</p>",
-            'img' => "images/site/ring_it_liberty_bell.jpg",
-            'imgAlt' => 'Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan',
+            'article' => Article::makeContentArray(
+                "<p>" . e('World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919') . "</p>",
+                '', 2, "<p>'Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'</p>"
+            ),
             'breadcrumbs' => ''
         ];
 

@@ -55,22 +55,24 @@ class Article extends Model
         );
     }
 
-    public function toContentArray()
+    public function toContentArray(bool $imgAsArr = true)
     {
         return self::makeContentArray(
             $this->article, $this->header,
-            $this->image_id, $this->subheading
+            $this->image_id, $this->subheading,
+            $imgAsArr
         );
     }
 
     static public function makeContentArray(
         string $article, string $header = '',
-        $img = null, string $subheading = ''
+        $img = null, string $subheading = '',
+        bool $imgAsArr = false
     ) {
         return [
             'header' => $header,
             'subheading' => $subheading,
-            'img' => Image::getImage($img),
+            'img' => $imgAsArr ? Image::getImageArray($img) : Image::getImage($img),
             'article' => $article,
         ];
     }

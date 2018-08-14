@@ -11,6 +11,8 @@
     $img2 = Functions::getUnBladedContent($img??[],[]);
     $article2 = Functions::getBladedString($article??'');
 
+    //dd($containerCss2, $header2, $subheading2, $img2, $article2);
+
 @endphp
 
 <div class="row">
@@ -23,8 +25,11 @@
         @endif
         
         @if (Functions::testVar($img2))
+            @php
+                //dd($img2);
+            @endphp
             @component('inc.figure')
-                @foreach ($img as $key => $item)
+                @foreach ($img2 as $key => $item)
                     @slot($key)
                         {!! $item !!}
                     @endslot

@@ -110,7 +110,7 @@ class Image extends Model
             $res = [];
             foreach ($pivots as $pivot) {
                 if ($pivot instanceof Pivot) {
-                    $t = self::getFromId($pivot->image);
+                    $t = self::getFromId($pivot->image_id);
                     if (Functions::testVar($t)) {
                         if ($toArray) {
                             $res[] = self::getImageArray($t);

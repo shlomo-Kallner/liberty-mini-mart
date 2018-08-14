@@ -7,6 +7,7 @@ use Illuminate\Http\Request,
     App\Page,
     App\User,
     App\Cart,
+    App\Article,
     App\Utilities\Functions\Functions,
     Session;
 
@@ -65,7 +66,7 @@ class MainController extends Controller {
                 'header' => '', // 'h2' page article content
                 'subheading' => '', // 'h3' page article content
                 'article' => '', // 'div' page article content
-                'img' => '', // page article img array content
+                'img' => '', // page article img array/id content
                 // 'imgAlt' => '', // page img alt content // old img alt..
             ],
         ],
@@ -274,13 +275,13 @@ class MainController extends Controller {
     }
 
     static public function getView(
-        string $viewName = 'content.template', string $title = '', $content = [], 
+        string $viewName = 'content.content', string $title = '', $content = [], 
         bool $useFakeData = false, array $breadcrumbs = null, array $alert = null,
         array $sidebar = null
     ) {
         self::setTitle($title);
         self::setPageContent($content);
-        if ($alert !== null || count($alert) > 0) {
+        if ($alert !== null || count($alert??[]) > 0) {
             self::setAlert(
                 $alert['class'], $alert['title'], $alert['content'], 
                 $alert['timeout'], $alert['id']
@@ -322,7 +323,7 @@ class MainController extends Controller {
         bool $useFakeData = false, array $breadcrumbs = null, array $alert = null
     ) {
         return self::getView(
-            'content.template', $title, $content, $useFakeData, $breadcrumbs, $alert
+            'content.content', $title, $content, $useFakeData, $breadcrumbs, $alert
         );
     }
 
@@ -401,13 +402,12 @@ class MainController extends Controller {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         $title = 'test ' . $requestedPage . ' page';
         $content = [
-            'article'=> [
-                'header' => e("<b>$requestedPage</b>"),
-                'subheading' => e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
-                'article'=> e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
-                'img' => "images/site/ring_it_liberty_bell.jpg",
-                'imgAlt' => e('Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan'),
-            ]
+            'article'=> Article::makeContentArray(
+                e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
+                e("<b>$requestedPage</b>"), (2),
+                e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
+                true
+            ),
         ];
         $useFakeData = true;
         //self::$data['sidebar'] = Page::getSidebar($useFakeData);
