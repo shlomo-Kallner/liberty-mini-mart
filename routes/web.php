@@ -13,7 +13,27 @@
 
 Route::get('/', 'PageController@home');
 
-/**
+use App\User,
+    App\PageGroup,
+    App\PageGrouping,
+    App\Page;
+use Illuminate\Http\Request;
+Route::get(
+    'php', function (Request $request) {
+        $dump = true;
+        //$tmp = User::getUserArray($request);
+        //$tmp = $request->session()->all();
+        $tmp = PageGroup::where('group_id', 2)
+        ->max('order');
+        //->get(); //all(); //getAllPages();
+        if ($dump) {
+            dd(session()->all(), $tmp, PageGroup::getGroups());
+        } else {
+            return $tmp;
+        }
+    }
+);
+/* *
  * Route::get(
  *    'php', function () {
  *      phpinfo();

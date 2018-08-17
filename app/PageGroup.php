@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Relations\Pivot,
     Illuminate\Database\Eloquent\SoftDeletes,
-    App\Utilities\Functions\Functions;
+    App\Utilities\Functions\Functions,
+    App\PageGrouping;
 
 class PageGroup extends Pivot
 {
@@ -26,36 +27,36 @@ class PageGroup extends Pivot
 
     static public function createNew(int $group, int $page, int $order)
     {
-        if ($page >= 0) {
+        if ($page > 0) {
             if ($group < 1) {
-                $group_id = self::max('group') + 1;
+                $group_id = PageGrouping::getRandId(); //self::max('group_id') + 1;
             } else {
                 $group_id = $group;
             } 
             if ($order < 1) {
-                $to = self::where('group', $group_id)->max('order');
-                if ($to > 0) {
-                    $order_num = $to + 1;
-                } else {
-                    $order_num = 1;
-                }
+                $order_num = self::getRandOrder($group_id);
+                if ($order_num > 1) {
+                    $order_num += 1;
+                } 
             } else {
                 $order_num = $order;
             }
             $tg = self::where(
                 [
-                    ['group', '=', $group_id],
-                    ['page', '=', $page],
+                    ['group_id', '=', $group_id],
+                    ['page_id', '=', $page],
                     ['order', '=', $order_num]
                 ]
             )->get();
             if (!Functions::testVar($tg) || count($tg) === 0) {
                 $tmp = new self;
-                $tmp->group = $group_id;
-                $tmp->page = $page;
-                $tmp->order = $order;
+                $tmp->group_id = $group_id;
+                $tmp->page_id = $page;
+                $tmp->order = $order_num;
                 if ($tmp->save()) {
-                    return $tmp->id;
+                    if (self::reorderAround($tmp->group_id, $tmp->page_id, $tmp->order)) {
+                        return $tmp->id;
+                    }
                 }
             }
         }
@@ -71,9 +72,7 @@ class PageGroup extends Pivot
 
     static public function reorderAround(int $group, int $page, int $order) 
     {
-        $tg = self::where('group', $group)
-            ->orderBy('order', 'asc')
-            ->get();
+        $tg = self::getGroup($group);
         $bol = true;
         if (Functions::testVar($tg)) {
             if (count($tg) !== 0) {
@@ -95,13 +94,21 @@ class PageGroup extends Pivot
         return $bol;
     }
 
-    static public function getGroup(int $group)
+    static public function getRandOrder(int $group)
     {
-        return self::where('group', $group)->get();
+        $m = self::where('group_id', $group)->max('order');
+        return $m > 1? random_int(1, $m) : 1;
+    }
+
+    static public function getGroup(int $group, string $dir = 'asc')
+    {
+        return self::where('group_id', $group)
+            ->orderBy('order', $dir)
+            ->get();
     }
 
     static public function getGroups(string $dir = 'asc')
     {
-        return self::orderBy('group', $dir)->get();
+        return self::orderBy('group_id', $dir)->get();
     }
 }

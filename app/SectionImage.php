@@ -45,16 +45,16 @@ class SectionImage extends Pivot
         // duplication avoidance..
         $t2 = self::where(
             [
-                ['image', '=', $image_id],
-                ['section', '=', $section_id]
+                ['image_id', '=', $image_id],
+                ['section_id', '=', $section_id]
             ]
         )->first();
         if (Functions::testVar($t2)) {
             return $t2->id;
         } else {
             $tmp = new self;
-            $tmp->section = $section_id;
-            $tmp->image = $image_id;
+            $tmp->section_id = $section_id;
+            $tmp->image_id = $image_id;
             if ($tmp->save()) {
                 return $tmp->id;
             } else {
@@ -65,7 +65,7 @@ class SectionImage extends Pivot
 
     static public function createNewFrom(Section $section) 
     {
-        return self::createNew($section->id, $section->image);
+        return self::createNew($section->id, $section->image_id);
     }
 
     static public function getAllImages($section, bool $toArray = false) 
@@ -77,7 +77,7 @@ class SectionImage extends Pivot
         } else {
             return null;
         }
-        $t = self::where('section', $section_id)->get();
+        $t = self::where('section_id', $section_id)->get();
         return Image::getAllForPivots($t, $toArray);
     }
 
@@ -90,9 +90,9 @@ class SectionImage extends Pivot
         } else {
             return null;
         }
-        $t = self::where('image', $image_id)->first();
+        $t = self::where('image_id', $image_id)->first();
         if (Functions::testVar($t)) {
-            return $t->section;
+            return $t->section_id;
         } else {
             return null;
         }

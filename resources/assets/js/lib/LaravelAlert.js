@@ -16,6 +16,10 @@ export class LaravelAlert {
     return this.data;
   }
 
+  getId () {
+    return this.getAlertID();
+  }
+
   setTimeout (timeout) {
     if (typeof timeout === 'number') {
       this.data.timeout = Math.trunc(timeout);

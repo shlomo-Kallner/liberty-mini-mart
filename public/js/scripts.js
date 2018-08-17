@@ -93,17 +93,11 @@ jQuery(function ($) {
     var alertTimeout = window.Laravel.page.alert.getTimeout();
     // console.log("Heloo from checkTimeOut()! timeout = " + alertTimeout);  
     if (alertTimeout !== 0) {
-      $('#masterPageAlert').show(function ($) {
-        var jMe = $(this);
-        $(this).delay(function() {
-             //jMe.alert('close');
-             window.Laravel.page.alert.hide();
-            }, alertTimeout);  
-        // $(this).delay(alertTimeout).alert('close');
-        // var jMe = $(this);
-        // setTimeout(function() {
-        //  jMe.alert('close');
-        // }, alertTimeout);
+      var jMe = $('#masterPageAlert');
+      jMe.show(400, function() {
+        setTimeout(function() {
+            jMe.hide();
+        }, alertTimeout);
       });
     }
   };

@@ -1,11 +1,11 @@
 <template>
     <transition v-on:enter="afterEnter">
-        <div v-if="isSeen" v-bind:id="alert.alertId" v-bind:class="usedCssClasses" >
+        <div v-if="isSeen" v-bind:id="alert.getId()" v-bind:class="usedCssClasses" >
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
                 <i class="fa fa-close" aria-hidden="true"></i>
             </button>
-            <strong><span v-html="alert.title"></span></strong> 
-            <span v-html="alert.content"></span>
+            <strong><span v-html="alert.getTitle()"></span></strong> 
+            <span v-html="alert.getContent()"></span>
         </div>
     </transition>
 </template>
@@ -29,21 +29,21 @@ export default {
     */
     computed: {
         usedCssClasses: function() {
-            let cSS = this.alert.cssClasses.trim();
+            let cSS = this.alert.getClass().trim();
             return "alert " + (cSS !== ''? cSS : 'alert-info') + " alert-dismissible fade in";
         },
         isSeen: function() {
-            return this.alert.seen;
+            return this.alert.isSeen();
         }
     },
 
     methods: {
         afterEnter: function () {
-            console.log('afterEnter called!' + 'timeout = ' + this.alert.timeout);
-            let alertEl = jQuery('#'+this.alert.alertId);
+            console.log('afterEnter called!' + 'timeout = ' + this.alert.getTimeout());
+            let alertEl = jQuery('#'+this.alert.getId());
             setTimeout(function(){
                 alertEl.alert('close');
-            },this.alert.timeout);
+            }, this.alert.getTimeout());
         }
     }
 

@@ -18,6 +18,7 @@ class AdminGuard
      */
     public function handle($request, Closure $next)
     {
+        //dd($request->session());
         if (User::getIsAdmin()) {
             return $next($request);
         } else {

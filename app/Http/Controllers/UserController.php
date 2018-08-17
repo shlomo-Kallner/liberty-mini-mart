@@ -127,7 +127,7 @@ class UserController extends MainController
         $name = $request->lastname . ' , ' . $request->firstname;
         $user = User::createNew(
             $name, $request->email, $request->password, 
-            Image::find(1), 1
+            1, 1
         );
         //dd($user);
         if (Functions::testVar($user)) {

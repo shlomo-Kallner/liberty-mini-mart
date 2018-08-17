@@ -48,6 +48,13 @@ class Cart extends Model
     static public function createNew()
     {
         //
+        /**
+         * 
+                $table->integer('user_id')->unsigned();
+                $table->string('session_id', 255);
+                $table->mediumText('content');
+                $table->string('verihash', 255);
+         */
     }
 
     static public function createNewFrom(array $array)

@@ -11628,7 +11628,7 @@ window.Laravel.page.alert = new __WEBPACK_IMPORTED_MODULE_0__lib_LaravelAlert__[
 var masterAlert = new Vue({
   el: '#masterPageAlertContainer',
   data: {
-    alert: window.Laravel.page.alert.getData()
+    alert: window.Laravel.page.alert
   }
 });
 
@@ -11667,6 +11667,11 @@ var LaravelAlert = function () {
     key: 'getData',
     value: function getData() {
       return this.data;
+    }
+  }, {
+    key: 'getId',
+    value: function getId() {
+      return this.getAlertID();
     }
   }, {
     key: 'setTimeout',
@@ -41474,21 +41479,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     */
     computed: {
         usedCssClasses: function usedCssClasses() {
-            var cSS = this.alert.cssClasses.trim();
+            var cSS = this.alert.getClass().trim();
             return "alert " + (cSS !== '' ? cSS : 'alert-info') + " alert-dismissible fade in";
         },
         isSeen: function isSeen() {
-            return this.alert.seen;
+            return this.alert.isSeen();
         }
     },
 
     methods: {
         afterEnter: function afterEnter() {
-            console.log('afterEnter called!' + 'timeout = ' + this.alert.timeout);
-            var alertEl = __WEBPACK_IMPORTED_MODULE_0_jquery__('#' + this.alert.alertId);
+            console.log('afterEnter called!' + 'timeout = ' + this.alert.getTimeout());
+            var alertEl = __WEBPACK_IMPORTED_MODULE_0_jquery__('#' + this.alert.getId());
             setTimeout(function () {
                 alertEl.alert('close');
-            }, this.alert.timeout);
+            }, this.alert.getTimeout());
         }
     }
 
@@ -41506,7 +41511,7 @@ var render = function() {
     _vm.isSeen
       ? _c(
           "div",
-          { class: _vm.usedCssClasses, attrs: { id: _vm.alert.alertId } },
+          { class: _vm.usedCssClasses, attrs: { id: _vm.alert.getId() } },
           [
             _c(
               "button",
@@ -41527,10 +41532,14 @@ var render = function() {
             ),
             _vm._v(" "),
             _c("strong", [
-              _c("span", { domProps: { innerHTML: _vm._s(_vm.alert.title) } })
+              _c("span", {
+                domProps: { innerHTML: _vm._s(_vm.alert.getTitle()) }
+              })
             ]),
             _vm._v(" "),
-            _c("span", { domProps: { innerHTML: _vm._s(_vm.alert.content) } })
+            _c("span", {
+              domProps: { innerHTML: _vm._s(_vm.alert.getContent()) }
+            })
           ]
         )
       : _vm._e()

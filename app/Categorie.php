@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model,
     App\Utilities\Functions\Functions,
     App\Section,
+    App\Product,
     App\Image,
     App\CategoryImage,
     App\Page;
@@ -78,6 +79,19 @@ class Categorie extends Model
         return Functions::testVar(self::getFromId($id));
     }
 
+    static public function makeContentArray(
+
+    ) {
+        return [
+
+        ];
+    }
+
+    public function toContentArray()
+    {
+        return self::makeContentArray();
+    }
+
     static public function getNamed(string $name, $section_id)
     {
         return self::where(
@@ -109,9 +123,24 @@ class Categorie extends Model
         }
     }
 
+    public function getProduct(string $url)
+    {
+        return $this->products()->where('url', $url)->first();
+    }
+
     public function image()
     {
-        return $this->hasOne('App\Image', 'image');
+        return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
+    public function products()
+    {
+        return $this->hasMany('App\Product', 'category_id', 'id');
+    }
+
+    public function article()
+    {
+        return $this->hasOne('App\Article', 'id', 'article_id');
     }
 
     static public function getCategoriesOfSection($section_id)

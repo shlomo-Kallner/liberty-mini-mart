@@ -29,11 +29,11 @@ class User extends Model
         string $name = '', string $email = '', string $id = ''
     ) {
         return [
-            'name' => '',
-            'email' => '',
-            'id' => '',
-            'agent' => '',
-            'ip' => '',
+            'name' => Functions::testVar($name) ? $name : '',
+            'email' => Functions::testVar($email) ? $email : '',
+            'id' => Functions::testVar($id) ? $id : '',
+            'agent' => Functions::testVar($agent) ? $agent : '',
+            'ip' => Functions::testVar($ip) ? $ip : '',
             'role' => ['guest']
         ];
     }
@@ -89,6 +89,7 @@ class User extends Model
         );
         $data['role'] = $this->getRolesArray();
         $request->session()->put('user', $data);
+        //dd($data);
         return $data;
     }
 
@@ -152,6 +153,7 @@ class User extends Model
         if (Functions::testVar($tmpCol) && count($tmpCol) === 1) {
             $tmp = $tmpCol[0];
             if (Hash::check($password, $tmp->password)) {
+                //dd($tmp);
                 $tmp->setUserArray($request);
                 return true;
             }
@@ -199,7 +201,9 @@ class User extends Model
             $user_id = $user->id;
         } elseif (is_array($user)) {
             $user_id = $user['id'];
-        } 
+        } elseif (is_int($user) && self::existsId($user)) {
+            $user_id = $user;
+        }
         return $user_id;
     }
 
@@ -280,14 +284,14 @@ class User extends Model
             $tImg = Image::getImageToID($img);
             $tmp = new self;
             $tmp->name = $name;
-            $tmp->email = $email ;
+            $tmp->email = $email;
             $tmp->password = Hash::make($password);
             $tmp->image_id = $tImg;
             $tmp->plan_id = $plan;
             if ($tmp->save()) {
                 $perm = new Basic($tmp->id);
                 if (Functions::testVar($perm)) {
-                    $perm->makeFakes(1);
+                    $perm->makeFakes(1, false, 1);
                     $ui = UserImage::createNewFrom($tmp);
                     if (Functions::testVar($ui)) {
                         return $tmp;
@@ -320,17 +324,21 @@ class User extends Model
     public function setIsAdmin(bool $regen = false)
     {
         $perm = new Basic($this->id);
-        $perm->makeFakes(random_int(1, 9), false);
+        $of1 = random_int(1, 9);
+        $perm->makeFakes(false ? $of1 : 1, false, 1);
         $perm->setAdmin();
-        $perm->makeFakes(random_int(1, 9), $regen);
+        $of2 = random_int(1, 9);
+        $perm->makeFakes(false ? $of2 : 1, $regen, 1);
     }
 
     public function setIsAuthUser(bool $regen = false)
     {
         $perm = new Basic($this->id);
-        $perm->makeFakes(random_int(1, 9), false);
+        $of1 = random_int(1, 9);
+        $perm->makeFakes(false ? $of1 : 1, false, 1);
         $perm->setAuthUser();
-        $perm->makeFakes(random_int(1, 9), $regen);
+        $of2 = random_int(1, 9);
+        $perm->makeFakes(false ? $of2 : 1, $regen, 1);
     }
     
 }

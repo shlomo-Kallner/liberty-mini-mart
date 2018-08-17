@@ -179,15 +179,15 @@
                                     <h3>Your Personal Details</h3>
                                     <div class="form-group">
                                         <label for="firstname">First Name <span class="require">*</span></label>
-                                        <input type="text" id="firstname" name="firstname" class="form-control">
+                                        <input type="text" id="firstname" name="firstname" class="form-control" value="{{old('firstname')}}">
                                     </div>
                                     <div class="form-group">
                                         <label for="lastname">Last Name <span class="require">*</span></label>
-                                        <input type="text" id="lastname" name="lastname" class="form-control">
+                                        <input type="text" id="lastname" name="lastname" class="form-control" value="{{old('lastname')}}">
                                     </div>
                                     <div class="form-group">
                                         <label for="email">E-Mail <span class="require">*</span></label>
-                                        <input type="email" id="email" name="email" class="form-control">
+                                        <input type="email" id="email" name="email" class="form-control" value="{{old('email')}}">
                                     </div>
                                     @if (false)
                                         <div class="form-group">

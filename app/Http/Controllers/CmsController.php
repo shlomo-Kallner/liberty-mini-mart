@@ -43,17 +43,20 @@ class CmsController extends MainController
         //dd($request->session()->getId());
         //$sections = Section::getAllWithPagination();
         //dd(Page::get()->count());
-        $sections = Section::getAllModels();
+        $sections = Section::getAllModels(true, true);
         foreach ($sections as $section) {
             //$section['categories'] = Categorie::getCategoriesOfSectionWithPagination($section['id'], ... );
             $section['categories'] = Categorie::getCategoriesOfSection($section['id']);
             //dd($section);
         }
-        $users = User::getAllUsers(true, true);
-        //dd($users);
-        $pages = []; // Page::getAllPages();
         //dd($sections);
+        $users = []; // User::getAllUsers(true, true);
+        //dd($users); // []; // 
+        $pages = Page::getAllPages();
+        //dd($pages);
+        $articles = []; // Article::getAll();
         $sidebar = self::getAdminSidebar();
+        //dd($sidebar);
         return self::getView(
             'content.cms', 'Admin Dashboard', 
             [

@@ -34,6 +34,6 @@ window.Laravel.page.alert = new LaravelAlert(window.Laravel.alert);
 var masterAlert = new Vue({
   el: '#masterPageAlertContainer',
   data: {
-    alert: window.Laravel.page.alert.getData()
+    alert: window.Laravel.page.alert
   }
 });

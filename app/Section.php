@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model,
     App\Utilities\Functions\Functions,
+    App\Categorie,
     App\Page,
     App\Image,
     App\SectionImage;
@@ -24,20 +25,89 @@ class Section extends Model
     {
         return self::where('url', $name)->first();
     }
-    static public function getAllModels() 
+
+    public function getCategory(string $url)
     {
-        $tmp = self::all()->toArray();
+        return $this->categories()->where('url', $url)->first();
+    }
+
+    static public function makeContentArray(
+        string $name, string $url, $img,
+        array $otherImages = null,
+        array $cats = null, int $id = 0
+    ) {
+        return [
+            'name' => $name,
+            'url' => $url,
+            'img' => Image::getImageArray($img),
+            'otherImages' => $otherImages??[],
+            'categories' => $cats,
+        ];
+    }
+
+    public function toContentArray()
+    {
+        $tCats = $this->categories;
+        $cats = [];
+        foreach($tCats as $cat) {
+            $cats[] = $cat->toContentArray();
+        }
+        return self::makeContentArray(
+            $this->name, $this->url, $this->image,
+            //SectionImage::getAllImages($this->id),
+            Image::getArraysFor($this->otherImages),
+            $cats, $this->id
+        );
+    }
+
+    static public function getAllModels(bool $withCats = true, bool $toArray = true) 
+    {
+        $tmp = self::all();
         /* foreach ($tmp as $section) {
             $section = Functions::dbModel2ViewModel($section);
         } */
-        return $tmp;
+        if ($toArray) {
+            $res = [];
+            foreach ($tmp as $sect) {
+                $res[] = $sect->toContentArray($withCats);
+            }
+            return $res;
+        } else {
+            return $tmp;
+        }
+    }
+
+    public function image()
+    {
+        return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
+    public function categories()
+    {
+        return $this->hasMany('App\Categorie', 'section_id');
+    }
+
+    /**
+     *  Function otherImages() Is Now An Eloquent Relationship!
+     *  Pass it's result through the getArraysFor() on the Image
+     *  Model!
+     */
+    public function otherImages()
+    {
+        return $this->hasManyThrough(
+            'App\Image', 'App\SectionImage', 
+            'section_id', 'id', 
+            'id', 'image_id'
+        );
+        //return SectionImage::getAllImages($this->id);
     }
 
     static public function getAllWithPagination(
+        bool $withCats = true, bool $toArray = true,
         $pageNum, $firstIndex, $lastIndex, int $numShown = 4,
         string $pagingFor = ''
     ) {
-        $tmp = self::getAllModels();
+        $tmp = self::getAllModels($withCats, $toArray);
         $num = count($tmp);
         return [
             'sections' => $tmp,
@@ -52,7 +122,7 @@ class Section extends Model
     }
 
     static public function createNew(
-        string $name, string $url, string $title, string $article,
+        string $name, string $url, string $title, $article,
         string $description, $img, string $sub_title = ''
     ) {
         $tmp = self::where('name', $name)
@@ -60,12 +130,13 @@ class Section extends Model
             ->get();
         if (!Functions::testVar($tmp) || count($tmp) === 0) {
             $tImg = Image::getImageToID($img);
-            if (Functions::testVar($tImg)) {
+            $tArt = Article::getToId($article);
+            if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
                 $data = new self;
                 $data->name = $name;
-                $data->image = $tImg;
+                $data->image_id = $tImg;
                 $data->sub_title = $sub_title;
-                $data->article = $article;
+                $data->article_id = $tArt;
                 $data->url = $url;
                 $data->description = $description;
                 if ($data->save()) {
@@ -74,7 +145,6 @@ class Section extends Model
                     }
                 }
             }
-             
         }
         return null;
     }

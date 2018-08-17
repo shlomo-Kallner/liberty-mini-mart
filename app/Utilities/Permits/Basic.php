@@ -202,7 +202,7 @@ class Basic extends Permits
         return in_array(parent::GUEST_USER_ROLE, $this->basics, true); 
     }
 
-    public function makeFakes(int $num = 1, bool $regen = true)
+    public function makeFakes(int $num = 1, bool $regen = true, int $t = 0)
     {
         if ($num > 0 && $num < 10) {
             $num_to = $num;
@@ -213,7 +213,7 @@ class Basic extends Permits
             $this->addPermit('***', 9);
             $this->addPermit('@@@', 8);
             $this->addPermit('+++', 7);
-            $num_x = random_int(3, 8);
+            $num_x = $t > 0 ? 3 : random_int(3, 8);
             if ($num_x > 3) {
                 $this->addPermit('&&&', 6);
                 if ($num_x > 4) {

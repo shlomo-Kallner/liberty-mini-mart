@@ -59,8 +59,10 @@ class Image extends Model
 
     static public function getImageToID($image)
     {
-        if (is_array($image)) {
+        if (is_array($image) && !self::isImageArray($image)) {
             return self::createNewFrom($image);
+        } elseif (is_array($image) && self::isImageArray($image)) {
+            return self::existsId($image['id']) ? $image['id'] : null;
         } elseif (is_int($image) && self::existsId($image)) {
             return $image;
         } elseif ($image instanceof self && self::existsId($image->id)) {
@@ -70,11 +72,25 @@ class Image extends Model
         }
     }
 
+    static public function isImageArray($image)
+    {
+        if (Functions::testVar($image) && is_array($image)) {
+            return array_key_exists('id', $image)
+                && array_key_exists('img', $image)
+                && array_key_exists('alt', $image)
+                && array_key_exists('cap', $image);
+        } else {
+            return false;
+        }
+    }
+
     static public function getImage($image)
     {
         if (is_int($image) && self::existsId($image)) {
             return self::getFromId($image);
         } elseif ($image instanceof self) {
+            return $image;
+        } elseif (self::isImageArray($image) ) {
             return $image;
         } else {
             return null;
@@ -85,11 +101,20 @@ class Image extends Model
     {
         $tmp = self::getImage($image);
         if (Functions::testVar($tmp)) {
-            $imgPath = Functions::testVar($tmp->path) ? $tmp->path . '/' : '';
-            $img = $imgPath . $tmp->name;
-            $alt = $tmp->alt;
-            $cap = $tmp->caption;
-            $id = $tmp->id;
+            if ($tmp instanceof self) {
+                $imgPath = Functions::testVar($tmp->path) ? $tmp->path . '/' : '';
+                $img = $imgPath . $tmp->name;
+                $alt = $tmp->alt;
+                $cap = $tmp->caption;
+                $id = $tmp->id;
+            } elseif (self::isImageArray($tmp)) {
+                return $tmp;
+            } else {
+                $img = '';
+                $alt = '';
+                $cap = '';
+                $id = '';
+            }
         } else {
             $img = '';
             $alt = '';
@@ -102,6 +127,24 @@ class Image extends Model
             'alt' => $alt,
             'cap' => $cap
         ];
+    }
+
+    public function toImageArray()
+    {
+        return self::getImageArray($this);
+    }
+
+    static public function getArraysFor($images)
+    {
+        $res = [];
+        if (Functions::testVar($images) && count($images) > 0) {
+            foreach ($images as $img) {
+                if ($img instanceof self) {
+                    $res[] = $img->toImageArray();
+                }
+            }
+        }
+        return $res;
     }
 
     static public function getAllForPivots($pivots, bool $toArray = false)

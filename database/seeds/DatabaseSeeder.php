@@ -2,8 +2,15 @@
 
 use Illuminate\Database\Seeder;
 use App\Utilities\Functions\Functions;
+use Faker\Generator as Faker;
 use Illuminate\Support\Facades\Storage;
 use App\Image;
+use App\Article,
+    App\Page,
+    App\Product,
+    App\Plan;
+use App\Section;
+use App\Categorie;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,8 +28,47 @@ class DatabaseSeeder extends Seeder
          //         'path' is empty, if so -> the image is non-local!
          //         else -> image is local, so append 'path' to the 'name'!
          $this->loadJSONseeds();
+         self::genFakeStuff();
          $this->call(UserTableSeeder::class);
          
+    }
+
+    static protected function genFakeStuff()
+    {
+        $faker = \Faker\Factory::create();
+        // generate fake articles..
+        $num_a = 20;
+        $ass = [];
+        for($i = 0; $i < $num_a; $i++) {
+            $tmp = Article::createNew(
+                $faker->text(200),
+                $faker->text(8),
+                1,
+                $faker->text(30),
+                true
+            );
+            //dd($tmp);
+            if (Functions::testVar($tmp)) {
+                $ass[$tmp] = [
+                    $faker->name,
+                    $faker->domainWord
+                ];
+            }
+
+        }
+        //dd($ass);
+        // generate fake pages..
+        if (Functions::testVar($ass)) {
+            foreach ($ass as $key => $pn) {
+                //dd($key, $pn);
+                $tmp = Page::createNew(
+                    $pn[0], $pn[1], 1,
+                    $faker->text(10), $key, 
+                    $faker->text(30), 1, ''
+                );
+                //dd($tmp, $key, $pn);
+            }
+        }
     }
 
     /**
@@ -111,6 +157,54 @@ class DatabaseSeeder extends Seeder
         return false;
     }
 
+    static protected function loadPages(array $pages)
+    {
+        if (Functions::testVar($pages)) {
+            $bol = true;
+            // Products
+            foreach ($pages as $page) {
+                $p = Page::createNewFrom($page);
+                if (!Functions::testVar($p)) {
+                    $bol = false;
+                }
+            }
+            return $bol;
+        }
+        return false;
+    }
+
+    static protected function loadArticles(array $articles)
+    {
+        if (Functions::testVar($articles)) {
+            $bol = true;
+            // Products
+            foreach ($articles as $article) {
+                $a = Article::createNewFrom($article);
+                if (!Functions::testVar($a)) {
+                    $bol = false;
+                }
+            }
+            return $bol;
+        }
+        return false;
+    }
+
+    static protected function loadPlans(array $plans)
+    {
+        if (Functions::testVar($plans)) {
+            $bol = true;
+            // Products
+            foreach ($plans as $plan) {
+                $p = Plan::createNewFrom($plan);
+                if (!Functions::testVar($p)) {
+                    $bol = false;
+                }
+            }
+            return $bol;
+        }
+        return false;
+    }
+
     public function loadJSONseeds()
     {
         $filepath = 'db/seedFile.json';// TODO! create file name & path!
@@ -121,7 +215,12 @@ class DatabaseSeeder extends Seeder
                 $data = json_decode($content, true);
                 if (Functions::testVar($data)) {
                     self::loadImages($data['images']);
+                    //self::loadArticles($data['articles']);
+                    //self::loadPages($data['pages']);
                     //self::loadSections($data['sections'], 0);
+
+                    //self::loadPlans($data['plans']);
+                    
                 }
             }
             

@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model,
     Illuminate\Http\Request,
     App\Utilities\Functions\Functions,
     DB,
+    App\Article,
     App\Section,
     App\Categorie,
     App\PageGroup,
+    App\PageGrouping,
     App\User,
     Session;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -192,8 +194,8 @@ class Page extends Model
 
     static public function getPreHeader($genFakeData = false) 
     {
-        //$testing = $genFakeData;
-        $testing = true;
+        $testing = $genFakeData; // no-op ... for now..
+        //$testing = true;
         $preheader = [];
 
         //dd(session()->all());
@@ -204,22 +206,18 @@ class Page extends Model
         $is_admin = User::getIsAdmin();
 
 
-        if (!$testing) {
-            
+        if (!$loggedin) {
+            // {{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
+            $preheader[] = self::genModalMenuItem('Sign In', '#login-modal', 'fa-sign-in', 'text-uppercase');
+            $preheader[] = self::genURLMenuItem('signup', 'Sign up', 'fa-user', 'text-uppercase');
         } else {
-            if (!$loggedin) {
-                // {{-- UPDATE: changing 'Log In' url to 'Sign In' url. --}}
-                $preheader[] = self::genModalMenuItem('Sign In', '#login-modal', 'fa-sign-in', 'text-uppercase');
-                $preheader[] = self::genURLMenuItem('signup', 'Sign up', 'fa-user', 'text-uppercase');
-            } else {
-                $preheader[] = self::genURLMenuItem('user', 'My Account', 'fa-id-card-o', 'text-uppercase');
-                $preheader[] = self::genURLMenuItem('wishlist', 'My Wishlist', 'fa-calendar-o', 'text-uppercase');
-                $preheader[] = self::genURLMenuItem('checkout', 'Checkout', 'fa-shopping-cart', 'text-uppercase');
-                if ($is_admin) {
-                    $preheader[] = self::genURLMenuItem('admin', 'Dashboard', 'fa-bar-chart', 'text-uppercase');
-                }
-                $preheader[] = self::genURLMenuItem('signout', 'Sign out', 'fa-sign-out', 'text-uppercase');
+            $preheader[] = self::genURLMenuItem('user', 'My Account', 'fa-id-card-o', 'text-uppercase');
+            $preheader[] = self::genURLMenuItem('wishlist', 'My Wishlist', 'fa-calendar-o', 'text-uppercase');
+            $preheader[] = self::genURLMenuItem('checkout', 'Checkout', 'fa-shopping-cart', 'text-uppercase');
+            if ($is_admin) {
+                $preheader[] = self::genURLMenuItem('admin', 'Dashboard', 'fa-bar-chart', 'text-uppercase');
             }
+            $preheader[] = self::genURLMenuItem('signout', 'Sign out', 'fa-sign-out', 'text-uppercase');
         }
         return $preheader;
     }
@@ -345,24 +343,67 @@ class Page extends Model
         } else {
             $o = $otherImages;
         }
-        return [
-            'title' => $this->title,
-            'content' => [
-                'header' => $this->title,
-                'article' => [
-                    'header' => $this->description,
+        return self::makeContentArray(
+            $this->article, $this->description, $this->title,
+            $i, $o, 
+            self::getBreadcrumbs(
+                self::genBreadcrumb($this->name, $this->url),
+                $b
+            ), 
+            $this->visible
+        );
+        /*     
+            return [
+                'title' => $this->title,
+                'content' => [
+                    'header' => $this->title,
+                    'article' => [
+                        'header' => $this->description,
+                        'subheading' => $i['cap'],
+                        'img' => $i['img'],
+                        'imgAlt' => $i['alt'],
+                        'article' => $this->article
+                    ]
+                ],
+                'breadcrumbs' => self::getBreadcrumbs(
+                    self::genBreadcrumb($this->name, $this->url),
+                    $b
+                ),
+                'visible' => $this->visible,
+                'otherImages' => $o,
+            ];  
+        */
+    }
+
+    static public function makeContentArray(
+        $article, string $header, 
+        string $title, $img, 
+        // string $description,
+        array $otherImages = null,
+        array $breadcrumbs = null, 
+        int $visible = 0
+    ) {
+        $i = Image::getImageArray($img);
+        /**
+         * [
+                    'header' => $description,
                     'subheading' => $i['cap'],
                     'img' => $i['img'],
                     'imgAlt' => $i['alt'],
-                    'article' => $this->article
+                    'article' => $article
                 ]
+         */
+        $a = Article::getArticle($article);
+        return [
+            'title' => $title,
+            'content' => [
+                'header' => $header,
+                'article' => $a,
+                'img' => $i,
             ],
-            'breadcrumbs' => self::getBreadcrumbs(
-                self::genBreadcrumb($this->name, $this->url),
-                $b
-            ),
-            'visible' => $this->visible,
-            'otherImages' => $o,
+            'breadcrumbs' => $breadcrumbs,
+            'visible' => $visible,
+            'otherImages' => $otherImages,
 
         ]; 
     }
@@ -399,12 +440,22 @@ class Page extends Model
         }
     }
 
-    public function groups()
+    /* public function groups()
     {
         return $this->hasMany('App\PageGroup', 'page');
+    } */
+
+    public function image()
+    {
+        return $this->hasOne('App\Image', 'id', 'image_id');
     }
 
-    static public function getAllPages(bool $getObj = true, $order = 'asc')
+    public function article()
+    {
+        return $this->hasOne('App\Article', 'id', 'article_id');
+    }
+
+    static public function getAllPages(bool $getObj = false, $order = 'asc')
     {
         /* $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
             //->orderBy('page_groups.group', $order)
@@ -467,9 +518,9 @@ class Page extends Model
 
     static public function createNew(
         string $name, string $url, $img,
-        string $title, string $article, string $description,
+        string $title, $article, string $description,
         int $visible = 1, string $sticker = '',
-        int $group_id = -1, int $order = -1
+        $group_id = -1, int $order = -1
     ) {
         $tP = self::where(
             [
@@ -479,16 +530,23 @@ class Page extends Model
         )->get();
         if (!Functions::testVar($tP) || count($tP) === 0) {
             $tImg = Image::getImageToID($img);
-            if (Functions::testVar($tImg)) {
+            $tArt = Article::getToId($article);
+            if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
                 $data = new self;
                 $data->name = $name;
                 $data->url = $url;
-                $data->image = $tImg;
+                $data->image_id = $tImg;
                 $data->title = Functions::purifyContent($title);
-                $data->article = Functions::purifyContent($article);
+                $data->article_id = $tArt;
                 $data->description = Functions::purifyContent($description);
                 $data->visible = $visible;
                 $data->sticker = $sticker;
+
+                if (!Functions::testVar($gId = PageGrouping::getFrom($group_id))) {
+                    $gId = PageGrouping::getRandId();
+                }
+                //if ()
+
                 /* 
                     // need to do some special checking on group_id..
                     if ($group_id < 0) {

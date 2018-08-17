@@ -117,18 +117,24 @@ class MainController extends Controller {
     static public function addMsg(string $msg)
     {
         if (session()->has('msgs')) {
+            //dd(session()->all(), $msg);
             session()->push('msgs', $msg);
         } else {
             $tmp = [];
             $tmp[] = $msg;
-            session()->put('msgs', $msg);
+            //dd(session()->all(), $msg);
+            session()->put('msgs', $tmp);
+            //dd(session(), $msg);
+            
         }
+        //dd(session()->all());
     }
 
     static public function getMsgs()
     {
         if (session()->has('msgs')) {
-            $msgs = session()->get('msgs');
+            $msgs = session()->pull('msgs');
+            //dd(session(), $msgs);
             if (Functions::testVar($msgs)) {
                 return $msgs;
             }
@@ -288,13 +294,14 @@ class MainController extends Controller {
             );
         } elseif (self::$data['alert']['class'] === '') {
             $mgs = self::getMsgs();
+            //dd($mgs);
             if (Functions::testVar($mgs)) {
                 $tStr = '<ul>';
                 foreach ($mgs as $msg) {
                     $tStr .= '<li>' . Functions::purifyContent($msg) . '</li>';
                 }
                 $tStr .= '</ul>';
-                self::setAlert('alert-info', 'Here are Your Messages:', $tStr, 0);
+                self::setAlert('alert-info', 'Here are Your Messages:', $tStr, 9000);
             } else {
                 self::setAlert();
             }

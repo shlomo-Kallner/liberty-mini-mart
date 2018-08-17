@@ -29,12 +29,13 @@ class UserTableSeeder extends Seeder
             if ($asUser) {
                 $perm = new Basic($tmp->id);
                 $perm->setGuestUser();
-                $perm->setAuthUser(true);
-                $perm->makeFakes(random_int(1, 4));
+                $perm->setAuthUser();
+                $perm->makeFakes(false ? random_int(1, 4) : 1, false, 1);
             }
             return $tmp;
         } else {
             dd($tmp);
+
         }
     }
     
@@ -72,8 +73,8 @@ class UserTableSeeder extends Seeder
         $perm = new Basic($creator->id);
         $perm->setGuestUser();
         $perm->setAuthUser();
-        $perm->setContentCreator(true);
-        $perm->makeFakes(random_int(1, 4));
+        $perm->setContentCreator();
+        $perm->makeFakes(false ? random_int(1, 4) : 1, false, 1);
         
         // create my..
         $admin = User::createNew(
@@ -85,8 +86,8 @@ class UserTableSeeder extends Seeder
         $perm->setGuestUser();
         $perm->setAuthUser();
         $perm->setContentCreator();
-        $perm->setAdmin(true);
-        $perm->makeFakes(random_int(1, 4));
+        $perm->setAdmin();
+        $perm->makeFakes(false ? random_int(1, 4) : 1, false, 1);
 
         // create several regular users..
         $user = User::createNew(
@@ -95,8 +96,8 @@ class UserTableSeeder extends Seeder
         );
         $perm = new Basic($user->id);
         $perm->setGuestUser();
-        $perm->setAuthUser(true);
-        $perm->makeFakes(random_int(1, 4));
+        $perm->setAuthUser();
+        $perm->makeFakes(false ? random_int(1, 4) : 1, false, 1);
         
     }
 }
