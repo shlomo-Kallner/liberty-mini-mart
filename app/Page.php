@@ -339,7 +339,8 @@ class Page extends Model
             $b = $links;
         }
         if (!Functions::testVar($otherImages)) {
-            $o = PageImage::getAllImages($this->id, true);
+            //$o = PageImage::getAllImages($this->id, true);
+            $o = Image::getArraysFor($this->images);
         } else {
             $o = $otherImages;
         }
@@ -408,8 +409,9 @@ class Page extends Model
         ]; 
     }
 
-    static public function getNamedPage($url, $path = null, bool $getObj = false)
-    {
+    static public function getNamedPage(
+        $url, $path = null, bool $getObj = false
+    ) {
         $page = self::where('url', $url)->first();
         //dd($page, $url, __METHOD__);
         if (Functions::testVar($page)) {
@@ -440,10 +442,23 @@ class Page extends Model
         }
     }
 
-    /* public function groups()
+    public function groups()
     {
-        return $this->hasMany('App\PageGroup', 'page');
-    } */
+        return $this->hasManyThrough(
+            'App\PageGroup', 'App\PageGrouping',
+            'page_id', 'id',
+            'id', 'group_id'
+        );
+    } 
+
+    public function images()
+    {
+        return $this->hasManyThrough(
+            'App\Image', 'App\PageImage',
+            'page_id', 'id',
+            'id', 'image_id'
+        );
+    }
 
     public function image()
     {
@@ -519,9 +534,14 @@ class Page extends Model
     static public function createNew(
         string $name, string $url, $img,
         string $title, $article, string $description,
-        int $visible = 1, string $sticker = '',
-        $group_id = -1, int $order = -1
+        int $visible = 2, string $sticker = '',
+        $group = -1, int $order = -1
     ) {
+        if (!Functions::testVar($gId = PageGroup::getFrom($group))) {
+            $group_id = PageGroup::getRandId();
+        } else {
+            $group_id = $gId->id;
+        }
         $tP = self::where(
             [
                 ['url', '=', $url],
@@ -542,11 +562,7 @@ class Page extends Model
                 $data->visible = $visible;
                 $data->sticker = $sticker;
 
-                if (!Functions::testVar($gId = PageGrouping::getFrom($group_id))) {
-                    $gId = PageGrouping::getRandId();
-                }
                 //dd($data, 1);
-                //if ()
 
                 /* 
                     // need to do some special checking on group_id..
@@ -560,9 +576,11 @@ class Page extends Model
                 */
                 if ($data->save()) {
                     //dd($data, 2);
-                    if (PageGroup::reorderAround($group_id, $data->id, $order)) {
+                    if (PageGrouping::reorderAround($group_id, $data->id, $order)) {
                         //dd($data, 3);
-                        if (Functions::testVar($pg = PageGroup::createNew($group_id, $data->id, $order))) {
+                        $pg = PageGrouping::createNew($group_id, $data->id, $order);
+                        $pi = PageImage::createNewFrom($data);
+                        if (Functions::testVar($pg) && Functions::testVar($pi)) {
                             //dd($data, $pg, 4, "my");
                             return $data->id;
                         }

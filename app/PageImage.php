@@ -45,16 +45,16 @@ class PageImage extends Pivot
         // duplication avoidance..
         $t2 = self::where(
             [
-                ['image', '=', $image_id],
-                ['page', '=', $page_id]
+                ['image_id', '=', $image_id],
+                ['page_id', '=', $page_id]
             ]
         )->first();
         if (Functions::testVar($t2)) {
             return $t2->id;
         } else {
             $tmp = new self;
-            $tmp->page = $page_id;
-            $tmp->image = $image_id;
+            $tmp->page_id = $page_id;
+            $tmp->image_id = $image_id;
             if ($tmp->save()) {
                 return $tmp->id;
             } else {
@@ -65,7 +65,7 @@ class PageImage extends Pivot
 
     static public function createNewFrom(Page $page)
     {
-        return self::createNew($page->id, $page->image);
+        return self::createNew($page->id, $page->image_id);
     }
 
     static public function getAllImages($page, bool $toArray = false) 
@@ -78,7 +78,7 @@ class PageImage extends Pivot
         } else {
             return null;
         }
-        $tmp = self::where('page', $page_id)->get();
+        $tmp = self::where('page_id', $page_id)->get();
         return Image::getAllForPivots($tmp, $toArray);
     }
 
@@ -91,11 +91,21 @@ class PageImage extends Pivot
         } else {
             return null;
         }
-        $t = self::where('image', $img_id)->first();
+        $t = self::where('image_id', $img_id)->first();
         if (Functions::testVar($t)) {
             return $t->page;
         } else {
             return null;
         }
+    }
+
+    public function page()
+    {
+        return $this->belongsTo('App\Page', 'page_id');
+    }
+
+    public function image()
+    {
+        return $this->hasOne('App\Image', 'id', 'image_id');
     }
 }

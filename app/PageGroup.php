@@ -83,16 +83,35 @@ class PageGroup extends Model
         return Functions::testVar(self::getFrom($pg));
     }
 
-    static public function getRandId()
+    /**
+     * Function getRandId - get a random ID of an existing PageGroup
+     *                      if there are none create and return one 
+     *                      using $newName for the new PageGroup's name.
+     *                      Returns null on Failure.
+     *
+     * @param string $newName 
+     * @return int|null
+     */
+    static public function getRandId(string $newName = 'Pages')
     {
         $n = self::count();
-        return $n > 1 ? random_int(1, $n) : 1;
+        if ($n > 0) {
+            return $n !== 1 ? random_int(1, $n) : 1;
+        } else {
+            if (Functions::testVar($ng = self::getFrom($newName))) {
+                return $ng->id;
+            } elseif (Functions::testVar($newName)) {
+                $tng = self::createNew($newName);
+                return Functions::testVar($tng) ? $tng : null;
+            }
+        }
+        return null;
     }
 
     public function pages()
     {
         return $this->hasManyThrough(
-            'App\Page', 'App\PageGroup',
+            'App\Page', 'App\PageGrouping',
             'group_id', 'id',
             'id', 'page_id'
         );

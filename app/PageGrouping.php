@@ -93,6 +93,7 @@ class PageGrouping extends Model
                 // need to 'move' (increment 'order' on)
                 // all models from '$order' upward if exists..
                 //dd($tg, $group, $page, $order, $pgId);
+                //$tpg = self::where()->get();
                 foreach ($tg as $item) {
                     //dd($tg, $item);
                     if ($item->order >= $order && $item->id !== $pgId) {

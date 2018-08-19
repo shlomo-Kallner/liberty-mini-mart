@@ -87,6 +87,11 @@ class Article extends Model
         return null;
     }
 
+    public function image()
+    {
+        return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
     static public function getArticle(
         $article, bool $toArray = false, 
         bool $imgAsArr = true
@@ -109,7 +114,7 @@ class Article extends Model
     {
         return self::makeContentArray(
             $this->article, $this->header,
-            $this->image_id, $this->subheading,
+            $this->image, $this->subheading,
             $imgAsArr, $this->id
         );
     }
