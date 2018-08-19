@@ -13,7 +13,7 @@ class CreatePageGroupingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('page_groupings', function (Blueprint $table) {
+        Schema::create('page_groups', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 255);
             $table->integer('order')->unsigned();

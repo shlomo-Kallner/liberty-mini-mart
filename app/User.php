@@ -241,23 +241,25 @@ class User extends Model
         //return $this->hasMany('App\Cart', 'user_id');
     }
 
-    static public function getAllUsers(
-        bool $toArray = true, bool $forA = false, 
-        bool $paginate = false, int $num_pages = 0
+    static public function getUsers(
+        int $pageNumber = 1, bool $toArray = true, 
+        bool $forA = false
     ) {
+        $numPerPage = 5;
         $tmp = self::where('id', '>', self::getNumForVer())->get();
         //dd($tmp);
         $users = [];
         if (Functions::testVar($tmp) && count($tmp) > 0) {
-            foreach ($tmp as $user) {
+            $pn = $pageNumber > 0 ? $pageNumber : 1;
+            $tu = $tmp->forPage($pn, $numPerPage);
+            foreach ($tu as $user) {
                 $p = false ? true : false;
-                $perm = new Basic($user->id, $p);
+                //$perm = new Basic($user->id, $p);
                 //dd($perm);
-                if ($perm->isAdmin() 
-                    || $perm->isContentCreator()
-                    || $perm->isAuthUser() 
+                // $perm->isAdmin() || $perm->isContentCreator() || $perm->isAuthUser() 
+                if (Functions::testVar($ur = $user->getRolesArray($perm, $p))
+                    && count($ur) > 0
                 ) {
-                    $ur = $user->getRolesArray($perm, $p);
                     if ($toArray) {
                         $tu = $user->toContentArray();
                         $tu['roles'] = $ur;

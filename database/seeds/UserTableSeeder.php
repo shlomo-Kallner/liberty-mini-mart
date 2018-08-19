@@ -27,7 +27,8 @@ class UserTableSeeder extends Seeder
         );
         if (Functions::testVar($tmp)) {
             if ($asUser) {
-                $perm = new Basic($tmp->id);
+                $tu = User::getUserId($tmp);
+                $perm = new Basic($tu);
                 $perm->setGuestUser();
                 $perm->setAuthUser();
                 $perm->makeFakes(false ? random_int(1, 4) : 1, false, 1);
@@ -70,7 +71,8 @@ class UserTableSeeder extends Seeder
             'fingerPainter123',  1, 1
         );
         //dd($creator);
-        $perm = new Basic($creator->id);
+        $ci = User::getUserId($creator);
+        $perm = new Basic($ci);
         $perm->setGuestUser();
         $perm->setAuthUser();
         $perm->setContentCreator();
@@ -81,8 +83,8 @@ class UserTableSeeder extends Seeder
             'artisan', 'artisan@liberty-mini-mart.bit.il',
             'phpMyAdmin127', 1, 1
         );
-        
-        $perm = new Basic($admin->id);
+        $ai = User::getUserId($admin);
+        $perm = new Basic($ai);
         $perm->setGuestUser();
         $perm->setAuthUser();
         $perm->setContentCreator();
@@ -94,10 +96,15 @@ class UserTableSeeder extends Seeder
             'critic', 'indulgent.critic@example.com',
             'criticalReveiwer123',  1, 1
         );
+        $ui = User::getUserId($user);
         $perm = new Basic($user->id);
         $perm->setGuestUser();
         $perm->setAuthUser();
         $perm->makeFakes(false ? random_int(1, 4) : 1, false, 1);
+
+        for ($i = 0; $i < 20; $i++) {
+            self::genFake($faker, true);
+        }
         
     }
 }

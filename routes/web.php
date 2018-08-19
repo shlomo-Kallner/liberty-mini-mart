@@ -23,8 +23,15 @@ Route::get(
         $dump = true;
         //$tmp = User::getUserArray($request);
         //$tmp = $request->session()->all();
-        $tmp = PageGroup::where('group_id', 2)
-        ->max('order');
+        $tmp = [
+            User::getUserArray($request),
+            $request->session()->all()
+        ];
+        //$tmp = new \DatabaseSeeder;
+        //dd($tmp);
+        //$tmp->run();
+        //PageGroup::where('group_id', 2)
+        //->max('order');
         //->get(); //all(); //getAllPages();
         if ($dump) {
             dd(session()->all(), $tmp, PageGroup::getGroups());

@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
          // NOTE: rewrite Image file name+path getters to check if
          //         'path' is empty, if so -> the image is non-local!
          //         else -> image is local, so append 'path' to the 'name'!
+         //       UPDATE: done in toContentArray() methods.
          $this->loadJSONseeds();
          self::genFakeStuff();
          $this->call(UserTableSeeder::class);
@@ -39,7 +40,7 @@ class DatabaseSeeder extends Seeder
         // generate fake articles..
         $num_a = 20;
         $ass = [];
-        for($i = 0; $i < $num_a; $i++) {
+        for ($i = 0; $i < $num_a; $i++) {
             $tmp = Article::createNew(
                 $faker->text(200),
                 $faker->text(8),
@@ -68,6 +69,7 @@ class DatabaseSeeder extends Seeder
                 );
                 //dd($tmp, $key, $pn);
             }
+            //dd($ass, "dumpASS!");
         }
     }
 

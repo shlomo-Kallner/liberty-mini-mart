@@ -2,12 +2,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Relations\Pivot,
+use Illuminate\Database\Eloquent\Model,
     Illuminate\Database\Eloquent\SoftDeletes,
-    App\Utilities\Functions\Functions,
-    App\PageGrouping;
+    App\Utilities\Functions\Functions;
 
-class PageGroup extends Pivot
+
+class PageGroup extends Model
 {
     use SoftDeletes;
     
@@ -25,90 +25,77 @@ class PageGroup extends Pivot
      */
     protected $dates = ['deleted_at'];
 
-    static public function createNew(int $group, int $page, int $order)
+    static public function orderAround(int $order)
     {
-        if ($page > 0) {
-            if ($group < 1) {
-                $group_id = PageGrouping::getRandId(); //self::max('group_id') + 1;
-            } else {
-                $group_id = $group;
-            } 
-            if ($order < 1) {
-                $order_num = self::getRandOrder($group_id);
-                if ($order_num > 1) {
-                    $order_num += 1;
-                } 
-            } else {
-                $order_num = $order;
-            }
-            $tg = self::where(
-                [
-                    ['group_id', '=', $group_id],
-                    ['page_id', '=', $page],
-                    ['order', '=', $order_num]
-                ]
-            )->get();
-            if (!Functions::testVar($tg) || count($tg) === 0) {
-                $tmp = new self;
-                $tmp->group_id = $group_id;
-                $tmp->page_id = $page;
-                $tmp->order = $order_num;
-                if ($tmp->save()) {
-                    if (self::reorderAround($tmp->group_id, $tmp->page_id, $tmp->order)) {
-                        return $tmp->id;
-                    }
+        $tmp = self::where('order', '>=', $order)->get();
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            foreach ($tmp as $t) {
+                if ($t->order >= $order) {
+                    $t->order += 1;
+                    $t->save();
                 }
+            }
+        }
+    }
+
+    static public function createNew(
+        string $name, int $order = -1
+    ) {
+        $tmp = self::where('name', $name)->get();
+        if (!Functions::testVar($tmp) || count($tmp) === 0) {
+            if ($order < 1) {
+                $o = self::count() + 1;
+            } else {
+                self::orderAround($order);
+                $o = $order;
+            }
+            $data = new self;
+            $data->name = $name;
+            $data->order = $o;
+            if ($data->save()) {
+                return $data->id;
             }
         }
         return null;
     }
 
-    static public function createNewFrom(array $array) 
+    static public function createNewFrom(array $array)
     {
-        return self::createNew(
-            $array['group'], $array['page'], $array['order']
+        return self::createNew($array['name'], $array['order']??-1);
+    }
+
+    static public function getFrom($pg) 
+    {
+        if (is_string($pg) && Functions::testVar($pg)) {
+            $tmp = self::where('name', $pg)->first();
+        } elseif (is_int($pg) && Functions::testVar($pg)) {
+            $tmp = self::where('id', $pg)->first();
+        } elseif ($pg instanceof self) {
+            $tmp = $pg;
+        } else {
+            $tmp = null;
+        }
+        return $tmp;
+    }
+
+    static public function exists($pg)
+    {
+        return Functions::testVar(self::getFrom($pg));
+    }
+
+    static public function getRandId()
+    {
+        $n = self::count();
+        return $n > 1 ? random_int(1, $n) : 1;
+    }
+
+    public function pages()
+    {
+        return $this->hasManyThrough(
+            'App\Page', 'App\PageGroup',
+            'group_id', 'id',
+            'id', 'page_id'
         );
     }
 
-    static public function reorderAround(int $group, int $page, int $order) 
-    {
-        $tg = self::getGroup($group);
-        $bol = true;
-        if (Functions::testVar($tg)) {
-            if (count($tg) !== 0) {
-                // need to 'move' (increment 'order' on)
-                // all models from '$order' upward if exists..
-                foreach ($tg as $item) {
-                    if ($tg->order >= $order) {
-                        $tg->order += 1;
-                        if (!$tg->save()) {
-                            // if for some unknown reason
-                            // the update failed..
-                            $bol = false;
-                            break;
-                        }
-                    }
-                }
-            }
-        } 
-        return $bol;
-    }
-
-    static public function getRandOrder(int $group)
-    {
-        $m = self::where('group_id', $group)->max('order');
-        return $m > 1? random_int(1, $m) : 1;
-    }
-
-    static public function getGroup(int $group, string $dir = 'asc')
-    {
-        return self::where('group_id', $group)
-            ->orderBy('order', $dir)
-            ->get();
-    }
-
-    static public function getGroups(string $dir = 'asc')
-    {
-        return self::orderBy('group_id', $dir)->get();
-    }
 }

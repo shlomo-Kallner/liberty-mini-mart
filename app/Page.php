@@ -545,6 +545,7 @@ class Page extends Model
                 if (!Functions::testVar($gId = PageGrouping::getFrom($group_id))) {
                     $gId = PageGrouping::getRandId();
                 }
+                //dd($data, 1);
                 //if ()
 
                 /* 
@@ -558,8 +559,11 @@ class Page extends Model
                     $data->order = $order; 
                 */
                 if ($data->save()) {
+                    //dd($data, 2);
                     if (PageGroup::reorderAround($group_id, $data->id, $order)) {
-                        if (Functions::testVar(PageGroup::createNew($group_id, $data->id, $order))) {
+                        //dd($data, 3);
+                        if (Functions::testVar($pg = PageGroup::createNew($group_id, $data->id, $order))) {
+                            //dd($data, $pg, 4, "my");
                             return $data->id;
                         }
                     }
