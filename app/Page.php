@@ -311,7 +311,7 @@ class Page extends Model
     static public function genBreadcrumbsFromPath(string $url = '')
     {
         $links = [];
-        if (str_contains($url,'/')) {
+        if (str_contains($url, '/')) {
             $paths = explode('/', $url);
             if ($paths !== false) {
                 for ($i = 0; $i < count($paths); $i++) {
@@ -322,187 +322,6 @@ class Page extends Model
             }
         }
         return $links;
-    }
-
-    public function toContentArray(
-        array $img = null, array $otherImages = null,
-        array $links = null
-    ) {
-        if (!Functions::testVar($img)) {
-            $i = Image::getImageArray($this->image);
-        } else {
-            $i = $img;
-        }
-        if (!Functions::testVar($links)) {
-            $b = self::genBreadcrumb('Home', '/');
-        } else {
-            $b = $links;
-        }
-        if (!Functions::testVar($otherImages)) {
-            //$o = PageImage::getAllImages($this->id, true);
-            $o = Image::getArraysFor($this->images);
-        } else {
-            $o = $otherImages;
-        }
-        return self::makeContentArray(
-            $this->article, $this->description, $this->title,
-            $i, $o, 
-            self::getBreadcrumbs(
-                self::genBreadcrumb($this->name, $this->url),
-                $b
-            ), 
-            $this->getVisibility()
-        );
-        /*     
-            return [
-                'title' => $this->title,
-                'content' => [
-                    'header' => $this->title,
-                    'article' => [
-                        'header' => $this->description,
-                        'subheading' => $i['cap'],
-                        'img' => $i['img'],
-                        'imgAlt' => $i['alt'],
-                        'article' => $this->article
-                    ]
-                ],
-                'breadcrumbs' => self::getBreadcrumbs(
-                    self::genBreadcrumb($this->name, $this->url),
-                    $b
-                ),
-                'visible' => $this->visible,
-                'otherImages' => $o,
-            ];  
-        */
-    }
-
-    static public function makeContentArray(
-        $article, string $header, 
-        string $title, $img, 
-        // string $description,
-        array $otherImages = null,
-        array $breadcrumbs = null, 
-        int $visible = 0
-    ) {
-        $i = Image::getImageArray($img);
-        /**
-         * [
-                    'header' => $description,
-                    'subheading' => $i['cap'],
-                    'img' => $i['img'],
-                    'imgAlt' => $i['alt'],
-                    'article' => $article
-                ]
-         */
-        $a = Article::getArticle($article);
-        return [
-            'title' => $title,
-            'content' => [
-                'header' => $header,
-                'article' => $a,
-                'img' => $i,
-            ],
-            'breadcrumbs' => $breadcrumbs,
-            'visible' => $visible,
-            'otherImages' => $otherImages,
-
-        ]; 
-    }
-
-    static public function getNamedPage(
-        $url, $path = null, bool $getObj = false
-    ) {
-        $page = self::where('url', $url)->first();
-        //dd($page, $url, __METHOD__);
-        if (Functions::testVar($page)) {
-            //$image = Image::getImageArray($page->image);
-            //$otherImages = [];
-            //$oit = PageImage::getAllImages($page->id, true);
-            /* if (Functions::testVar($oit)) {
-                foreach ($oit as $i) {
-                    $t = Image::getImageArray($i);
-                    if (Functions::testVar($t)) {
-                        $otherImages[] = $t;
-                    }
-                }
-            } */
-            //  $ca = $page->toContentArray($image, $otherImages);
-            if (!$getObj) {
-                return $page->toContentArray();
-            } else {
-                return $page;
-               /*  [
-                    'page' => $page,
-                    'image' => $image,
-                    'otherImages' => $otherImages
-                ]; */
-            }
-        } else {
-            //abort(404);
-            return [];
-        }
-    }
-
-    public function groups()
-    {
-        return $this->hasManyThrough(
-            'App\PageGroup', 'App\PageGrouping',
-            'page_id', 'id',
-            'id', 'group_id'
-        );
-    } 
-
-    public function images()
-    {
-        return $this->hasManyThrough(
-            'App\Image', 'App\PageImage',
-            'page_id', 'id',
-            'id', 'image_id'
-        );
-    }
-
-    public function image()
-    {
-        return $this->hasOne('App\Image', 'id', 'image_id');
-    }
-
-    public function getVisibility()
-    {
-        return $this->viewable;
-    }
-
-    public function article()
-    {
-        return $this->hasOne('App\Article', 'id', 'article_id');
-    }
-
-    static public function getAllPages(bool $getObj = false, $order = 'asc')
-    {
-        /* $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
-            //->orderBy('page_groups.group', $order)
-            ->select('pages.*', 'page_groups.page', 'page_groups.group', 'page_groups.order')
-            ->groupBy('pages.id', 'page_groups.group')
-            ->orderBy('page_groups.order', $order)
-            ->get(); */
-        $tmp = self::all();
-        $pages = [];
-        if (Functions::testVar($tmp)) {
-            dd($tmp);
-            // TODO BASICLIST ITEM:
-            // create a manual groupBy function
-            // as PDO '@BARFED@' on the query above...
-            // Optional: create a 'PageGroupInfo' 
-            //  Table + Migration for use with PageGroup..
-            foreach ($tmp as $page) {
-                $g = $page->groups
-                    ->orderBy('group', 'order')
-                    ->get();
-                dd($g);
-                //$pages[] = '';
-            }
-            //dd($pages);
-        }
-        return $pages;
     }
     
     /**
@@ -535,6 +354,162 @@ class Page extends Model
             'numPerView' => $numPagesPerPagingView,
             'pagingFor' => $pagingFor
         ];
+    }
+
+    /// 
+
+    public function groups()
+    {
+        return $this->hasManyThrough(
+            'App\PageGroup', 'App\PageGrouping',
+            'page_id', 'id',
+            'id', 'group_id'
+        );
+    } 
+
+    public function images()
+    {
+        return $this->hasManyThrough(
+            'App\Image', 'App\PageImage',
+            'page_id', 'id',
+            'id', 'image_id'
+        );
+    }
+
+    public function image()
+    {
+        return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
+    public function article()
+    {
+        return $this->hasOne('App\Article', 'id', 'article_id');
+    }
+
+    public function getVisibility()
+    {
+        return $this->viewable;
+    }
+
+    ///
+
+    public function toContentArray(
+        array $img = null, array $otherImages = null,
+        array $links = null
+    ) {
+        if (!Functions::testVar($img)) {
+            $i = Image::getImageArray($this->image);
+        } else {
+            $i = $img;
+        }
+        if (!Functions::testVar($links)) {
+            $b = self::genBreadcrumb('Home', '/');
+        } else {
+            $b = $links;
+        }
+        if (!Functions::testVar($otherImages)) {
+            //$o = PageImage::getAllImages($this->id, true);
+            $o = Image::getArraysFor($this->images);
+        } else {
+            $o = $otherImages;
+        }
+        return self::makeContentArray(
+            $this->article, $this->description, $this->title,
+            $i, $o, 
+            self::getBreadcrumbs(
+                self::genBreadcrumb($this->name, $this->url),
+                $b
+            ), 
+            $this->getVisibility()
+        );
+    }
+
+    static public function makeContentArray(
+        $article, string $header, 
+        string $title, $img, 
+        // string $description,
+        array $otherImages = null,
+        array $breadcrumbs = null, 
+        int $visible = 0
+    ) {
+        $i = Image::getImageArray($img);
+        /**
+         * [
+                    'header' => $description,
+                    'subheading' => $i['cap'],
+                    'img' => $i['img'],
+                    'imgAlt' => $i['alt'],
+                    'article' => $article
+                ]
+         */
+        $a = Article::getArticle($article, true);
+        return [
+            'title' => $title,
+            'content' => [
+                'header' => $header,
+                'article' => $a,
+                'img' => $i,
+            ],
+            'breadcrumbs' => $breadcrumbs,
+            'visible' => $visible,
+            'otherImages' => $otherImages,
+
+        ]; 
+    }
+
+    static public function getNamedPage(
+        $url, $path = null, bool $getObj = false
+    ) {
+        $page = self::where('url', $url)->first();
+        //dd($page, $url, __METHOD__);
+        if (Functions::testVar($page)) {
+            //  $ca = $page->toContentArray($image, $otherImages);
+            if (!$getObj) {
+                return $page->toContentArray();
+            } else {
+                return $page;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    static public function getAllPages(
+        bool $getObj = false, string $dir = 'asc'
+    ) {
+        /* $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
+            //->orderBy('page_groups.group', $order)
+            ->select('pages.*', 'page_groups.page', 'page_groups.group', 'page_groups.order')
+            ->groupBy('pages.id', 'page_groups.group')
+            ->orderBy('page_groups.order', $order)
+            ->get(); */
+        $tmp = self::all();
+        $pages = [];
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            dd($tmp);
+            if ($getObj) {
+                $pages = $tmp->all();
+            } else {
+                foreach ($tmp as $p) {
+                    $pages[] = $p->toContentArray();
+                }
+            }
+            // TODO BASICLIST ITEM:
+            // create a manual groupBy function
+            // as PDO '@BARFED@' on the query above...
+            // Optional: create a 'PageGroupInfo' 
+            //  Table + Migration for use with PageGroup..
+            /// UPDATE: DONE (on PageGroup) AND DONE (as PageGrouping)
+            /* foreach ($tmp as $page) {
+                $g = $page->groups()
+                    ->orderBy('group_id', $dir)
+                    ->get();
+                dd($g); */
+                //$pages[] = '';
+            }
+            dd($pages);
+        }
+        return $pages;
     }
 
     static public function createNew(

@@ -117,4 +117,41 @@ class PageGroup extends Model
         );
     }
 
+    static public function makeContentArray(
+        int $id, string $name, int $order, array $pages = null
+    ) {
+        return [
+            'id' => $id,
+            'name' => $name,
+            'order' => $order,
+            'pages' => $pages
+        ];
+    }
+
+    public function toContentArray(string $dir = 'asc')
+    {
+        $p = PageGrouping::getGroup($this->id, $dir);
+        $res = [];
+        foreach ($p as $tp) {
+            $res[] = $tp->page->toContentArray();
+        }
+        return self::makeContentArray(
+            $this->id, $this->name, $this->order,
+            $res
+        );
+    }
+
+    static public function getAllGroups(
+        bool $toArray = true, string $dir = 'asc'
+    ) {
+        $res = [];
+        $tmp = self::orderBy('order', $dir)->get();
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            foreach ($tmp as $g) {
+                $res[] = $toArray ? $g->toContentArray($dir) : $g;
+            }
+        }
+        return $res;
+    }
+
 }

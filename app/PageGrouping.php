@@ -130,14 +130,28 @@ class PageGrouping extends Model
         return self::orderBy('group_id', $dir)->get();
     }
 
+    static public function getOrderForPage(int $page, int $group)
+    {
+        $tmp = self::where(
+            [
+                ['page_id', '=', $page],
+                ['group_id', '=', $group]
+            ]
+        )->get();
+        if (Functions::testVar($tmp) && count($tmp) === 1) {
+            return $tmp[0]->order;
+        }
+        return null;
+    }
+
     public function group()
     {
-        $this->belongsTo('App\PageGroup', 'group_id', 'id');
+        return $this->belongsTo('App\PageGroup', 'group_id', 'id');
     }
 
     public function page()
     {
-        $this->hasOne('App\Page', 'id', 'page_id');
+        return $this->hasOne('App\Page', 'id', 'page_id');
     }
 
 }
