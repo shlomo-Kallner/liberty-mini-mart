@@ -21,7 +21,7 @@ class CreatePagesTable extends Migration
             $table->string('description', 255);
             $table->integer('image_id')->unsigned();
             $table->integer('article_id')->unsigned()->nullable();
-            $table->integer('visible')->unsigned()->nullable();
+            $table->unsignedInteger('viewable')->default(0);
             $table->string('sticker', 255);
             $table->timestamps();
             $table->softDeletes();

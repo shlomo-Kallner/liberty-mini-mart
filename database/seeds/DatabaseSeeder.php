@@ -65,7 +65,8 @@ class DatabaseSeeder extends Seeder
                 $tmp = Page::createNew(
                     $pn[0], $pn[1], 1,
                     $faker->text(10), $key, 
-                    $faker->text(30), 1
+                    $faker->text(30), 1, '', 
+                    -1, -1
                 );
                 //dd($tmp, $key, $pn);
             }

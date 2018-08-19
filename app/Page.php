@@ -351,7 +351,7 @@ class Page extends Model
                 self::genBreadcrumb($this->name, $this->url),
                 $b
             ), 
-            $this->visible
+            $this->getVisibility()
         );
         /*     
             return [
@@ -415,26 +415,27 @@ class Page extends Model
         $page = self::where('url', $url)->first();
         //dd($page, $url, __METHOD__);
         if (Functions::testVar($page)) {
-            $image = Image::getImageArray($page->image);
-            $otherImages = [];
-            $oit = PageImage::getAllImages($page->id);
-            if (Functions::testVar($oit)) {
+            //$image = Image::getImageArray($page->image);
+            //$otherImages = [];
+            //$oit = PageImage::getAllImages($page->id, true);
+            /* if (Functions::testVar($oit)) {
                 foreach ($oit as $i) {
                     $t = Image::getImageArray($i);
                     if (Functions::testVar($t)) {
                         $otherImages[] = $t;
                     }
                 }
-            }
+            } */
             //  $ca = $page->toContentArray($image, $otherImages);
             if (!$getObj) {
-                return $page->toContentArray($image, $otherImages);
+                return $page->toContentArray();
             } else {
-                return [
+                return $page;
+               /*  [
                     'page' => $page,
                     'image' => $image,
                     'otherImages' => $otherImages
-                ];
+                ]; */
             }
         } else {
             //abort(404);
@@ -463,6 +464,11 @@ class Page extends Model
     public function image()
     {
         return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
+    public function getVisibility()
+    {
+        return $this->viewable;
     }
 
     public function article()
@@ -534,7 +540,7 @@ class Page extends Model
     static public function createNew(
         string $name, string $url, $img,
         string $title, $article, string $description,
-        int $visible = 2, string $sticker = '',
+        int $visible = 1, string $sticker = '',
         $group = -1, int $order = -1
     ) {
         if (!Functions::testVar($gId = PageGroup::getFrom($group))) {
@@ -559,10 +565,11 @@ class Page extends Model
                 $data->title = Functions::purifyContent($title);
                 $data->article_id = $tArt;
                 $data->description = Functions::purifyContent($description);
-                $data->visible = $visible;
+                //dd($visible);
+                $data->viewable = $visible;
                 $data->sticker = $sticker;
 
-                //dd($data, 1);
+                //dd($data, $visible, "myFirst");
 
                 /* 
                     // need to do some special checking on group_id..
@@ -596,7 +603,7 @@ class Page extends Model
         return self::createNew(
             $array['name'], $array['url'], $array['img'], 
             $array['title'], $array['article'], $array['description'], 
-            $array['visible'], $array['sticker'], $array['group_id'], 
+            $array['visible'], $array['sticker'], $array['group'], 
             $array['order']
         );
     }
