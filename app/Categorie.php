@@ -143,6 +143,11 @@ class Categorie extends Model
         return $this->hasOne('App\Article', 'id', 'article_id');
     }
 
+    public function section()
+    {
+        return $this->belongsTo('App\Section', 'section_id');
+    }
+
     static public function getCategoriesOfSection($section_id)
     {
         $res = [];

@@ -11,7 +11,7 @@
     //$numRanges2 = intval(Functions::getUnBladedContent($numRanges??'',''));
     $ranges2 = Functions::getUnBladedContent($ranges??'','');
     $numPerView2 = intval(Functions::getUnBladedContent($numPerView??'','4'));
-    $pagingFor2 = Functions::getUnBladedContent($pagingFor??'','');
+    $pagingFor2 = Functions::getBladedString($pagingFor??'','');
 
     
     //dd($paginator2);
@@ -37,7 +37,7 @@
                 break;
             }
         }
-        //dd($numPerView2, $numViews, $viewIdxs, $currentView);
+        dd($numPerView2, $numViews, $viewIdxs, $currentView);
 
         if ($currentView != -1) {
 
@@ -45,14 +45,14 @@
             $prevViewUrl = '#?' . http_build_query(
                 [
                     'viewNum' => $currentView - 1, 
-                    'pageNum'=> $currentRange2['index'],
+                    'pageNum'=> Functions::getVar($currentRange2['index'], 1),
                     'pagingFor' => $pagingFor2
                 ]
             );
             $nextViewUrl = '#?' . http_build_query(
                 [
                     'viewNum' => $currentView + 1, 
-                    'pageNum'=> $currentRange2['index'],
+                    'pageNum'=> Functions::getVar($currentRange2['index'], 1),
                     'pagingFor' => $pagingFor2 
                 ]
             );
@@ -75,6 +75,7 @@
     } else {
         //$testing = true;
     }
+    dd($paging, $currentRange2, $totalItems2, $ranges2, $numPerView2);
     
 @endphp
 

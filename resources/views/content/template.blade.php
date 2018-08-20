@@ -1,5 +1,6 @@
 <?php
 // put your code here
+//dd($navbar, $preheader, $cart);
 ?>
 
 @extends('master')
@@ -22,7 +23,20 @@
             Navigational, Header & Footer Content.
 --}}
 
-@include('lib.themewagon.nav')
+@component('lib.themewagon.nav')
+    @slot('navbar')
+        {!! serialize($navbar) !!}
+    @endslot
+    @slot('preheader')
+        {!! serialize($preheader) !!}
+    @endslot
+    @slot('cart')
+        {!! serialize($cart) !!}
+    @endslot
+    @slot('currency')
+        {{ 'fa-usd' }}
+    @endslot
+@endcomponent
 
 @include('lib.bootstrapious.modals.login')
 @include('lib.bootstrapious.modals.search')

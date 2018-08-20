@@ -14,6 +14,7 @@
 Route::get('/', 'PageController@home');
 
 use App\User,
+    App\Utilities\Functions\Functions,
     App\PageGroup,
     App\PageGrouping,
     App\Page;
@@ -23,9 +24,18 @@ Route::get(
         $dump = true;
         //$tmp = User::getUserArray($request);
         //$tmp = $request->session()->all();
+        //$num = 44;
+        //$n = Functions::int2url_encode($num);
+        //$k = Functions::url2int_decode($n);
+        //$j = pack('V', $num);
+        //$l = bin2hex($j);
+
         $tmp = [
-            User::getUserArray($request),
-            $request->session()->all()
+            //User::getUserArray($request),
+            $request->session()->all(),
+            //'page_groups' => PageGrouping::getGroups(),
+            //'users' => App\User::getUsers(1, true),
+            //'num' => [ $n, $k, $j, $l ],
         ];
         //$tmp = new \DatabaseSeeder;
         //dd($tmp);
@@ -34,7 +44,7 @@ Route::get(
         //->max('order');
         //->get(); //all(); //getAllPages();
         if ($dump) {
-            dd(session()->all(), $tmp, PageGroup::getGroups());
+            dd($tmp);
         } else {
             return $tmp;
         }

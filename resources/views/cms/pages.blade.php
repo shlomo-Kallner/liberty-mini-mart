@@ -7,6 +7,7 @@
     $paginator2 = Functions::getUnBladedContent($paginator??[],[]);
 
     $panelGroupId = 'pages-panel-group';
+    //dd($pages2);
 @endphp
 
 <div class="panel-group" id="{{ $panelGroupId }}" role="tablist" aria-multiselectable="true">
@@ -25,7 +26,7 @@
                 //'show' => $section['url']  ,
             ];
             $pageEditUrl = 'admin/page/' . $page['url'] . '/edit';
-            $pageDeleteUrl = 'admin/page/' . $page['url'];
+            $pageDeleteUrl = 'admin/page/' . $page['url'] . '/delete';
             //$newCategoryCreateUrl = 'admin/page/' . $page['url'] . '/category/create';
         
             //$sectionPanelID = '';
@@ -43,10 +44,10 @@
                 <div class="panel-body">
                     <div class="row">
                         
-                        @if (Functions::testVar($page['img']))
+                        @if (Functions::testVar($page['content']['img']))
 
                             <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 thumbnail">
-                                <img src="{{ asset($page['img']) }}" class="img-responsive" alt="{{$page['imgAlt']}}">
+                                <img src="{{ asset($page['content']['img']['img']) }}" class="img-responsive" alt="{{$page['content']['img']['alt']}}">
                             </div>
                             
                         @else
@@ -62,8 +63,9 @@
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="btn-group pull-left">
                                         <a class="btn btn-default" data-toggle="collapse" href="{{'#' . $panelId3}}" aria-expanded="false" aria-controls="{{ $panelId3 }}" role="button">Show Content</a>
-                                        <a class="btn btn-warning" href="{{ $pageEditUrl }}" role="button">Edit this Page</a>
-                                        <button type="button" class="btn btn-danger" onclick="deleteSection('{{$sectionDeleteUrl}}')">Delete this Page</button>
+                                        <a class="btn btn-warning" href="{{ url($pageEditUrl) }}" role="button">Edit this Page</a>
+                                        
+                                        <a class="btn btn-danger" href="{{ url($pageDeleteUrl) }}" role="button">Delete this Page</a>
                                         
                                         {{-- <a class="btn btn-default" href="#" role="button"></a> --}}
                                         {{-- <a class="btn btn-default" href="#" role="button"></a> --}}
@@ -81,10 +83,14 @@
                             </div>
             
                             <div class="row collapse" id="{{ $panelId3 }}">
-                                @component('lib.themewagon.article')
-                                    @foreach ($page as $key => $item)
+                                @component('lib.themewagon.article-sm')
+                                    @foreach ($page['content']['article'] as $key => $item)
                                         @slot($key)
-                                            {{ $item }}
+                                            @if ($key == 'img')
+                                                {!! serialize($item) !!}
+                                            @else
+                                                {{ $item }}
+                                            @endif
                                         @endslot
                                     @endforeach
                                 @endcomponent
@@ -110,12 +116,16 @@
                 @component('lib.themewagon.paginator')
                     @foreach ($paginator2 as $key => $val)
                         @slot($key)
-                            {!! serialize($val) !!}
+                            @if ($key == 'pagingFor')
+                                {{ $val }}
+                            @else
+                                {!! serialize($val) !!}
+                            @endif
                         @endslot
                     @endforeach
-                    @slot('pagingFor')
+                    {{--  @slot('pagingFor')
                         {!! 'admin.PagesPanel' !!}
-                    @endslot
+                    @endslot  --}}
                 @endcomponent
             </div>
         </div>

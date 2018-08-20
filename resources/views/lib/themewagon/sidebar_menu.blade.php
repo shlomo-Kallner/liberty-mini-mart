@@ -128,7 +128,7 @@
                         <ul class="dropdown-menu" style="display:none;">
                     {{-- Stack PUSH time! --}}
                     @php
-                        $frameStack->push('submenu');
+                        $frameStack->push('submenus');
                         
                         /* -- the old code.. here for future use ..
                             $parentFrameStack[] = $currentFrame;

@@ -118,9 +118,10 @@ class PageGrouping extends Model
         return Functions::testVar($m) && $m > 1 ? random_int(1, $m) : 1;
     }
 
-    static public function getGroup(int $group, string $dir = 'asc')
+    static public function getGroup($group, string $dir = 'asc')
     {
-        return self::where('group_id', $group)
+        $group_id = PageGroup::getIdFrom($group);
+        return self::where('group_id', $group_id)
             ->orderBy('order', $dir)
             ->get();
     }

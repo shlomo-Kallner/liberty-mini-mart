@@ -15,6 +15,11 @@ class Functions
         return isset($var) && !empty($var);
     }
 
+    static public function getVar($var, $default = null)
+    {
+        return self::testVar($var) ? $var : $default;
+    }
+
     static public function testBladedVar($var)
     {
         if (self::testVar($var)) {
@@ -126,6 +131,22 @@ class Functions
             return null;
         }
 
+    }
+
+    static public function int2url_encode(int $num, bool $enc = false)
+    {
+        $s = pack('V', $num);
+        $h = bin2hex($s);
+        return $enc ? rawurlencode($h) : $h;
+    }
+
+    static public function url2int_decode(string $url, bool $enc = false)
+    {
+        $h = $enc ? rawurldecode($url) : $url;
+        $s = hex2bin($h);
+        $n = unpack('V', $s);
+        //dd($n);
+        return $n[1];
     }
 
     static public function testVersions(string $ver1, string $ver2, string $op = '==')
@@ -368,7 +389,7 @@ class Functions
         if ($ppp <= $ppr) {
             return 1;
         } else {
-            $res = $ppp / $ppr;
+            $res = intdiv($ppp, $ppr);
             if ($ppp % $ppr > 0) {
                 $res++;
             }
@@ -395,7 +416,7 @@ class Functions
             $res[] = $range;
         } elseif ($rngLen > $numPerPage) {
             $col = collect($range);
-            $numTotal = self::genRowsPerPage($col->count(), $numPerPage);
+            $numTotal = self::genRowsPerPage($rngLen, $numPerPage);
             for ($i = 0; $i < $numTotal; $i++ ) {
                 // Collection::forPage() cannot really handle a page
                 //  numbered '0' -- if '0' is passed in it will 

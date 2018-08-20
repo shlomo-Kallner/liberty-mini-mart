@@ -23,7 +23,11 @@
             @endslot
             @foreach ($page['article'] as $key => $item)
                 @slot($key)
-                    {!! $item !!}
+                    @if ($key == 'img')
+                        {!! serialize($item) !!}
+                    @else
+                        {!! $item !!}
+                    @endif
                 @endslot
             @endforeach
         @endcomponent

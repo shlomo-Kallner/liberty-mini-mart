@@ -79,6 +79,12 @@ class UserController extends MainController
     public function edit(Request $request) 
     {
         //
+        if (Functions::testVar($request->user??'')) {
+            $uid = Functions::url2int_decode($request->user);
+            
+        } else {
+            $uid = 0;
+        }
     }
 
     /**

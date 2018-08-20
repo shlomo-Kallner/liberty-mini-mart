@@ -2,7 +2,7 @@
 @php
 /*
  * A template for a 'normal-link' or a 'modal-link' menu-item
- * .. and nothing else!
+ * .. and nothing else! (except dropdown-links..)
  * 
  * $templateItem = [
   'icon' => '', // the Font Awesome 4 icon class without the 'fa'.
@@ -33,7 +33,8 @@
 
  if ($type2 == 'dropdown') {
     $submenus2 = Functions::getUnBladedContent($submenus??'','');
-    $listCSS2 = "dropdown " . Functions::getBladedString($listCSS??'','');
+    $lc = Functions::getBladedString($listCSS??'','');
+    $listCSS2 = Functions::testVar($lc) ? "dropdown " . $lc : "dropdown" ;
     $toggle2 = Functions::getBladedString($toggle??'dropdown','dropdown');
     $role2 = Functions::getBladedString($role??'button','button');
  } else {
@@ -99,8 +100,6 @@
             
             @php
                 // copying outright from sidebar_menu.blade.php..
-
-                $frameStack = new IterationStack($submenus2);
                 /*
                     $currentParent = null;
                     $currentFrame = [
@@ -112,6 +111,8 @@
                     $siblingsArr = $sidebar2['sidebar'];
                     $currentIndex = 0;
                 */
+                
+                $frameStack = new IterationStack($submenus2);
                 $bol = true;
             @endphp
     
@@ -128,6 +129,7 @@
                     // setting/getting the current element..
                     $elem = $frameStack->current();
                     $elem_type = $elem->get('type');
+                    $elem_parent = $elem->parent();
                     //dd($frameStack);
                     //dd($elem);
                     //dd($elem_type);
@@ -135,8 +137,8 @@
                     if ($elem_type === 'url' || $elem_type === 'modal') {
                         $elem_listCssClass = '';
                     } elseif ($elem_type === 'dropdown-submenu' || $elem_type === 'dropdown') {
-                        if ($elem->parent() !== null) {
-                            $parent_type = $elem->parent()->get('type');
+                        if ($elem_parent !== null) {
+                            $parent_type = $elem_parent->get('type');
                             if ($parent_type == 'dropdown' || $parent_type == 'dropdown-submenu') {
                                 $elem_listCssClass = 'dropdown-submenu';
                             } else {
@@ -160,10 +162,6 @@
                 @endphp
                     {{-- the 'render' loop --}}
                 
-                @if ($elem_type === 'dropdown-submenu' || $elem_type === 'dropdown')
-                    <!-- BEGIN DROPDOWN sub-MENU -->
-                @endif
-
                 <li
                     @if (Functions::testVar($elem_listCssClass))
                         class="{!! $elem_listCssClass !!}"
@@ -209,13 +207,15 @@
                 
                     
                     
-                    @if($elem_type === 'dropdown-submenu' || $elem_type === 'dropdown')
-                        
-                            <ul class="dropdown-menu" role="menu">
-                            {{-- Stack PUSH time! --}}
-                            @php
-                                $frameStack->push('submenu');
-                            @endphp
+                    @if(($elem_type === 'dropdown-submenu' || $elem_type === 'dropdown')
+                    && Functions::testVar($elem->get('submenus')))
+                    
+                        <!-- BEGIN DROPDOWN sub-MENU -->
+                        <ul class="dropdown-menu" role="menu">
+                        {{-- Stack PUSH time! --}}
+                        @php
+                            $frameStack->push('submenus');
+                        @endphp
                         @continue
                                 
                     @endif
@@ -236,25 +236,33 @@
                             // out of the 'top/first frame' 
                             // (we were "pushing" down/in/onto-the-end..)
                             // these methods do nothing if so..
+                            // UNTRUE! UPDATE: REQUIRED TO CHECK IF WE 
+                            // HAVE POPPED THE 'top/first frame'!
+                            // WE GET EXTRA HTML CLOSE TAGS IF WE DO NOT!!!
 
                             /*  -- the old code.. here for future use ..
                                 $tmp = array_pop($parentFrameStack);
                             */
                         @endphp
                         {{-- 
-                            we have popped the stack frame, 
-                            now we close the inner list .. 
+                            if we have popped the stack frame of a inner 
+                            (not first!) frame, now we close the inner list .. 
                         --}}
+                        @if (Functions::testVar($elem_parent))
+                            {{-- @if ($elem_type !== 'dropdown-submenu' || $elem_type !== 'dropdown') --}}
+                            
+                                </li>
+                            {{-- @endif --}}
+                            
                             </ul>
+                            <!-- END DROPDOWN sub-MENU -->
+                        @endif
                     @endif
 
                     {{-- AND.. close the list element.. --}}
                     
                 </li>
                 
-                @if ($elem_type === 'dropdown-submenu' || $elem_type === 'dropdown')
-                    <!-- END DROPDOWN sub-MENU -->
-                @endif
                 {{-- 
                     Could not chain empty() above 
                         due to the closing html tags above.. 

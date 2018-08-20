@@ -188,7 +188,7 @@ class IterationFrame
 
     public function set($key, $value = null)
     {
-        if ((is_string($key) && $key !== '' ) || is_int($key)) {
+        if (((is_string($key) && $key !== '' ) || is_int($key)) && !empty($value)) {
             $this->elems[$this->index][$key] = $value;
         } elseif (is_array($key)) {
             foreach ($key as $idx => $val) {

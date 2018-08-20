@@ -7,6 +7,8 @@
     $users2 = Functions::getUnBladedContent($users??[],[]);
     $paginator2 = Functions::getUnBladedContent($paginator??[],[]);
 
+    //dd($paginator2);
+
     $panelGroupId = 'users-panel-group';
 @endphp
 
@@ -15,18 +17,19 @@
     @forelse ($users2 as $user)
 
         @php
-            $panelId1 = 'headingSectionPanel-of-User-' . $user['id'];
-            $panelId2 = 'collapseSectionPanel-of-User-' . $user['id'];
-            $panelId3 = 'sectionContentCollapsedDiv-of-User-' . $user['id'];
+            $uid = Functions::int2url_encode($user['id']);
+            $panelId1 = 'headingSectionPanel-of-User-' . $uid;
+            $panelId2 = 'collapseSectionPanel-of-User-' . $uid;
+            $panelId3 = 'sectionContentCollapsedDiv-of-User-' . $uid;
             $urls = [
                 //'user/{user}/'
-                'edit' => 'admin/user/' . $user['id'] . '/edit',
+                'edit' => 'admin/user/' . $uid . '/edit',
                 //'create' => 'admin/user/create',
-                'delete' => 'admin/user/' . $user['id'] ,
+                'delete' => 'admin/user/' . $uid ,
                 //'show' => 'store/user/' . $user['url']  ,
             ];
-            $url_edit = 'admin/user/' . $user['id'] . '/edit';
-            $url_delete = 'admin/user/' . $user['id'] . '/delete';
+            $url_edit = 'admin/user/' . $uid . '/edit';
+            $url_delete = 'admin/user/' . $uid . '/delete';
 
         @endphp
 
@@ -100,12 +103,18 @@
                 @component('lib.themewagon.paginator')
                     @foreach ($paginator2 as $key => $val)
                         @slot($key)
-                            {!! serialize($val) !!}
+                            @if ($key == 'pagingFor')
+                                {{ $val }}
+                            @else
+                                {!! serialize($val) !!}
+                            @endif
                         @endslot
                     @endforeach
-                    @slot('pagingFor')
-                        {!! 'admin.UsersPanel' !!}
-                    @endslot
+                    {{-- 
+                        @slot('pagingFor')
+                            {!! 'admin.UsersPanel' !!}
+                        @endslot 
+                    --}}
                 @endcomponent
             </div>
         </div>

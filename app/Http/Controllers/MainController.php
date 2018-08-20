@@ -307,7 +307,7 @@ class MainController extends Controller {
             }
         }
 
-        self::$data['navbar'] = Page::getNavBar($useFakeData);
+        self::$data['navbar'] = Page::getNavBar(false);
         //dd(session()->all());
         self::$data['preheader'] = Page::getPreHeader($useFakeData);
         //dd(session()->all());

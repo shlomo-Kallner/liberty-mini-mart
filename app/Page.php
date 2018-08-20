@@ -69,7 +69,7 @@ class Page extends Model
             'target' => $target, // the data-target attribute's data value 
             // (of a modal)
             'transform' => $textTransform, // Bootstrap 3 text-transform css class.
-            'submenu' => $submenus,
+            'submenus' => $submenus,
             'cssExtraClasses' => $cssExtraClasses, // extra CSS classes for the 
             // anchor tag... (Bootstrap 3/other..)
             'iconAfter' => $iconAfter, // 'the Font Awesome 4 icon class' inserted 
@@ -110,8 +110,11 @@ class Page extends Model
         string $url = 'javascript:void(0);', string $iconAfter = 'fa-angle-right'
     ) {
         return static::genLink( 
-            'dropdown', $url, $name, "dropdown-toggle " . $cssExtraClasses,
-            $icon, $textTransform, '', $submenus, $iconAfter, 'dropdown', 'button'
+            'dropdown', $url, $name, 
+            "dropdown-toggle " . $cssExtraClasses,
+            $icon, $textTransform, '', 
+            $submenus, $iconAfter, 'dropdown', 
+            'button', ''
         );
     }
 
@@ -138,10 +141,12 @@ class Page extends Model
         );
     }
 
-    static public function getNavBar($genFakeData = false, string $area = 'store') 
-    {
-        //$testing = $genFakeData;
-        $testing = true;
+    static public function getNavBar(
+        $genFakeData = false, string $area = 'store', 
+        string $defDropName = 'All Pages', int $numPerView = 6
+    ) {
+        $testing = $genFakeData;
+        //$testing = true;
 
         /*
          * // get the URLs of the defined content pages from 
@@ -169,15 +174,38 @@ class Page extends Model
         if (!$testing) {
             //$navbar = DB::table('pages')::all()->toArray();
             $navbar = [];
-            if ($area == 'store') {
-                
-            } else {
-                $tmp = self::where('visible', '>',  0)
-                    ->groupBy('group_id')
-                    ->orderBy('order', 'asc')
-                    ->get();
-                dd($tmp);
+            $tg = PageGroup::getAllGroups(false);
+            if (Functions::testVar($tg) && count($tg) > 0) {
+                $t1 = [];
+                foreach ($tg as $g) {
+                    $t2 = [];
+                    $tpg = PageGrouping::getGroup($g);
+                    $numPg = Functions::genRowsPerPage(count($tpg), $numPerView);
+                    if ($numPg > 1) {
+                        for ($i = 1; $i <= $numPg; $i++) {
+                            $tpg1 = $tpg->forPage($i, $numPerView);
+                            $t3 = [];
+                            foreach ($tpg1 as $pg1) {
+                                $tp1 = $pg1->page;
+                                $t3[] = self::genURLMenuItem($tp1->url, $tp1->name);
+                            }
+                            $t2[] = self::genDropdownLink($g->name . ' Part ' . $i, $t3);
+                        }
+                    } else {
+                        foreach ($tpg as $pg1) {
+                            $tp1 = $pg1->page;
+                            $t2[] = self::genURLMenuItem($tp1->url, $tp1->name);
+                        }
+                    }
+                    $t1[] = self::genDropdownLink($g->name, $t2);
+                }
+                if (count($t1) === 1) {
+                    $navbar[] = $t1[0];
+                } elseif (count($t1) > 1) {
+                    $navbar[] = self::genDropdownLink($defDropName, $t1);
+                }
             }
+            $navbar[] = self::genURLMenuItem('store', 'Store');
         } else {
             // for pre-database testing:
             $navbar = [
@@ -263,17 +291,21 @@ class Page extends Model
             foreach ($sections as $section) {
                 // each section is a dropdown containing categories
                 // each category is a url link.
-                $cats = Categorie::where('section_id', $section->id)->get();
+                $cats = $section->categories;
                 //dd($section, $cats);
                 $subs = [];
+                $section_url = "store/section/". $section->url;
                 foreach ($cats as $cat) {
                     $subs[] = self::genURLMenuItem(
-                        "store/section/". $section->url . "/category/". $cat->url, 
+                        $section_url . "/category/". $cat->url, 
                         $cat->title
                     );
                 }
                 //dd($subs);
-                $res[] = self::genDropdownLink($section->title, $subs);
+                $res[] = self::genDropdownLink(
+                    $section->title, $subs, '', '', '',
+                    $section_url
+                );
                 //dd($res);
             }
         }
@@ -329,6 +361,7 @@ class Page extends Model
      *                            'lib.themewagon.paginator'...
      *  All Numbers passed are indexes starting from zero, 
      *  although they are displayed by the component with one added to them..
+     * Based on the calculations made in 'lib.themewagon.content_list'..
      *
      * @param integer $pageNum  - the current page number
      * @param integer $firstItemShownOnPage - the index of the first item being shown
@@ -356,161 +389,22 @@ class Page extends Model
         ];
     }
 
-    /// 
-
-    public function groups()
-    {
-        return $this->hasManyThrough(
-            'App\PageGroup', 'App\PageGrouping',
-            'page_id', 'id',
-            'id', 'group_id'
+    static public function genPagingFor(
+        int $pageNum, int $totalItems, int $numItemsPerPage = 4, 
+        string $pagingFor = ''
+    ) {
+        $rngs = Functions::genRange(0, $totalItems);
+        $pgs = collect($rngs);
+        $tpr = $pgs->forPage($pageNum + 1, $numItemsPerPage);
+        $pa = Functions::genPageArray($rngs, $numItemsPerPage);
+        return self::genPagination(
+            $pageNum, $tpr[0], $tpr[count($tpr) - 1],
+            $totalItems, $pa, $numItemsPerPage,
+            $pagingFor
         );
-    } 
-
-    public function images()
-    {
-        return $this->hasManyThrough(
-            'App\Image', 'App\PageImage',
-            'page_id', 'id',
-            'id', 'image_id'
-        );
-    }
-
-    public function image()
-    {
-        return $this->hasOne('App\Image', 'id', 'image_id');
-    }
-
-    public function article()
-    {
-        return $this->hasOne('App\Article', 'id', 'article_id');
-    }
-
-    public function getVisibility()
-    {
-        return $this->viewable;
     }
 
     ///
-
-    public function toContentArray(
-        array $img = null, array $otherImages = null,
-        array $links = null
-    ) {
-        if (!Functions::testVar($img)) {
-            $i = Image::getImageArray($this->image);
-        } else {
-            $i = $img;
-        }
-        if (!Functions::testVar($links)) {
-            $b = self::genBreadcrumb('Home', '/');
-        } else {
-            $b = $links;
-        }
-        if (!Functions::testVar($otherImages)) {
-            //$o = PageImage::getAllImages($this->id, true);
-            $o = Image::getArraysFor($this->images);
-        } else {
-            $o = $otherImages;
-        }
-        return self::makeContentArray(
-            $this->article, $this->description, $this->title,
-            $i, $o, 
-            self::getBreadcrumbs(
-                self::genBreadcrumb($this->name, $this->url),
-                $b
-            ), 
-            $this->getVisibility()
-        );
-    }
-
-    static public function makeContentArray(
-        $article, string $header, 
-        string $title, $img, 
-        // string $description,
-        array $otherImages = null,
-        array $breadcrumbs = null, 
-        int $visible = 0
-    ) {
-        $i = Image::getImageArray($img);
-        /**
-         * [
-                    'header' => $description,
-                    'subheading' => $i['cap'],
-                    'img' => $i['img'],
-                    'imgAlt' => $i['alt'],
-                    'article' => $article
-                ]
-         */
-        $a = Article::getArticle($article, true);
-        return [
-            'title' => $title,
-            'content' => [
-                'header' => $header,
-                'article' => $a,
-                'img' => $i,
-            ],
-            'breadcrumbs' => $breadcrumbs,
-            'visible' => $visible,
-            'otherImages' => $otherImages,
-
-        ]; 
-    }
-
-    static public function getNamedPage(
-        $url, $path = null, bool $getObj = false
-    ) {
-        $page = self::where('url', $url)->first();
-        //dd($page, $url, __METHOD__);
-        if (Functions::testVar($page)) {
-            //  $ca = $page->toContentArray($image, $otherImages);
-            if (!$getObj) {
-                return $page->toContentArray();
-            } else {
-                return $page;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    static public function getAllPages(
-        bool $getObj = false, string $dir = 'asc'
-    ) {
-        /* $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
-            //->orderBy('page_groups.group', $order)
-            ->select('pages.*', 'page_groups.page', 'page_groups.group', 'page_groups.order')
-            ->groupBy('pages.id', 'page_groups.group')
-            ->orderBy('page_groups.order', $order)
-            ->get(); */
-        $tmp = self::all();
-        $pages = [];
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
-            dd($tmp);
-            if ($getObj) {
-                $pages = $tmp->all();
-            } else {
-                foreach ($tmp as $p) {
-                    $pages[] = $p->toContentArray();
-                }
-            }
-            // TODO BASICLIST ITEM:
-            // create a manual groupBy function
-            // as PDO '@BARFED@' on the query above...
-            // Optional: create a 'PageGroupInfo' 
-            //  Table + Migration for use with PageGroup..
-            /// UPDATE: DONE (on PageGroup) AND DONE (as PageGrouping)
-            /* foreach ($tmp as $page) {
-                $g = $page->groups()
-                    ->orderBy('group_id', $dir)
-                    ->get();
-                dd($g); */
-                //$pages[] = '';
-            }
-            dd($pages);
-        }
-        return $pages;
-    }
 
     static public function createNew(
         string $name, string $url, $img,
@@ -591,5 +485,156 @@ class Page extends Model
     static public function existsId(int $id)
     {
         return Functions::testVar(self::getFromId($id));
+    }
+
+    /// 
+
+    public function groups()
+    {
+        return $this->hasManyThrough(
+            'App\PageGroup', 'App\PageGrouping',
+            'page_id', 'id',
+            'id', 'group_id'
+        );
+    } 
+
+    public function images()
+    {
+        return $this->hasManyThrough(
+            'App\Image', 'App\PageImage',
+            'page_id', 'id',
+            'id', 'image_id'
+        );
+    }
+
+    public function image()
+    {
+        return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
+    public function article()
+    {
+        return $this->hasOne('App\Article', 'id', 'article_id');
+    }
+
+    public function getVisibility()
+    {
+        return $this->viewable;
+    }
+
+    ///
+
+    public function toContentArray(
+        array $img = null, array $otherImages = null,
+        array $links = null
+    ) {
+        if (!Functions::testVar($img)) {
+            $i = Image::getImageArray($this->image);
+        } else {
+            $i = $img;
+        }
+        if (!Functions::testVar($links)) {
+            $b = self::genBreadcrumb('Home', '/');
+        } else {
+            $b = $links;
+        }
+        if (!Functions::testVar($otherImages)) {
+            //$o = PageImage::getAllImages($this->id, true);
+            $o = Image::getArraysFor($this->images);
+        } else {
+            $o = $otherImages;
+        }
+        return self::makeContentArray(
+            $this->article, $this->description, $this->url,
+            $this->name, $this->title, $i, $o, 
+            self::getBreadcrumbs(
+                self::genBreadcrumb($this->name, $this->url),
+                $b
+            ), 
+            $this->getVisibility()
+        );
+    }
+
+    static public function makeContentArray(
+        $article, string $header, string $url,
+        string $name, string $title, $img, 
+        // string $description,
+        array $otherImages = null,
+        array $breadcrumbs = null, 
+        int $visible = 0
+    ) {
+        $i = Image::getImageArray($img);
+        /**
+         * [
+                    'header' => $description,
+                    'subheading' => $i['cap'],
+                    'img' => $i['img'],
+                    'imgAlt' => $i['alt'],
+                    'article' => $article
+                ]
+         */
+        $a = Article::getArticle($article, true);
+        return [
+            'title' => $title,
+            'name' => $name,
+            'url' => $url,
+            'content' => [
+                'header' => $header,
+                'article' => $a,
+                'img' => $i,
+            ],
+            'breadcrumbs' => $breadcrumbs,
+            'visible' => $visible,
+            'otherImages' => $otherImages,
+
+        ]; 
+    }
+
+    static public function getNamedPage(
+        $url, $path = null, bool $getObj = false
+    ) {
+        $page = self::where('url', $url)->first();
+        //dd($page, $url, __METHOD__);
+        if (Functions::testVar($page)) {
+            //  $ca = $page->toContentArray($image, $otherImages);
+            if (!$getObj) {
+                return $page->toContentArray();
+            } else {
+                return $page;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    static public function getAllPages(
+        bool $getObj = false, string $dir = 'asc'
+    ) {
+        /* $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
+            //->orderBy('page_groups.group', $order)
+            ->select('pages.*', 'page_groups.page', 'page_groups.group', 'page_groups.order')
+            ->groupBy('pages.id', 'page_groups.group')
+            ->orderBy('page_groups.order', $order)
+            ->get(); */
+        $tmp = self::all();
+        $pages = [];
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            //dd($tmp);
+            if ($getObj) {
+                $pages = $tmp->all();
+            } else {
+                foreach ($tmp as $p) {
+                    $pages[] = $p->toContentArray();
+                }
+            }
+            // TODO BASICLIST ITEM:
+            // create a manual groupBy function
+            // as PDO '@BARFED@' on the query above...
+            // Optional: create a 'PageGroupInfo' 
+            //  Table + Migration for use with PageGroup..
+            /// UPDATE: DONE (on PageGroup) AND DONE (as PageGrouping)
+            //dd($pages);
+        }
+        return $pages;
     }
 }

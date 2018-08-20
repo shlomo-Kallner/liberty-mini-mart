@@ -78,6 +78,21 @@ class PageGroup extends Model
         return $tmp;
     }
 
+    static public function getIdFrom($pg)
+    {
+        if (Functions::testVar($pg)) {
+            if (is_int($pg) && self::exists($pg)) {
+                return $pg;
+            } elseif (is_string($pg)) {
+                $t = self::getFrom($pg);
+                return Functions::testVar($t) ? $t->id : null;
+            } elseif ($pg instanceof self) {
+                return $pg->id;
+            }
+        }
+        return null;
+    }
+
     static public function exists($pg)
     {
         return Functions::testVar(self::getFrom($pg));
@@ -130,7 +145,7 @@ class PageGroup extends Model
 
     public function toContentArray(string $dir = 'asc')
     {
-        $p = PageGrouping::getGroup($this->id, $dir);
+        $p = PageGrouping::getGroup($this, $dir);
         $res = [];
         foreach ($p as $tp) {
             $res[] = $tp->page->toContentArray();
@@ -144,14 +159,19 @@ class PageGroup extends Model
     static public function getAllGroups(
         bool $toArray = true, string $dir = 'asc'
     ) {
-        $res = [];
         $tmp = self::orderBy('order', $dir)->get();
         if (Functions::testVar($tmp) && count($tmp) > 0) {
-            foreach ($tmp as $g) {
-                $res[] = $toArray ? $g->toContentArray($dir) : $g;
+            if ($toArray) {
+                $res = [];
+                foreach ($tmp as $g) {
+                    $res[] = $g->toContentArray($dir);
+                }
+                return $res;
+            } else {
+                return $tmp;
             }
         }
-        return $res;
+        return null;
     }
 
 }

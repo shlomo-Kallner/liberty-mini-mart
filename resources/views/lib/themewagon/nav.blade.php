@@ -14,6 +14,7 @@ $navbar2 = Functions::getUnBladedContent($navbar??'');
 if (!Functions::testVar($navbar2)) {
     $navbar2 = Page::getNavBar();
 }
+//dd($navbar2);
 
 
 $preheader2 = Functions::getUnBladedContent($preheader??'');
@@ -33,7 +34,7 @@ $testing = true;
 
 if (!$testing) {
  // place some $cart initializing code here..
-    $cart2 = Functions::getBladedContent($cart??'');
+    $cart2 = Functions::getUnBladedContent($cart??'');
     $currency2 = Functions::getBladedString($currency??'fa-usd');
 } else{
     $fakeID = 'MyFAKESEssionID123';
@@ -175,11 +176,13 @@ if (!$testing) {
                             {{-- BEGIN single "main level" AND dropdown menu --}}
                             @component('lib.themewagon.menu_links')
                                 @foreach ($nav as $key => $value)
-
                                     @slot($key)
-                                        {{ $value }}
+                                        @if ($key == 'submenus')
+                                            {!! serialize($value) !!}
+                                        @else
+                                            {{ $value }}
+                                        @endif
                                     @endslot
-                                    
                                 @endforeach
                             @endcomponent
                             {{-- End single "main level" AND dropdown menu --}}

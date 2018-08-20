@@ -43,14 +43,27 @@ class CmsController extends MainController
         //dd($request->session()->getId());
         //$sections = Section::getAllWithPagination();
         //dd(Page::get()->count());
-        $sections = Section::getAllModels(true, true);
+        $sections = Section::getAllModels(true);
         foreach ($sections as $section) {
             //$section['categories'] = Categorie::getCategoriesOfSectionWithPagination($section['id'], ... );
             $section['categories'] = Categorie::getCategoriesOfSection($section['id']);
             //dd($section);
         }
         //dd($sections);
-        $users = []; // User::getAllUsers(true, true);
+        
+        if ($request->has('pageNum') && $request->has('pagingFor')) {
+            $pf = $request->input('pagingFor');
+            if ($pf === 'usersPanel') {
+                $userPn = $request->input('pageNum');
+            } else {
+                $userPn = 1;
+            }
+        } else {
+            $userPn = 1;
+        }
+        
+        
+        $users = User::getUsers($userPn, true, true);
         //dd($users); // []; // 
         $pages = Page::getAllPages();
         //dd($pages);
@@ -77,8 +90,8 @@ class CmsController extends MainController
                     'pagination' => ''
                 ],
                 'users'=> [
-                    'items' => $users,
-                    'pagination' => ''
+                    'items' => $users[0],
+                    'pagination' => $users[1]
                 ],
                 'pages'=> [
                     'items' => $pages,

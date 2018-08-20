@@ -169,4 +169,23 @@ class Product extends Model
         ];
     }
 
+    public function image()
+    {
+        return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
+    public function images()
+    {
+        return $this->hasManyThrough(
+            'App\Image', 'App\ProductImage',
+            'product_id', 'id',
+            'id', 'image_id'
+        );
+    }
+
+    public function category()
+    {
+        return $this->belongsTo('App\Categorie', 'category_id');
+    }
+
 }

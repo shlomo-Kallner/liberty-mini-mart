@@ -118,12 +118,16 @@
                 @component('lib.themewagon.paginator')
                     @foreach ($paginator2 as $key => $val)
                         @slot($key)
+                        @if ($key == 'pagingFor')
+                            {{ $val }}
+                        @else
                             {!! serialize($val) !!}
+                        @endif
                         @endslot
                     @endforeach
-                    @slot('pagingFor')
+                    {{--  @slot('pagingFor')
                         {!! 'admin.Section-'. $section_url2 .'.CategoriesPanel' !!}
-                    @endslot
+                    @endslot  --}}
                 @endcomponent
             </div>
         </div>

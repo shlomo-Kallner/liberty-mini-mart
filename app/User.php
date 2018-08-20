@@ -218,8 +218,8 @@ class User extends Model
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'img' => Image::getImageArray($this->image_id),
-            'otherImages' => UserImage::getAllImages($this->id, true),
+            'img' => $this->image->toImageArray(),
+            'otherImages' => Image::getArraysFor($this->images),
             'date' => [
                 'created' => $this->created_at,
                 'modified' => $this->updated_at,
@@ -241,15 +241,30 @@ class User extends Model
         //return $this->hasMany('App\Cart', 'user_id');
     }
 
+    public function image()
+    {
+        return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
+    public function images()
+    {
+        return $this->hasManyThrough(
+            'App\Image', 'App\UserImage',
+            'user_id', 'id',
+            'id', 'image_id'
+        );
+    }
+
     static public function getUsers(
         int $pageNumber = 1, bool $toArray = true, 
         bool $forA = false
     ) {
-        $numPerPage = 5;
+        $numPerPage = 3; //5;
         $tmp = self::where('id', '>', self::getNumForVer())->get();
         //dd($tmp);
-        $users = [];
+        $res = [];
         if (Functions::testVar($tmp) && count($tmp) > 0) {
+            $users = [];
             $pn = $pageNumber > 0 ? $pageNumber : 1;
             $tu = $tmp->forPage($pn, $numPerPage);
             foreach ($tu as $user) {
@@ -257,24 +272,32 @@ class User extends Model
                 //$perm = new Basic($user->id, $p);
                 //dd($perm);
                 // $perm->isAdmin() || $perm->isContentCreator() || $perm->isAuthUser() 
-                if (Functions::testVar($ur = $user->getRolesArray($perm, $p))
+                if (Functions::testVar($ur = $user->getRolesArray())
                     && count($ur) > 0
                 ) {
                     if ($toArray) {
                         $tu = $user->toContentArray();
-                        $tu['roles'] = $ur;
+                        if ($forA) {
+                            $tu['roles'] = $ur;
+                        }
                         $users[] = $tu;
                     } else {
-                        $user->roles = $ur;
+                        if ($forA) {
+                            $user->roles = $ur;
+                        }
                         $users[] = $user;
                     }
-
                 }
                 //dd($perm);
             }
+            $res[] = $users;
+            $res[] = Page::genPagingFor(
+                $pn - 1, count($tmp), $numPerPage,
+                'usersPanel'
+            );
             //dd($users);
         } 
-        return $users;
+        return $res;
     }
 
     static public function createNew(

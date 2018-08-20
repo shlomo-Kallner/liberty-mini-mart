@@ -26,9 +26,37 @@ class Section extends Model
         return self::where('url', $name)->first();
     }
 
+    static public function getSection($section, bool $toArray = false)
+    {
+        if (Functions::testVar($section)) {
+            if (is_string($section)) {
+                $tmp = self::getNamed($section);
+                return $toArray && Functions::testVar($tmp) 
+                    ? $tmp->toContentArray() : $tmp;
+            } elseif (is_int($section) 
+                && Functions::testVar($ts = self::getFromId($section))
+            ) {
+                return $toArray ? $ts->toContentArray() : $ts;
+            } elseif ($section instanceof self) {
+                return $toArray ? $section->toContentArray() : $section;
+            }
+        }
+        return null;
+    }
+
     public function getCategory(string $url)
     {
         return $this->categories()->where('url', $url)->first();
+    }
+
+    public function getCategories()
+    {
+        $tCats = $this->categories;
+        $cats = [];
+        foreach ($tCats as $cat) {
+            $cats[] = $cat->toContentArray();
+        }
+        return $cats;
     }
 
     static public function makeContentArray(
@@ -37,39 +65,40 @@ class Section extends Model
         array $cats = null, int $id = 0
     ) {
         return [
+            'id' => $id,
             'name' => $name,
             'url' => $url,
             'img' => Image::getImageArray($img),
             'otherImages' => $otherImages??[],
-            'categories' => $cats,
+            'categories' => $cats??[],
         ];
     }
 
     public function toContentArray()
     {
-        $tCats = $this->categories;
-        $cats = [];
-        foreach($tCats as $cat) {
-            $cats[] = $cat->toContentArray();
-        }
         return self::makeContentArray(
             $this->name, $this->url, $this->image,
             //SectionImage::getAllImages($this->id),
             Image::getArraysFor($this->otherImages),
-            $cats, $this->id
+            $this->getCategories(), $this->id
         );
     }
 
-    static public function getAllModels(bool $withCats = true, bool $toArray = true) 
+    static public function getAll(bool $toArray = true)
+    {
+        return self::getAllModels($toArray);
+    }
+
+    static public function getAllModels(bool $toArray = true) 
     {
         $tmp = self::all();
         /* foreach ($tmp as $section) {
             $section = Functions::dbModel2ViewModel($section);
         } */
-        if ($toArray) {
+        if ($toArray && count($tmp) > 0) {
             $res = [];
             foreach ($tmp as $sect) {
-                $res[] = $sect->toContentArray($withCats);
+                $res[] = $sect->toContentArray();
             }
             return $res;
         } else {
@@ -103,11 +132,11 @@ class Section extends Model
     }
 
     static public function getAllWithPagination(
-        bool $withCats = true, bool $toArray = true,
+        bool $toArray = true,
         $pageNum, $firstIndex, $lastIndex, int $numShown = 4,
         string $pagingFor = ''
     ) {
-        $tmp = self::getAllModels($withCats, $toArray);
+        $tmp = self::getAllModels($toArray);
         $num = count($tmp);
         return [
             'sections' => $tmp,
