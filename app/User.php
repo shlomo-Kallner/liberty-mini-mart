@@ -257,7 +257,8 @@ class User extends Model
 
     static public function getUsers(
         int $pageNumber = 1, bool $toArray = true, 
-        bool $forA = false
+        bool $forA = false, int $paginatorViewNum = 0,
+        string $paginatorBaseUrl = ''
     ) {
         $numPerPage = 3; //5;
         $tmp = self::where('id', '>', self::getNumForVer())->get();
@@ -265,7 +266,8 @@ class User extends Model
         $res = [];
         if (Functions::testVar($tmp) && count($tmp) > 0) {
             $users = [];
-            $pn = $pageNumber > 0 ? $pageNumber : 1;
+            $numPages = Functions::genRowsPerPage(count($tmp), $numPerPage);
+            $pn = $pageNumber > 0 && $pageNumber <= $numPages ? $pageNumber : 1;
             $tu = $tmp->forPage($pn, $numPerPage);
             foreach ($tu as $user) {
                 $p = false ? true : false;
@@ -293,7 +295,8 @@ class User extends Model
             $res[] = $users;
             $res[] = Page::genPagingFor(
                 $pn - 1, count($tmp), $numPerPage,
-                'usersPanel'
+                'usersPanel', $paginatorViewNum, 
+                $paginatorBaseUrl
             );
             //dd($users);
         } 

@@ -21,89 +21,114 @@ class Section extends Model
      */
     protected $dates = ['deleted_at'];
 
-    static public function getNamed(string $name)
+    static public function getNamed(string $name, bool $withTrashed = false)
     {
-        return self::where('url', $name)->first();
+        return $withTrashed 
+        ? self::withTrashed()->where('url', $name)->first()
+        : self::where('url', $name)->first();
     }
 
-    static public function getSection($section, bool $toArray = false)
-    {
+    static public function getSection(
+        $section, bool $toArray = false, bool $withTrashed = false
+    ) {
         if (Functions::testVar($section)) {
             if (is_string($section)) {
-                $tmp = self::getNamed($section);
+                $tmp = self::getNamed($section, $withTrashed);
                 return $toArray && Functions::testVar($tmp) 
-                    ? $tmp->toContentArray() : $tmp;
+                    ? $tmp->toContentArray($withTrashed) : $tmp;
             } elseif (is_int($section) 
                 && Functions::testVar($ts = self::getFromId($section))
             ) {
-                return $toArray ? $ts->toContentArray() : $ts;
+                return $toArray ? $ts->toContentArray($withTrashed) : $ts;
             } elseif ($section instanceof self) {
-                return $toArray ? $section->toContentArray() : $section;
+                return $toArray ? $section->toContentArray($withTrashed) : $section;
             }
         }
         return null;
     }
 
-    public function getCategory(string $url)
+    public function getCategory(string $url, bool $withTrashed = false)
     {
-        return $this->categories()->where('url', $url)->first();
+        return $withTrashed 
+            ? $this->categories()->withTrashed()->where('url', $url)->first()
+            : $this->categories()->where('url', $url)->first();
     }
 
-    public function getCategories()
+    public function getCategories(bool $withTrashed = true)
     {
-        $tCats = $this->categories;
+        $tCats = $withTrashed 
+            ? $this->categories()->withTrashed()->get() 
+            : $this->categories;
         $cats = [];
         foreach ($tCats as $cat) {
-            $cats[] = $cat->toContentArray();
+            $cats[] = $cat->toContentArray($withTrashed);
         }
         return $cats;
     }
 
     static public function makeContentArray(
         string $name, string $url, $img,
+        string $title, $article, string $description,
         array $otherImages = null,
-        array $cats = null, int $id = 0
+        array $cats = null, array $dates = [], int $id = 0
     ) {
         return [
             'id' => $id,
             'name' => $name,
             'url' => $url,
             'img' => Image::getImageArray($img),
+            'title' => $title,
+            'article' => Article::getArticle($article, true),
+            'description' => $description,
             'otherImages' => $otherImages??[],
             'categories' => $cats??[],
+            'dates' => $dates??[],
         ];
     }
 
-    public function toContentArray()
+    public function toContentArray(bool $withTrashed = true)
     {
         return self::makeContentArray(
             $this->name, $this->url, $this->image,
+            $this->title, $this->article, 
+            $this->description,
             //SectionImage::getAllImages($this->id),
             Image::getArraysFor($this->otherImages),
-            $this->getCategories(), $this->id
+            $this->getCategories(), 
+            [
+                'created' => $this->created_at,
+                'updated' => $this->updated_at,
+                'deleted' => $this->deleted_at,
+            ],
+            $this->id
         );
     }
 
-    static public function getAll(bool $toArray = true)
-    {
-        return self::getAllModels($toArray);
+    static public function getAll(
+        bool $toArray = true, bool $withTrashed = true
+    ) {
+        return self::getAllModels($toArray, $withTrashed);
     }
 
-    static public function getAllModels(bool $toArray = true) 
-    {
-        $tmp = self::all();
+    static public function getAllModels(
+        bool $toArray = true, bool $withTrashed = true
+    ) {
+        $tmp = $withTrashed ? self::withTrashed()->get() : self::all();
         /* foreach ($tmp as $section) {
             $section = Functions::dbModel2ViewModel($section);
         } */
+        $res = [];
         if ($toArray && count($tmp) > 0) {
-            $res = [];
             foreach ($tmp as $sect) {
                 $res[] = $sect->toContentArray();
             }
-            return $res;
-        } else {
-            return $tmp;
-        }
+        } 
+        return $res;
+    }
+
+    public function article()
+    {
+        return $this->hasOne('App\Article', 'id', 'article_id');
     }
 
     public function image()
@@ -131,6 +156,13 @@ class Section extends Model
         //return SectionImage::getAllImages($this->id);
     }
 
+    public function getFullUrl(string $baseUrl)
+    {
+        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
+        // $surl = $this->catalog->getFullUrl($baseUrl);
+        return $baseUrl . '/section/' . $this->url;
+    }
+
     static public function getAllWithPagination(
         bool $toArray = true,
         $pageNum, $firstIndex, $lastIndex, int $numShown = 4,
@@ -152,22 +184,27 @@ class Section extends Model
 
     static public function createNew(
         string $name, string $url, string $title, $article,
-        string $description, $img, string $sub_title = ''
+        string $description, $img, int $catalog_id = 1
     ) {
-        $tmp = self::where('name', $name)
-            ->orWhere('url', $url)
-            ->get();
+        $tmp = self::withTrashed()->where(
+            [
+                ['name', '=', $name],
+                ['url', '=', $url],
+                ['catalog_id', '=', $catalog_id],
+            ]
+        )->get();
         if (!Functions::testVar($tmp) || count($tmp) === 0) {
             $tImg = Image::getImageToID($img);
             $tArt = Article::getToId($article);
             if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
                 $data = new self;
                 $data->name = $name;
-                $data->image_id = $tImg;
-                $data->sub_title = $sub_title;
-                $data->article_id = $tArt;
                 $data->url = $url;
-                $data->description = $description;
+                $data->image_id = $tImg;
+                $data->title = Functions::purifyContent($title);
+                $data->article_id = $tArt;
+                $data->description = Functions::purifyContent($description);
+                $data->catalog_id = $catalog_id;
                 if ($data->save()) {
                     if (Functions::testVar(SectionImage::createNewFrom($data))) {
                         return $data->id;
@@ -183,17 +220,19 @@ class Section extends Model
         return self::createNew(
             $array['name'], $array['url'], $array['title'], 
             $array['article'], $array['description'], 
-            $array['img'], $array['sub_title']
+            $array['img'], $array['catalog_id']
         );
     }
 
-    static public function getFromId(int $id)
+    static public function getFromId(int $id, bool $withTrashed = true)
     {
-        return self::where('id', $id)->first();
+        return $withTrashed 
+            ? self::withTrashed()->where('id', $id)->first()
+            : self::where('id', $id)->first();
     }
 
-    static public function existsId(int $id)
+    static public function existsId(int $id, bool $withTrashed = true)
     {
-        return Functions::testVar(self::getFromId($id));
+        return Functions::testVar(self::getFromId($id, $withTrashed));
     }
 }

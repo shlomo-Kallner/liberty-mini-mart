@@ -43,27 +43,18 @@ class CmsController extends MainController
         //dd($request->session()->getId());
         //$sections = Section::getAllWithPagination();
         //dd(Page::get()->count());
-        $sections = Section::getAllModels(true);
-        foreach ($sections as $section) {
-            //$section['categories'] = Categorie::getCategoriesOfSectionWithPagination($section['id'], ... );
-            $section['categories'] = Categorie::getCategoriesOfSection($section['id']);
-            //dd($section);
-        }
+        $sections = Section::getAllModels(true, true);
         //dd($sections);
-        
-        if ($request->has('pageNum') && $request->has('pagingFor')) {
-            $pf = $request->input('pagingFor');
-            if ($pf === 'usersPanel') {
-                $userPn = $request->input('pageNum');
-            } else {
-                $userPn = 1;
-            }
+        if (Functions::testVar($pv = Page::getPagingVars($request, 'usersPanel'))) {
+            $userPn = $pv['pageNum'];
+            $userVn = $pv['viewNum'];
         } else {
             $userPn = 1;
+            $userVn = 0;
         }
         
         
-        $users = User::getUsers($userPn, true, true);
+        $users = User::getUsers($userPn, true, true, $userVn, $request->path());
         //dd($users); // []; // 
         $pages = Page::getAllPages();
         //dd($pages);
@@ -79,12 +70,7 @@ class CmsController extends MainController
                     'Welcome to OUR DASHBOARD!',
                     null,
                     'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
-                    )
-                /* [
-                    'header' => 'Welcome to OUR DASHBOARD!',
-                    'subheading' => 'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
-                ] */
-                ,
+                ),
                 'sections' => [
                     'items' => $sections,
                     'pagination' => ''

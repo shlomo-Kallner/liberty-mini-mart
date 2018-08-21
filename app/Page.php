@@ -374,7 +374,7 @@ class Page extends Model
     static public function genPagination(
         int $pageNum, int $firstItemShownOnPage, int $lastItemShownOnPage,
         int $totalItems, array $rangeOfAllItemIndexes, int $numPagesPerPagingView = 4,
-        string $pagingFor = ''
+        string $pagingFor = '', int $viewNumber = 0, string $baseUrl = ''
     ) {
         return [
             'currentRange' => [
@@ -385,23 +385,41 @@ class Page extends Model
             'totalItems' => $totalItems,
             'ranges' => $rangeOfAllItemIndexes,
             'numPerView' => $numPagesPerPagingView,
-            'pagingFor' => $pagingFor
+            'pagingFor' => $pagingFor,
+            'viewNumber' => $viewNumber,
+            'baseUrl' => $baseUrl
         ];
     }
 
     static public function genPagingFor(
         int $pageNum, int $totalItems, int $numItemsPerPage = 4, 
-        string $pagingFor = ''
+        string $pagingFor = '', int $viewNumber = 0, 
+        string $baseUrl = ''
     ) {
         $rngs = Functions::genRange(0, $totalItems);
         $pgs = collect($rngs);
         $tpr = $pgs->forPage($pageNum + 1, $numItemsPerPage);
         $pa = Functions::genPageArray($rngs, $numItemsPerPage);
+        //dd($rngs, $pgs, $tpr, $pa, $tpr->first(), $tpr->last());
         return self::genPagination(
-            $pageNum, $tpr[0], $tpr[count($tpr) - 1],
+            $pageNum, Functions::getVar($tpr->first(), 0), 
+            Functions::getVar($tpr->last(), 0),
             $totalItems, $pa, $numItemsPerPage,
-            $pagingFor
+            $pagingFor, $viewNumber, $baseUrl
         );
+    }
+
+    static public function getPagingVars(Request $request, string $pagingFor)
+    {
+        if ($request->has('pageNum') && $request->has('pagingFor') && $request->has('viewNum')) {
+            if ($pagingFor == $request->input('pagingFor')) {
+                return [
+                    'pageNum' => $request->input('pageNum'),
+                    'viewNum' => $request->input('viewNum'),
+                ];
+            }
+        }
+        return null;
     }
 
     ///

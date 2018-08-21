@@ -34,22 +34,90 @@ class DatabaseSeeder extends Seeder
          
     }
 
-    static protected function genFakeStuff()
-    {
-        $faker = \Faker\Factory::create();
-        // generate fake articles..
-        $num_a = 20;
-        $ass = [];
-        for ($i = 0; $i < $num_a; $i++) {
-            $tmp = Article::createNew(
-                $faker->text(200),
-                $faker->text(8),
-                1,
-                $faker->text(30),
-                true
+    ///
+
+    static protected function genFakeStoreShelves(
+        $faker, int $numSections, int $numCategories, 
+        int $numProducts
+    ) {
+        // for each section gen an article & a image..
+        // then for each section create it categories..
+        /**
+         *  Section::createNew(
+                string $name, string $url, string $title, $article,
+                string $description, $img, int $catalog_id = 1
             );
-            //dd($tmp);
-            if (Functions::testVar($tmp)) {
+         */
+        $sections = [];
+        for ($i = 0; $i < $numSections; $i++) {
+            if (Functions::testVar($ts = self::genFakeSection($faker))) {
+                $sections[] = $ts;
+            }
+        }
+    }
+
+    static protected function genFakeCategory(
+        $faker, $img = null, $article = null, int $section_id = 1
+    ) {
+        $tImg = Functions::getVar($img, self::genFakeImage($faker));
+        $tArt = Functions::getVar($article, self::genFakeArticle($faker, $tImg));
+        $stck = random_int(1, 9);
+        if ($stck % 3 === 0) {
+            $sticker = 'sticker-sale';
+        } elseif ($stck % 3 == 1) {
+            $sticker = 'sticker-new';
+        } else {
+            $sticker = '';
+        }
+        $tmp = Categorie::createNew(
+            string $name, string $url, string $description, 
+            string $title, $tArt, $section_id,
+            $tImg, $sticker
+        );
+        return Functions::getVar($tmp, null);
+    }
+
+    static protected function genFakeSection(
+        $faker, $img = null, $article = null, int $catalog_id = 1
+    ) {
+        $tImg = Functions::getVar($img, self::genFakeImage($faker));
+        $tArt = Functions::getVar($article, self::genFakeArticle($faker, $tImg));
+        $tmp = Section::createNew(
+            $faker->name, $faker->domainWord, $faker->text(40), $tArt,
+            $faker->text(100), $tImg, $catalog_id
+        );
+        return Functions::getVar($tmp, null);
+    }
+
+    static protected function genFakeArticle($faker, $img = 1)
+    {
+        $tImg = random_int(1, 6) % 2 == 0 ? self::genFakeImage($faker) : $img;
+        $tmp = Article::createNew(
+            $faker->text(2000), $faker->text(80),
+            $tImg, $faker->text(300), true
+        );
+        return Functions::getVar($tmp, null);
+    }
+
+    static protected function genFakeImage($faker)
+    {
+        $tmp = Image::createNew(
+            $faker->imageUrl(), '', $faker->text(20), 
+            $faker->text(80)
+        );
+        return Functions::getVar($tmp, null);
+    } 
+
+    static protected function genFakePages($faker, int $numPages)
+    {
+        // generate fake articles..
+        $ass = [];
+        for ($i = 0; $i < $numPages; $i++) {
+            $tImg = random_int(1, 6) % 2 == 0 
+                ? self::genFakeImage($faker) 
+                : Image::getRandomImage();
+            if (Functions::testVar($tmp = self::genFakeArticle($faker, $tImg))) {
+                //dd($tmp);
                 $ass[$tmp] = [
                     $faker->name,
                     $faker->domainWord
@@ -62,8 +130,11 @@ class DatabaseSeeder extends Seeder
         if (Functions::testVar($ass)) {
             foreach ($ass as $key => $pn) {
                 //dd($key, $pn);
+                $tImg1 = random_int(1, 6) % 2 == 0 
+                    ? self::genFakeImage($faker) 
+                    : Image::getRandomImage();
                 $tmp = Page::createNew(
-                    $pn[0], $pn[1], 1,
+                    $pn[0], $pn[1], $tImg1,
                     $faker->text(10), $key, 
                     $faker->text(30), 1, '', 
                     -1, -1
@@ -72,6 +143,13 @@ class DatabaseSeeder extends Seeder
             }
             //dd($ass, "dumpASS!");
         }
+    }
+
+    static protected function genFakeStuff()
+    {
+        $faker = \Faker\Factory::create();
+        $num_a = 20;
+        self::genFakePages($faker, $num_a);
     }
 
     /**

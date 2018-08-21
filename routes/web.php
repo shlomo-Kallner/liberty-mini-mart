@@ -36,6 +36,7 @@ Route::get(
             //'page_groups' => PageGrouping::getGroups(),
             //'users' => App\User::getUsers(1, true),
             //'num' => [ $n, $k, $j, $l ],
+            //'in_array' => in_array(null, [2, 'a', null, 2.4]),
         ];
         //$tmp = new \DatabaseSeeder;
         //dd($tmp);

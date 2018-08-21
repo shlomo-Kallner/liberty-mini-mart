@@ -12,7 +12,8 @@
     $ranges2 = Functions::getUnBladedContent($ranges??'','');
     $numPerView2 = intval(Functions::getUnBladedContent($numPerView??'','4'));
     $pagingFor2 = Functions::getBladedString($pagingFor??'','');
-
+    $viewNumber2 = intval(Functions::getUnBladedContent($viewNumber??'', -1));
+    $baseUrl2 = Functions::getUnBladedContent($baseUrl??'', '');
     
     //dd($paginator2);
     //dd($currentRange2, $totalItems2, $ranges2);
@@ -29,27 +30,38 @@
         //$numPerView = Functions::testVar($numPerView2) ? $numPerView2 : 4;
         $numViews = Functions::genRowsPerPage(count($ranges2), $numPerView2);
         $viewIdxs = Functions::genPageArray($ranges2, $numPerView2);
-        $currentView = -1;
-        for ($i = 0; $i < count($viewIdxs); $i++) {
-            if (in_array($currentRange2['index'], $viewIdxs[$i])) {
-                $currentView = $i;
-                //dd($i, $currentView);
-                break;
+        $currentView = $viewNumber2 > 0 && $viewNumber2 < count($viewIdxs) ? $viewNumber2 : -1;
+        if ($currentView == -1) {
+            for ($i = 0; $i < count($viewIdxs); $i++) {
+                //dd($i, $viewIdxs[$i]);
+                $btmp = true;
+                if ($btmp) {
+                    for ($j = 0; $j < count($viewIdxs[$i]); $j++) {
+                        if (in_array($currentRange2['index'], $viewIdxs[$i][$j])) {
+                            $currentView = $i;
+                            //dd($i, $currentView);
+                            $btmp = false;
+                            break;
+                        } 
+                    }
+                } else {
+                    break;
+                }
             }
         }
-        dd($numPerView2, $numViews, $viewIdxs, $currentView);
+        //dd($numPerView2, $numViews, $viewIdxs, $currentView);
 
         if ($currentView != -1) {
 
             // view urls..
-            $prevViewUrl = '#?' . http_build_query(
+            $prevViewUrl = $baseUrl2 . '?' . http_build_query(
                 [
                     'viewNum' => $currentView - 1, 
                     'pageNum'=> Functions::getVar($currentRange2['index'], 1),
                     'pagingFor' => $pagingFor2
                 ]
             );
-            $nextViewUrl = '#?' . http_build_query(
+            $nextViewUrl = $baseUrl2 . '?' . http_build_query(
                 [
                     'viewNum' => $currentView + 1, 
                     'pageNum'=> Functions::getVar($currentRange2['index'], 1),
@@ -59,13 +71,17 @@
             $numberedViewUrls = [];
             //dd($prevViewUrl, $nextViewUrl, $numberedViewUrls, $viewIdxs, $currentView);
             foreach ($viewIdxs[$currentView] as $item) {
-                $numberedViewUrls[$item] = '#?' . http_build_query(
-                    [
-                        'viewNum' => $currentView, 
-                        'pageNum'=> $item + 1,
-                        'pagingFor' => $pagingFor2 
-                    ]
-                );
+                //dd($item);
+                foreach ($item as $val) {
+                    //dd($item, $val);
+                    $numberedViewUrls[Functions::getVar($val, 0)] = $baseUrl2 . '?' . http_build_query(
+                        [
+                            'viewNum' => $currentView, 
+                            'pageNum'=> Functions::getVar($val, 0) + 1,
+                            'pagingFor' => $pagingFor2 
+                        ]
+                    );
+                }
             }
 
         } else {
@@ -75,7 +91,8 @@
     } else {
         //$testing = true;
     }
-    dd($paging, $currentRange2, $totalItems2, $ranges2, $numPerView2);
+    //dd($numberedViewUrls, url($nextViewUrl));
+    //dd($paging, $currentRange2, $totalItems2, $ranges2, $numPerView2);
     
 @endphp
 
@@ -86,8 +103,8 @@
     @if (Functions::testVar($paging))
         
             <div class="col-md-4 col-sm-4 items-info">
-                Items {{ $currentRange2['begin'] + 1 }} 
-                to {{ $currentRange2['end'] + 1 }} 
+                Items {{  Functions::getVar($currentRange2['begin'], 0) + 1 }} 
+                to {{  Functions::getVar($currentRange2['end'], 0) + 1 }} 
                 of {{ $totalItems2 }} total
             </div>
 
@@ -95,25 +112,29 @@
                 <ul class="pagination pull-right">
                     @if ($numViews > 1 && $currentView > 0 )
                         <li>
-                            <a href="{{ $prevViewUrl }}" aria-label="Previous">
+                            <a href="{{ url($prevViewUrl) }}" aria-label="Previous">
                                 <i class="fa fa-chevron-left"></i>
                             </a>
                         </li>
                     @endif
 
                     @foreach ($viewIdxs[$currentView] as $item)
-                        <li>
-                            @if ($item === $currentRange2['index'])
-                                <span>{{ $item + 1 }}</span> 
-                            @else
-                                <a href="{{ $numberedViewUrls[$item] }}">{{ $item + 1 }}</a>
-                            @endif
-                        </li>
+                        @foreach ($item as $value)
+                            <li>
+                                @if (Functions::getVar($value, 0) === Functions::getVar($currentRange2['index'], 0))
+                                    <span>{{ Functions::getVar($value, 0) + 1 }}</span> 
+                                @else
+                                    <a href="{{ url($numberedViewUrls[Functions::getVar($value, 0)]) }}">
+                                        {{ Functions::getVar($value, 0) + 1 }}
+                                    </a>
+                                @endif
+                            </li>
+                        @endforeach
                     @endforeach
                     
                     @if ($numViews > 1 && $currentView < $numViews )
                         <li>
-                            <a href="{{ $nextViewUrl }}" aria-label="Next">
+                            <a href="{{ url($nextViewUrl) }}" aria-label="Next">
                                     <i class="fa fa-chevron-right"></i>
                             </a>
                         </li>

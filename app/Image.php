@@ -84,6 +84,21 @@ class Image extends Model
         }
     }
 
+    static public function getRandomImage(bool $withTrashed = false)
+    {
+        $num = $withTrashed 
+            ? self::withTrashed()->count()
+            : self::count();
+        if (Functions::testVar($num)) {
+            if ($num > 1) {
+                $idx = random_int(1, $num);
+                return Functions::getVar($ti = self::getFromId($idx), self::getFromId(1));
+            } else {
+                return self::getFromId(1);
+            }
+        }
+    }
+
     static public function getImage($image)
     {
         if (is_int($image) && self::existsId($image)) {
@@ -127,6 +142,11 @@ class Image extends Model
             'alt' => $alt,
             'cap' => $cap
         ];
+    }
+
+    public function toContentArray()
+    {
+        return self::getImageArray($this);
     }
 
     public function toImageArray()

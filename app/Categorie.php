@@ -25,10 +25,10 @@ class Categorie extends Model
 
     static public function createNew(
         string $name, string $url, string $description, 
-        string $title, string $article, int $section_id,
+        string $title, $article, int $section_id,
         $image, string $sticker
     ) {
-        $tmp = self::where(
+        $tmp = self::withTrashed()->where(
             [
                 ['name', '=', $name],
                 ['section_id', '=', $section_id],
@@ -39,12 +39,13 @@ class Categorie extends Model
             && Section::existsId($section_id)
         ) {
             $tImg = Image::getImageToID($img);
-            if (Functions::testVar($tImg)) {
+            $tArt = Article::getToId($article);
+            if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
                 $res = new self;
                 $res->name = $name;
-                $res->image = $tImg;
+                $res->image_id = $tImg;
                 $res->title = Functions::purifyContent($title);
-                $res->article = Functions::purifyContent($article);
+                $res->article_id = $tArt;
                 $res->url = $url;
                 $res->section_id = $section_id;
                 $res->sticker = $sticker;
@@ -69,27 +70,52 @@ class Categorie extends Model
         );
     }
 
-    static public function getFromId(int $id)
+    static public function getFromId(int $id, bool $withTrashed = true)
     {
-        return self::where('id', $id)->first();
+        return $withTrashed 
+            ? self::withTrashed()->where('id', $id)->first()
+            : self::where('id', $id)->first();
     }
 
-    static public function existsId(int $id)
+    static public function existsId(int $id, bool $withTrashed = true)
     {
-        return Functions::testVar(self::getFromId($id));
+        return Functions::testVar(self::getFromId($id, $withTrashed));
     }
 
     static public function makeContentArray(
-
+        string $name, string $url, string $title,
+        $img, $article, string $description,
+        array $products = null, array $otherImages = null,
+        string $sticker = '', array $dates = [], int $id = 0
     ) {
         return [
-
+            'id' => $id,
+            'name' => $name,
+            'img' => Image::getImageArray($img),
+            'otherImages' => $otherImages??[],
+            'title' => $title,
+            'article' => Article::getArticle($article, true),
+            'url' => $url,
+            'sticker' => $sticker,
+            'description' => $description,
+            'products' => $products??[],
+            'dates' => $dates??[],
         ];
     }
 
-    public function toContentArray()
+    public function toContentArray(bool $withTrashed = true)
     {
-        return self::makeContentArray();
+        return self::makeContentArray(
+            $this->name, $this->url, $this->title,
+            $this->image, $this->article, $this->description,
+            $this->getProducts($withTrashed), 
+            Image::getArraysFor($this->otherImages),
+            $this->sticker, [
+                'created' => $this->created_at,
+                'updated' => $this->updated_at,
+                'deleted' => $this->deleted_at,
+            ], $this->id
+        );
     }
 
     static public function getNamed(string $name, $section_id)
@@ -117,10 +143,32 @@ class Categorie extends Model
             $section_id = Section::getNamed($tmp[2])->id;
             return self::getNamed($tmp[4], $section_id)->id;
         } elseif (count($tmp) == 1) {
-            return null;
+            return self::where('url', $url)
+                ->orderBy('section_id', 'asc')
+                ->get();
         } else {
             return null;
         }
+    }
+
+    static public function getAll(
+        bool $toArray = false, string $dir = 'asc', bool $withTrashed = true
+    ) {
+        $tmp = $withTrashed 
+        ? self::withTrashed()->orderBy('section_id', $dir)->get()
+        : self::orderBy('section_id', $dir)->get();
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            if ($toArray) {
+                $res = [];
+                foreach ($tmp as $cat) {
+                    $res[] = $cat->toContentArray($withTrashed);
+                }
+                return $res;
+            } else {
+                return $tmp->all();
+            }
+        }
+        return null;
     }
 
     public function getProduct(string $url)
@@ -128,9 +176,32 @@ class Categorie extends Model
         return $this->products()->where('url', $url)->first();
     }
 
+    public function getProducts(bool $withTrashed = true, string $dir = 'asc')
+    {
+        $tmp = $withTrashed 
+            ? $this->products()->withTrashed()->orderBy('name', $dir)->get()
+            : $this->products()->orderBy('name', $dir)->get();
+        $res = [];
+        if (Functions::testVar($tmp)) {
+            foreach ($tmp as $product) {
+                $res[] = $product->toContentArray();
+            }
+        }
+        return $res;
+    }
+
     public function image()
     {
         return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
+    public function otherImages()
+    {
+        return $this->hasManyThrough(
+            'App\Image', 'App\CategoryImage',
+            'category_id', 'id',
+            'id', 'image_id'
+        );
     }
 
     public function products()
@@ -148,20 +219,25 @@ class Categorie extends Model
         return $this->belongsTo('App\Section', 'section_id');
     }
 
-    static public function getCategoriesOfSection($section_id)
+    public function getFullUrl(string $baseUrl)
     {
+        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
+        $surl = $this->section->getFullUrl($baseUrl);
+        return $surl . '/category/' . $this->url;
+    }
+
+    static public function getCategoriesOfSection(
+        $section_id,bool $toArray = true, bool $withTrashed = false
+    ) {
         $res = [];
-        $tmp = self::where('section_id', $section_id)->get()->toArray();
-        foreach ($tmp as $category) {
-            //dd($category);
-            $tCat = [];
-            foreach ($category as $key => $val) {
-                if (is_string($key) && $key === 'image') {
-                    $tCat[$key] = Image::getFromId(intval($val));
-                }
+        $tmp = $withTrashed 
+            ? self::withTrashed()->where('section_id', $section_id)->get()
+            : self::where('section_id', $section_id)->get();
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            foreach ($tmp as $category) {
+                //dd($category);
+                $res[] = $category->toContentArray();
             }
-            //$res[] = Functions::dbModel2ViewModel($category);
-            //dd($category);
         }
         dd($res);
         return $res;
