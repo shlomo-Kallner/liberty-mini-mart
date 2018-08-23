@@ -45,16 +45,16 @@ class CategoryImage extends Pivot
         // duplication avoidance..
         $t2 = self::where(
             [
-                ['image', '=', $image_id],
-                ['category', '=', $category_id]
+                ['image_id', '=', $image_id],
+                ['category_id', '=', $category_id]
             ]
         )->first();
         if (Functions::testVar($t2)) {
             return $t2->id;
         } else {
             $tmp = new self;
-            $tmp->category = $category_id;
-            $tmp->image = $image_id;
+            $tmp->category_id = $category_id;
+            $tmp->image_id = $image_id;
             if ($tmp->save()) {
                 return $tmp->id;
             } else {
@@ -78,7 +78,7 @@ class CategoryImage extends Pivot
         } else {
             return null;
         }
-        $tmp = self::where('category', $category_id)->get();
+        $tmp = self::where('category_id', $category_id)->get();
         return Image::getAllForPivots($tmp, $toArray);
     }
 
@@ -91,7 +91,7 @@ class CategoryImage extends Pivot
         } else {
             return null;
         }
-        $t = self::where('image', $img_id)->first();
+        $t = self::where('image_id', $img_id)->first();
         // redo!! return an array!
         if (Functions::testVar($t)) {
             return $t->category;

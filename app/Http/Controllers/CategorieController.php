@@ -59,29 +59,35 @@ class CategorieController extends MainController
         //dd($categorie);
         //dd($request->section, $request->category);
         //$categorie
-        $sect = Section::where('url', $request->section)->first();
+        $sect = Section::getNamed($request->section);
         //dd($sect->id);
         //dd($sect);
         if (Functions::testVar($sect)) {
-            $cat = Categorie::where(
+            /* $cat = Categorie::where(
                 [
                     ['section_id', $sect->id],
                     ['url', $request->category]
                 ]
-            )->first();
+            )->first(); */
+            $cat = $sect->getCategory($request->category);
             // 'store/section/{section}/category/{category}/product/{product}'...
-            $sect_url = 'store/section/'. $sect->url;
-            $cat_url = $sect_url . '/category/' . $request->category;
+            //$sect_url = 'store/section/'. $sect->url;
+            //$cat_url = $sect_url . '/category/' . $request->category;
             $breadcrumbs = Page::getBreadcrumbs( 
-                Page::genBreadcrumb($cat->title, $cat_url),
+                Page::genBreadcrumb($cat->title, $cat->getFullUrl('store')),
                 [
                     Page::genBreadcrumb('Store', 'store'),
-                    Page::genBreadcrumb($sect->title, $sect_url)
+                    Page::genBreadcrumb($sect->title, $sect->getFullUrl('store'))
                 ]
             );
             //dd($cat);
             // getting the products of the category..
-            self::$data['products'] = Product::getProductsForCategory($cat->id, 'mini', $cat_url);
+            $prods = [];
+            foreach ($cat->products as $product) {
+                $prods[] = $product->toMini('store');
+            }
+            //self::$data['products'] = Product::getProductsForCategory($cat->id, 'mini', $cat_url);
+            self::$data['products'] = $prods;
             //dd($products);
             return parent::getView('content.category', $request->category, [], false, $breadcrumbs);
         } 

@@ -28,17 +28,22 @@ class Categorie extends Model
         string $title, $article, int $section_id,
         $image, string $sticker
     ) {
-        $tmp = self::withTrashed()->where(
-            [
-                ['name', '=', $name],
-                ['section_id', '=', $section_id],
-                ['url', '=', $url]
-            ]
-        )->get();
+        $tmp = self::withTrashed()
+            ->where(
+                [
+                    ['name', '=', $name],
+                    ['section_id', '=', $section_id],
+                ]
+            )->orWhere(
+                [
+                    ['url', '=', $url],
+                    ['section_id', '=', $section_id],
+                ]
+            )->get();
         if ((!Functions::testVar($tmp) || count($tmp) === 0) 
             && Section::existsId($section_id)
         ) {
-            $tImg = Image::getImageToID($img);
+            $tImg = Image::getImageToID($image);
             $tArt = Article::getToId($article);
             if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
                 $res = new self;
@@ -227,7 +232,7 @@ class Categorie extends Model
     }
 
     static public function getCategoriesOfSection(
-        $section_id,bool $toArray = true, bool $withTrashed = false
+        $section_id, bool $toArray = true, bool $withTrashed = false
     ) {
         $res = [];
         $tmp = $withTrashed 
@@ -239,7 +244,7 @@ class Categorie extends Model
                 $res[] = $category->toContentArray();
             }
         }
-        dd($res);
+        //dd($res);
         return $res;
     }
 

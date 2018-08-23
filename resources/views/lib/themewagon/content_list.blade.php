@@ -34,32 +34,36 @@
         // Initializing the row Indices while we are at it..
         $totalProducts = count($products2);
         $rowIdxs = Functions::genPagesIndexes($productsPerPage2, $productsPerRow2, $totalProducts, $pageNumber2);
+        $currentPage = $pageNumber2 > -1 ? $pageNumber2 : 0;
         // if $productsPerPage is set then 
         //  EVEN IF $pageNumber2 IS NOT set then we have paganation!
         // THOUGH REALLY if we have more products than 
         //  $productsPerRow times $rowsPerPage then we have paganation
         // regardless...
-        //dd($totalProducts, $rowIdxs, $productsPerPage2);
+        //dd($totalProducts, $rowIdxs, $productsPerPage2, $productsPerRow2, $pageNumber2, $currentPage);
 
-        // initializing the paginator
-        //dd(
-        //    count($rowIdxs[0]),
-        //    $rowIdxs[0][count($rowIdxs[0]) -1],
-        //    $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1]
-        //);
-        //dd($rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])]);
-        $numPages = Functions::genRowsPerPage($totalProducts, $productsPerPage2);
-        $paginator = [
-            'totalItems' => $totalProducts,
-            'numRanges' => $numPages,
-            'ranges' => Functions::genRange(0, $numPages - 1, 1),
-            'currentRange' => [
-                'begin' => $rowIdxs[0][0][0],
-                'end' => $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1],
-                'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
-            ],
-        ];
-        $currentPage = $pageNumber2 > -1 ? $pageNumber2 : 0;
+        if ($pageNumber2 > -1) {
+            // initializing the paginator
+            //dd(
+            //    count($rowIdxs[0]),
+            //    $rowIdxs[0][count($rowIdxs[0]) -1],
+            //    $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1]
+            //);
+            //dd($rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])]);
+            $numPages = Functions::genRowsPerPage($totalProducts, $productsPerPage2);
+            $paginator = [
+                'totalItems' => $totalProducts,
+                'numRanges' => $numPages,
+                'ranges' => Functions::genRange(0, $numPages - 1, 1),
+                'currentRange' => [
+                    'begin' => $rowIdxs[0][0][0],
+                    'end' => $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1],
+                    'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
+                ],
+            ];
+        } else {
+            $paginator = [];
+        }
             
     } else {
         $paginator = [];
@@ -136,14 +140,16 @@
 
                     @component('lib.themewagon.product_mini')
                         {{-- 
-                            slot 'extraOuterCss' added above... 
+                            slot 'extraOuterCss' added above... NOPE!!!
                         
                             @slot('extraOuterCss')
                                 {{ "col-md-4 col-sm-6 col-xs-12" }}
                             @endslot
 
                         --}}
-
+                        @slot('extraOuterCss')
+                            {{ "col-md-4 col-sm-6 col-xs-12" }}
+                        @endslot
                         @foreach ($products2[$idx] as $key => $value)
                             @slot($key)
                                 {{ $value }}
@@ -316,17 +322,18 @@
     @endif
     <!-- END PRODUCT LIST -->
 
-    @component('lib.themewagon.paginator')
-        @foreach ($paginator as $key => $val)
-            @slot($key)
-                {!! serialize($val) !!}
-            @endslot
-        @endforeach
-        {{-- @slot('paginator')
-            {!! serialize($paginator) !!}
-        @endslot --}}
-        
-    @endcomponent
+    @if (Functions::testVar($paginator))
+        @component('lib.themewagon.paginator')
+            @foreach ($paginator as $key => $val)
+                @slot($key)
+                    {!! serialize($val) !!}
+                @endslot
+            @endforeach
+            {{-- @slot('paginator')
+                {!! serialize($paginator) !!}
+            @endslot --}}
+        @endcomponent
+    @endif
 
 </div>
 <!-- END CONTENT -->

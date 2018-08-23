@@ -169,9 +169,9 @@ class Page extends Model
           //      ]
           //   """
           //
-         */
+        **/
 
-        if (!$testing) {
+        if (true) {
             //$navbar = DB::table('pages')::all()->toArray();
             $navbar = [];
             $tg = PageGroup::getAllGroups(false);
@@ -294,17 +294,18 @@ class Page extends Model
                 $cats = $section->categories;
                 //dd($section, $cats);
                 $subs = [];
-                $section_url = "store/section/". $section->url;
+                //$section_url = "store/section/". $section->url;
                 foreach ($cats as $cat) {
+                    // $section_url . "/category/". $cat->url
                     $subs[] = self::genURLMenuItem(
-                        $section_url . "/category/". $cat->url, 
+                        $cat->getFullUrl('store'), 
                         $cat->title
                     );
                 }
                 //dd($subs);
                 $res[] = self::genDropdownLink(
                     $section->title, $subs, '', '', '',
-                    $section_url
+                    $section->getFullUrl('store')
                 );
                 //dd($res);
             }

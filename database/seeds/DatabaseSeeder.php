@@ -42,18 +42,56 @@ class DatabaseSeeder extends Seeder
     ) {
         // for each section gen an article & a image..
         // then for each section create it categories..
-        /**
-         *  Section::createNew(
-                string $name, string $url, string $title, $article,
-                string $description, $img, int $catalog_id = 1
-            );
-         */
         $sections = [];
         for ($i = 0; $i < $numSections; $i++) {
             if (Functions::testVar($ts = self::genFakeSection($faker))) {
                 $sections[] = $ts;
             }
         }
+        //dd($sections);
+        foreach ($sections as $section) {
+            $categories = [];
+            for ($i = 0; $i < $numCategories; $i++) {
+                if (Functions::testVar($tc = self::genFakeCategory($faker, null, null, $section))) {
+                    $categories[] = $tc;
+                }
+            }
+            //dd($categories);
+            foreach ($categories as $category) {
+                $products = [];
+                for ($j = 0; $j < $numProducts; $j++) {
+                    $tPrc = $faker->randomFloat(2, 1.0, 200.0);
+                    if (Functions::testVar($tp = self::genFakeProduct($faker, null, null, $category, $tPrc))) {
+                        $products[] = $tp;
+                    }
+                }
+                //dd($products);
+            }
+        }
+    }
+
+    static protected function genFakeProduct(
+        $faker, $img = null, $article = null, int $category_id = 1,
+        float $price = 0.0
+    ) {
+        $tImg = Functions::getVar($img, self::genFakeImage($faker));
+        $tArt = Functions::getVar($article, self::genFakeArticle($faker, $tImg));
+        $tPrc = Functions::getVar($price, $faker->randomFloat(2, 1.5, 200.0));
+        $tSlp = random_int(1, 9) % 3 === 0 ? $faker->randomFloat(2, 1.5, $tPrc) : $tPrc;
+        $stck = random_int(1, 9);
+        if ($stck % 3 === 0) {
+            $sticker = 'sticker-sale';
+        } elseif ($stck % 3 == 1) {
+            $sticker = 'sticker-new';
+        } else {
+            $sticker = '';
+        }
+        $tmp = Product::createNew(
+            $faker->name, $faker->domainWord, $tPrc, 
+            $tSlp, $category_id, $sticker, $tImg, 
+            $faker->text(100), $faker->text(40), $tArt
+        );
+        return Functions::getVar($tmp, null);
     }
 
     static protected function genFakeCategory(
@@ -70,8 +108,8 @@ class DatabaseSeeder extends Seeder
             $sticker = '';
         }
         $tmp = Categorie::createNew(
-            string $name, string $url, string $description, 
-            string $title, $tArt, $section_id,
+            $faker->name, $faker->domainWord, $faker->text(100), 
+            $faker->text(40), $tArt, $section_id,
             $tImg, $sticker
         );
         return Functions::getVar($tmp, null);
@@ -94,7 +132,7 @@ class DatabaseSeeder extends Seeder
         $tImg = random_int(1, 6) % 2 == 0 ? self::genFakeImage($faker) : $img;
         $tmp = Article::createNew(
             $faker->text(2000), $faker->text(80),
-            $tImg, $faker->text(300), true
+            $tImg, $faker->text(100), true
         );
         return Functions::getVar($tmp, null);
     }
@@ -150,6 +188,10 @@ class DatabaseSeeder extends Seeder
         $faker = \Faker\Factory::create();
         $num_a = 20;
         self::genFakePages($faker, $num_a);
+        $num_sect = $faker->numberBetween(3, 30);
+        $num_cat = $faker->numberBetween(6, 30);
+        $num_prod = $faker->numberBetween(9, 30);
+        self::genFakeStoreShelves($faker, $num_sect, $num_cat, $num_prod);
     }
 
     /**

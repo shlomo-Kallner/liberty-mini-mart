@@ -16,7 +16,7 @@
 
     <ul class="list-group margin-bottom-25 sidebar-menu">
 
-        @if(Functions::testVar($menu2))
+        @if(Functions::testVar($menu2) && count($menu2) > 0)
             
             @php
             
@@ -136,7 +136,7 @@
                             // setting the parent..
                             $currentFrame['parent'] = &$currentFrame['elem'][$currentFrame['index']];
                             // setting the children..
-                            $currentFrame['children'] = &$elem['submenu'];
+                            $currentFrame['children'] = &$elem['submenus'];
 
                         */
                     @endphp

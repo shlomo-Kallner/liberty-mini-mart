@@ -28,23 +28,28 @@ class Product extends Model
         string $name, string $url, float $price, 
         float $sale, int $category_id, string $sticker,
         $image, string $description,
-        string $title, string $article
+        string $title, $article
     ) {
-        $tmp = self::withTrashed()->where(
-            [
-                ['name', '=', $name],
-                ['category_id', '=', $category_id],
-                ['url', '=', $url]
-            ]
-        )->get();
+        $tmp = self::withTrashed()
+            ->where(
+                [
+                    ['name', '=', $name],
+                    ['category_id', '=', $category_id],
+                ]
+            )->orWhere(
+                [
+                    ['url', '=', $url],
+                    ['category_id', '=', $category_id],
+                ]
+            )->get();
         if ((!Functions::testVar($tmp) || count($tmp) === 0)
             && Categorie::existsId($category_id)
         ) {
-            $tImg = Image::getImageToID($img);
+            $tImg = Image::getImageToID($image);
             $tArt = Article::getToId($article);
             if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
                 $data = new self;
-                $data->name = $data;
+                $data->name = $name;
                 $data->image_id = $tImg;
                 $data->title = Functions::purifyContent($title);
                 $data->article_id = $tArt;

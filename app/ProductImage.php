@@ -46,16 +46,16 @@ class ProductImage extends Pivot
         // duplication avoidance..
         $t2 = self::where(
             [
-                ['image', '=', $image_id],
-                ['product', '=', $product_id]
+                ['image_id', '=', $image_id],
+                ['product_id', '=', $product_id]
             ]
         )->first();
         if (Functions::testVar($t2)) {
             return $t2->id;
         } else {
             $tmp = new self;
-            $tmp->product = $product_id;
-            $tmp->image = $image_id;
+            $tmp->product_id = $product_id;
+            $tmp->image_id = $image_id;
             if ($tmp->save()) {
                 return $tmp->id;
             } else {
@@ -79,7 +79,7 @@ class ProductImage extends Pivot
         } else {
             return null;
         }
-        $tmp = self::where('product', $product_id)->get();
+        $tmp = self::where('product_id', $product_id)->get();
         return Image::getAllForPivots($tmp, $toArray);
     }
 
@@ -92,7 +92,7 @@ class ProductImage extends Pivot
         } else {
             return null;
         }
-        $t = self::where('image', $img_id)->find();
+        $t = self::where('image_id', $img_id)->find();
         if (Functions::testVar($t)) {
             return $t->product;
         } else {

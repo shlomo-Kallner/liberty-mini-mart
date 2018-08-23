@@ -186,13 +186,18 @@ class Section extends Model
         string $name, string $url, string $title, $article,
         string $description, $img, int $catalog_id = 1
     ) {
-        $tmp = self::withTrashed()->where(
-            [
-                ['name', '=', $name],
-                ['url', '=', $url],
-                ['catalog_id', '=', $catalog_id],
-            ]
-        )->get();
+        $tmp = self::withTrashed()
+            ->where(
+                [
+                    ['name', '=', $name],
+                    ['catalog_id', '=', $catalog_id],
+                ]
+            )->orWhere(
+                [
+                    ['url', '=', $url],
+                    ['catalog_id', '=', $catalog_id],
+                ]
+            )->get();
         if (!Functions::testVar($tmp) || count($tmp) === 0) {
             $tImg = Image::getImageToID($img);
             $tArt = Article::getToId($article);

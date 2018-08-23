@@ -22,7 +22,7 @@
         <div class="pi-img-wrapper">
             <img src="{{ asset($img2) }}" class="img-responsive" alt="{{ $name2 }}">
             <div>
-                <a href="{{ url($img2) }}" class="btn btn-default fancybox-button">Zoom</a>
+                <a href="{{ url($img2) }}" class="btn btn-default fancybox.image fancybox-button">Zoom</a>
                 <a href="#product-pop-up" class="btn btn-default fancybox-fast-view" 
                     data-fancybox="product" data-product-id="{{ $id2 }}">View</a>
             </div>

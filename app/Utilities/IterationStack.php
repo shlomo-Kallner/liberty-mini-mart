@@ -17,7 +17,8 @@ class IterationStack
 
     public function push($key)
     {
-        if (( is_string($key) || is_int($key)) && !$this->empty() ) {
+        if ((is_string($key) || is_int($key)) 
+            && !$this->empty() && $this->current->get($key) !== null) {
             $this->stack[] = $this->current;
             $tArr = $this->current->get($key);
             $tmp = new IterationFrame($tArr, $this->current);
