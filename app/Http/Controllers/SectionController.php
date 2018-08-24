@@ -58,12 +58,12 @@ class SectionController extends MainController
     {
         if (isset($request->section)) {
             
-            dd($request->section);
+            //dd($request->section);
             $section = Section::getNamed($request->section);
-            $section_items = Categorie::getCategoriesOfSection($section->id);
+            //$section_items = Categorie::getCategoriesOfSection($section->id);
             $section_data = [
                 'section' => $section,
-                'items' => $section_items
+                'items' => $section->getCategories(false)
             ];
             
             $breadcumbs = Page::getBreadcrumbs(
@@ -71,9 +71,9 @@ class SectionController extends MainController
                     Page::genBreadcrumb('Store', 'store'),
                     Page::genBreadcrumb('Our Sections', 'store/section'),
                 ],
-                Page::genBreadcrumb($section->name, 'store/section/'. $section->url)
+                Page::genBreadcrumb($section->name, $section->getFullUrl('store'))
             );
-            return self::getVeiw(
+            return self::getView(
                 'content.section', $section->title, $section_data, 
                 false, $breadcumbs
             );

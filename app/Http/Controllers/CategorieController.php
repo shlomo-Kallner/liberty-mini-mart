@@ -87,9 +87,12 @@ class CategorieController extends MainController
                 $prods[] = $product->toMini('store');
             }
             //self::$data['products'] = Product::getProductsForCategory($cat->id, 'mini', $cat_url);
-            self::$data['products'] = $prods;
+            //self::$data['products'] = $prods;
             //dd($products);
-            return parent::getView('content.category', $request->category, [], false, $breadcrumbs);
+            return parent::getView(
+                'content.category', $request->category, 
+                ['products' => $prods], false, $breadcrumbs
+            );
         } 
         abort(404);
     }

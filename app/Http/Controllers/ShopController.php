@@ -79,6 +79,14 @@ class ShopController extends MainController {
             Page::genBreadcrumb('Store','store')
         );
         $title = 'test Store page';
+        $newProducts = [];
+        foreach (Product::getRandomSample(12) as $np) {
+            $newProducts[] = $np->toMini('store');
+        }
+        $bestsellers = [];
+        foreach (Product::getRandomSample(3) as $bs) {
+            $bestsellers[] = $bs->toSidebar('store');
+        }
         $content = [
             'article' => Article::makeContentArray(
                 self::getLoremIpsum(),
@@ -87,6 +95,8 @@ class ShopController extends MainController {
                 'Here you will find a wealth of products that only LIBERTY can PROVIDE!',
                 true
             ),
+            'newProducts' => $newProducts,
+            'bestsellers' => $bestsellers,
         ];
         return parent::getView('content.store', $title, $content, $useFakeData, $breadcrumbs);
     }

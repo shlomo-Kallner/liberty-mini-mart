@@ -197,7 +197,9 @@ class Product extends Model
             'url' => $curl . '/product/' . $this->url,
             'img' => $this->image->toImageArray()['img'],
             'alt' => $this->title,
-            'price' => $this->sale != ''? $this->sale : $this->price,
+            'price' => $this->sale != '' || $this->sale != $this->price 
+                ? $this->sale 
+                : $this->price,
         ];
     }
 
@@ -208,7 +210,8 @@ class Product extends Model
             'name' => $this->title,
             'id' => $this->id,
             'url' => $this->getFullUrl($baseUrl),
-            'price' => $this->sale != ''? $this->sale : $this->price,
+            'price' => $this->sale != '' || $this->sale != $this->price
+                ? $this->sale : $this->price,
             'sticker' => $this->sticker,
         ];
     }
@@ -294,7 +297,11 @@ class Product extends Model
      */
     public function otherImages()
     {
-        return $this->images;
+        return $this->hasManyThrough(
+            'App\Image', 'App\ProductImage',
+            'product_id', 'id',
+            'id', 'image_id'
+        );
     }
 
     public function images()

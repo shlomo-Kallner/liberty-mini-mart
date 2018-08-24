@@ -147,9 +147,12 @@
                             @endslot
 
                         --}}
-                        @slot('extraOuterCss')
-                            {{ "col-md-4 col-sm-6 col-xs-12" }}
-                        @endslot
+                        @if (!array_key_exists('extraOuterCss', $products2[$idx]) 
+                            || empty($products2[$idx]['extraOuterCss']))
+                            @slot('extraOuterCss')
+                                {{ "col-md-4 col-sm-6 col-xs-12" }}
+                            @endslot
+                        @endif
                         @foreach ($products2[$idx] as $key => $value)
                             @slot($key)
                                 {{ $value }}

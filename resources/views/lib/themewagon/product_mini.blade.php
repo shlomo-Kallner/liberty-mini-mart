@@ -28,12 +28,14 @@
             </div>
         </div>
         <h3><a href="{{ url($url2) }}">{{ $name2 }}</a></h3>
-        <div class="pi-price">
-            <i class="fa {{ $currency2 }}"></i>
-            <span>{{ $price2 }}</span>
-        </div>
-        <a href="javascript:;" class="btn btn-default add2cart" data-product-id="{{ $id2 }}">Add to cart</a>
-        <a href="javascript:;" class="btn btn-default pull-right orderNow" data-product-id="{{ $id2 }}">Order Now!</a>
+        @if (Functions::testVar($price2))
+            <div class="pi-price">
+                <i class="fa {{ $currency2 }}"></i>
+                <span>{{ $price2 }}</span>
+            </div>
+            <a href="javascript:;" class="btn btn-default add2cart" data-product-id="{{ $id2 }}">Add to cart</a>
+            <a href="javascript:;" class="btn btn-default pull-right orderNow" data-product-id="{{ $id2 }}">Order Now!</a>
+        @endif
         @if(Functions::testVar($sticker2))
             <div class="sticker {{ $sticker2 }}"></div>
         @endif

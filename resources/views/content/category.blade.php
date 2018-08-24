@@ -18,7 +18,7 @@
 
         $sidebar2 = serialize(Functions::getContent($sidebar??''));
         //dd($sidebar, $sidebar2);
-        $products2 = serialize(Functions::getContent($products??''));
+        $products2 = serialize(Functions::getContent($page['products']??''));
         $filters2 = '';
         $bestsellers2 = '';
         $currency2 = 'fa-usd';

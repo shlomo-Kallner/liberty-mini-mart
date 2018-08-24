@@ -13,8 +13,9 @@
     use \App\Utilities\Functions\Functions;
 
     $section2 = '';
+    $categories2 = serialize(Functions::getContent($page['items']??''));
 
-    $sidebar2 = '';
+    $sidebar2 = serialize(Functions::getContent($sidebar??''));
     $filters2 = '';
     $bestsellers2 = '';
     $currency2 = '';
