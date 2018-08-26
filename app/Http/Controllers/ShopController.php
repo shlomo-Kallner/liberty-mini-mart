@@ -42,6 +42,11 @@ class ShopController extends MainController {
         return self::test($request, false);
     }
 
+    public function getStore(Request $request) 
+    {
+        return __METHOD__;
+    }
+
     public function test(Request $request, bool $useFakeData = true)
     {
         
@@ -54,10 +59,10 @@ class ShopController extends MainController {
         foreach (Product::getRandomSample(12) as $np) {
             $newProducts[] = $np->toMini('store');
         } */
-        $bestsellers = [];
+        /* $bestsellers = [];
         foreach (Product::getRandomSample(3) as $bs) {
             $bestsellers[] = $bs->toSidebar('store');
-        }
+        } */
         $sections = [];
         foreach (Section::getAllModels(false, false) as $sect) {
             $sections[] = $sect->toMini('store');
@@ -70,8 +75,8 @@ class ShopController extends MainController {
                 'Here you will find a wealth of products that only LIBERTY can PROVIDE!',
                 true
             ),
-            'newProducts' => self::getNewProducts(),
-            'bestsellers' => $bestsellers,
+            'newProducts' => Product::getNewProducts(),
+            'bestsellers' => Product::getBestsellers(),
             'sections' => $sections,
         ];
         return parent::getView('content.store', $title, $content, $useFakeData, $breadcrumbs);

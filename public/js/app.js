@@ -11627,8 +11627,14 @@ window.Laravel.page.alert = new __WEBPACK_IMPORTED_MODULE_0__lib_LaravelAlert__[
 
 var masterAlert = new Vue({
   el: '#masterPageAlertContainer',
+  template: '<dismissable-alert/>',
   data: {
-    alert: window.Laravel.page.alert
+    initAlert: window.Laravel.page.alert.getData()
+    // initAlert: new LaravelAlert(window.Laravel.alert)
+  },
+  created: function created() {
+    // `this` points to the vm instance
+    console.log('alert is: ' + this.initAlert);
   }
 });
 
@@ -41466,34 +41472,29 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'dismissable-alert',
-    props: ['alert'], //['cssClasses', 'title', 'content', 'alertId', 'timeout' ],
-    /*
-    data: function () {
+    props: ['initAlert'], //['cssClasses', 'title', 'content', 'alertId', 'timeout' ],
+    data: function data() {
         return {
-            cssClasses: this.cssClasses,
-            title: '',
-            content: '',
-            alertId: 'masterPageAlert'
-        }
-    }, 
-    */
+            alert: this.initAlert
+        };
+    },
     computed: {
         usedCssClasses: function usedCssClasses() {
-            var cSS = this.alert.getClass().trim();
+            var cSS = this.alert.cssClasses.trim();
             return "alert " + (cSS !== '' ? cSS : 'alert-info') + " alert-dismissible fade in";
         },
         isSeen: function isSeen() {
-            return this.alert.isSeen();
+            return this.alert.seen;
         }
     },
 
     methods: {
         afterEnter: function afterEnter() {
-            console.log('afterEnter called!' + 'timeout = ' + this.alert.getTimeout());
-            var alertEl = __WEBPACK_IMPORTED_MODULE_0_jquery__('#' + this.alert.getId());
+            console.log('afterEnter called!' + 'timeout = ' + this.alert.timeout);
+            var alertEl = __WEBPACK_IMPORTED_MODULE_0_jquery__('#' + this.alert.alertId);
             setTimeout(function () {
                 alertEl.alert('close');
-            }, this.alert.getTimeout());
+            }, this.alert.timeout);
         }
     }
 
@@ -41511,7 +41512,7 @@ var render = function() {
     _vm.isSeen
       ? _c(
           "div",
-          { class: _vm.usedCssClasses, attrs: { id: _vm.alert.getId() } },
+          { class: _vm.usedCssClasses, attrs: { id: _vm.alert.alertId } },
           [
             _c(
               "button",
@@ -41532,14 +41533,10 @@ var render = function() {
             ),
             _vm._v(" "),
             _c("strong", [
-              _c("span", {
-                domProps: { innerHTML: _vm._s(_vm.alert.getTitle()) }
-              })
+              _c("span", { domProps: { innerHTML: _vm._s(_vm.alert.title) } })
             ]),
             _vm._v(" "),
-            _c("span", {
-              domProps: { innerHTML: _vm._s(_vm.alert.getContent()) }
-            })
+            _c("span", { domProps: { innerHTML: _vm._s(_vm.alert.content) } })
           ]
         )
       : _vm._e()

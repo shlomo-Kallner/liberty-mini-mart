@@ -42,7 +42,7 @@
                 $js_data = [
                     'class' => $class2,
                     'title' => $title2,
-                    'content' => $content2,
+                    'content' => str_replace("\n", '',$content2),
                     'timeout' => $timeout2
                 ];
             @endphp

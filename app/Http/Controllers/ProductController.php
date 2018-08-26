@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Product,
+    App\Categorie,
+    App\Section,
+    App\Page,
+    App\Utilities\Functions\Functions,
     Illuminate\Http\Request,
     Illuminate\Http\Response;
 
@@ -46,15 +50,48 @@ class ProductController extends MainController
         //
     }
 
+    public function postReveiw(Request $request) 
+    {
+        $request->session()->put('lastRequest', $request->all());
+        return redirect('php');
+    }
+
     /**
      * Display the specified resource.
      *
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show(Request $request)
     {
-        //
+        //dd($request->section, $request->category, $request->product);
+        $sect = Section::getNamed($request->section);
+        if (Functions::testVar($sect)) {
+            $cat = $sect->getCategory($request->category);
+            if (Functions::testVar($cat)) {
+                $product = $cat->getProduct($request->product);
+                // 'store/section/{section}/category/{category}/product/{product}'...
+                $breadcrumbs = Page::getBreadcrumbs( 
+                    Page::genBreadcrumb($product->title, $product->getFullUrl('store')),
+                    [
+                        Page::genBreadcrumb('Store', 'store'),
+                        Page::genBreadcrumb($sect->title, $sect->getFullUrl('store')),
+                        Page::genBreadcrumb($cat->title, $cat->getFullUrl('store')),
+                    ]
+                );
+                //dd($product);
+                $content_data = [
+                    'product' => $product->toFull('store'),
+                    'bestsellers' => Product::getBestsellers(),
+                
+                ];
+                return parent::getView(
+                    'content.product', $request->product, 
+                    $content_data, false, $breadcrumbs
+                );
+            }
+        } 
+        abort(404);
     }
 
     /**

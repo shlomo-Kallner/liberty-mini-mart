@@ -16,10 +16,10 @@
     $categories2 = serialize(Functions::getContent($page['items']??''));
 
     $sidebar2 = serialize(Functions::getContent($sidebar??''));
+    $bestsellers2 = serialize(Functions::getContent($page['bestsellers']??'', ''));
+    $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
     $filters2 = '';
-    $bestsellers2 = '';
-    $currency2 = '';
-
+    
 @endphp
 
 @section('main-content')
@@ -54,6 +54,9 @@
             @endslot
             @slot('productsPerPage')
                 {{ '12' }}
+            @endslot
+            @slot('currency')
+                {{ $currency2 }}
             @endslot
         @endcomponent
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cart;
 use Illuminate\Http\Request;
-use Darryldecode\Cart;
+use Darryldecode\Cart as DarrylCart;
 
 class CartController extends MainController
 {
@@ -92,5 +92,13 @@ class CartController extends MainController
     public function showDelete(Request $request)
     {
         // display 'ARE YOU SURE' PAGE...
+    }
+
+    public function addToCart(Request $request) 
+    {
+        return [
+            $request->session()->all(),
+            $request->all(),
+        ];
     }
 }

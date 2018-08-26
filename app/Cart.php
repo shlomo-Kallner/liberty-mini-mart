@@ -4,6 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Darryldecode\Cart as DarrylCart;
+use App\Utilities\Functions\Functions;
+use Illuminate\Support\Facades\Hash;
+use App\User;
 
 class Cart extends Model
 {
@@ -45,13 +49,17 @@ class Cart extends Model
         return Functions::testVar(self::getFromId($id));
     }
 
-    static public function createNew()
-    {
+    static public function createNew(
+        $user, string $session_id, $content = null
+    ) {
+        $user_id = Functions::getVar(User::getUserId($user), 0);
         //
         /**
          * 
-                $table->integer('user_id')->unsigned();
+                $table->integer('user_id')->unsigned()->nullable();
                 $table->string('session_id', 255);
+                $table->string('ip_address', 45)->nullable();
+                $table->text('user_agent')->nullable();
                 $table->mediumText('content');
                 $table->string('verihash', 255);
          */

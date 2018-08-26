@@ -52,29 +52,64 @@ jQuery(function ($) {
     };
     handleSearch();
 
-    var getOptionVals = function (options, jquery) {
+    /* var getOptionVals = function (options, jquery) {
         var result = {};
         for (var i in options) {
-            result[i] = jquery(options[i]).val();
+            result[i] = jquery('#' + options[i]).val();
         }
         return result;
-    };
+    }; */
 
-    var handleCart = function () {
-        var cartForStore = {
-            // utility 
-            getOptionVals: function (options, jquery)
-            {
-                var result = {};
-                for(var i in options){
-                    result[i] = jquery(options[i]).val();
+    //var cartForStore = function () {
+    var handleCart = {
+        // utility 
+        getOptionVals: function (options, jquery) {
+            var result = {};
+            for (var i in options) {
+                result[i] = jquery('#' + options[i]).val();
+            }
+            return result;
+        },
+        doAjax: function (jquery, data) {
+            jquery.ajax(
+                {
+                    url: data.url,
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': data.token //'{{ csrf_token() }}'
+                    },
+                    type: 'POST',
+                    data: data,
+                    success: function (result, status, xhr) {
+                        console.log(status + ' -> ' + JSON.stringify(result));
+                        if (data.redirect) {
+                            window.location.assign(data.redirect);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(status + ' -> ' + error);
+                    }
                 }
-                return result;
-            },
-        
-        };
-
+            );
+        },
+        getData: function (item, token, numProducts) {
+            //var options = item.data('productOption');
+            var data = {
+                options: handleCart.getOptionVals(item.data('productOption')),
+                id: item.data('productId'),
+                url: item.data('productUrl'),
+                numProducts: numProducts,
+                token: token,
+                redirect: item.data('redirectTo')
+            };
+            return data;
+        }
     };
+       // return cartForStore;
+    //};
+    /* jQuery.fn.extend({
+        cartForStore: handleCart()
+    }); */
 
     var myInit = function ($) {
         Layout.init();
@@ -102,5 +137,18 @@ jQuery(function ($) {
     }
   };
   checkTimeOut($);
+
+  $('.addToCart').on('click', function(e) {
+      var data = handleCart.getData($(this), window.Laravel.csrfToken, 1);
+      handleCart.doAjax($, data);
+      
+    });
+  $('.orderNow').on('click', function(e) {
+    var data = handleCart.getData($(this), window.Laravel.csrfToken, 1);
+    handleCart.doAjax($, data);
+
+        //$.ajax()
+    });
+  //$('.delFromCart')
 
 });

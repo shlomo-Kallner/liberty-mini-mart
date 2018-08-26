@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Section,
     App\Page,
+    App\Product,
     App\Categorie;
 use Illuminate\Http\Request;
 
@@ -69,6 +70,8 @@ class SectionController extends MainController
             $section_data = [
                 'section' => $section,
                 'items' => $section_items,
+                'bestsellers' => Product::getBestsellers(),
+                
             ];
             
             $breadcumbs = Page::getBreadcrumbs(

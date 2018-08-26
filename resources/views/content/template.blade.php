@@ -1,6 +1,21 @@
 <?php
 // put your code here
 //dd($navbar, $preheader, $cart);
+use \App\Utilities\Functions\Functions;
+use \App\Page;
+use \App\Cart;
+
+if (!Functions::testVar($navbar??'')) {
+    $navbar = Page::getNavBar(false);
+}
+
+if (!Functions::testVar($preheader??'')) {
+    $preheader = Page::getPreHeader(false);
+}
+
+if (!Functions::testVar($cart??'')) {
+    $cart = Cart::getCurrentCart();
+}
 ?>
 
 @extends('master')
@@ -45,7 +60,6 @@
     @parent
 
     @php
-        use \App\Utilities\Functions\Functions;
         $pageHeader2 = Functions::getBladedString($page['header']??'','');
     @endphp
 

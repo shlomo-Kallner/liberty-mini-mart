@@ -19,10 +19,12 @@
         $sidebar2 = serialize(Functions::getContent($sidebar??''));
         //dd($sidebar, $sidebar2);
         $products2 = serialize(Functions::getContent($page['products']??''));
+        $bestsellers2 = serialize(Functions::getContent($page['bestsellers']??'', ''));
+        $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
         $filters2 = '';
-        $bestsellers2 = '';
-        $currency2 = 'fa-usd';
 
+        //dd($products2, $bestsellers2);
+        
     @endphp
 
     <div class="row margin-bottom-40 ">
@@ -34,7 +36,7 @@
             @slot('filters')
                 {!! $filters2 !!}
             @endslot
-            @slot('bestsellers')
+            @slot('products')
                 {!! $bestsellers2 !!}
             @endslot
             @slot('currency')

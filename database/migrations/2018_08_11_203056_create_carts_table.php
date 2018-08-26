@@ -16,8 +16,10 @@ class CreateCartsTable extends Migration
         Schema::create(
             'carts', function (Blueprint $table) {
                 $table->increments('id');
-                $table->integer('user_id')->unsigned();
+                $table->integer('user_id')->unsigned()->nullable();
                 $table->string('session_id', 255);
+                $table->string('ip_address', 45)->nullable();
+                $table->text('user_agent')->nullable();
                 $table->mediumText('content');
                 $table->string('verihash', 255);
                 $table->timestamps();

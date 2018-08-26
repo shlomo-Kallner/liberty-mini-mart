@@ -10,6 +10,9 @@
     $price2 = Functions::getBladedString($price??'','');
     $sticker2 = Functions::getBladedString($sticker??'','');
 
+    
+    $apiURL = 'api/' . $url2;
+
 @endphp
 
 <div 
@@ -33,8 +36,14 @@
                 <i class="fa {{ $currency2 }}"></i>
                 <span>{{ $price2 }}</span>
             </div>
-            <a href="javascript:;" class="btn btn-default add2cart" data-product-id="{{ $id2 }}">Add to cart</a>
-            <a href="javascript:;" class="btn btn-default pull-right orderNow" data-product-id="{{ $id2 }}">Order Now!</a>
+            <a href="javascript:;" class="btn btn-default addToCart" 
+            data-product-id="{{ $id2 }}" data-product-url="{{ url($apiURL) }}"
+            data-product-option="@json([])"data-redirect-to=""
+            >Add to cart</a>
+            <a href="javascript:;" class="btn btn-default pull-right orderNow" 
+            data-product-id="{{ $id2 }}" data-product-url="{{ url($apiURL) }}"
+            data-product-option="@json([])" data-redirect-to="{{ url('checkout') }}"
+            >Order Now!</a>
         @endif
         @if(Functions::testVar($sticker2))
             <div class="sticker {{ $sticker2 }}"></div>

@@ -33,7 +33,13 @@ window.Laravel.page.alert = new LaravelAlert(window.Laravel.alert);
 
 var masterAlert = new Vue({
   el: '#masterPageAlertContainer',
+  template: '<dismissable-alert/>',
   data: {
-    alert: window.Laravel.page.alert
+    initAlert: window.Laravel.page.alert.getData()
+    // initAlert: new LaravelAlert(window.Laravel.alert)
+  },
+  created: function () {
+    // `this` points to the vm instance
+    console.log('alert is: ' + this.initAlert);
   }
 });

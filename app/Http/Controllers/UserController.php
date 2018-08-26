@@ -169,6 +169,20 @@ class UserController extends MainController
         return str_replace( '/', '-', $tmp1);
     }
 
+    public function verify(SigninRequest $request)
+    {
+        if (User::testIfUser($request->email, $request->password, $request)) {
+            $request->session()->regenerate();
+            return response('Success!');    
+        } else {
+            $request->session()->regenerate();
+            return response(
+                'Error! Incorrect User Email & Password Combination!',
+                403
+            );
+        }
+    }
+
     public function signin(SigninRequest $request) 
     {
         //        $email = !empty($request->email) ? $request->email : '[blank]';

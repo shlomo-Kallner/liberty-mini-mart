@@ -90,6 +90,7 @@ Route::middleware('userguard')->group(
                 Route::get('section/{section}/category/{category?}', 'CategorieController@show');
                 //
                 Route::get('section/{section}/category/{category}/product/{product?}', 'ProductController@show');
+                Route::post('section/{section}/category/{category}/product/{product?}', 'ProductController@postReveiw');
                 //
                 // a category 'all' should return all products in the catalog/store..
 
@@ -101,6 +102,7 @@ Route::middleware('userguard')->group(
         Route::get('cart/{cart?}', 'CartController@show');
         Route::get('wishlist/{wishlist?}', 'WishlistController@show');
         Route::get('checkout', 'ShopController@checkout');
+        //Route::post('checkout', )
 
         Route::prefix('user')->group(
             function () {
@@ -151,6 +153,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
         );
         // 'category/' goes to 'index()' which returns 'all-categories' of the section..
         Route::get('category/create', 'CategorieController@create');
+        
         Route::resource(
             'section/{section}/category', 'CategorieController', [
                 'parameters'=> [
@@ -164,6 +167,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
         );
         // 'product/' goes to 'index()' which returns 'all-products' of the category..
         Route::get('product/create', 'ProductController@create');
+        
         Route::resource(
             'section/{section}/category/{category}/product', 'ProductController', [
                 'parameters'=> [
@@ -180,7 +184,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
             'section/{section}/category/{category}/product/{product}/delete', 
             'ProductController@showDelete'
         );
-
+        
         // 'user/' goes to 'index()' which returns 'all-users' of the site..
         Route::resource(
             'user', 'UserController', [

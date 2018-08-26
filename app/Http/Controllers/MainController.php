@@ -9,6 +9,7 @@ use Illuminate\Http\Request,
     App\Cart,
     App\Article,
     App\Utilities\Functions\Functions,
+    App\UserSession,
     Session;
 
 class MainController extends Controller {
@@ -316,11 +317,25 @@ class MainController extends Controller {
         //
         self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
         //
-        self::$data['user'] = User::getUserArray();
+        session()->regenerate();
+        //
+        $userData = User::getUserArray();
+        //dd($userData);
+        if (!Functions::testVar($us = UserSession::getFromId($userData))) {
+            $tus = UserSession::createNew(
+                session()->getId(), intval($userData['id']),
+                $userData['ip'], $userData['agent']
+            );
+        } else {
+            $us->updateSession(
+                session()->getId(), intval($userData['id']),
+                $userData['ip'], $userData['agent'],
+                session()->all()
+            );
+        }
+        self::$data['user'] = $userData;
         //
         self::$data['cart'] = Cart::getCurrentCart();
-
-        session()->regenerate();
 
         return view($viewName, self::$data);
     }

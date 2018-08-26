@@ -9,38 +9,18 @@
 
     {{-- OUR SLOTS... --}}
     @php
-        $testing = true;
+        $testing = false;
         $fakeData = '';
 
         use \App\Utilities\Functions\Functions,
             \App\Page;
 
+        $sidebarMenu2 = serialize(Functions::getContent($sidebar??$fakeData,$fakeData));
+        $sidebarProducts2 = serialize(Functions::getContent($page['bestsellers']??$fakeData,$fakeData));
+        
         if (!$testing) {
-            $sidebarMenu2 = serialize(Functions::getContent($sidebar['menu']??$fakeData,$fakeData));
-            $sidebarProducts2 = Functions::getContent($sidebar['products']??$fakeData,$fakeData);
-            $product2 = Functions::getContent($product??'','');
+            $product2 = Functions::getContent($page['product']??'','');
         } else {
-            $sidebarMenu2 = serialize(Page::getSidebar(true));
-            $sidebarProducts2 = serialize([
-                [
-                    'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
-                    'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k1.jpg',
-                    'alt' => 'Some Shoes in Animal with Cut Out',
-                    'price' => '31.00'
-                ],
-                [
-                    'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
-                    'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k4.jpg',
-                    'alt' => 'Some Shoes in Animal with Cut Out',
-                    'price' => '23.00'
-                ],
-                [
-                    'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
-                    'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/k3.jpg',
-                    'alt' => 'Some Shoes in Animal with Cut Out',
-                    'price' => '86.00'
-                ]
-            ]);
             $product2 = [
                 'productImage' => e('lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model7.jpg'),
                 'productImageAlt' => e('Cool green dress with red bell'),

@@ -16,3 +16,12 @@
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
+
+Route::prefix('store')->group(
+    function () {
+        Route::get('/', 'ShopController@getStore');
+        // 'store/section/{section}/category/{category}/product/{product}'...
+        Route::get('section/{section}/category/{category}/product/{product}', 'CartController@addToCart');
+        Route::post('section/{section}/category/{category}/product/{product}', 'CartController@addToCart');
+    }
+);

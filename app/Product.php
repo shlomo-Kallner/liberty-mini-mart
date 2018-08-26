@@ -192,35 +192,30 @@ class Product extends Model
     }
 
     static public function getNewProducts(
-        string $name = 'New Arrivals', string $url = 'store', 
-        string $sizeClass = 'col-md-12',
+        int $numProducts = 12, string $name = 'New Arrivals', 
+        string $url = 'store', string $sizeClass = 'col-md-12',
         string $owlClass = 'owl-carousel5', 
         string $productClass = 'sale-product'
     ) {
         $products = [];
         if (!Functions::testVar($products)) {
-            foreach (Product::getRandomSample(12) as $np) {
+            foreach (self::getRandomSample($numProducts) as $np) {
                 $products[] = $np->toMini($url);
             }
         }
-        // the gallery's name..
-        //$name = 'New Arrivals';
-        /*  $cssClasses = [
-                // the gallery's name..
-                'title' => $name,
-                // the actual products..
-                'products' => serialize($products2),
-                // some CSS classes ...
-                'sizeClass' => $sizeClass, // some (can be multiple) Bootstrap Column Size classes.
-                'owlClass' => $owlClass, // a [required] Metronic CSS Class name for items-per-view..
-                'productClass' => $productClass, // some extra Metronic CSS class .. can be blank.
-                // others?... 
-            ]; 
-            return self::genProductGallery($name, $products2, $cssClasses);
-        */
         return self::genProductGallery(
             $name, $products, $url, $sizeClass, $owlClass, $productClass
         );
+    }
+
+    static public function getBestsellers(
+        int $numProducts = 3, string $url = 'store'
+    ) {
+        $bestsellers = [];
+        foreach (self::getRandomSample($numProducts) as $bs) {
+            $bestsellers[] = $bs->toSidebar($url);
+        }
+        return $bestsellers;
     }
 
     static public function getProductsForCategory($category_id, $transform, string $baseUrl) 

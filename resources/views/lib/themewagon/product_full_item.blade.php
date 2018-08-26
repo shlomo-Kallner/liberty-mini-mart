@@ -137,18 +137,18 @@
         //Functions::getUnBladedContent($??'','');
         $image2 = Functions::getBladedString($productImage??'','');
         $imageAlt2 = Functions::getBladedString($productImageAlt??'','');
-        $otherImages2 = Functions::getUnBladedContent($productOtherImages??'','');
+        $otherImages2 = Functions::getUnBladedContent($productOtherImages??'', []);
         $productTitle2 = Functions::getBladedString($productTitle??'','');
         $productPrice2 = Functions::getBladedString($productPrice??'','');
         $productSalePrice2 = Functions::getBladedString($productSalePrice??'','');
         $productAvailability2 = Functions::getBladedString($productAvailability??'','');
         $productShortDescription2 = Functions::getBladedString($productShortDescription??'','');
         $productLongDescription2 = Functions::getBladedString($productLongDescription??'','');
-        $productRating2 = Functions::getBladedString($productRating??'','');
-        $productOptions2 = Functions::getUnBladedContent($productOptions??'','');
+        $productRating2 = Functions::getBladedString($productRating??'', 0);
+        $productOptions2 = Functions::getUnBladedContent($productOptions??'', []);
         // reviews are a Wishlist item!
-        $productReviews2 = Functions::getUnBladedContent($productReviews??'','');
-        $productAdditionalInfo2 = Functions::getUnBladedContent($productAdditionalInfo??'','');
+        $productReviews2 = Functions::getUnBladedContent($productReviews??'', []);
+        $productAdditionalInfo2 = Functions::getUnBladedContent($productAdditionalInfo??'', []);
         $productSticker2 = Functions::getBladedString($productSticker??'','');
         $productURL2 = Functions::getBladedString($productURL??'','');
         $productID2 = Functions::getBladedString($productID??'','');
@@ -157,7 +157,12 @@
 
     // it does not matter to us how we get this number ...
     $numProductReviews = count($productReviews2);
+    $productApiURL = 'api/' . $productURL2;
         
+    $optionTmp = [];
+    foreach ($productOptions2 as $key => $item) {
+        $optionTmp[$key] = $key . '-product-option';
+    }
     
     
 @endphp
@@ -225,8 +230,14 @@
                     <div class="product-quantity">
                         <input id="product-quantity" type="text" value="1" readonly class="form-control input-sm">
                     </div>
-                    <button class="btn btn-primary addToCart" type="submit" id="mainProductAdder">Add to cart</button>
-                    <button class="btn btn-primary orderNow" type="submit" id="mainProductOrder">Order Now!</button>
+                    <button class="btn btn-primary addToCart" 
+                    data-product-id="{{ $productID2 }}" data-product-url="{{ url($productApiURL) }}"
+                    data-product-option="@json($optionTmp)" data-redirect-to=""
+                    type="submit" id="mainProductAdder">Add to cart</button>
+                    <button class="btn btn-primary orderNow" 
+                    data-product-id="{{ $productID2 }}" data-product-url="{{ url($productApiURL) }}"
+                    data-product-option="@json($optionTmp)" data-redirect-to="{{ url('checkout') }}"
+                    type="submit" id="mainProductOrder">Order Now!</button>
                   </div>
                   <div class="review">
                     <input type="range" value="{{ $productRating2 }}" step="0.25" id="backing4">
@@ -255,7 +266,7 @@
                   <ul id="myTab" class="nav nav-tabs">
                     <li><a href="#Description" data-toggle="tab">Description</a></li>
                     <li><a href="#Information" data-toggle="tab">Information</a></li>
-                    <li class="active"><a href="#Reviews" data-toggle="tab">Reviews ({{ $numProductReviews }})</a></li>
+                    <li class="active"><a href="#Reviews" data-toggle="tab">Reviews <span class="badge">({{ $numProductReviews }})</span></a></li>
                   </ul>
                   <div id="myTabContent" class="tab-content">
                     <div class="tab-pane fade" id="Description">
@@ -306,25 +317,25 @@
                             {{ csrf_field() }}
                             <input type="hidden" name="product-id" value="{{ $productID2 }}">
                             <div class="form-group">
-                            <label for="name">Name <span class="require">*</span></label>
-                            <input type="text" class="form-control" id="name" name="name">
+                                <label for="name">Name <span class="require">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name">
                             </div>
                             <div class="form-group">
-                            <label for="email">Email <span class="require">*</label>
-                            <input type="text" class="form-control" id="email" name="email">
+                                <label for="email">Email <span class="require">*</label>
+                                <input type="text" class="form-control" id="email" name="email">
                             </div>
                             <div class="form-group">
-                            <label for="reviewSummernote">Review <span class="require">*</span></label>
-                            <textarea class="form-control" rows="8" id="reviewSummernote" name="review"></textarea>
+                                <label for="reviewSummernote">Review <span class="require">*</span></label>
+                                <textarea class="form-control" rows="8" id="reviewSummernote" name="review"></textarea>
                             </div>
                             <div class="form-group">
-                            <label for="backing5">Rating</label>
-                            <input type="range" value="4" step="0.25" id="backing5" name="rating">
-                            <div class="rateit" data-rateit-backingfld="#backing5" data-rateit-resetable="true"  data-rateit-ispreset="true" data-rateit-min="0" data-rateit-max="5">
-                            </div>
+                                <label for="backing5">Rating</label>
+                                <input type="range" value="4" step="0.25" id="backing5" name="rating">
+                                <div class="rateit" data-rateit-backingfld="#backing5" data-rateit-resetable="true"  data-rateit-ispreset="true" data-rateit-min="0" data-rateit-max="5">
+                                </div>
                             </div>
                             <div class="padding-top-20">                  
-                            <button type="submit" form="review-form" class="btn btn-primary" name="sendReview" id="sendReview">Send</button>
+                                <button type="submit" form="review-form" class="btn btn-primary" name="sendReview" id="sendReview" value="sendReview">Send</button>
                             </div>
                         </form>
                         <!-- END FORM--> 
@@ -356,12 +367,6 @@
 
 @section('js-extra')
     @parent
-    @php    
-        $optionTmp = [];
-        foreach ($productOptions2 as $key => $item) {
-            $optionTmp[$key] = $key . '-product-option';
-        }
-    @endphp
     <script>
         /** this script section is to be written here and then converted into a 
         *   Javascript file of its own and loaded here..
@@ -369,46 +374,62 @@
 
         jQuery(function($) 
         {
-            var pageUrl = '{{ url($productURL2) }}';
-            var optionSelectors = JSON.parse( '@json($optionTmp)' );
-            var getOptionVals = function (options)
-            {
-                var result = {};
-                //console.log(JSON.stringify(options));
-                for(var i in options){
-                    //console.log(i);
-                    result[i] = $('#' + options[i]).val();
-                }
-                //$.extend()
-                return result;
-            };
             $('#reviewSummernote').summernote();
-            $('.addToCart').click(function() {
-                //console.log(optionSelectors);
-                var data = JSON.stringify(getOptionVals(optionSelectors));
-                console.log(data);
-                $.ajax(
-                    {
-                        url: pageUrl,
-                        dataType : 'json',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        type: 'POST',
-                        data: getOptionVals(optionSelectors),
-                        success: function(result,status,xhr){
-                            console.log(status + ' -> ' + JSON.stringify(result));
-                        },
-                        error: function(xhr,status,error){
-                            console.log(status + ' -> ' + error);
-                        }
-                    }
-                );
-            });
-            $('.orderNow').click(function(){
-                window.location.assign( "{{ url('checkout') }}" );
-            });
             
+            //var pageUrl = '{{ url($productApiURL) }}';
+            var optionSelectors = JSON.parse( '@json($optionTmp)' );
+            /** 
+                var getOptionVals = function (options)
+                {
+                    var result = {};
+                    //console.log(JSON.stringify(options));
+                    for(var i in options){
+                        //console.log(i);
+                        result[i] = $('#' + options[i]).val();
+                    }
+                    //$.extend()
+                    return result;
+                };
+            
+                $('.addToCart').click(function() {
+                    var pid = $(this).data('productId');
+                    var pUrl = $(this).data('productUrl');
+                    console.log( pid + ' - ' + pUrl + ' == ' + pageUrl );
+                    
+                    //console.log(optionSelectors);
+
+                    var data = {
+                        options: getOptionVals(optionSelectors),
+                        id: pid,
+                        url: pUrl,
+                        numProducts: 1
+
+                    };
+                    
+                    console.log(data);
+                    $.ajax(
+                        {
+                            url: pageUrl,
+                            dataType : 'json',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            type: 'POST',
+                            data: data,
+                            success: function(result,status,xhr){
+                                console.log(status + ' -> ' + JSON.stringify(result));
+                            },
+                            error: function(xhr,status,error){
+                                console.log(status + ' -> ' + error);
+                            }
+                        }
+                    );
+                });
+
+                $('.orderNow').click(function(){
+                    window.location.assign( "{{ url('checkout') }}" );
+                });
+            */
             
             
         });
