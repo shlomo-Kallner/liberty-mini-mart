@@ -147,7 +147,9 @@ class Section extends Model
             foreach ($tmp as $sect) {
                 $res[] = $sect->toContentArray();
             }
-        } 
+        } elseif (count($tmp) > 0) {
+            return $tmp; 
+        }
         return $res;
     }
 

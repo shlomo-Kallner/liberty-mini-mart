@@ -9,17 +9,18 @@
 
 @php
 
-    $testing = false;
+    $testing = true;
     $fakeData = ''; // the old data was '123FAKEDATA321'..
 
     use \App\Utilities\Functions\Functions;
+    //dd($page);
 
     if (true) {
-        $sections2 = serialize(Functions::getContent($sections??'', ''));
-        $newProducts2 = serialize(Functions::getContent($newProducts??'',''));
+        $sections2 = serialize(Functions::getContent($page['sections']??'', ''));
+        $newProducts2 = Functions::getContent($page['newProducts']??'','');
         $sidebar2 = serialize(Functions::getContent($sidebar??'',''));
-        $filters2 = serialize(Functions::getContent($filters??$fakeData,$fakeData));
-        $bestsellers2 = serialize(Functions::getContent($bestsellers??$fakeData,$fakeData));
+        $filters2 = serialize(Functions::getContent($page['filters']??$fakeData,$fakeData));
+        $bestsellers2 = serialize(Functions::getContent($page['bestsellers']??$fakeData,$fakeData));
         $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
         
         //dd($page);
@@ -87,7 +88,7 @@
 
     if ($testing) {
         //dd($filters2); 
-        //dd($newProducts2); 
+        //dd($newProducts2, $sections2, $bestsellers2); 
         //dd($sidebar2); 
         //dd($bestsellers2); 
         //dd($currency2);
@@ -161,24 +162,38 @@
             <!-- BEGIN SALE PRODUCT & NEW ARRIVALS -->
             
                 @component('lib.themewagon.product_gallery')
-                    @slot('products')
-                        {!! $newProducts2 !!}
-                    @endslot
                     @slot('containerClasses')
                         {{ "row margin-bottom-40 margin-top-30" }}
                     @endslot
-                    @slot('sizeClass')
-                        {{ "col-md-12" }}
-                    @endslot
-                    @slot('productClass')
-                        {{ "sale-product" }}
-                    @endslot
-                    @slot('owlClass')
-                        {{ "owl-carousel5" }}
-                    @endslot
-                    @slot('title')
-                        {{ "New Arrivals" }}
-                    @endslot
+                    @if (true)
+                        @foreach ($newProducts2 as $key => $item)
+                            @slot($key)
+                            @if (is_string($item))
+                                {{ $item }}
+                            @else
+                                {!! serialize($item) !!}
+                            @endif
+                            @endslot
+                        @endforeach
+                    @else
+                        
+                        @slot('products')
+                            {!! $newProducts2 !!}
+                        @endslot
+                        @slot('sizeClass')
+                            {{ "col-md-12" }}
+                        @endslot
+                        @slot('productClass')
+                            {{ "sale-product" }}
+                        @endslot
+                        @slot('owlClass')
+                            {{ "owl-carousel5" }}
+                        @endslot
+                        @slot('title')
+                            {{ "New Arrivals" }}
+                        @endslot
+
+                    @endif
                 @endcomponent
 
             <!-- END SALE PRODUCT & NEW ARRIVALS -->

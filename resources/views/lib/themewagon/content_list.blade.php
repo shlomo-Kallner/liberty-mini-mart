@@ -6,10 +6,10 @@
     // The DATA for the SLOTS of THIS COMPONENT are gathered HERE!!!  
     // Note: they CAN be empty... 
 
-    $products2 = Functions::getBladedContent($products??'');
+    $products2 = Functions::getUnBladedContent($products??'', []);
     //dd($products, $products2);
     $currency2 = Functions::getBladedString($currency??'fa-usd','fa-usd');
-    $sorting2 = Functions::getBladedContent($sorting??'');
+    $sorting2 = Functions::getBladedContent($sorting??'', '');
     $pageNumber2 = intval(Functions::getBladedString($pageNumber??-1,-1));
     // our default.. is 12 products per page (the template had 9..)
     $productsPerPage2 = intval(Functions::getBladedString($productsPerPage??12,12));
@@ -24,12 +24,15 @@
 
         // adding the 'extraOuterCss' slot & data to the array..
         // so that we can use 'product_gallery.blade.php' for this..
-        foreach ($products2 as $value){
-            if(Functions::testVar($value) && is_array($value) 
-            && !array_key_exists('extraOuterCss',$value)){
-                $value['extraOuterCss'] = "col-md-4 col-sm-6 col-xs-12";
+        /// HAD TO RESTORE THE SLOTS BELOW>>>!!!
+        /*
+            foreach ($products2 as $value){
+                if(Functions::testVar($value) && is_array($value) 
+                && !array_key_exists('extraOuterCss',$value)){
+                    $value['extraOuterCss'] = "col-md-4 col-sm-6 col-xs-12";
+                }
             }
-        }
+        */
 
         // Initializing the row Indices while we are at it..
         $totalProducts = count($products2);
@@ -64,11 +67,12 @@
         } else {
             $paginator = [];
         }
+        //dd("cont", $paginator, $currentPage, $products2);
             
     } else {
         $paginator = [];
     }
-    //dd("cont", $paginator, $currentPage, $products2);
+    //dd("cont", $paginator, $products2);
 
     
            

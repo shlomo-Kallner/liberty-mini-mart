@@ -11,7 +11,7 @@
     //dd($testing);
     $menu2 = Functions::getContent($menu??$fakeData,$fakeData);
     //dd($menu2);
-    if (!$testing) {
+    if (true) {
         $filters2 = Functions::getContent($filters??$fakeData,$fakeData);
         $products2 = Functions::getContent($products??$fakeData,$fakeData);  
     } else {

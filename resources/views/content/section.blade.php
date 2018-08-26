@@ -47,7 +47,7 @@
                 {{ "" }}
             @endslot
             @slot('products')
-                {{ '' }}
+                {!! $categories2 !!}
             @endslot
             @slot('pageNumber')
                 {{ '-1' }}

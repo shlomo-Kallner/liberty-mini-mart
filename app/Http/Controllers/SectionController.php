@@ -72,11 +72,11 @@ class SectionController extends MainController
             ];
             
             $breadcumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb($section->name, $section->getFullUrl('store')),
                 [
                     Page::genBreadcrumb('Store', 'store'),
                     Page::genBreadcrumb('Our Sections', 'store/section'),
-                ],
-                Page::genBreadcrumb($section->name, $section->getFullUrl('store'))
+                ]
             );
             return self::getView(
                 'content.section', $section->title, $section_data, 

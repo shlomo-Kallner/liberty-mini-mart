@@ -8,6 +8,7 @@ use Illuminate\Http\Request,
     App\Section,
     App\Categorie,
     App\Page;
+use \App\Utilities\Functions\Functions;
 
 class ShopController extends MainController {
 
@@ -16,81 +17,22 @@ class ShopController extends MainController {
     }
 
     /* public function categories(Request $request) 
-    {
-        $request->page = 'store/categories';
-        return parent::test2($request);
-    }
-
-    public function products() 
-    {
-        return __METHOD__;
-    } */
-
-    static public function genProduct()
-    {
-        $product = [];
-        return $product;
-    }
-
-    static public function genProductGallery(
-        $name, array &$products, 
-        //array &$cssClasses = [],
-        string $url = 'store', string $sizeClass = 'col-md-12',
-        string $owlClass = 'owl-carousel5', 
-        string $productClass = 'sale-product'
-    ) {
-        $res = [
-            // the gallery's name..
-            'title' => $name,
-            // the actual products..
-            'products' => serialize($products),
-            // some CSS classes ...
-            'sizeClass' => $sizeClass, // some (can be multiple) Bootstrap Column Size classes.
-            'owlClass' => $owlClass, // a [required] Metronic CSS Class name for items-per-view..
-            'productClass' => $productClass, // some extra Metronic CSS class .. can be blank.
-            // others?... 
-            // 'containerClasses' => '' / ...
-        ];
-
-        /* foreach ($cssClasses as $key => $value) {
-            if ($key !== 'title' || $key !== 'products') {
-                $res[$key] = $value;
-            }
-        } */
-        return $res;
-    }
-
-    static public function getNewProducts(
-        string $name = 'New Arrivals', string $url = 'store', 
-        string $sizeClass = 'col-md-12',
-        string $owlClass = 'owl-carousel5', 
-        string $productClass = 'sale-product'
-    ) {
-        $products = [];
-        if (!Fuunctions::testVar($products)) {
-            foreach (Product::getRandomSample(12) as $np) {
-                $products[] = $np->toMini($url);
-            }
+        {
+            $request->page = 'store/categories';
+            return parent::test2($request);
         }
-        // the gallery's name..
-        //$name = 'New Arrivals';
-        /*  $cssClasses = [
-                // the gallery's name..
-                'title' => $name,
-                // the actual products..
-                'products' => serialize($products2),
-                // some CSS classes ...
-                'sizeClass' => $sizeClass, // some (can be multiple) Bootstrap Column Size classes.
-                'owlClass' => $owlClass, // a [required] Metronic CSS Class name for items-per-view..
-                'productClass' => $productClass, // some extra Metronic CSS class .. can be blank.
-                // others?... 
-            ]; 
-            return self::genProductGallery($name, $products2, $cssClasses);
-        */
-        return self::genProductGallery(
-            $name, $products, $url, $sizeClass, $owlClass, $productClass
-        );
-    }
+
+        public function products() 
+        {
+            return __METHOD__;
+        } 
+        
+        static public function genProduct()
+        {
+            $product = [];
+            return $product;
+        } 
+    */
 
     public function index(Request $request)
     {
@@ -128,7 +70,7 @@ class ShopController extends MainController {
                 'Here you will find a wealth of products that only LIBERTY can PROVIDE!',
                 true
             ),
-            'newProducts' => $newProducts ?? self::getNewProducts(),
+            'newProducts' => self::getNewProducts(),
             'bestsellers' => $bestsellers,
             'sections' => $sections,
         ];

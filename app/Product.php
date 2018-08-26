@@ -162,6 +162,67 @@ class Product extends Model
         return $res;
     }
 
+    static public function genProductGallery(
+        $name, array &$products, 
+        //array &$cssClasses = [],
+        string $url = 'store', string $sizeClass = 'col-md-12',
+        string $owlClass = 'owl-carousel5', 
+        string $productClass = 'sale-product',
+        bool $serializeProducts = false
+    ) {
+        $res = [
+            // the gallery's name..
+            'title' => $name,
+            // the actual products..
+            'products' => $serializeProducts ? serialize($products) : $products,
+            // some CSS classes ...
+            'sizeClass' => $sizeClass, // some (can be multiple) Bootstrap Column Size classes.
+            'owlClass' => $owlClass, // a [required] Metronic CSS Class name for items-per-view..
+            'productClass' => $productClass, // some extra Metronic CSS class .. can be blank.
+            // others?... 
+            // 'containerClasses' => '' / ...
+        ];
+
+        /* foreach ($cssClasses as $key => $value) {
+            if ($key !== 'title' || $key !== 'products') {
+                $res[$key] = $value;
+            }
+        } */
+        return $res;
+    }
+
+    static public function getNewProducts(
+        string $name = 'New Arrivals', string $url = 'store', 
+        string $sizeClass = 'col-md-12',
+        string $owlClass = 'owl-carousel5', 
+        string $productClass = 'sale-product'
+    ) {
+        $products = [];
+        if (!Functions::testVar($products)) {
+            foreach (Product::getRandomSample(12) as $np) {
+                $products[] = $np->toMini($url);
+            }
+        }
+        // the gallery's name..
+        //$name = 'New Arrivals';
+        /*  $cssClasses = [
+                // the gallery's name..
+                'title' => $name,
+                // the actual products..
+                'products' => serialize($products2),
+                // some CSS classes ...
+                'sizeClass' => $sizeClass, // some (can be multiple) Bootstrap Column Size classes.
+                'owlClass' => $owlClass, // a [required] Metronic CSS Class name for items-per-view..
+                'productClass' => $productClass, // some extra Metronic CSS class .. can be blank.
+                // others?... 
+            ]; 
+            return self::genProductGallery($name, $products2, $cssClasses);
+        */
+        return self::genProductGallery(
+            $name, $products, $url, $sizeClass, $owlClass, $productClass
+        );
+    }
+
     static public function getProductsForCategory($category_id, $transform, string $baseUrl) 
     {
         $res = [];

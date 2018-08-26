@@ -6,7 +6,7 @@
     
     //dd($productClass);
     
-    if (!$testing) {
+    if (true) {
         $products2 = Functions::getUnBladedContent($products??'','');
     } else {
         $products2 = [
