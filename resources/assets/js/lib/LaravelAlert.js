@@ -3,12 +3,12 @@ export class LaravelAlert {
   constructor (data) {
     let decoded = JSON.parse(data);
     this.data = {
-      alertId: decoded.id !== undefined || decoded.id !== '' ? decoded.id : 'masterPageAlert',
-      cssClasses: decoded.class !== null || decoded.class !== '' ? decoded.class : '',
-      title: decoded.title !== null || decoded.title !== '' ? decoded.title : '',
-      content: decoded.content !== null || decoded.content !== '' ? decoded.content : '',
-      timeout: decoded.timeout !== null || decoded.timeout !== '' ? LaravelAlert.getNumber(decoded.timeout) : '',
-      seen: decoded.class !== null || decoded.class !== ''
+      alertId: LaravelAlert.testVal(decoded.id) ? decoded.id : 'masterPageAlert',
+      cssClasses: LaravelAlert.testVal(decoded.class) ? decoded.class : '',
+      title: LaravelAlert.testVal(decoded.title) ? decoded.title : '',
+      content: LaravelAlert.testVal(decoded.content) ? decoded.content : '',
+      timeout: LaravelAlert.testVal(decoded.timeout) ? LaravelAlert.getNumber(decoded.timeout) : '',
+      seen: LaravelAlert.testVal(decoded.class)
     };
   }
 
@@ -35,6 +35,22 @@ export class LaravelAlert {
       return parseInt(num);
     } else {
       return 0;
+    }
+  }
+
+  static testVal (val) {
+    if (val === null) {
+      return false;
+    } else if (val === '') {
+      return false;
+    } else if (val === undefined) {
+      return false;
+    } else if (val === 0) {
+      return false;
+    } else if (val === 0.0) {
+      return false;
+    } else {
+      return true;
     }
   }
 

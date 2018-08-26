@@ -8,6 +8,7 @@ use Illuminate\Http\Request,
     App\User,
     App\Cart,
     App\Article,
+    App\Product,
     App\Utilities\Functions\Functions,
     App\UserSession,
     Session;
@@ -430,8 +431,11 @@ class MainController extends Controller {
                 e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
                 true
             ),
+            'newProducts' => Product::getNewProducts(),
+            'sampleProducts' => Product::getNewProducts(7, 'Multi-Items'),
+            'bestsellers' => Product::getBestsellers()
         ];
-        $useFakeData = true;
+        $useFakeData = false;
         //self::$data['sidebar'] = Page::getSidebar($useFakeData);
         //dd($request->path());
         $breadcrumbs = Page::getBreadcrumbs(

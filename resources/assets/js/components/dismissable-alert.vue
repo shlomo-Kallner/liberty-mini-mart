@@ -1,13 +1,11 @@
-<template>
-    <transition v-on:enter="afterEnter">
-        <div v-if="isSeen" v-bind:id="alert.alertId" v-bind:class="usedCssClasses" >
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                <i class="fa fa-close" aria-hidden="true"></i>
-            </button>
-            <strong><span v-html="alert.title"></span></strong> 
-            <span v-html="alert.content"></span>
-        </div>
-    </transition>
+<template v-if="isSeen">
+    <div v-bind:id="alert.alertId" v-bind:class="usedCssClasses">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            <i class="fa fa-close" aria-hidden="true"></i>
+        </button>
+        <strong><span v-html="alert.title"></span></strong> 
+        <span v-html="alert.content"></span>
+    </div>
 </template>
 
 <script>
@@ -16,12 +14,15 @@ import * as jQuery from 'jquery'; // 'jquery/dist/jquery'
 
 export default {
     name: 'dismissable-alert',
+
     props: ['initAlert'], //['cssClasses', 'title', 'content', 'alertId', 'timeout' ],
+
     data: function () {
         return {
             alert: this.initAlert
         }
     }, 
+
     computed: {
         usedCssClasses: function() {
             let cSS = this.alert.cssClasses.trim();

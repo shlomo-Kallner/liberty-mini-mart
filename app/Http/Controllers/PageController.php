@@ -130,7 +130,8 @@ class PageController extends MainController
     /// UTILITY METHODS:
     /// Testing Functions Start:
 
-    public function index1(Request $request) {
+    public function index1(Request $request) 
+    {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         $title = 'test ' . $requestedPage . ' page';
         $content = [
@@ -143,7 +144,8 @@ class PageController extends MainController
         return self::getView('content.tests.index2', $title, $content);
     }
 
-    public function test(Request $request) {
+    public function test(Request $request) 
+    {
         $requestedPage = !empty($request->page) ? $request->page : 'index';
         $title = 'test ' . $requestedPage . ' page';
         $content = [

@@ -25,11 +25,11 @@
     @parent
 
     @php
-        $testing = true;
+        $testing = false;
         use \App\Utilities\Functions\Functions;
 
         if (!$testing) {
-            $newProducts2 = serialize(Functions::getContent($newProducts??'',''));
+            $newProducts2 = serialize(Functions::getContent($page['newProducts']['products']??'',''));
         } else {
             $newProducts2 = serialize([
                 [
@@ -98,7 +98,7 @@
             ]);
         }
         if (!$testing) {
-            $sampleProducts2 = serialize(Functions::getContent($sampleProducts??''));
+            $sampleProducts2 = serialize(Functions::getContent($page['sampleProducts']['products']??''));
         } else {
             $sampleProducts2 = serialize([
                 [
@@ -170,7 +170,7 @@
         $pricing2 = Functions::getContent($pricing??'');
         $currency2 = Functions::getContent($currency??'','fa-usd');
         $filters2 = Functions::getContent($filters2??'');
-        $bestsellers2 = Functions::getContent($bestsellers??'');
+        $bestsellers2 = serialize(Functions::getContent($page['bestsellers']??''));
 
         if (Functions::testVar($pricing2)) {
             $usePricings = true;

@@ -4,7 +4,7 @@
     $testing = false;
     use \App\Utilities\Functions\Functions;
     
-    if (!$testing) {
+    if (true) {
         $newProducts2 = Functions::getContent($newProducts??'','');
     } else {
         $newProducts2 = serialize([
@@ -74,7 +74,7 @@
         ]);
     }
     
-    if (!$testing) {
+    if (true) {
         $sampleProducts2 = Functions::getContent($sampleProducts??'');
     } else {
         $sampleProducts2 = serialize([

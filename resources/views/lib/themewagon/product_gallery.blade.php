@@ -83,7 +83,7 @@
     $title2 = Functions::getBladedString($title??'');
     $currency2 = Functions::getBladedString($currency??'','fa-usd');
 
-    
+    //dd($products2);
 
 
 

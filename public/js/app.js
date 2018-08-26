@@ -11627,14 +11627,14 @@ window.Laravel.page.alert = new __WEBPACK_IMPORTED_MODULE_0__lib_LaravelAlert__[
 
 var masterAlert = new Vue({
   el: '#masterPageAlertContainer',
-  template: '<dismissable-alert/>',
+  template: '<dismissable-alert v-bind:initAlert="alert"></dismissable-alert>',
   data: {
-    initAlert: window.Laravel.page.alert.getData()
+    alert: window.Laravel.page.alert.getData()
     // initAlert: new LaravelAlert(window.Laravel.alert)
   },
   created: function created() {
     // `this` points to the vm instance
-    console.log('alert is: ' + this.initAlert);
+    console.log('alert is: ' + this.alert);
   }
 });
 
@@ -11660,12 +11660,12 @@ var LaravelAlert = function () {
 
     var decoded = JSON.parse(data);
     this.data = {
-      alertId: decoded.id !== undefined || decoded.id !== '' ? decoded.id : 'masterPageAlert',
-      cssClasses: decoded.class !== null || decoded.class !== '' ? decoded.class : '',
-      title: decoded.title !== null || decoded.title !== '' ? decoded.title : '',
-      content: decoded.content !== null || decoded.content !== '' ? decoded.content : '',
-      timeout: decoded.timeout !== null || decoded.timeout !== '' ? LaravelAlert.getNumber(decoded.timeout) : '',
-      seen: decoded.class !== null || decoded.class !== ''
+      alertId: LaravelAlert.testVal(decoded.id) ? decoded.id : 'masterPageAlert',
+      cssClasses: LaravelAlert.testVal(decoded.class) ? decoded.class : '',
+      title: LaravelAlert.testVal(decoded.title) ? decoded.title : '',
+      content: LaravelAlert.testVal(decoded.content) ? decoded.content : '',
+      timeout: LaravelAlert.testVal(decoded.timeout) ? LaravelAlert.getNumber(decoded.timeout) : '',
+      seen: LaravelAlert.testVal(decoded.class)
     };
   }
 
@@ -11737,6 +11737,23 @@ var LaravelAlert = function () {
         return parseInt(num);
       } else {
         return 0;
+      }
+    }
+  }, {
+    key: 'testVal',
+    value: function testVal(val) {
+      if (val === null) {
+        return false;
+      } else if (val === '') {
+        return false;
+      } else if (val === undefined) {
+        return false;
+      } else if (val === 0) {
+        return false;
+      } else if (val === 0.0) {
+        return false;
+      } else {
+        return true;
       }
     }
   }]);
@@ -41464,20 +41481,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 
  // 'jquery/dist/jquery'
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'dismissable-alert',
+
     props: ['initAlert'], //['cssClasses', 'title', 'content', 'alertId', 'timeout' ],
+
     data: function data() {
         return {
             alert: this.initAlert
         };
     },
+
     computed: {
         usedCssClasses: function usedCssClasses() {
             var cSS = this.alert.cssClasses.trim();
@@ -41508,41 +41526,44 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("transition", { on: { enter: _vm.afterEnter } }, [
-    _vm.isSeen
-      ? _c(
-          "div",
-          { class: _vm.usedCssClasses, attrs: { id: _vm.alert.alertId } },
-          [
-            _c(
-              "button",
-              {
-                staticClass: "close",
-                attrs: {
-                  type: "button",
-                  "data-dismiss": "alert",
-                  "aria-hidden": "true"
-                }
-              },
-              [
-                _c("i", {
-                  staticClass: "fa fa-close",
-                  attrs: { "aria-hidden": "true" }
-                })
-              ]
-            ),
-            _vm._v(" "),
-            _c("strong", [
-              _c("span", { domProps: { innerHTML: _vm._s(_vm.alert.title) } })
-            ]),
-            _vm._v(" "),
-            _c("span", { domProps: { innerHTML: _vm._s(_vm.alert.content) } })
-          ]
-        )
-      : _vm._e()
-  ])
+  return _c(
+    "div",
+    { class: _vm.usedCssClasses, attrs: { id: _vm.alert.alertId } },
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("strong", [
+        _c("span", { domProps: { innerHTML: _vm._s(_vm.alert.title) } })
+      ]),
+      _vm._v(" "),
+      _c("span", { domProps: { innerHTML: _vm._s(_vm.alert.content) } })
+    ]
+  )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "alert",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c("i", {
+          staticClass: "fa fa-close",
+          attrs: { "aria-hidden": "true" }
+        })
+      ]
+    )
+  }
+]
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
