@@ -104,6 +104,31 @@ class Section extends Model
         );
     }
 
+    public function toSidebar(string $baseUrl, int $version = 1)
+    {
+        return [
+            'url' => $this->getFullUrl($baseUrl),
+            'img' => $this->image->toImageArray()['img'],
+            'alt' => $this->title,
+            /* 'price' => $this->sale != '' || $this->sale != $this->price 
+                ? $this->sale 
+                : $this->price, */
+        ];
+    }
+
+    public function toMini(string $baseUrl, int $version = 1)
+    {
+        return [
+            'img' => $this->image->toImageArray()['img'],
+            'name' => $this->title,
+            'id' => $this->id,
+            'url' => $this->getFullUrl($baseUrl),
+            /* 'price' => $this->sale != '' || $this->sale != $this->price
+                ? $this->sale : $this->price, */
+            //'sticker' => $this->sticker,
+        ];
+    }
+
     static public function getAll(
         bool $toArray = true, bool $withTrashed = true
     ) {

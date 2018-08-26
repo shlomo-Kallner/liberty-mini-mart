@@ -61,9 +61,14 @@ class SectionController extends MainController
             //dd($request->section);
             $section = Section::getNamed($request->section);
             //$section_items = Categorie::getCategoriesOfSection($section->id);
+            //$section_items = $section->getCategories(false);
+            $section_items = [];
+            foreach ($section->categories as $cat) {
+                $section_items[] = $cat->toMini('store');
+            }
             $section_data = [
                 'section' => $section,
-                'items' => $section->getCategories(false)
+                'items' => $section_items,
             ];
             
             $breadcumbs = Page::getBreadcrumbs(

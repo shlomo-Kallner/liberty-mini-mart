@@ -14,7 +14,8 @@
 
     use \App\Utilities\Functions\Functions;
 
-    if (!$testing) {
+    if (true) {
+        $sections2 = serialize(Functions::getContent($sections??'', ''));
         $newProducts2 = serialize(Functions::getContent($newProducts??'',''));
         $sidebar2 = serialize(Functions::getContent($sidebar??'',''));
         $filters2 = serialize(Functions::getContent($filters??$fakeData,$fakeData));
@@ -156,7 +157,7 @@
                 @endcomponent
             @endif
             
-            @if (false)
+            @if (Functions::testVar($newProducts2))
             <!-- BEGIN SALE PRODUCT & NEW ARRIVALS -->
             
                 @component('lib.themewagon.product_gallery')
@@ -216,13 +217,13 @@
                     @endslot
                 @endcomponent
         
-                @if (false)
+                @if (Functions::testVar($sections2))
                     @component('lib.themewagon.content_list')
                         @slot('sorting')
                             {{ "" }}
                         @endslot
                         @slot('products')
-                            {{ '' }}
+                            {!! $sections2 !!}
                         @endslot
                         @slot('pageNumber')
                             {{ '-1' }}

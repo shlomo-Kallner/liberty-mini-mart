@@ -194,7 +194,7 @@ class Product extends Model
     public function toSidebar(string $baseUrl, int $version = 1)
     {
         return [
-            'url' => $curl . '/product/' . $this->url,
+            'url' => $this->getFullUrl($baseUrl),
             'img' => $this->image->toImageArray()['img'],
             'alt' => $this->title,
             'price' => $this->sale != '' || $this->sale != $this->price 
