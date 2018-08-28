@@ -31,15 +31,32 @@ Vue.component('dismissable-alert', require('./components/dismissable-alert.vue')
 
 window.Laravel.page.alert = new LaravelAlert(window.Laravel.alert);
 
+
 var masterAlert = new Vue({
   el: '#masterPageAlertContainer',
   template: '<dismissable-alert v-bind:initAlert="alert"></dismissable-alert>',
   data: {
-    alert: window.Laravel.page.alert.getData()
+    alertData: window.Laravel.page.alert.getData()
     // initAlert: new LaravelAlert(window.Laravel.alert)
   },
   created: function () {
     // `this` points to the vm instance
-    console.log('alert is: ' + this.alert);
+    //console.log('alert is: ' + this.alert);
+  },
+
+  computed: {
+    alert: {
+      set: function (data) {
+        this.alertData = data;
+      },
+      get: function () {
+        return this.alertData;
+      }
+    }
   }
 });
+
+window.Laravel.page.setAlert = function (data) {
+  window.Laravel.page.alert = new LaravelAlert(data);
+  masterAlert.alert = window.Laravel.page.alert.getData();
+}

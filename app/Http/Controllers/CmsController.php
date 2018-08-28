@@ -62,7 +62,7 @@ class CmsController extends MainController
         $sidebar = self::getAdminSidebar();
         //dd($sidebar);
         return self::getView(
-            'content.cms', 'Admin Dashboard', 
+            $request, 'content.cms', 'Admin Dashboard', 
             [
                 'header' => 'Admin Dashboard',
                 'article' => Article::makeContentArray(

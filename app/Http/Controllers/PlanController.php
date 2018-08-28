@@ -12,9 +12,9 @@ class PlanController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return self::getView('content.plans', 'Our Membership Plans');
+        return self::getView($request, 'content.plans', 'Our Membership Plans');
     }
 
     /**
@@ -22,9 +22,9 @@ class PlanController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        return self::getView('cms.forms.new.plan', 'Create a New Membership Plan');
+        return self::getView($request, 'cms.forms.new.plan', 'Create a New Membership Plan');
     }
 
     /**
@@ -47,7 +47,7 @@ class PlanController extends MainController
     public function show(Request $request)
     {
         $plan = Plan::where('url', $request->plan)->first();
-        return self::getView('content.plan', $plan->name, $plan);
+        return self::getView($request, 'content.plan', $plan->name, $plan);
     }
 
     /**

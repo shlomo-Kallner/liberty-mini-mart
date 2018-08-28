@@ -11629,14 +11629,30 @@ var masterAlert = new Vue({
   el: '#masterPageAlertContainer',
   template: '<dismissable-alert v-bind:initAlert="alert"></dismissable-alert>',
   data: {
-    alert: window.Laravel.page.alert.getData()
+    alertData: window.Laravel.page.alert.getData()
     // initAlert: new LaravelAlert(window.Laravel.alert)
   },
   created: function created() {
     // `this` points to the vm instance
-    console.log('alert is: ' + this.alert);
+    //console.log('alert is: ' + this.alert);
+  },
+
+  computed: {
+    alert: {
+      set: function set(data) {
+        this.alertData = data;
+      },
+      get: function get() {
+        return this.alertData;
+      }
+    }
   }
 });
+
+window.Laravel.page.setAlert = function (data) {
+  window.Laravel.page.alert = new __WEBPACK_IMPORTED_MODULE_0__lib_LaravelAlert__["a" /* LaravelAlert */](data);
+  masterAlert.alert = window.Laravel.page.alert.getData();
+};
 
 /***/ }),
 /* 20 */
@@ -41505,15 +41521,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return this.alert.seen;
         }
     },
-
     methods: {
-        afterEnter: function afterEnter() {
-            console.log('afterEnter called!' + 'timeout = ' + this.alert.timeout);
-            var alertEl = __WEBPACK_IMPORTED_MODULE_0_jquery__('#' + this.alert.alertId);
-            setTimeout(function () {
-                alertEl.alert('close');
-            }, this.alert.timeout);
+        setAlertTimeout: function setAlertTimeout(name) {
+            console.log(name + ' called! timeout = ' + this.alert.timeout);
+            if (this.alert.timeout) {
+                var alertEl = window.jQuery('#' + this.alert.alertId);
+                setTimeout(function () {
+                    alertEl.alert('close');
+                }, this.alert.timeout);
+            }
         }
+    },
+
+    mounted: function mounted() {
+        this.setAlertTimeout('mounted');
+    },
+    updated: function updated() {
+        this.setAlertTimeout('updated');
     }
 
 });
@@ -41528,7 +41552,18 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { class: _vm.usedCssClasses, attrs: { id: _vm.alert.alertId } },
+    {
+      directives: [
+        {
+          name: "show",
+          rawName: "v-show",
+          value: _vm.isSeen,
+          expression: "isSeen"
+        }
+      ],
+      class: _vm.usedCssClasses,
+      attrs: { id: _vm.alert.alertId }
+    },
     [
       _vm._m(0),
       _vm._v(" "),

@@ -313,6 +313,19 @@ class Functions
         return $res;
     }
 
+    static public function setPropKey($data, $name, $val = null)
+    {
+        $res = self::isPropKeyIn($data, $name);
+        if (self::testVar($data) && self::testVar($name)) {
+            if (is_array($data)) {
+                $data[$name] = $val;
+            } elseif (is_object($data)) {
+                $data->$name = $val;
+            }
+        } 
+        return $res;
+    }
+
     static public function isValIn($data, $key, $val = null)
     {
         $bol = null;

@@ -27,7 +27,7 @@ class ArticleController extends MainController
     public function create(Request $request)
     {
         return self::getView(
-            'cms.forms.new.article', 'Here You Can Create a New Article',
+            $request, 'cms.forms.new.article', 'Here You Can Create a New Article',
             [], false, Page::getBreadcrumbs(
                 Page::getBreadcrumbs('Create An Article', $request->path()),
                 Page::genBreadcrumb('Admin Dashboard', 'admin')
@@ -59,7 +59,7 @@ class ArticleController extends MainController
     public function show(Request $request, Article $article)
     {
         return self::getTemplateView(
-            $article->header, ['article' => $article->toContentArray()],
+            $request, $article->header, ['article' => $article->toContentArray()],
             false, Page::getBreadcrumbs(
                 Page::genBreadcrumb('Article: '. $article->header, $request->path()),
                 Page::genBreadcrumb('Admin Dashboard', 'admin')
@@ -76,7 +76,7 @@ class ArticleController extends MainController
     public function edit(Request $request, Article $article)
     {
         return self::getView(
-            'cms.forms.edit.article', 'Here You Can Edit an Article',
+            $request, 'cms.forms.edit.article', 'Here You Can Edit an Article',
             ['article' => $article->toContentArray()], false, 
             Page::getBreadcrumbs(
                 Page::getBreadcrumbs('Create An Article', $request->path()),
@@ -111,7 +111,7 @@ class ArticleController extends MainController
     {
         // display 'ARE YOU SURE' PAGE...
         return self::getView(
-            'cms.forms.delete.article', 'Are You Sure You Want to Delete an Article?',
+            $request, 'cms.forms.delete.article', 'Are You Sure You Want to Delete an Article?',
             ['article' => $article->toContentArray()], false, 
             Page::getBreadcrumbs(
                 Page::getBreadcrumbs('Create An Article', $request->path()),

@@ -18,7 +18,7 @@ class WishlistController extends MainController {
     public function index() 
     {
         //
-        return parent::getView('content.wishlist');
+        return parent::getView($request, 'content.wishlist');
     }
 
     /**

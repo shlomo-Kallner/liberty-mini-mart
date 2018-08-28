@@ -4,9 +4,10 @@
     use \App\Utilities\Functions\Functions;
     $title2 =  Functions::getBladedString($title ?? '');// . '-- dummy Title -- for testing Master Page 2';
     $siteName2 = Functions::getBladedString($site['name']?? App\Http\Controllers\MainController::$data['site']['name']);
-    $scripts = Functions::getBladedString($site['scripts']??'');
+    $scripts = Functions::getContent($site['scripts']??'');
     $usingCDNs = Functions::getBladedString($site['usingCDNs']??'');
     $usingMix = Functions::getBladedString($site['usingMix']??'');
+    $nut2 = Functions::getContent($site['nut']??'');
     $alert2 =  Functions::getContent($alert??'');
 ?>
 
@@ -53,7 +54,11 @@
                     csrfToken: '{{ csrf_token() }}',
                     upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}",
                     alert: '@json($alert2)',
-                    page: {}
+                    nut: '{{ $nut2 }}',
+                    page: {},
+                    setAlert: function (data) {
+                        this.alert = data;
+                    }
                 };
             </script>
             <meta content="Metronic Shop UI description" name="description">
@@ -182,7 +187,7 @@
                             </ul>
                         @endslot
                         @slot('timeout')
-                            {!! 'zero' !!}
+                            {!! '90000' !!}
                         @endslot
                     @endcomponent
                 @else
@@ -197,7 +202,7 @@
                             {!! $alert2['content']??'' !!}
                         @endslot
                         @slot('timeout')
-                            {!! $alert2['timeout']??'' !!}
+                            {!! $alert2['timeout']??9000 !!}
                         @endslot
                     @endcomponent
                 @endif

@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Cart;
+use App\Cart,
+    App\User,
+    App\Utilities\Functions\Functions,
+    App\UserSession;
 use Illuminate\Http\Request;
 use Darryldecode\Cart as DarrylCart;
+use App\Utilities\CsrfTokenVerifier as Verifier;
 
 class CartController extends MainController
 {
@@ -20,7 +24,7 @@ class CartController extends MainController
      */
     public function index(Request $request)
     {
-        //return parent::getView('content.cart');
+        //return parent::getView($request, 'content.cart');
     }
 
     /**
@@ -96,9 +100,31 @@ class CartController extends MainController
 
     public function addToCart(Request $request) 
     {
+        //dd($request);
+        $verifier = new Verifier;
+        $userData = User::getUserArray($request);
+        $us = UserSession::getFromId($userData);
+        $payload = $us->getPayload();
+        $nut = Functions::getPropKey(
+            Functions::getPropKey($payload, 'site'), 
+            'nut'
+        );
+        $token = Functions::getPropKey($payload, '_token');
+        if ($verifier->match2($request, $token) 
+            && $verifier->match3($request, $nut)
+        ) {
+            return self::getRequestData($request);
+        }
         return [
-            $request->session()->all(),
-            $request->all(),
+            'status' => 'failure',
+            'old_nut' => $nut,
+            'old_token' => $token,
+            '_token' => $request->input('_token'),
+            'csrf' => $request->header('X-CSRF-TOKEN'),
+            'xsrf' => $request->header('X-XSRF-TOKEN'),
+            //'decoded' => decrypt($request->header('X-XSRF-TOKEN')),
+            'nut' => $request->input('nut'),
+            'session_token' => $request->session()->token()
         ];
     }
 }

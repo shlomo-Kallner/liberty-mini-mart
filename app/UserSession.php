@@ -13,28 +13,54 @@ class UserSession extends Model
         string $session_id, $user, string $ip, string $userAgent,
         $payload = null, int $lastActivity = 1
     ) {
-        $user_id = Functions::getVar(User::getUserId($user), 0);
-        $tmp = self::where(
-            [
-                ['session_id', '=', $session_id],
-                ['user_id', '=', $user_id],
-                ['ip_address', '=', $ip],
-                ['user_agent', '=', $userAgent]
-            ]
-        )->get();
-        if (!Functions::testVar($tmp) || count($tmp) === 0) {
-            $data = new self;
-            $data->session_id = $session_id;
-            $data->user_id = $user_id;
-            $data->ip_address = $ip;
-            $data->user_agent = $userAgent;
-            $data->payload  = serialize($payload);
-            $data->last_activity = $lastActivity;
-            if ($data->save()) {
-                return $data->id;
+        if (Functions::testVar($session_id) 
+            && Functions::testVar($ip)
+            && Functions::testVar($userAgent)
+        ) {
+            $user_id = Functions::getVar(User::getUserId($user), 0);
+            $tmp = self::where(
+                [
+                    ['session_id', '=', $session_id],
+                    ['user_id', '=', $user_id],
+                    ['ip_address', '=', $ip],
+                    ['user_agent', '=', $userAgent]
+                ]
+            )->orWhere(
+                [
+                    ['user_id', '=', $user_id],
+                    ['ip_address', '=', $ip],
+                    ['user_agent', '=', $userAgent]
+                ]
+            )->orWhere(
+                [
+                    ['ip_address', '=', $ip],
+                    ['user_agent', '=', $userAgent]
+                ]
+            )->get();
+            if (!Functions::testVar($tmp) || count($tmp) === 0) {
+                if (!self::acceptablePayloadType($payload) || !Functions::testVar($payload)) {
+                    $tPay = [];
+                } else {
+                    $tPay = $payload;
+                }
+                $data = new self;
+                $data->session_id = $session_id;
+                $data->user_id = $user_id;
+                $data->ip_address = $ip;
+                $data->user_agent = $userAgent;
+                $data->payload  = base64_encode(serialize($tPay??[]));
+                $data->last_activity = $lastActivity;
+                if ($data->save()) {
+                    return $data->id;
+                }
             }
         }
         return null;
+    }
+
+    static protected function acceptablePayloadType($payload)
+    {
+        return is_array($payload) || is_object($payload);
     }
 
     public function updateSession(
@@ -55,13 +81,30 @@ class UserSession extends Model
         if ($this->user_agent != $userAgent) {
             $this->user_agent = $userAgent;
         }
-        if ($this->payload != serialize($payload)) {
-            $this->payload  = serialize($payload);
-        }
+        $this->updatePayload($payload);
         if ($this->last_activity != $lastActivity) {
             $this->last_activity = $lastActivity;
         }
         return $this->save();
+    }
+
+    protected function updatePayload($payload = null)
+    {
+        if (Functions::testVar($payload)) {
+            $tmp1 = is_string($payload) ? unserialize($payload) : $payload;
+            if (self::acceptablePayloadType($tmp1)) {
+                $tmp2 = unserialize(base64_decode($this->payload));
+                foreach ($tmp1 as $key => $val) {
+                    Functions::setPropKey($tmp2, $key, $val);
+                }
+                $this->payload = base64_encode(serialize($tmp2));
+            }
+        }
+    }
+
+    public function getPayload()
+    {
+        return unserialize(base64_decode($this->payload));
     }
 
     static public function createNewFrom(Request $request)
@@ -83,13 +126,28 @@ class UserSession extends Model
         } elseif (is_string($id)) {
             return self::where('session_id', $id)
                 ->first();
-        } elseif (is_array($id)) {
+        } elseif (is_array($id) && Functions::testVar($id['ip'])
+            && Functions::testVar($id['agent'])
+        ) {
             return self::where(
                 [
                     ['ip_address', '=', $id['ip']],
                     ['user_agent', '=', $id['agent']]
                 ]
-                )->first();
+            )->first();
+        } elseif ($id instanceof Request) {
+            return self::where(
+                [
+                    ['ip_address', '=', $id->ip()],
+                    ['user_agent', '=', $id->userAgent()]
+                ]
+            )->orWhere(
+                [
+                    ['session_id', '=', $id->session()->getId()],
+                    ['ip_address', '=', $id->ip()],
+                    ['user_agent', '=', $id->userAgent()]
+                ]
+            )->first();
         } else {
             return null;
         }

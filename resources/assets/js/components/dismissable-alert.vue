@@ -1,5 +1,5 @@
 <template v-if="isSeen">
-    <div v-bind:id="alert.alertId" v-bind:class="usedCssClasses">
+    <div v-bind:id="alert.alertId" v-bind:class="usedCssClasses" v-show="isSeen">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
             <i class="fa fa-close" aria-hidden="true"></i>
         </button>
@@ -32,15 +32,23 @@ export default {
             return this.alert.seen;
         }
     },
-
     methods: {
-        afterEnter: function () {
-            console.log('afterEnter called!' + 'timeout = ' + this.alert.timeout);
-            let alertEl = jQuery('#'+this.alert.alertId);
-            setTimeout(function(){
-                alertEl.alert('close');
-            }, this.alert.timeout);
+        setAlertTimeout: function (name) {
+            console.log(name + ' called! timeout = ' + this.alert.timeout);
+            if (this.alert.timeout) {
+                let alertEl = window.jQuery('#' + this.alert.alertId);
+                setTimeout(function () {
+                    alertEl.alert('close');
+                }, this.alert.timeout);
+            }
         }
+    },
+
+    mounted: function () {
+        this.setAlertTimeout('mounted');
+    },
+    updated: function () {
+        this.setAlertTimeout('updated');
     }
 
 }

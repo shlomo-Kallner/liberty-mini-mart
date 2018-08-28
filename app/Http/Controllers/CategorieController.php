@@ -34,7 +34,7 @@ class CategorieController extends MainController
      */
     public function create(Request $request)
     {
-        return self::getView('cms.forms.new.category', 'Create a New Category');
+        return self::getView($request, 'cms.forms.new.category', 'Create a New Category');
     }
 
     /**
@@ -95,7 +95,7 @@ class CategorieController extends MainController
             //self::$data['products'] = $prods;
             //dd($products);
             return parent::getView(
-                'content.category', $request->category, 
+                $request, 'content.category', $request->category, 
                 $content_data, false, $breadcrumbs
             );
         } 
@@ -143,7 +143,7 @@ class CategorieController extends MainController
 
     public function test(Request $request)
     {
-        return static::getView('content.category', 'DEMO-CATEGORY', [], true);
+        return static::getView($request, 'content.category', 'DEMO-CATEGORY', [], true);
     }
 
 }

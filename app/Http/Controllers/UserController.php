@@ -42,7 +42,7 @@ class UserController extends MainController
      */
     public function create(Request $request) 
     {
-        return self::getView('cms.forms.new.user', 'Create a New User');
+        return self::getView($request, 'cms.forms.new.user', 'Create a New User');
     }
 
     /**
@@ -66,7 +66,7 @@ class UserController extends MainController
     {
         $user = User::getIdFromUserArray();
         if (Functions::testVar($user)) {
-            return self::getView('content.user', 'User Profile Page', $user);
+            return self::getView($request, 'content.user', 'User Profile Page', $user);
         }
     }
 
@@ -123,7 +123,7 @@ class UserController extends MainController
         if (User::getIsUser()) {
             return redirect('/');
         } else {
-            return parent::getView('forms.register', 'New User Registration Page');
+            return parent::getView($request, 'forms.register', 'New User Registration Page');
         }
     }
 
@@ -153,7 +153,7 @@ class UserController extends MainController
                 '<strong>You Have Successfully Registered Your Account, now just sign in to enter!</strong>',
                 9000
             );
-            return parent::getView('content.index');
+            return parent::getView($request, 'content.index');
         */
     }
 
@@ -171,16 +171,14 @@ class UserController extends MainController
 
     public function verify(SigninRequest $request)
     {
+        $msg = 'Error! Incorrect User Email & Password Combination!';
+        $status = 403;
         if (User::testIfUser($request->email, $request->password, $request)) {
-            $request->session()->regenerate();
-            return response('Success!');    
-        } else {
-            $request->session()->regenerate();
-            return response(
-                'Error! Incorrect User Email & Password Combination!',
-                403
-            );
-        }
+            $msg = 'Success!';
+            $status = 200;
+        } 
+        $request->session()->regenerate();
+        return response($msg, $status);
     }
 
     public function signin(SigninRequest $request) 
@@ -218,6 +216,8 @@ class UserController extends MainController
             */
             if (!User::validateUser($request->email, $request->password, $request)) {
                 $errors[] = 'Incorrect User Email & Password Combination!';
+            } else {
+                self::addMsg('Welcome Back ' . User::getUserArray($request)['name'] . ' !');
             }
         }
         
@@ -299,7 +299,7 @@ class UserController extends MainController
                 // THE redirect view will have to retrieve the $redirect* data 
                 //  from the Session directly.. 
 
-                return parent::getView('forms.redirect');
+                return parent::getView($request, 'forms.redirect');
             }
         } 
         /* 
@@ -314,6 +314,7 @@ class UserController extends MainController
     public function signout(Request $request) 
     {
         //dd(session()->all());
+        self::addMsg('Good Bye ' . User::getUserArray($request)['name'] . ' ! Come Back Soon!');
         //$request->session()->forget('user');
         User::resetUserArray($request);
         //dd(session()->all());

@@ -36,7 +36,7 @@ class ProductController extends MainController
     public function create(Request $request)
     {
         // PARTIAL!! Requires further Implementation!
-        return self::getView('cms.forms.new.product', 'Create a New Product');
+        return self::getView($request, 'cms.forms.new.product', 'Create a New Product');
     }
 
     /**
@@ -86,7 +86,7 @@ class ProductController extends MainController
                 
                 ];
                 return parent::getView(
-                    'content.product', $request->product, 
+                    $request, 'content.product', $request->product, 
                     $content_data, false, $breadcrumbs
                 );
             }
@@ -135,7 +135,7 @@ class ProductController extends MainController
 
     public function test(Request $request)
     {
-        return static::getView('content.product', 'TEST-PRODUCT', [], true);
+        return static::getView($request, 'content.product', 'TEST-PRODUCT', [], true);
     }
 
     public function testPost(Request $request)

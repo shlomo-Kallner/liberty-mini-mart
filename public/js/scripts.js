@@ -9,13 +9,14 @@ jQuery(function ($) {
     // console.log("Ready To Code with jQuery!!");
 
     // from
+
     /*
 
         BEGIN USERS Scrolled Links Panel Scripting
 
         Inspired From Styler Panel in 
         '..\lib\themewagon\metronicShopUI\theme\assets\corporate\scripts\layout.js'
-    ***/
+    */
 
     var handleUsersLinks = function () {
     
@@ -70,20 +71,29 @@ jQuery(function ($) {
             }
             return result;
         },
-        doAjax: function (jquery, data) {
+        doAjax: function (jquery, data, type = 'POST') {
+            handleCart.dumpData(data);
             jquery.ajax(
                 {
                     url: data.url,
                     dataType: 'json',
                     headers: {
-                        'X-CSRF-TOKEN': data.token //'{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': data.token,
+                        'X-XSRF-TOKEN': data._token
+                        // 'XSRF-TOKEN': data.token,
+                        // 'Cookie': document.cookie
                     },
-                    type: 'POST',
+                    type: type,
                     data: data,
+                    xhrFields: {
+                       withCredentials: true
+                    },
                     success: function (result, status, xhr) {
                         console.log(status + ' -> ' + JSON.stringify(result));
                         if (data.redirect) {
                             window.location.assign(data.redirect);
+                        } else if (result.redirect) {
+                            window.location.assign(result.redirect);
                         }
                     },
                     error: function (xhr, status, error) {
@@ -92,17 +102,66 @@ jQuery(function ($) {
                 }
             );
         },
-        getData: function (item, token, numProducts) {
-            //var options = item.data('productOption');
-            var data = {
-                options: handleCart.getOptionVals(item.data('productOption')),
-                id: item.data('productId'),
-                url: item.data('productUrl'),
-                numProducts: numProducts,
+        getData: function (item, token, numProducts, action, nut = '') {
+            // var options = item.data('productOption');
+            return handleCart.makeData(
+                {
+                    id: item.data('productId'),
+                    options: handleCart.getOptionVals(item.data('productOption')),
+                    numProducts: numProducts
+                }, item.data('productUrl'), token,
+                item.data('redirectTo'), action, nut
+            );
+        },
+        makeData: function (info, url, token, redirect, action, nut = '') {
+            return {
+                data: function (name) {
+                    if (handleCart.testData(this[name])) {
+                        return this[name];
+                    } else {
+                        return null;
+                    }
+                },
+                info: info,
+                url: url,
                 token: token,
-                redirect: item.data('redirectTo')
+                _token: token,
+                redirect: redirect,
+                action: action,
+                nut: nut
             };
-            return data;
+        },
+        testData: function (val) {
+            if (val === null || val === undefined || !val) {
+                return false;
+            } else if (val === '') {
+                return false;
+            } else if (val === 0 || val === 0.0) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+        addToCart: function (item) {
+            var tmp = $('.product-quantity input[id="product-quantity"]').val();
+            var val = handleCart.testData(tmp) ? tmp : 1;
+            var data = handleCart.getData(
+                item, window.Laravel.csrfToken, val, 'addToCart',
+                window.Laravel.nut
+            );
+            handleCart.doAjax($, data);
+        },
+        remFromCart: function (item) {
+            var data = handleCart.getData(
+                item, window.Laravel.csrfToken, 1, 'remFromCart',
+                window.Laravel.nut
+            );
+            handleCart.doAjax($, data);
+        },
+        dumpData: function (data) {
+            for (var i in data) {
+                console.log( i + ' => ' + data[i]);
+            }
         }
     };
        // return cartForStore;
@@ -139,15 +198,10 @@ jQuery(function ($) {
   checkTimeOut($);
 
   $('.addToCart').on('click', function(e) {
-      var data = handleCart.getData($(this), window.Laravel.csrfToken, 1);
-      handleCart.doAjax($, data);
-      
+      handleCart.addToCart($(this));
     });
   $('.orderNow').on('click', function(e) {
-    var data = handleCart.getData($(this), window.Laravel.csrfToken, 1);
-    handleCart.doAjax($, data);
-
-        //$.ajax()
+    handleCart.addToCart($(this));
     });
   //$('.delFromCart')
 

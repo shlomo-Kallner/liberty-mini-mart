@@ -79,7 +79,7 @@ class ShopController extends MainController {
             'bestsellers' => Product::getBestsellers(),
             'sections' => $sections,
         ];
-        return parent::getView('content.store', $title, $content, $useFakeData, $breadcrumbs);
+        return parent::getView($request, 'content.store', $title, $content, $useFakeData, $breadcrumbs);
     }
 
     public function checkout(Request $request) 
@@ -106,7 +106,7 @@ class ShopController extends MainController {
                 'article' => serialize($request->json()),
             ]
         ];
-        return parent::getView('forms.checkout', $title, $content, $useFakeData);
+        return parent::getView($request, 'forms.checkout', $title, $content, $useFakeData);
     }
 
 }

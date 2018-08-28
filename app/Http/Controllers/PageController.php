@@ -30,9 +30,9 @@ class PageController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() 
+    public function create(Request $request) 
     {
-        return self::getView('cms.forms.new.page', 'Create a New Content Page');
+        return self::getView($request, 'cms.forms.new.page', 'Create a New Content Page');
     }
 
     /**
@@ -59,7 +59,7 @@ class PageController extends MainController
             // WISHLIST ITEM: a more sophisticated user role based
             //  Visibility / Access Control Method..
             return self::getView(
-                'content.content', $page_info['title'], $page_info['content'],
+                $request, 'content.content', $page_info['title'], $page_info['content'],
                 false, $page_info['breadcrumbs']
             );
         } else {
@@ -107,7 +107,7 @@ class PageController extends MainController
         $page = Page::getNamedPage($request->page, $request->path, true);
         if (Functions::testVar($page)) {
             return self::getView(
-                'cms.forms.delete.page', 
+                $request, 'cms.forms.delete.page', 
                 'Are You Sure That You Want To Delete This Page?',
                 [ 'data' => $page],
                 false,
@@ -141,7 +141,7 @@ class PageController extends MainController
                 ]
         ];
 
-        return self::getView('content.tests.index2', $title, $content);
+        return self::getView($request, 'content.tests.index2', $title, $content);
     }
 
     public function test(Request $request) 
@@ -179,7 +179,7 @@ class PageController extends MainController
                 ],
             ],
         ];
-        return self::getView('content.tests.test2', $title, $content);
+        return self::getView($request, 'content.tests.test2', $title, $content);
     }
 
 }

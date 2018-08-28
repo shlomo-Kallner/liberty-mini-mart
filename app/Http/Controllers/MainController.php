@@ -36,6 +36,7 @@ class MainController extends Controller {
                     ]
                 */
             ],
+            'nut' => '',
         ],
         'preheader' => [], // the preheader navbar data...
         'navbar' => [], // the header navbar data...
@@ -116,6 +117,21 @@ class MainController extends Controller {
     /// Begin Utility Functions
     /// UPDATE: converting all Utility functions to static functions...
 
+    
+
+    static public function getRequestData(Request $request)
+    {
+        return [
+            'session' => $request->session()->all(),
+            'SID' => [
+                $request->session()->getId(),
+                $request->session()->getName(),
+            ],
+            'request' => $request->all(),
+            'cookies' => $request->cookies->all(),
+        ];
+    }
+
     static public function addMsg(string $msg)
     {
         if (session()->has('msgs')) {
@@ -186,6 +202,15 @@ class MainController extends Controller {
                     self::$data['site'][$key] = $value;
                 }
             }
+        }
+    }
+
+    static public function getSiteData(string $key, $default = null)
+    {
+        if (Functions::testVar($key)) {
+            return Functions::getVar(self::$data['site'][$key], $default);
+        } else {
+            return $default;
         }
     }
 
@@ -283,9 +308,10 @@ class MainController extends Controller {
     }
 
     static public function getView(
-        string $viewName = 'content.content', string $title = '', $content = [], 
-        bool $useFakeData = false, array $breadcrumbs = null, array $alert = null,
-        array $sidebar = null
+        Request $request, string $viewName = 'content.content', 
+        string $title = '', $content = [], 
+        bool $useFakeData = false, array $breadcrumbs = null, 
+        array $alert = null, array $sidebar = null
     ) {
         self::setTitle($title);
         self::setPageContent($content);
@@ -318,21 +344,28 @@ class MainController extends Controller {
         //
         self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
         //
-        session()->regenerate();
+        $nut = str_random(120);
+        self::setSiteData('nut', $nut);
+        session()->put('site.nut', $nut);
         //
-        $userData = User::getUserArray();
+        session()->regenerate();
+        //dd($nut, session()->all());
+        $userData = User::getUserArray($request);
         //dd($userData);
         if (!Functions::testVar($us = UserSession::getFromId($userData))) {
             $tus = UserSession::createNew(
                 session()->getId(), intval($userData['id']),
-                $userData['ip'], $userData['agent']
+                $userData['ip'], $userData['agent'],
+                session()->all()
             );
+            //dd($tus, 'tus');
         } else {
             $us->updateSession(
                 session()->getId(), intval($userData['id']),
                 $userData['ip'], $userData['agent'],
                 session()->all()
             );
+            //dd($us, 'us');
         }
         self::$data['user'] = $userData;
         //
@@ -342,11 +375,12 @@ class MainController extends Controller {
     }
 
     static public function getTemplateView(
-        string $title = '', $content = [], 
+        Request $request, string $title = '', $content = [], 
         bool $useFakeData = false, array $breadcrumbs = null, array $alert = null
     ) {
         return self::getView(
-            'content.content', $title, $content, $useFakeData, $breadcrumbs, $alert
+            $request, 'content.content', $title, $content, 
+            $useFakeData, $breadcrumbs, $alert
         );
     }
 
@@ -417,7 +451,7 @@ class MainController extends Controller {
         //return $this->getTemplateView($title, $content);
         //dd($request->session()->all());
         //dd(session()->all());
-        return self::getView('content.tests.test2', $title, $content);
+        return self::getView($request, 'content.tests.test2', $title, $content);
     }
 
     public function test3(Request $request, array $alert = null) 
@@ -445,7 +479,7 @@ class MainController extends Controller {
         //return $this->getTemplateView($title, $content);
         //dd($request->session()->all());
         //dd(session()->all());
-        return self::getView('content.index', $title, $content, $useFakeData, $breadcrumbs, $alert);
+        return self::getView($request, 'content.index', $title, $content, $useFakeData, $breadcrumbs, $alert);
     }
 
     public function test4(Request $request)

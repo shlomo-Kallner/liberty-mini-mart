@@ -24,7 +24,7 @@ class SectionController extends MainController
     public function index(Request $request)
     {
         // display ALL Sections...
-        return self::getView('content.catalog');
+        return self::getView($request, 'content.catalog');
     }
 
     /**
@@ -34,7 +34,7 @@ class SectionController extends MainController
      */
     public function create()
     {
-        return self::getView('cms.forms.new.section', 'Create a New Store Section');
+        return self::getView($request, 'cms.forms.new.section', 'Create a New Store Section');
     }
 
     /**
@@ -82,7 +82,7 @@ class SectionController extends MainController
                 ]
             );
             return self::getView(
-                'content.section', $section->title, $section_data, 
+                $request, 'content.section', $section->title, $section_data, 
                 false, $breadcumbs
             );
         } else {
@@ -95,7 +95,7 @@ class SectionController extends MainController
             );
             // create a special 'content.sections' view for such a listing.. 
             // optionally add pagination... 
-            return self::getView('content.catalog', 'Our Sections', null, false, $breadcumbs);
+            return self::getView($request, 'content.catalog', 'Our Sections', null, false, $breadcumbs);
         }
 
         
@@ -142,6 +142,6 @@ class SectionController extends MainController
 
     public function test(Request $request)
     {
-        return static::getView('content.section', 'TEST-SECTION', [], true);
+        return static::getView($request, 'content.section', 'TEST-SECTION', [], true);
     }
 }

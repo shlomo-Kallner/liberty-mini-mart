@@ -17,36 +17,48 @@
 
     //dd($class, $title, $content, $timeout);
     //dd($class2, $title2, $content2, $timeout2);
-    
+    if (Functions::testVar($class2) && Functions::testVar($title2) && Functions::testVar($content2)) {
+        $display = true;
+    } else {
+        $display = false;
+    }
+    $js_data = [
+        'class' => $class2,
+        'title' => $title2,
+        'content' => str_replace("\n", '',$content2),
+        'timeout' => $timeout2
+    ];
 @endphp
 
 <div class="container">
     <div class="row">
         <div class="col-md-12" id="masterPageAlertContainer">
 
-            @if (Functions::testVar($class2) && Functions::testVar($title2) && Functions::testVar($content2))
-
-                <div id="masterPageAlert" class="alert {{ $class2 }} alert-dismissible fade in">
+            @if (true)
+                
+                <div id="masterPageAlert" class="alert {{ $class2 }} 
+                    {{ true ?'alert-dismissible fade in' : '' }}" 
+                    style="display: {{ $display ? 'block' : 'none' }};" 
+                    data-server-rendered="true">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
                         <i class="fa fa-close" aria-hidden="true"></i>
                     </button>
                     <strong>{{ $title2 }}</strong> 
                     {!! $content2 !!}
                 </div>
-
+    
             @endif
-            
+
         </div>
         <script>
-            @php
-                $js_data = [
-                    'class' => $class2,
-                    'title' => $title2,
-                    'content' => str_replace("\n", '',$content2),
-                    'timeout' => $timeout2
-                ];
-            @endphp
-            window.Laravel.alert = '@json($js_data)';
+            window.Laravel.setAlert('@json($js_data)');
         </script>
     </div>
 </div>
+
+@section('js-extra')
+    @parent
+    <script>
+        window.Laravel.page.setAlert('@json($js_data)');
+    </script>
+@endsection
