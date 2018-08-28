@@ -34,7 +34,7 @@ export default {
     },
     methods: {
         setAlertTimeout: function (name) {
-            console.log(name + ' called! timeout = ' + this.alert.timeout);
+            //console.log(name + ' called! timeout = ' + this.alert.timeout);
             if (this.alert.timeout) {
                 let alertEl = window.jQuery('#' + this.alert.alertId);
                 setTimeout(function () {

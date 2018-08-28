@@ -41523,7 +41523,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     methods: {
         setAlertTimeout: function setAlertTimeout(name) {
-            console.log(name + ' called! timeout = ' + this.alert.timeout);
+            //console.log(name + ' called! timeout = ' + this.alert.timeout);
             if (this.alert.timeout) {
                 var alertEl = window.jQuery('#' + this.alert.alertId);
                 setTimeout(function () {

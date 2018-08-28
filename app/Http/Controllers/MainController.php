@@ -346,7 +346,7 @@ class MainController extends Controller {
         //
         $nut = str_random(120);
         self::setSiteData('nut', $nut);
-        session()->put('site.nut', $nut);
+        session()->put('_nut', $nut);
         //
         session()->regenerate();
         //dd($nut, session()->all());

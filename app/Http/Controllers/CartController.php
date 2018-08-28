@@ -105,10 +105,7 @@ class CartController extends MainController
         $userData = User::getUserArray($request);
         $us = UserSession::getFromId($userData);
         $payload = $us->getPayload();
-        $nut = Functions::getPropKey(
-            Functions::getPropKey($payload, 'site'), 
-            'nut'
-        );
+        $nut = Functions::getPropKey($payload, '_nut');
         $token = Functions::getPropKey($payload, '_token');
         if ($verifier->match2($request, $token) 
             && $verifier->match3($request, $nut)
@@ -117,8 +114,8 @@ class CartController extends MainController
         }
         return [
             'status' => 'failure',
-            'old_nut' => $nut,
             'old_token' => $token,
+            'old_nut' => $nut,
             '_token' => $request->input('_token'),
             'csrf' => $request->header('X-CSRF-TOKEN'),
             'xsrf' => $request->header('X-XSRF-TOKEN'),
