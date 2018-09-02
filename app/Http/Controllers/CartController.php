@@ -101,17 +101,20 @@ class CartController extends MainController
     public function addToCart(Request $request) 
     {
         //dd($request);
-        $verifier = new Verifier;
+        $verifier = Verifier::make();
+        $userData = User::getUserArray($request);
+        $us = UserSession::getFromId($userData);
         if ($request->hasSession()) {
-            $userData = User::getUserArray($request);
-            $us = UserSession::getFromId($userData);
             
             $sn = $request->session()->getName();    
             $rsi = $request->session()->getId();
+            $sData = $request->session();
 
-        } elseif ($request->ajax()) {
-            $us = UserSession::getFrom($request);
+        } else {
+            // if ($request->ajax()) 
             $sn = config('session.cookie');
+            $rsi = '';
+            $sData = session();
         }
         $payload = Functions::testVar($us) ? $us->getPayload() : null;
         $nut = Functions::getVar(Functions::getPropKey($payload, '_nut'), '');
@@ -121,10 +124,17 @@ class CartController extends MainController
         $csi = $request->cookies->get($sn);
         $usi = $us->session_id;
         
-        $m1 = true ? $verifier->match($request) : null;
+        $m1 = $request->hasSession() ? $verifier->match($request) : null;
         $m2 = $verifier->match2($request, $token);
         $m3 = $verifier->match3($request, $nut);
         $m4 = $verifier->match4($request);
+
+        $sd = $sData->driver();
+        $sd->setId($m4 ? $csi : $usi);
+        $sd->start();
+
+        // dd($m4 ? $csi : $usi, $sd, $token, $nut);
+        
 
         if ($m2 && $m3 && false) {
             return [
@@ -150,13 +160,16 @@ class CartController extends MainController
             'match2' => $m2,
             'match3' => $m3,
             'match4' => $m4, //Verifier::do_match($usi, $csi),
+            'session_data' =>$sData,
             '_token' => $request->input('_token'),
             'request' => $rd,
             'csrf' => $request->header('X-CSRF-TOKEN'),
             'xsrf' => $request->header('X-XSRF-TOKEN'),
             //'decoded' => decrypt($request->header('X-XSRF-TOKEN')),
             'nut' => $request->input('nut'),
-            'session_token' => $request->session()->token()
+            'session_token' => $request->hasSession() 
+                ? $request->session()->token()
+                : '',
         ];
     }
 }

@@ -73,10 +73,11 @@ class UserSession extends Model
     protected function updatePayload($payload = null)
     {
         if (Functions::testVar($payload)) {
-            $tmp1 = is_string($payload) ? unserialize($payload) : $payload;
-            if (self::acceptablePayloadType($tmp1)) {
-                $tmp2 = unserialize(base64_decode($this->payload));
-                foreach ($tmp1 as $key => $val) {
+            // $tmp1 = is_string($payload) ? unserialize($payload) : $payload;
+            if (self::acceptablePayloadType($payload)) {
+                $tmp2 = $this->getPayload();
+                //dd($tmp2, $payload);
+                foreach ($payload as $key => $val) {
                     Functions::setPropKey($tmp2, $key, $val);
                 }
                 $this->payload = base64_encode(serialize($tmp2));
@@ -94,7 +95,7 @@ class UserSession extends Model
         $tmp = User::getUserArray($request);
         return self::createNew(
             $request->hasSession() ? $request->session()->getId() : '',
-            Functions::getVar(Functions::getPropKey($tmp, 'id'), 0),
+            intval(Functions::getVar(Functions::getPropKey($tmp, 'id'), 0)),
             $request->ip(),
             $request->userAgent(),
             $request->hasSession() ? $request->session()->all() : []

@@ -326,7 +326,7 @@ class Functions
         return $res;
     }
 
-    static public function setPropKey($data, $name, $val = null)
+    static public function setPropKey(&$data, $name, $val = null)
     {
         $res = self::isPropKeyIn($data, $name);
         if (self::testVar($data) && self::testVar($name)) {

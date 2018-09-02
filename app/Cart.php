@@ -8,6 +8,7 @@ use Darryldecode\Cart as DarrylCart;
 use App\Utilities\Functions\Functions;
 use Illuminate\Support\Facades\Hash;
 use App\User;
+use Illuminate\Http\Request;
 
 class Cart extends Model
 {
@@ -21,17 +22,23 @@ class Cart extends Model
     protected $dates = ['deleted_at'];
 
 
-    static public function getCurrentCart()
+    static public function getCurrentCart(Request $request = null)
     {
+        $sess = Functions::getVar(
+            Functions::testVar($request) && $request->hasSession()
+                ? $request->session() 
+                : null,
+            session()
+        );
         $cart = [
             'items' => null,
-            'currency-icon' => session()->has('currency') ?
-                session()->get('currency')  : 'fa-usd',
+            'currency-icon' => $sess->has('currency') ?
+                $sess->get('currency')  : 'fa-usd',
             'sub-total' => 0,
             'total-items' => 0,
         ];
-        if (session()->has('cart')) {
-            $cart_info = unserialize(session()->get('cart'));
+        if ($sess->has('cart')) {
+            $cart_info = unserialize($sess->get('cart'));
             $cart['items'] = $cart_info['items'];
             $cart['sub-total'] = $cart_info['sub-total'];
             $cart['total-items'] = $cart_info['total-items'];

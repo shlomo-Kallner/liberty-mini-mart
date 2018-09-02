@@ -361,6 +361,10 @@ class MainController extends Controller {
         $request->session()->regenerate();
         //dd($nut, self::getRequestData($request));
         $userData = User::getUserArray($request);
+        self::$data['user'] = $userData;
+        //
+        self::$data['cart'] = Cart::getCurrentCart($request);
+
         //dd($userData, $tmp, $nut, $request->session()->getId(), $request->session()->all());
         if (!Functions::testVar($us = UserSession::getFromId($userData))) {
             $tus = UserSession::createNew(
@@ -368,18 +372,28 @@ class MainController extends Controller {
                 $userData['ip'], $userData['agent'],
                 $request->session()->all()
             );
+            $tpay = $tus->getPayload(); 
+            $tses = $tus->session_id;
+            $imin = 'tus';
+            
             //dd($tus, 'tus');
         } else {
+            // $tpay = $us->getPayload(); 
+            // $tses = $us->session_id;
+            $imin = 'us';
             $us->updateSession(
                 $request->session()->getId(), intval($userData['id']),
                 $userData['ip'], $userData['agent'],
                 $request->session()->all()
             );
-            //dd($us, 'us');
+            // dd($tpay, $us->getPayload(), 'us');
+            // dd($tses, $request->session()->getId(), $us->session_id, 'us');
+            $tpay = $us->getPayload(); 
+            $tses = $us->session_id;
+            
         }
-        self::$data['user'] = $userData;
-        //
-        self::$data['cart'] = Cart::getCurrentCart();
+        
+        // dd($tpay, $tses, $request->session(), self::$data['cart'], $imin == 'us' ? $us : $tus, $imin);
 
         return view($viewName, self::$data);
     }
