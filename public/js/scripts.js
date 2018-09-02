@@ -89,7 +89,10 @@ jQuery(function ($) {
                        withCredentials: true
                     },
                     success: function (result, status, xhr) {
-                        console.log(status + ' -> ' + JSON.stringify(result));
+                        // console.log(status + ' -> ' + JSON.stringify(result));
+                        console.log(status + ' -> ');
+                        handleCart.dumpData(result);
+                        // handleCart.dumpData(xhr);
                         if (data.redirect) {
                             window.location.assign(data.redirect);
                         } else if (result.redirect) {
@@ -115,13 +118,13 @@ jQuery(function ($) {
         },
         makeData: function (info, url, token, redirect, action, nut = '') {
             return {
-                data: function (name) {
+                /* data: function (name) {
                     if (handleCart.testData(this[name])) {
                         return this[name];
                     } else {
                         return null;
                     }
-                },
+                }, */
                 info: info,
                 url: url,
                 token: token,

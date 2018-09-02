@@ -204,20 +204,22 @@ class Functions
             return $dbModel; // just as a convenience as we received the param by reference..
         */
         $res = [];
-        foreach ($dbModel as $key => $val) {
-            if ($key == 'image' && is_int($val)) {
-                if (!array_key_exists('img', $dbModel) && !array_key_exists('imgAlt', $dbModel)) {
-                    $img = DB::table('images')->where('id', $val)->first();
-                    if ($img) {
-                        $res['img'] = $img->path . '/' . $img->name;
-                        $res['imgAlt'] = $img->alt;
-                    } elseif ($useTitle) {
-                        $res['img'] = $dbModel['image'];
-                        $res['imgAlt'] = $dbModel['title'];
-                    }
-                } 
-            } else {
-                $res[$key] = $val;
+        if (false) {
+            foreach ($dbModel as $key => $val) {
+                if ($key == 'image' && is_int($val)) {
+                    if (!array_key_exists('img', $dbModel) && !array_key_exists('imgAlt', $dbModel)) {
+                        $img = DB::table('images')->where('id', $val)->first();
+                        if ($img) {
+                            $res['img'] = $img->path . '/' . $img->name;
+                            $res['imgAlt'] = $img->alt;
+                        } elseif ($useTitle) {
+                            $res['img'] = $dbModel['image'];
+                            $res['imgAlt'] = $dbModel['title'];
+                        }
+                    } 
+                } else {
+                    $res[$key] = $val;
+                }
             }
         }
         return $res;
@@ -292,8 +294,19 @@ class Functions
             if (is_array($data) && (is_int($name) || is_string($name))) {
                 $bol = array_key_exists($name, $data);
             } elseif (is_object($data)) {
-                $bol = isset($data->$name) || empty($data->$name); 
+                $bol = property_exists($data, $name) || isset($data->$name) 
+                    || empty($data->$name); 
             }
+        }
+        return $bol;
+    }
+
+    static public function hasPropKeyIn($data, $name)
+    {
+        $bol = null;
+        if (self::testVar($data) && self::testVar($name)) {
+            $bol = self::isPropKeyIn($data, $name) 
+                && self::testVar(self::getPropKey($data, $name));
         }
         return $bol;
     }

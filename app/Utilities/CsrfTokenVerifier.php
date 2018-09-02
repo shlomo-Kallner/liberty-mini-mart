@@ -3,13 +3,17 @@
 namespace App\Utilities;
 
 use App\Http\Middleware\VerifyCsrfToken as Verifier;
-use Illuminate\Encryption\Encrypter;
+use Illuminate\Contracts\Encryption\Encrypter;
+// use Illuminate\Encryption\Encrypter;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
-use App\Utilities\Functions\Functions;
+use App\Utilities\Functions\Functions,
+    App\User,
+    App\UserSession;
 
 class CsrfTokenVerifier extends Verifier
 {
-    public function __construct()
+    public function __construct(Application $app, Encrypter $encrypter)
     {
         $app = app();
         // $key = config('app.key');
@@ -21,15 +25,35 @@ class CsrfTokenVerifier extends Verifier
     }
 
     /// Just stashing this method here for now..
+    /// maybe not.. see make()..
     static protected function makeVerifier()
     {
-        $app = app();
+        return self::make();
+    }
+
+    /**
+     * Function make() - A Factory method to create a new CsrfTokenVerifier.
+     *
+     * @param Application|null $app - the Application instance, 
+     *                              if null, will use the global 
+     *                              function app() to retrieve it.
+     * @param Encrypter|null $encrypter - an Encrypter instance, 
+     *                                  if null, will use the global 
+     *                                  function app() to retrieve it.
+     * @return void
+     */
+    static public function make(
+        Application $app = null, Encrypter $encrypter = null
+    ) {
+        // $apper = $app ?? app();
         // $key = config('app.key');
         // $cipher = config('app.cipher');
         // $encrypter = new Encrypter($key, $cipher);
-        $encrypter = app('encrypter'); // new Encrypter($dec, $cipher);
-        $verifier = new Verifier($app, $encrypter);
-        return $verifier;
+        // new Encrypter($dec, $cipher);
+        // $encrypt = $encrypter ?? app('encrypter'); 
+        // $verifier = new Verifier($apper, $encrypt);
+        // $verifier = new self($app ?? app(), $encrypter ?? app('encrypter'));
+        return new self($app ?? app(), $encrypter ?? app('encrypter'));
     }
 
     /**
@@ -38,13 +62,13 @@ class CsrfTokenVerifier extends Verifier
      * @param  \Illuminate\Http\Request  $request
      * @return string
      */
-    protected function getToken(Request $request)
+    public function getToken(Request $request, string $default = '')
     {
         $token = $request->input('_token') ?: $request->header('X-CSRF-TOKEN');
 
         $token = $token ?: $request->header('X-XSRF-TOKEN');
 
-        return $token ?: null;
+        return $token ?: $default;
     }
 
     // the decrypter BARFS!!
@@ -53,10 +77,8 @@ class CsrfTokenVerifier extends Verifier
         return $this->tokensMatch($request);
     }
 
-    // this WORKS!!
-    public function match2(Request $request, string $token)
+    static public function do_match(string $key, string $token)
     {
-        $key = $this->getToken($request);
         if (Functions::testVar($key) && Functions::testVar($token)) {
             return hash_equals($key, $token);
         } else {
@@ -64,13 +86,36 @@ class CsrfTokenVerifier extends Verifier
         }
     }
 
+    // this WORKS!!
+    public function match2(Request $request, string $token)
+    {
+        $key = $this->getToken($request);
+        return self::do_match($key, $token);
+    }
+
     public function match3(Request $request, string $nut)
     {
-        $key = $request->input('nut');
-        if (Functions::testVar($key) && Functions::testVar($nut)) {
-            return hash_equals($key, $nut);
+        $key = Functions::getVar($request->input('nut'), '');
+        return self::do_match($key, $nut);
+    }
+
+    public function match4(Request $request)
+    {
+        $userData = User::getUserArray($request);
+        $us = UserSession::getFromId($userData);
+        //$payload = $us->getPayload();
+        //$nut = Functions::getPropKey($payload, '_nut');
+        //$token = Functions::getPropKey($payload, '_token');
+        if ($request->hasSession()) {
+            $sn = $request->hasSession() 
+                ? $request->session()->getName() 
+                : config('session.cookie');
+            $csi = Functions::getVar($request->cookies->get($sn), '');
+            $usi =  Functions::testVar($us) ? $us->session_id : '';
+
+            return self::do_match($usi, $csi); 
         } else {
-            return false;
+            return null;
         }
     }
 }

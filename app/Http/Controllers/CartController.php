@@ -102,21 +102,56 @@ class CartController extends MainController
     {
         //dd($request);
         $verifier = new Verifier;
-        $userData = User::getUserArray($request);
-        $us = UserSession::getFromId($userData);
-        $payload = $us->getPayload();
-        $nut = Functions::getPropKey($payload, '_nut');
-        $token = Functions::getPropKey($payload, '_token');
-        if ($verifier->match2($request, $token) 
-            && $verifier->match3($request, $nut)
-        ) {
-            return self::getRequestData($request);
+        if ($request->hasSession()) {
+            $userData = User::getUserArray($request);
+            $us = UserSession::getFromId($userData);
+            
+            $sn = $request->session()->getName();    
+            $rsi = $request->session()->getId();
+
+        } elseif ($request->ajax()) {
+            $us = UserSession::getFrom($request);
+            $sn = config('session.cookie');
+        }
+        $payload = Functions::testVar($us) ? $us->getPayload() : null;
+        $nut = Functions::getVar(Functions::getPropKey($payload, '_nut'), '');
+        $token = Functions::getVar(Functions::getPropKey($payload, '_token'), '');
+        
+        $rd = self::getRequestData($request);
+        $csi = $request->cookies->get($sn);
+        $usi = $us->session_id;
+        
+        $m1 = true ? $verifier->match($request) : null;
+        $m2 = $verifier->match2($request, $token);
+        $m3 = $verifier->match3($request, $nut);
+        $m4 = $verifier->match4($request);
+
+        if ($m2 && $m3 && false) {
+            return [
+                'status' => $m2 && $m3 ? 'success' : 'failure',
+                'cookie-SID' => $si,
+                'old_si' => $usi,
+                'request' => $rd,
+                'old_token' => $token,
+                'old_nut' => $nut,
+                'match1' => $m1,
+                'match2' => $m2,
+                'match3' => $m3,
+            ];
         }
         return [
-            'status' => 'failure',
+            'status' => $m2 && $m3 ? 'success' : 'failure',
+            'cookie-SID' => $csi,
+            'old_si' => $usi,
+            'request_si' => $rsi,
             'old_token' => $token,
             'old_nut' => $nut,
+            'match1' => $m1,
+            'match2' => $m2,
+            'match3' => $m3,
+            'match4' => $m4, //Verifier::do_match($usi, $csi),
             '_token' => $request->input('_token'),
+            'request' => $rd,
             'csrf' => $request->header('X-CSRF-TOKEN'),
             'xsrf' => $request->header('X-XSRF-TOKEN'),
             //'decoded' => decrypt($request->header('X-XSRF-TOKEN')),

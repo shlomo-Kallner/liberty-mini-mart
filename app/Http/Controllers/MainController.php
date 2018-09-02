@@ -121,15 +121,18 @@ class MainController extends Controller {
 
     static public function getRequestData(Request $request)
     {
-        return [
-            'session' => $request->session()->all(),
-            'SID' => [
-                $request->session()->getId(),
-                $request->session()->getName(),
-            ],
+        $tmp = [
             'request' => $request->all(),
             'cookies' => $request->cookies->all(),
         ];
+        if ($request->hasSession()) {
+            $tmp['session'] = $request->session()->all();
+            $tmp['SID'] = [
+                'id' => $request->session()->getId(),
+                'name' => $request->session()->getName(),
+            ];
+        }
+        return $tmp;
     }
 
     static public function addMsg(string $msg)
@@ -307,6 +310,14 @@ class MainController extends Controller {
         }
     }
 
+    static public function setSiteNut(Request $request, int $length = 120)
+    {
+        $nut = str_random($length);
+        self::setSiteData('nut', $nut);
+        $request->session()->put('_nut', $nut);
+        return $nut;
+    }
+
     static public function getView(
         Request $request, string $viewName = 'content.content', 
         string $title = '', $content = [], 
@@ -336,34 +347,33 @@ class MainController extends Controller {
         }
 
         self::$data['navbar'] = Page::getNavBar(false);
-        //dd(session()->all());
+        //dd($request->session()->all());
         self::$data['preheader'] = Page::getPreHeader($useFakeData);
-        //dd(session()->all());
+        //dd($request->session()->all());
         //dd(self::$data['preheader']); 
         self::$data['sidebar'] = $sidebar ?? Page::getSidebar($useFakeData);
         //
         self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
         //
-        $nut = str_random(120);
-        self::setSiteData('nut', $nut);
-        session()->put('_nut', $nut);
+        $nut = self::setSiteNut($request);
+        $tmp = self::getRequestData($request);
         //
-        session()->regenerate();
-        //dd($nut, session()->all());
+        $request->session()->regenerate();
+        //dd($nut, self::getRequestData($request));
         $userData = User::getUserArray($request);
-        //dd($userData);
+        //dd($userData, $tmp, $nut, $request->session()->getId(), $request->session()->all());
         if (!Functions::testVar($us = UserSession::getFromId($userData))) {
             $tus = UserSession::createNew(
-                session()->getId(), intval($userData['id']),
+                $request->session()->getId(), intval($userData['id']),
                 $userData['ip'], $userData['agent'],
-                session()->all()
+                $request->session()->all()
             );
             //dd($tus, 'tus');
         } else {
             $us->updateSession(
-                session()->getId(), intval($userData['id']),
+                $request->session()->getId(), intval($userData['id']),
                 $userData['ip'], $userData['agent'],
-                session()->all()
+                $request->session()->all()
             );
             //dd($us, 'us');
         }

@@ -29,11 +29,11 @@ class User extends Model
         string $name = '', string $email = '', string $id = ''
     ) {
         return [
-            'name' => Functions::testVar($name) ? $name : '',
-            'email' => Functions::testVar($email) ? $email : '',
-            'id' => Functions::testVar($id) ? $id : '',
-            'agent' => Functions::testVar($agent) ? $agent : '',
-            'ip' => Functions::testVar($ip) ? $ip : '',
+            'name' => Functions::getVar($name, ''),
+            'email' => Functions::getVar($email, ''),
+            'id' => Functions::getVar($id, ''),
+            'agent' => Functions::getVar($agent, ''),
+            'ip' => Functions::getVar($ip, ''),
             'role' => ['guest']
         ];
     }
@@ -41,7 +41,7 @@ class User extends Model
     static public function getUserArray(Request $request = null)
     {
         if (Functions::testVar($request)) {
-            if ($request->session()->has('user')) {
+            if ($request->hasSession() && $request->session()->has('user')) {
                 $user = $request->session()->get('user');
                 if (Functions::testVar($user)) {
                     return $user;
@@ -88,23 +88,29 @@ class User extends Model
             $this->name, $this->email, (string)$this->id
         );
         $data['role'] = $this->getRolesArray();
-        $request->session()->put('user', $data);
+        if ($request->hasSession()) {
+            $request->session()->put('user', $data);
+        }
         //dd($data);
         return $data;
     }
 
     static public function resetUserArray(Request $request)
     {
-        //$request->session()->get('user');
-        /// remove the old data..
-        $request->session()->forget('user');
-        /// create a new user array, 
+        /// first lets create a new user array, 
         ///  while keeping the userAgent and ip..
         $new_data = self::getNewUserArray( 
             $request->userAgent(), $request->ip()
         );
-        /// reseting the user array..
-        $request->session()->put('user', $new_data);
+        
+        if ($request->hasSession()) {
+            //$request->session()->get('user');
+            /// remove the old data..
+            $request->session()->forget('user');
+            
+            /// reseting the user array.. by setting the new data..
+            $request->session()->put('user', $new_data);
+        }
         /// and returning the new array..
         return $new_data;
     }
