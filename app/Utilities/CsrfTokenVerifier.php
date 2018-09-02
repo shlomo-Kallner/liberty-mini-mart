@@ -59,10 +59,14 @@ class CsrfTokenVerifier extends Verifier
     /**
      * Get the CSRF token from the request. Alternative Method..
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return string
+     * @param \Illuminate\Http\Request $request - a Request instance.
+     * @param string                   $default - a default value to 
+     *                                          return if there is no 
+     *                                          Token on the Request.
+     * 
+     * @return string 
      */
-    public function getToken(Request $request, string $default = '')
+    static public function getToken(Request $request, string $default = '')
     {
         $token = $request->input('_token') ?: $request->header('X-CSRF-TOKEN');
 
@@ -87,35 +91,31 @@ class CsrfTokenVerifier extends Verifier
     }
 
     // this WORKS!!
-    public function match2(Request $request, string $token)
+    static public function match2(Request $request, string $token)
     {
-        $key = $this->getToken($request);
+        $key = self::getToken($request);
         return self::do_match($key, $token);
     }
 
-    public function match3(Request $request, string $nut)
+    static public function match3(Request $request, string $nut)
     {
         $key = Functions::getVar($request->input('nut'), '');
         return self::do_match($key, $nut);
     }
 
-    public function match4(Request $request)
+    static public function match4(Request $request)
     {
         $userData = User::getUserArray($request);
         $us = UserSession::getFromId($userData);
         //$payload = $us->getPayload();
         //$nut = Functions::getPropKey($payload, '_nut');
         //$token = Functions::getPropKey($payload, '_token');
-        if ($request->hasSession()) {
-            $sn = $request->hasSession() 
-                ? $request->session()->getName() 
-                : config('session.cookie');
-            $csi = Functions::getVar($request->cookies->get($sn), '');
-            $usi =  Functions::testVar($us) ? $us->session_id : '';
+        $sn = $request->hasSession() 
+            ? $request->session()->getName() 
+            : config('session.cookie');
+        $csi = Functions::getVar($request->cookies->get($sn), '');
+        $usi =  Functions::testVar($us) ? $us->session_id : '';
 
-            return self::do_match($usi, $csi); 
-        } else {
-            return null;
-        }
+        return self::do_match($usi, $csi);
     }
 }
