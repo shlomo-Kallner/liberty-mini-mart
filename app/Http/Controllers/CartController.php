@@ -100,6 +100,11 @@ class CartController extends MainController
 
     public function addToCart(Request $request) 
     {
+        return $this->dataTester($request);
+    }
+
+    public function dataTester(Request $request)
+    {
         //dd($request);
         $verifier = Verifier::make();
         $userData = User::getUserArray($request);
@@ -127,28 +132,15 @@ class CartController extends MainController
         $m1 = $request->hasSession() ? $verifier->match($request) : null;
         $m2 = $verifier->match2($request, $token);
         $m3 = $verifier->match3($request, $nut);
-        $m4 = $verifier->match4($request);
+        $m4 = $verifier->match4($request, $us);
 
         $sd = $sData->driver();
         $sd->setId($m4 ? $csi : $usi);
         $sd->start();
 
-        // dd($m4 ? $csi : $usi, $sd, $token, $nut);
+        // dd($m4 ? $csi : $usi, $sd, $sData, $token, $nut);
         
 
-        if ($m2 && $m3 && false) {
-            return [
-                'status' => $m2 && $m3 ? 'success' : 'failure',
-                'cookie-SID' => $si,
-                'old_si' => $usi,
-                'request' => $rd,
-                'old_token' => $token,
-                'old_nut' => $nut,
-                'match1' => $m1,
-                'match2' => $m2,
-                'match3' => $m3,
-            ];
-        }
         return [
             'status' => $m2 && $m3 ? 'success' : 'failure',
             'cookie-SID' => $csi,
@@ -160,7 +152,7 @@ class CartController extends MainController
             'match2' => $m2,
             'match3' => $m3,
             'match4' => $m4, //Verifier::do_match($usi, $csi),
-            'session_data' =>$sData,
+            'session_data' =>$sd,
             '_token' => $request->input('_token'),
             'request' => $rd,
             'csrf' => $request->header('X-CSRF-TOKEN'),
@@ -169,7 +161,7 @@ class CartController extends MainController
             'nut' => $request->input('nut'),
             'session_token' => $request->hasSession() 
                 ? $request->session()->token()
-                : '',
+                : $sd->token(),
         ];
     }
 }

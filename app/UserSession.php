@@ -73,11 +73,11 @@ class UserSession extends Model
     protected function updatePayload($payload = null)
     {
         if (Functions::testVar($payload)) {
-            // $tmp1 = is_string($payload) ? unserialize($payload) : $payload;
-            if (self::acceptablePayloadType($payload)) {
+            $tmp1 = is_string($payload) ? unserialize($payload) : $payload;
+            if (self::acceptablePayloadType($tmp1)) {
                 $tmp2 = $this->getPayload();
                 //dd($tmp2, $payload);
-                foreach ($payload as $key => $val) {
+                foreach ($tmp1 as $key => $val) {
                     Functions::setPropKey($tmp2, $key, $val);
                 }
                 $this->payload = base64_encode(serialize($tmp2));
@@ -85,9 +85,11 @@ class UserSession extends Model
         }
     }
 
-    public function getPayload()
+    public function getPayload(bool $unserialize = true)
     {
-        return unserialize(base64_decode($this->payload));
+        return $unserialize 
+            ? unserialize(base64_decode($this->payload)) 
+            : base64_decode($this->payload);
     }
 
     static public function createNewFrom(Request $request)
