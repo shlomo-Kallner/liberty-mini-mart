@@ -134,9 +134,9 @@ class CartController extends MainController
         $m3 = $verifier->match3($request, $nut);
         $m4 = $verifier->match4($request, $us);
 
-        $sd = $sData->driver();
+        /* $sd = $sData->driver();
         $sd->setId($m4 ? $csi : $usi);
-        $sd->start();
+        $sd->start(); */
 
         // dd($m4 ? $csi : $usi, $sd, $sData, $token, $nut);
         
@@ -152,7 +152,7 @@ class CartController extends MainController
             'match2' => $m2,
             'match3' => $m3,
             'match4' => $m4, //Verifier::do_match($usi, $csi),
-            'session_data' =>$sd,
+            'session_data' =>$sData,
             '_token' => $request->input('_token'),
             'request' => $rd,
             'csrf' => $request->header('X-CSRF-TOKEN'),
@@ -161,7 +161,8 @@ class CartController extends MainController
             'nut' => $request->input('nut'),
             'session_token' => $request->hasSession() 
                 ? $request->session()->token()
-                : $sd->token(),
+                : $sData->token(),
+                //: '<no-token>',
         ];
     }
 }

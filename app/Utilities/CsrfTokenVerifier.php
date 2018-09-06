@@ -8,6 +8,7 @@ use Illuminate\Session\TokenMismatchException;
 // use Illuminate\Encryption\Encrypter;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use App\Exceptions\JsonException;
 use App\Utilities\Functions\Functions,
     App\User,
     App\UserSession,
@@ -86,9 +87,14 @@ class CsrfTokenVerifier extends VerifyCsrfToken
     static public function getToken(Request $request, string $default = '')
     {
         $token = $request->input('_token') ?: $request->header('X-CSRF-TOKEN');
-
+        // dd($token, $request, 'input or header(X-CSRF-TOKEN)');
+        // throw new JsonException($request, 'input or header(X-CSRF-TOKEN)', $token);
         $token = $token ?: $request->header('X-XSRF-TOKEN');
-
+        // dd($token, $request, '.. or header(X-XSRF-TOKEN)');
+        // throw new JsonException($request, '.. or header(X-XSRF-TOKEN)', $token);
+        $token = $token ?: $request->cookies->get('XSRF-TOKEN');
+        // dd($token, $request, '.. or cookies->get(XSRF-TOKEN)');
+        // throw new JsonException($request, '.. or cookies->get(XSRF-TOKEN)', $token);
         return $token ?: $default;
     }
 
@@ -104,13 +110,29 @@ class CsrfTokenVerifier extends VerifyCsrfToken
     static public function match2(Request $request, string $token)
     {
         $key = self::getToken($request);
-        return self::do_match($key, $token);
+        // dd($key, $token);
+        $bol = self::do_match($key, $token);
+        $tmp = [
+            'token' => $token, 
+            'key' => $key,
+            'bol' => $bol
+        ];
+        // throw new JsonException($request, 'in match2()', $tmp);
+        return $bol;
     }
 
     static public function match3(Request $request, string $nut)
     {
         $key = Functions::getVar($request->input('nut'), '');
-        return self::do_match($key, $nut);
+        // dd($key, $nut);
+        $bol = self::do_match($key, $nut);
+        $tmp = [
+            'nut' => $nut, 
+            'key' => $key,
+            'bol' => $bol
+        ];
+        // throw new JsonException($request, 'in match3()', $tmp);
+        return $bol;
     }
 
     static public function match4(Request $request, UserSession $us)
@@ -127,8 +149,16 @@ class CsrfTokenVerifier extends VerifyCsrfToken
             : config('session.cookie');
         $csi = Functions::getVar($request->cookies->get($sn), '');
         $usi =  Functions::testVar($us) ? $us->session_id : '';
-
-        return self::do_match($usi, $csi);
+        // dd($sn, $csi, $usi);
+        $bol = self::do_match($usi, $csi);
+        $tmp = [
+            'usi' => $usi, 
+            'csi' => $csi,
+            'sn' => $sn,
+            'bol' => $bol
+        ];
+        // throw new JsonException($request, 'in match4()', $tmp);
+        return $bol;
     }
 
     static public function match5(Request $request, UserSession $us)

@@ -184,8 +184,9 @@ class Functions
         return $res;
     }
 
-    static public function dbModel2ViewModel(array &$dbModel, bool $useTitle = false) 
-    {
+    static public function dbModel2ViewModel(
+        array &$dbModel, bool $useTitle = false
+    ) {
         /* 
             if (array_key_exists('image', $dbModel) && is_int($dbModel['image'])) {
                 $img = DB::table('images')->where('id', $dbModel['image'])->first();
@@ -223,6 +224,25 @@ class Functions
             }
         }
         return $res;
+    }
+
+    static public function jsonRetOrDump(
+        Request $request, array $data = null, $id = null
+    ) {
+        if (! $request->ajax()) {
+            dd($request, $data, $id ?? __METHOD__);
+        } else {
+            $tmp = [
+                'request' => $request,
+                'dumping_from' => $id ?? __METHOD__,
+            ];
+            foreach ($data as $key => $val) {
+                if ($key != 'request' || $key != 'dumping_from') {
+                    $tmp[$key] = $val;
+                }
+            }
+            return $tmp;
+        }
     }
 
     /**

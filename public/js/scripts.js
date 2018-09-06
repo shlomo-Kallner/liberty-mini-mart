@@ -161,9 +161,27 @@ jQuery(function ($) {
             );
             handleCart.doAjax($, data);
         },
+        isScalar: function (data) {
+            if (typeof data == 'boolean' 
+                || typeof data == 'number'
+                || typeof data == 'string'
+                || typeof data == 'undefined'
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+
+        },
         dumpData: function (data) {
             for (var i in data) {
-                console.log( i + ' => ' + data[i]);
+                if (handleCart.isScalar(i)) {
+                    console.log( i + ' => ' + data[i]);
+                } else {
+                    console.log( i + ' => [ ');
+                    handleCart.dumpData(i);
+                    console.log(']');
+                }
             }
         }
     };

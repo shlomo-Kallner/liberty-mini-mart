@@ -45,7 +45,7 @@ class Kernel extends HttpKernel
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             // \Illuminate\Session\Middleware\StartSession::class,
             // \App\Http\Middleware\VerifyCsrfToken::class,
-            
+            \App\Http\Middleware\ApiSessionGuard::class,
         ],
     ];
 

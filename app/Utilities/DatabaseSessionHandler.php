@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Utilities;
+
+use App\Exceptions\JsonException;
 use SessionHandlerInterface;
 use App\UserSession,
     App\Utilities\Functions\Functions;
@@ -30,6 +32,7 @@ class DatabaseSessionHandler implements SessionHandlerInterface
      */
     public function read($sessionId)
     {
+        // throw new JsonException(request(), __METHOD__, $this->userSession);
         return $this->hasUserSession()
             ? $this->userSession->getPayload(false)
             : '';
