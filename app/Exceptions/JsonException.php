@@ -3,10 +3,10 @@
 namespace App\Exceptions;
 
 use Exception;
+use App\Utilities\Functions\Functions;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
-use App\Utilities\Functions\Functions;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Symfony\Component\VarDumper\Dumper\CliDumper;

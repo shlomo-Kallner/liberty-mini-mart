@@ -6,6 +6,14 @@ use Illuminate\Support\Collection,
     Illuminate\Support\HtmlString,
     HTMLPurifier, DB;
 use Composer\Semver\Comparator;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
+use Symfony\Component\VarDumper\Dumper\HtmlDumper;
+use Symfony\Component\VarDumper\Dumper\CliDumper;
+use App\Exceptions\JsonException;
+
 
 class Functions
 {
@@ -227,21 +235,28 @@ class Functions
     }
 
     static public function jsonRetOrDump(
-        Request $request, array $data = null, $id = null
+        Request $request, $id = null, ...$data
     ) {
         if (! $request->ajax()) {
-            dd($request, $data, $id ?? __METHOD__);
+            dd($request, $id ?? __METHOD__, ...$data);
         } else {
-            $tmp = [
-                'request' => $request,
-                'dumping_from' => $id ?? __METHOD__,
-            ];
-            foreach ($data as $key => $val) {
-                if ($key != 'request' || $key != 'dumping_from') {
-                    $tmp[$key] = $val;
-                }
+            throw new JsonException($request, $id ?? __METHOD__, ...$data);
+        }
+    }
+
+    static public function genDumpResponse(Request $request, ...$data)
+    {
+        if ($request->ajax()) {
+            $tmp = [];
+            $dumper = new CliDumper;
+            foreach ($data as $val) {
+                $tmp[] = $dumper->dump((new VarCloner)->cloneVar($val), true);
             }
-            return $tmp;
+            return new JsonResponse($tmp);
+        } else {
+            $dumper = new HtmlDumper;
+            $tmp = $dumper->dump((new VarCloner)->cloneVar($data), true);
+            return new Response($tmp);
         }
     }
 

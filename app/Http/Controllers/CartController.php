@@ -141,7 +141,7 @@ class CartController extends MainController
         // dd($m4 ? $csi : $usi, $sd, $sData, $token, $nut);
         
 
-        return [
+        $tmp = [
             'status' => $m2 && $m3 ? 'success' : 'failure',
             'cookie-SID' => $csi,
             'old_si' => $usi,
@@ -164,5 +164,6 @@ class CartController extends MainController
                 : $sData->token(),
                 //: '<no-token>',
         ];
+        return Functions::genDumpResponse($request, $tmp);
     }
 }
