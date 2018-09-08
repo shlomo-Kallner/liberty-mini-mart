@@ -1,4 +1,10 @@
-<?php ?>
+
+@php
+    
+use \App\Utilities\Functions\Functions,
+    \Darryldecode\Cart\Cart;
+
+@endphp
 
 <li>
     <a href="{{ url($url) }}">
@@ -6,6 +12,7 @@
     </a>
     <span class="cart-content-count">
         @if(true)
+        
             <i class="fa fa-times"></i>
             {{ $quantity }}
         

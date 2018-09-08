@@ -157,7 +157,7 @@
 
     // it does not matter to us how we get this number ...
     $numProductReviews = count($productReviews2);
-    $productApiURL = 'api/' . $productURL2;
+    $productApiURL = 'api/' . $productURL2 . '/addtocart';
         
     $optionTmp = [];
     foreach ($productOptions2 as $key => $item) {

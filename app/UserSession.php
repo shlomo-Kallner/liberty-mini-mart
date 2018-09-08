@@ -3,17 +3,26 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model,
+    Illuminate\Database\Eloquent\SoftDeletes,
     Illuminate\Http\Request;
 use App\Utilities\Functions\Functions;
 use App\User;
 
 class UserSession extends Model
 {
+    use SoftDeletes;
 
     const LOCKED_ACTIVITY = 0;
     const CREATED_ACTIVITY = 1;
     const UPDATED_ACTIVITY = 2;
     const DELETED_ACTIVITY = 3;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     static public function createNew(
         string $session_id, $user, string $ip, string $userAgent,
@@ -67,8 +76,10 @@ class UserSession extends Model
     ) {
         $this->session_id = $session_id;
         $user_id = Functions::getVar(User::getUserId($user), 0);
-        //dd($user_id);
-        $this->user_id = $user_id;
+        if ($this->user_id >= 0 && $user_id > 0) {
+            //dd($user_id);
+            $this->user_id = $user_id;
+        }
         $this->ip_address = $ip;
         $this->user_agent = $userAgent;
         $this->updatePayload($payload);
@@ -133,6 +144,78 @@ class UserSession extends Model
             $request->userAgent(),
             $request->hasSession() ? $request->session()->all() : []
         );
+    }
+
+    static public function createNewOrUpdate(Request $request, int $user_id = 0)
+    {
+        $session_id = $request->hasSession()
+            ? $request->session()->getId()
+            : '';
+        $session_data = $request->hasSession() 
+            ? $request->session()->all() 
+            : [];
+        if (!Functions::testVar($us = self::getFromId($request))) {
+            $tus = UserSession::createNew(
+                $session_id, $user_id,
+                $request->ip(), $request->userAgent(),
+                $session_data
+            );
+            if (false) {
+                if ($tus1 = UserSession::getFromId($tus)) {
+                    $tpay = $tus1->getPayload(); 
+                    $tses = $tus1->session_id;
+                } else {
+                    $tpay = ''; 
+                    $tses = '';
+                }
+
+                $imin = 'tus';
+                
+                //dd($tus, 'tus');
+            }
+        } else {
+            // $tpay = $us->getPayload(); 
+            // $tses = $us->session_id;
+            // $imin = 'us';
+            $us->updateSession(
+                $session_id, $user_id,
+                $request->ip(), $request->userAgent(),
+                $session_data
+            );
+            // dd($tpay, $us->getPayload(), 'us');
+            // dd($tses, $request->session()->getId(), $us->session_id, 'us');
+            // $tpay = $us->getPayload(); 
+            // $tses = $us->session_id;
+            
+        }
+        return Functions::testVar($us) 
+            ? $us
+            : self::getFromId($tus);
+        
+    }
+
+    public function updateWith(Request $request, int $user_id = 0)
+    {
+        $session_id = $request->hasSession()
+            ? $request->session()->getId()
+            : '';
+        $session_data = $request->hasSession() 
+            ? $request->session()->all() 
+            : [];
+        return $this->updateSession(
+            $session_id, $user_id,
+            $request->ip(), $request->userAgent(),
+            $session_data
+        );
+    }
+
+    static function updateRegenerate(
+        Request $request, int $user_id = 0, bool $retObj = false
+    ) {
+        $us = UserSession::createNewOrUpdate($request, $user_id);
+        $request->session()->regenerate();
+        $bol = $us->updateWith($request, $user_id);
+        return $retObj ? $us : $bol;
     }
 
     static public function getFrom($id)

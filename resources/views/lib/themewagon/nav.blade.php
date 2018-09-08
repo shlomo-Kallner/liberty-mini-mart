@@ -6,7 +6,7 @@
 
 use \App\Page,
     \App\Utilities\Functions\Functions,
-    Darryldecode\Cart\Cart;
+    \Darryldecode\Cart\Cart;
 
 
 $navbar2 = Functions::getUnBladedContent($navbar??'');
@@ -30,7 +30,7 @@ $preheader2s = serialize($preheader2); // preserialized for component slots..
 //dd($preheader);
 
 
-$testing = true;
+$testing = false;
 
 if (!$testing) {
  // place some $cart initializing code here..
@@ -53,6 +53,7 @@ if (!$testing) {
     ];
     $currency2 = Functions::getBladedString($currency??'fa-usd');
 }
+//dd($cart, $cart2, $currency, $currency2);
 ?>
 
 

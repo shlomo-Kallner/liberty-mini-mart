@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User,
+    App\UserSession,
     App\Image;
 use Illuminate\Http\Request,
     App\Http\Requests\SigninRequest,
@@ -119,7 +120,8 @@ class UserController extends MainController
      *  USER SIGNIN, SIGNOUT and REGISTRATION:
      */
 
-    public function signup(Request $request) {
+    public function signup(Request $request) 
+    {
         if (User::getIsUser()) {
             return redirect('/');
         } else {
@@ -317,6 +319,10 @@ class UserController extends MainController
         self::addMsg('Good Bye ' . User::getUserArray($request)['name'] . ' ! Come Back Soon!');
         //$request->session()->forget('user');
         User::resetUserArray($request);
+        if (Functions::testVar($us = UserSession::getFrom($request))) {
+            $us->lock();
+            $us->delete();
+        }
         //dd(session()->all());
         //self::$data['user']['loggedin'] = false;
         //session(['user.loggedin' => false]);

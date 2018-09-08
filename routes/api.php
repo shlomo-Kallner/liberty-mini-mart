@@ -22,6 +22,6 @@ Route::prefix('store')->group(
         Route::get('/', 'ShopController@getStore');
         // 'store/section/{section}/category/{category}/product/{product}'...
         Route::get('section/{section}/category/{category}/product/{product}', 'CartController@addToCart');
-        Route::post('section/{section}/category/{category}/product/{product}', 'CartController@addToCart');
+        Route::post('section/{section}/category/{category}/product/{product}/addtocart', 'CartController@addToCart');
     }
 );

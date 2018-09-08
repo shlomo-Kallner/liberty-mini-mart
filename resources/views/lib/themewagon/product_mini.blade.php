@@ -10,9 +10,9 @@
     $price2 = Functions::getBladedString($price??'','');
     $sticker2 = Functions::getBladedString($sticker??'','');
 
+    $apiGetURL = 'api/' . $url2;
+    $apiURL = $apiGetURL . '/addtocart';
     
-    $apiURL = 'api/' . $url2;
-
 @endphp
 
 <div 
@@ -27,7 +27,9 @@
             <div>
                 <a href="{{ url($img2) }}" class="btn btn-default fancybox.image fancybox-button">Zoom</a>
                 <a href="#product-pop-up" class="btn btn-default fancybox-fast-view" 
-                    data-fancybox="product" data-product-id="{{ $id2 }}">View</a>
+                    data-fancybox="product" data-product-id="{{ $id2 }}"
+                    data-product-info-url="{{ url($apiGetURL) }}"
+                    >View</a>
             </div>
         </div>
         <h3><a href="{{ url($url2) }}">{{ $name2 }}</a></h3>

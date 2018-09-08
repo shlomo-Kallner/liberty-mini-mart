@@ -44,12 +44,15 @@ class ApiSessionGuard extends StartSession
         if ($request->hasSession() && ! $request->ajax()) {
             // we came from the call to our parent class
             // on the web routes..
+            //$old_session = $request->session()->all();
             if (Functions::testVar($us) && $us->tryLock()
                 && CsrfTokenVerifier::match5($request, $us)
             ) {
                 // update the regular Laravel session here..
                 $request->session()->put($us->getPayload());
                 $us->unlock();
+                //$new_session = $request->session()->all();
+                //dd($old_session, $new_session);
             }
             return $next($request);
         } else {
@@ -121,6 +124,7 @@ class ApiSessionGuard extends StartSession
                 } 
             }
             // dd($us, $request, $us->unlock(), 'after if statement');
+            // we had an ERROR!
             if (true) {
                 try {
                     $this->sessionHandled = true;
