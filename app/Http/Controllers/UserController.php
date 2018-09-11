@@ -123,6 +123,7 @@ class UserController extends MainController
     public function signup(Request $request) 
     {
         if (User::getIsUser()) {
+            UserSession::updateRegenerate($request);
             return redirect('/');
         } else {
             return parent::getView($request, 'forms.register', 'New User Registration Page');
@@ -146,7 +147,8 @@ class UserController extends MainController
                 . '<p><strong>You Have Successfully Registered Your Account, now just sign in to enter!</strong></p>'
             );
         }
-        $request->session()->regenerate();
+        UserSession::updateRegenerate($request, intval(User::getUserId($user)));
+        //$request->session()->regenerate();
         return redirect('/');
 
         /*     
@@ -179,7 +181,9 @@ class UserController extends MainController
             $msg = 'Success!';
             $status = 200;
         } 
-        $request->session()->regenerate();
+        //$request->session()->regenerate();
+        UserSession::updateRegenerate($request);
+            
         return response($msg, $status);
     }
 
@@ -247,7 +251,8 @@ class UserController extends MainController
                 } 
             */
         } 
-        $request->session()->regenerate();
+        UserSession::updateRegenerate($request);
+        // $request->session()->regenerate();
         if (Functions::testVar($errors)) {
             return redirect($redirect)->withErrors($errors);
         } else {
@@ -309,7 +314,8 @@ class UserController extends MainController
                 //dd('hello world..');
             }
          */
-        $request->session()->regenerate();
+        UserSession::updateRegenerate($request);
+        // $request->session()->regenerate();
         return redirect('/');
     }
 
@@ -326,6 +332,7 @@ class UserController extends MainController
         //dd(session()->all());
         //self::$data['user']['loggedin'] = false;
         //session(['user.loggedin' => false]);
+        $request->session()->flush();
         $request->session()->regenerate();
         return redirect('/');
     }

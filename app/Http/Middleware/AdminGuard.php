@@ -27,7 +27,8 @@ class AdminGuard
             
             //$request->session()->flash('redirectFullUrl', $request->fullUrl());
             $request->session()->flash('redirectPath', $request->path());
-            $request->session()->regenerate();
+            UserSession::updateRegenerate($request);
+            //$request->session()->regenerate();
             //dd($request->session()->all(), $request->reTok);
             $ver = UserController::getRedVer();
             if ($ver === 1) {

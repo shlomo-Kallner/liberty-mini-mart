@@ -362,48 +362,12 @@ class MainController extends Controller {
         $userData = User::getUserArray($request);
         self::$data['user'] = $userData;
         //
-        $us = UserSession::createNewOrUpdate($request, intval($userData['id']));
-        $request->session()->regenerate();
-        $us->updateWith($request, intval($userData['id']));
+        UserSession::updateRegenerate($request, intval($userData['id']));
         //
         self::$data['cart'] = Cart::getCurrentCart($request);
 
         //dd($userData, $tmp, $nut, $request->session()->getId(), $request->session()->all());
-        
-        if (false && !Functions::testVar($us = UserSession::getFromId($request))) {
-            $tus1 = UserSession::createNew(
-                $request->session()->getId(), intval($userData['id']),
-                $userData['ip'], $userData['agent'],
-                $request->session()->all()
-            );
-            if ($tus = UserSession::getFromId($tus1)) {
-                $tpay = $tus->getPayload(); 
-                $tses = $tus->session_id;
-            } else {
-                $tpay = ''; 
-                $tses = '';
-            }
-
-            $imin = 'tus';
-            
-            //dd($tus, 'tus');
-        } elseif (false) {
-            // $tpay = $us->getPayload(); 
-            // $tses = $us->session_id;
-            $imin = 'us';
-            $us->updateSession(
-                $request->session()->getId(), intval($userData['id']),
-                $userData['ip'], $userData['agent'],
-                $request->session()->all()
-            );
-            // dd($tpay, $us->getPayload(), 'us');
-            // dd($tses, $request->session()->getId(), $us->session_id, 'us');
-            $tpay = $us->getPayload(); 
-            $tses = $us->session_id;
-            
-        }
-        
-        // dd($tpay, $tses, $request->session(), self::$data['cart'], $imin == 'us' ? $us : $tus, $imin);
+        // dd($request->session(), self::$data['cart']);
 
         return view($viewName, self::$data);
     }
