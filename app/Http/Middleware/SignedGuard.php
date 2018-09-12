@@ -20,6 +20,7 @@ class SignedGuard
         if (!User::getIsUser()) {
             return $next($request);
         } else {
+            UserSession::updateRegenerate($request);
             return redirect('/');
         }
     }
