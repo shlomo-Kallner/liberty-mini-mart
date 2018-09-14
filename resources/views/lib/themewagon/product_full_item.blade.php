@@ -158,6 +158,7 @@
     // it does not matter to us how we get this number ...
     $numProductReviews = count($productReviews2);
     $productApiURL = 'api/' . $productURL2 . '/addtocart';
+    $productReviewURL = 'api/' . $productURL2 . '/review';
         
     $optionTmp = [];
     foreach ($productOptions2 as $key => $item) {
@@ -375,9 +376,14 @@
         jQuery(function($) 
         {
             $('#reviewSummernote').summernote();
-            
+            var reviewText = $('#reviewSummernote');
             //var pageUrl = '{{ url($productApiURL) }}';
             var optionSelectors = JSON.parse( '@json($optionTmp)' );
+            var reviewPostURl = '{{ url($productReviewURL) }}';
+            $('#sendReview').on('click', function(e){
+                    console.log($(this).val() + reviewText.val() );
+                }
+            );
             /** 
                 var getOptionVals = function (options)
                 {
