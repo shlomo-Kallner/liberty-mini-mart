@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Darryldecode\Cart as DarrylCart;
+use Darryldecode\Cart\Cart as DarrylCart;
 use App\Utilities\Functions\Functions;
 use Illuminate\Support\Facades\Hash;
 use App\User;
@@ -22,26 +22,33 @@ class Cart extends Model
     protected $dates = ['deleted_at'];
 
 
-    static public function getCurrentCart(Request $request = null)
+    static public function getCurrentCart(Request $request = null, bool $useCart = false)
     {
-        $sess = Functions::getVar(
-            Functions::testVar($request) && $request->hasSession()
-                ? $request->session() 
-                : null,
-            session()
-        );
+        $sess = Functions::testVar($request) && $request->hasSession()
+                    ? $request->session() 
+                    : session();
         $cart = [
-            'items' => null,
-            'currency-icon' => $sess->has('currency') ?
-                $sess->get('currency')  : 'fa-usd',
-            'sub-total' => 0,
-            'total-items' => 0,
+                'items' => null,
+                'currency-icon' => $sess->has('currency') 
+                    ? $sess->get('currency')  
+                    : 'fa-usd',
+                'sub-total' => 0,
+                'total-items' => 0,
         ];
-        if ($sess->has('cart')) {
-            $cart_info = unserialize($sess->get('cart'));
-            $cart['items'] = $cart_info['items'];
-            $cart['sub-total'] = $cart_info['sub-total'];
-            $cart['total-items'] = $cart_info['total-items'];
+        if (!$useCart && $sess->has('cart')) {
+                $cart_info = unserialize($sess->get('cart'));
+                $cart['items'] = $cart_info['items'];
+                $cart['sub-total'] = $cart_info['sub-total'];
+                $cart['total-items'] = $cart_info['total-items'];
+            
+        } else {
+            $darrylCart = DarrylCart::session('cart');
+            if (!$darrylCart->isEmpty()) {
+                $cart['items'] = $darrylCart->getContent()->all();
+                $cart['sub-total'] = $darrylCart->getSubTotal();
+                $cart['total-items'] = $darrylCart->getTotalQuantity();
+
+            }
         }
         return $cart;
     }

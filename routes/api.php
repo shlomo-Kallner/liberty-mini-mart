@@ -21,7 +21,8 @@ Route::prefix('store')->group(
     function () {
         Route::get('/', 'ShopController@getStore');
         // 'store/section/{section}/category/{category}/product/{product}'...
-        Route::get('section/{section}/category/{category}/product/{product}', 'CartController@addToCart');
+        Route::get('section/{section}/category/{category}/product/{product}', 'ProductController@show');
+        Route::get('section/{section}/category/{category}/product/{product}/addtocart', 'CartController@addToCart');
         Route::post('section/{section}/category/{category}/product/{product}/addtocart', 'CartController@addToCart');
     }
 );
