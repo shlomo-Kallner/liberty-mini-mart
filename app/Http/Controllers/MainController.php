@@ -82,9 +82,9 @@ class MainController extends Controller {
         ],
         'cart' => [
             'items' => null,
-            'currency-icon' => 'fa-usd',
-            'sub-total' => 0,
-            'total-items' => 0,
+            'currencyIcon' => 'fa-usd',
+            'subTotal' => 0,
+            'totalItems' => 0,
         ],
         'alert' => [
             'class' => '',

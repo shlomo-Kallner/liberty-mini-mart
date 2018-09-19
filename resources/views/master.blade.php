@@ -9,6 +9,9 @@
     $usingMix = Functions::getBladedString($site['usingMix']??'');
     $nut2 = Functions::getContent($site['nut']??'');
     $alert2 =  Functions::getContent($alert??'');
+    $baseUrl = url('');
+    $cart2 = Functions::getContent($cart??'');
+    //dd($cart2, $cart);
 ?>
 
 <!DOCTYPE html>
@@ -56,11 +59,13 @@
                     alert: '@json($alert2)',
                     nut: '{{ $nut2 }}',
                     page: {},
+                    baseUrl: '{{ $baseUrl }}',
+                    cart: '@json($cart2)',
                     setAlert: function (data) {
                         this.alert = data;
                     }
                 };
-            </script>
+            </script> 
             <meta content="Metronic Shop UI description" name="description">
             <meta content="Metronic Shop UI keywords" name="keywords">
             <meta content="Shlomo Kallner" name="author">

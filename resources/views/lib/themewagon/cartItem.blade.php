@@ -6,7 +6,7 @@ use \App\Utilities\Functions\Functions,
 
 @endphp
 
-<li>
+<li data-server-rendered="true">
     <a href="{{ url($url) }}">
         <img src="{{ asset($img) }}" alt="{{ $description }}" width="37" height="34">
     </a>

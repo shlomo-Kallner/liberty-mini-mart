@@ -98,7 +98,7 @@ if (!$testing) {
             </a>
 
             <!-- BEGIN CART -->
-            <div class="top-cart-block">
+            <div class="top-cart-block" id="topCartComp" data-server-rendered="true">
                 <div class="top-cart-info">
                     <a href="javascript:void(0);" class="top-cart-info-count">
                         {{ $cart2['total-items'] }} 

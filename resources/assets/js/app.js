@@ -19,6 +19,7 @@ window.Vue = require('vue');
  */
 
 Vue.component('example', require('./components/Example.vue'));
+Vue.component('cart-component', require('./components/cart.vue'));
 
 /*
 const app = new Vue({
@@ -32,7 +33,7 @@ Vue.component('dismissable-alert', require('./components/dismissable-alert.vue')
 window.Laravel.page.alert = new LaravelAlert(window.Laravel.alert);
 
 
-var masterAlert = new Vue({
+window.Laravel.masterAlert = new Vue({
   el: '#masterPageAlertContainer',
   template: '<dismissable-alert v-bind:initAlert="alert"></dismissable-alert>',
   data: {
@@ -56,7 +57,31 @@ var masterAlert = new Vue({
   }
 });
 
+window.Laravel.masterCart = new Vue(
+  {
+    el: '#topCartComp',
+    template: '<cart-component v-bind:initCart="cart"></cart-component>',
+    data: {
+      cartData: JSON.parse(window.Laravel.cart)
+    },
+    computed: {
+      cart : {
+        get: function () {
+          return this.cartData;
+        },
+        set: function (data) {
+          if (typeof data == 'string') {
+            this.cartData = JSON.parse(data);
+          } else if (typeof data == 'object') {
+            this.cartData = data;
+          }
+        }
+      }
+    }
+  }
+);
+
 window.Laravel.page.setAlert = function (data) {
   window.Laravel.page.alert = new LaravelAlert(data);
   masterAlert.alert = window.Laravel.page.alert.getData();
-}
+};
