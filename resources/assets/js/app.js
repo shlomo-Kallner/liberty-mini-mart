@@ -57,11 +57,18 @@ window.Laravel.masterAlert = new Vue({
   }
 });
 
+window.Laravel.page.setAlert = function (data) {
+  window.Laravel.page.alert = new LaravelAlert(data);
+  window.Laravel.masterAlert.alert = window.Laravel.page.alert.getData();
+};
+
+
 window.Laravel.masterCart = new Vue(
   {
     el: '#topCartComp',
-    template: '<cart-component v-bind:initCart="cart"></cart-component>',
+    template: '<cart-component v-bind:initCart="cart" v-bind:baseUrl="baseUrl"></cart-component>',
     data: {
+      baseUrl: window.Laravel.baseUrl,
       cartData: JSON.parse(window.Laravel.cart)
     },
     computed: {
@@ -81,7 +88,7 @@ window.Laravel.masterCart = new Vue(
   }
 );
 
-window.Laravel.page.setAlert = function (data) {
-  window.Laravel.page.alert = new LaravelAlert(data);
-  masterAlert.alert = window.Laravel.page.alert.getData();
+window.Laravel.page.setCart = function (data) {
+  window.Laravel.page.cart = data;
+  window.Laravel.masterCart.cart = window.Laravel.page.cart;
 };

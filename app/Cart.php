@@ -28,16 +28,15 @@ class Cart extends Model
                     ? $request->session() 
                     : session();
         /*
-        
-        'cart' => [
-            'items' => null,
-            'currencyIcon' => 'fa-usd',
-            'subTotal' => 0,
-            'totalItems' => 0,
-        ],
+            'cart' => [
+                'items' => [],
+                'currencyIcon' => 'fa-usd',
+                'subTotal' => 0,
+                'totalItems' => 0,
+            ],
         */
         $cart = [
-                'items' => null,
+                'items' => [],
                 'currencyIcon' => $sess->has('currency') 
                     ? $sess->get('currency')  
                     : 'fa-usd',

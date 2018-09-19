@@ -81,7 +81,7 @@ class MainController extends Controller {
             'ip' => '',
         ],
         'cart' => [
-            'items' => null,
+            'items' => [],
             'currencyIcon' => 'fa-usd',
             'subTotal' => 0,
             'totalItems' => 0,

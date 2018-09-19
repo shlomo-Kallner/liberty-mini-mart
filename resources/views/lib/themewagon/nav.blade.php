@@ -98,65 +98,67 @@ if (!$testing) {
             </a>
 
             <!-- BEGIN CART -->
-            <div class="top-cart-block" id="topCartComp" data-server-rendered="true">
-                <div class="top-cart-info">
-                    <a href="javascript:void(0);" class="top-cart-info-count">
-                        {{ $cart2['total-items'] }} 
-                        {{ $cart2['total-items'] == 0 || $cart2['total-items'] > 1 ? 'items' : 'item' }}
-                    </a>
-                    <a href="javascript:void(0);" class="top-cart-info-value">
-                        <i class="fa {{ $currency2 }}"></i>
-                        {{ $cart2['sub-total'] }}
-                    </a>
-                </div>
-                <i class="fa fa-shopping-cart"></i>
-
-                <div class="top-cart-content-wrapper">
-                    <div class="top-cart-content">
-                        <ul class="scroller" style="height: 250px;">
-                            @if (Functions::testVar($cart2['items']))
-                                @foreach($cart2['items'] as $item)
-                                    <?php //dd($item);     ?>
-                                    @component('lib.themewagon.cartItem')
-                                        @slot('url')
-                                            {{$item->attributes['url']}}
-                                        @endslot
-                                        @slot('img')
-                                            {{ $item->attributes['img'] }}
-                                        @endslot
-                                        @slot('description')
-                                            {{ $item->attributes['description'] }}
-                                        @endslot
-                                        @slot('quantity')
-                                            {{ $item->quantity }}
-                                        @endslot
-                                        @slot('name')
-                                            {{ $item->name }}
-                                        @endslot
-                                        @slot('currencyIcon')
-                                            {{ $currency2 }}
-                                        @endslot
-                                        @slot('priceSum')
-                                            {{ $item->getPriceSumWithConditions() }}
-                                        @endslot
-                                    @endcomponent
-                                @endforeach
-                            @else
-                                <p>Your shopping cart is empty!</p>
-                            @endif
-                        </ul>
-                        <div class="pull-right">
-
-                            <a href="{{ url('cart') }}" class="btn btn-default">
-                                View Cart
-                            </a>
-                            <a href="{{ url('checkout') }}" class="btn btn-primary">
-                                Checkout
-                            </a>
-
-                        </div>
+            <div id="topCartComp" data-server-rendered="true">
+                <div class="top-cart-block">
+                    <div class="top-cart-info">
+                        <a href="javascript:void(0);" class="top-cart-info-count">
+                            {{ $cart2['totalItems'] }} 
+                            {{ $cart2['totalItems'] == 0 || $cart2['totalItems'] > 1 ? 'items' : 'item' }}
+                        </a>
+                        <a href="javascript:void(0);" class="top-cart-info-value">
+                            <i class="fa {{ $currency2 }}"></i>
+                            {{ $cart2['subTotal'] }}
+                        </a>
                     </div>
-                </div>            
+                    <i class="fa fa-shopping-cart"></i>
+
+                    <div class="top-cart-content-wrapper">
+                        <div class="top-cart-content">
+                            <ul class="scroller" style="height: 250px;">
+                                @if (Functions::testVar($cart2['items']))
+                                    @foreach($cart2['items'] as $item)
+                                        <?php //dd($item);     ?>
+                                        @component('lib.themewagon.cartItem')
+                                            @slot('url')
+                                                {{$item->attributes['url']}}
+                                            @endslot
+                                            @slot('img')
+                                                {{ $item->attributes['img'] }}
+                                            @endslot
+                                            @slot('description')
+                                                {{ $item->attributes['description'] }}
+                                            @endslot
+                                            @slot('quantity')
+                                                {{ $item->quantity }}
+                                            @endslot
+                                            @slot('name')
+                                                {{ $item->name }}
+                                            @endslot
+                                            @slot('currencyIcon')
+                                                {{ $currency2 }}
+                                            @endslot
+                                            @slot('priceSum')
+                                                {{ $item->getPriceSumWithConditions() }}
+                                            @endslot
+                                        @endcomponent
+                                    @endforeach
+                                @else
+                                    <li>Your shopping cart is empty!</li>
+                                @endif
+                            </ul>
+                            <div class="pull-right">
+
+                                <a href="{{ url('cart') }}" class="btn btn-default">
+                                    View Cart
+                                </a>
+                                <a href="{{ url('checkout') }}" class="btn btn-primary">
+                                    Checkout
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>            
+                </div>
             </div>
             <!--END CART -->
 
