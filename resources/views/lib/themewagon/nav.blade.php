@@ -122,28 +122,28 @@ if (!$testing) {
                                         @endphp
                                         @component('lib.themewagon.cartItem')
                                             @slot('id')
-                                                {{ $item->id }}
+                                                {{ $item['id'] }}
                                             @endslot
                                             @slot('url')
-                                                {{$item->attributes['url']}}
+                                                {{$item['url']}}
                                             @endslot
                                             @slot('img')
-                                                {{ $item->attributes['img'] }}
+                                                {{ $item['img'] }}
                                             @endslot
                                             @slot('description')
-                                                {{ $item->attributes['description'] }}
+                                                {{ $item['description'] }}
                                             @endslot
                                             @slot('quantity')
-                                                {{ $item->quantity }}
+                                                {{ $item['quantity'] }}
                                             @endslot
                                             @slot('name')
-                                                {{ $item->name }}
+                                                {{ $item['name'] }}
+                                            @endslot
+                                            @slot('priceSum')
+                                                {{ $item['priceSum'] }}
                                             @endslot
                                             @slot('currencyIcon')
                                                 {{ $currency2 }}
-                                            @endslot
-                                            @slot('priceSum')
-                                                {{ $item->getPriceSumWithConditions() }}
                                             @endslot
                                         @endcomponent
                                     @endforeach

@@ -40,7 +40,7 @@ class Cart extends Model
     }
 
     static public function getCurrentCart(
-        Request $request = null, bool $asArray = true, bool $useCart = false
+        Request $request = null, bool $asArray = true
     ) {
         $sess = Functions::testVar($request) && $request->hasSession()
                     ? $request->session() 
@@ -48,41 +48,72 @@ class Cart extends Model
         $cart = self::getNewCartArray(
             $sess->has('currency') ? $sess->get('currency') : 'fa-usd'
         );
-        if (false && $useCart && $sess->has('cart')) {
-            $cart_info = unserialize($sess->get('cart'));
-            $cart['items'] = $cart_info['items'];
-            $cart['subTotal'] = $cart_info['subTotal'];
-            $cart['totalItems'] = $cart_info['totalItems'];
-            //dd($cart);
-        } else {
-            $darrylCart = DarrylCart::session('cart');
-            if (!$darrylCart->isEmpty()) {
-                $cTmp = $darrylCart->getContent()->all();
-                foreach ($cTmp as $item) {
-                    if ($asArray) {
-                        $cart['items'][] = [
-                            'id' => $item->id,
-                            'name' => $item->name,
-                            'url' => $request->ajax() 
-                                ? url($item->attributes['url'])
-                                : $item->attributes['url'],
-                            'img' => $request->ajax() 
-                                ? asset($item->attributes['img'])
-                                : $item->attributes['img'],
-                            'description' => $item->attributes['description'],
-                            'quantity' => $item->quantity,
-                            'priceSum' => $item->getPriceSumWithConditions(),
-                        ];
-                    } else {
-                        $cart['items'][] = $item;
-                    }
+        $darrylCart = DarrylCart::session('cart');
+        if (!$darrylCart->isEmpty()) {
+            $cTmp = $darrylCart->getContent()->all();
+            foreach ($cTmp as $item) {
+                if ($asArray) {
+                    $cart['items'][] = [
+                        'id' => $item->id,
+                        'name' => $item->name,
+                        'url' => $request->ajax() 
+                            ? url($item->attributes['url'])
+                            : $item->attributes['url'],
+                        'img' => $request->ajax() 
+                            ? asset($item->attributes['img'])
+                            : $item->attributes['img'],
+                        'description' => $item->attributes['description'],
+                        'quantity' => $item->quantity,
+                        'priceSum' => $item->getPriceSumWithConditions(),
+                    ];
+                } else {
+                    $cart['items'][] = $item;
                 }
-                $cart['subTotal'] = $darrylCart->getSubTotal();
-                $cart['totalItems'] = $darrylCart->getTotalQuantity();
             }
-            //dd($cart, $darrylCart);
+            $cart['subTotal'] = $darrylCart->getSubTotal();
+            $cart['totalItems'] = $darrylCart->getTotalQuantity();
         }
+        //dd($cart, $darrylCart);
         return $cart;
+    }
+
+    static public function setCurrentCart(Request $request)
+    {
+        $sess = Functions::testVar($request) && $request->hasSession()
+                    ? $request->session() 
+                    : session();
+        
+        return null;
+    }
+
+    static public function getFrom($id)
+    {
+        if (is_int($id)) {
+            return self::getFromId($id);
+        } elseif ($id instanceof Request) {
+            $whereWith = [
+                ['ip_address', '=', $id->ip()],
+                ['user_agent', '=', $id->userAgent()]
+            ];
+            if ($id->hasSession()) {
+                $whereWith[] = ['session_id', '=', $id->session()->getId()];
+            }
+            return self::where($whereWith)->get();
+        } elseif (is_array($id)) {
+            // is a User Array ...
+            $whereWith = [
+                ['ip_address', '=', $id['ip']],
+                ['user_agent', '=', $id['agent']],
+                ['user_id', '=', $id['id']]
+            ];
+            return self::where($whereWith)->get();
+        }
+        return null;
+    }
+
+    static public function exists($id)
+    {
+        return Functions::testVar(self::getFrom($id));
     }
 
     static public function getFromId(int $id)
