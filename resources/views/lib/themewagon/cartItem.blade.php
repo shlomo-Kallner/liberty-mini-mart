@@ -4,9 +4,10 @@
 use \App\Utilities\Functions\Functions,
     \Darryldecode\Cart\Cart;
 
+    $apiUrl = $url . '\delFromCart';
 @endphp
 
-<li data-server-rendered="true">
+<li>
     <a href="{{ url($url) }}">
         <img src="{{ asset($img) }}" alt="{{ $description }}" width="37" height="34">
     </a>
@@ -44,7 +45,8 @@ use \App\Utilities\Functions\Functions,
         <i class="fa {{ $currencyIcon }}"></i>
         {{ $priceSum }}
     </em>
-    <a href="javascript:void(0);" class="del-goods text-center">
+    <a href="javascript:void(0);" class="del-goods text-center"
+        data-cart-item-id="{{ $id }}" data-cart-api-url="{{ $apiUrl }}">
         <i class="fa fa-times-circle"></i>
     </a>
 </li>

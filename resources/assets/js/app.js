@@ -19,7 +19,6 @@ window.Vue = require('vue');
  */
 
 Vue.component('example', require('./components/Example.vue'));
-Vue.component('cart-component', require('./components/cart.vue'));
 
 /*
 const app = new Vue({
@@ -28,6 +27,7 @@ const app = new Vue({
  */
 
 Vue.component('dismissable-alert', require('./components/dismissable-alert.vue'));
+Vue.component('cart-component', require('./components/cart.vue'));
 
 
 window.Laravel.page.alert = new LaravelAlert(window.Laravel.alert);

@@ -12061,7 +12061,6 @@ window.Vue = __webpack_require__(111);
  */
 
 Vue.component('example', __webpack_require__(114));
-Vue.component('cart-component', __webpack_require__(117));
 
 /*
 const app = new Vue({
@@ -12070,6 +12069,7 @@ const app = new Vue({
  */
 
 Vue.component('dismissable-alert', __webpack_require__(120));
+Vue.component('cart-component', __webpack_require__(117));
 
 window.Laravel.page.alert = new __WEBPACK_IMPORTED_MODULE_1__lib_LaravelAlert__["a" /* LaravelAlert */](window.Laravel.alert);
 
@@ -42663,7 +42663,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
-
+var _ = __webpack_require__(90);
+// var isArray = require('isarray');
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'cart-component',
     props: ['initCart', 'baseUrl'],
@@ -42675,6 +42676,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     computed: {
         items: function items() {
             return this.cart.items;
+        },
+        itemsLength: function itemsLength() {
+            return _.size(this.cart.items);
         },
         currency: function currency() {
             return this.cart.currencyIcon;
@@ -42736,7 +42740,7 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "top-cart-content-wrapper" }, [
       _c("div", { staticClass: "top-cart-content" }, [
-        _vm.items.length > 0
+        this.itemsLength > 0
           ? _c(
               "ul",
               { staticClass: "scroller", staticStyle: { height: "250px" } },
@@ -42787,7 +42791,8 @@ var render = function() {
                       staticClass: "del-goods text-center",
                       attrs: {
                         href: "javascript:void(0);",
-                        "data-cart-item-id": item.id
+                        "data-cart-item-id": item.id,
+                        "data-cart-api-url": item.url + "delFromCart"
                       }
                     },
                     [_c("i", { staticClass: "fa fa-times-circle" })]
@@ -42795,13 +42800,17 @@ var render = function() {
                 ])
               })
             )
-          : _c("ul", [
-              _c("li", [
-                _vm._v(
-                  "\n                    Your shopping cart is empty!\n                "
-                )
-              ])
-            ]),
+          : _c(
+              "ul",
+              { staticClass: "scroller", staticStyle: { height: "250px" } },
+              [
+                _c("li", [
+                  _vm._v(
+                    "\n                    Your shopping cart is empty!\n                "
+                  )
+                ])
+              ]
+            ),
         _vm._v(" "),
         _c("div", { staticClass: "pull-right" }, [
           _c(

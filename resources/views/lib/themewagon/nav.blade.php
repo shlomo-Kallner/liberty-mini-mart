@@ -117,8 +117,13 @@ if (!$testing) {
                             <ul class="scroller" style="height: 250px;">
                                 @if (Functions::testVar($cart2['items']))
                                     @foreach($cart2['items'] as $item)
-                                        <?php //dd($item);     ?>
+                                        @php
+                                            //dd($item);
+                                        @endphp
                                         @component('lib.themewagon.cartItem')
+                                            @slot('id')
+                                                {{ $item->id }}
+                                            @endslot
                                             @slot('url')
                                                 {{$item->attributes['url']}}
                                             @endslot
@@ -143,7 +148,9 @@ if (!$testing) {
                                         @endcomponent
                                     @endforeach
                                 @else
-                                    <li>Your shopping cart is empty!</li>
+                                    <li>
+                                        Your shopping cart is empty!
+                                    </li>
                                 @endif
                             </ul>
                             <div class="pull-right">

@@ -14,7 +14,7 @@
 
         <div class="top-cart-content-wrapper">
             <div class="top-cart-content">
-                <ul class="scroller" style="height: 250px;" v-if="items.length > 0">
+                <ul class="scroller" style="height: 250px;" v-if="this.itemsLength > 0">
                     <li v-for="item in this.items" v-bind:key="item.id">
                         <a :href="item.url">
                             <img :src="item.img" :alt="item.description" width="37" height="34">
@@ -33,12 +33,12 @@
                             {{ item.priceSum }}
                         </em>
                         <a href="javascript:void(0);" class="del-goods text-center"
-                            :data-cart-item-id="item.id">
+                            :data-cart-item-id="item.id" :data-cart-api-url="item.url + '\delFromCart'">
                             <i class="fa fa-times-circle"></i>
                         </a>
                     </li>
                 </ul>
-                <ul v-else>
+                <ul class="scroller" style="height: 250px;" v-else>
                     <li>
                         Your shopping cart is empty!
                     </li>
@@ -59,7 +59,8 @@
 </template>
 
 <script>
-    
+    var _ = require('lodash');
+    // var isArray = require('isarray');
     export default {
         name: 'cart-component',
         props: ['initCart', 'baseUrl'],
@@ -71,6 +72,9 @@
         computed: {
             items: function () {
                 return this.cart.items;
+            },
+            itemsLength: function () {
+                return _.size(this.cart.items);
             },
             currency: function () {
                 return this.cart.currencyIcon;
