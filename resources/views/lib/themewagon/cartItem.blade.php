@@ -4,7 +4,7 @@
 use \App\Utilities\Functions\Functions,
     \Darryldecode\Cart\Cart;
 
-    $apiUrl = $url . '\delFromCart';
+    $apiUrl = $url . '/delFromCart';
 @endphp
 
 <li>

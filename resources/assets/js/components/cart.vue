@@ -33,7 +33,7 @@
                             {{ item.priceSum }}
                         </em>
                         <a href="javascript:void(0);" class="del-goods text-center"
-                            :data-cart-item-id="item.id" :data-cart-api-url="item.url + '\delFromCart'">
+                            :data-cart-item-id="item.id" :data-cart-api-url="item.url + '/delFromCart'">
                             <i class="fa fa-times-circle"></i>
                         </a>
                     </li>
@@ -45,10 +45,10 @@
                 </ul>
                 <div class="pull-right">
 
-                    <a :href="this.baseUrl + '\cart'" class="btn btn-default">
+                    <a :href="this.baseUrl + '/cart'" class="btn btn-default">
                         View Cart
                     </a>
-                    <a :href="this.baseUrl + '\checkout'" class="btn btn-primary">
+                    <a :href="this.baseUrl + '/checkout'" class="btn btn-primary">
                         Checkout
                     </a>
 
