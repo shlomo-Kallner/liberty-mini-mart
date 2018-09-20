@@ -98,75 +98,79 @@ if (!$testing) {
             </a>
 
             <!-- BEGIN CART -->
-            <div id="topCartComp" data-server-rendered="true">
-                <div class="top-cart-block">
-                    <div class="top-cart-info">
-                        <a href="javascript:void(0);" class="top-cart-info-count">
-                            {{ $cart2['totalItems'] }} 
-                            {{ $cart2['totalItems'] == 0 || $cart2['totalItems'] > 1 ? 'items' : 'item' }}
-                        </a>
-                        <a href="javascript:void(0);" class="top-cart-info-value">
-                            <i class="fa {{ $currency2 }}"></i>
-                            {{ $cart2['subTotal'] }}
-                        </a>
-                    </div>
-                    <i class="fa fa-shopping-cart"></i>
-
-                    <div class="top-cart-content-wrapper">
-                        <div class="top-cart-content">
-                            <ul class="scroller" style="height: 250px;">
-                                @if (Functions::testVar($cart2['items']))
-                                    @foreach($cart2['items'] as $item)
-                                        @php
-                                            //dd($item);
-                                        @endphp
-                                        @component('lib.themewagon.cartItem')
-                                            @slot('id')
-                                                {{ $item['id'] }}
-                                            @endslot
-                                            @slot('url')
-                                                {{$item['url']}}
-                                            @endslot
-                                            @slot('img')
-                                                {{ $item['img'] }}
-                                            @endslot
-                                            @slot('description')
-                                                {{ $item['description'] }}
-                                            @endslot
-                                            @slot('quantity')
-                                                {{ $item['quantity'] }}
-                                            @endslot
-                                            @slot('name')
-                                                {{ $item['name'] }}
-                                            @endslot
-                                            @slot('priceSum')
-                                                {{ $item['priceSum'] }}
-                                            @endslot
-                                            @slot('currencyIcon')
-                                                {{ $currency2 }}
-                                            @endslot
-                                        @endcomponent
-                                    @endforeach
-                                @else
-                                    <li>
-                                        Your shopping cart is empty!
-                                    </li>
-                                @endif
-                            </ul>
-                            <div class="pull-right">
-
-                                <a href="{{ url('cart') }}" class="btn btn-default">
-                                    View Cart
-                                </a>
-                                <a href="{{ url('checkout') }}" class="btn btn-primary">
-                                    Checkout
-                                </a>
-
-                            </div>
+            @if (true)
+                <div id="topCartComp"></div>
+            @else
+                <div id="topCartComp" data-server-rendered="true">
+                    <div class="top-cart-block">
+                        <div class="top-cart-info">
+                            <a href="javascript:void(0);" class="top-cart-info-count">
+                                {{ $cart2['totalItems'] }} 
+                                {{ $cart2['totalItems'] == 0 || $cart2['totalItems'] > 1 ? 'items' : 'item' }}
+                            </a>
+                            <a href="javascript:void(0);" class="top-cart-info-value">
+                                <i class="fa {{ $currency2 }}"></i>
+                                {{ $cart2['subTotal'] }}
+                            </a>
                         </div>
-                    </div>            
+                        <i class="fa fa-shopping-cart"></i>
+
+                        <div class="top-cart-content-wrapper">
+                            <div class="top-cart-content">
+                                <ul class="scroller" style="height: 250px;">
+                                    @if (Functions::testVar($cart2['items']))
+                                        @foreach($cart2['items'] as $item)
+                                            @php
+                                                //dd($item);
+                                            @endphp
+                                            @component('lib.themewagon.cartItem')
+                                                @slot('id')
+                                                    {{ $item['id'] }}
+                                                @endslot
+                                                @slot('url')
+                                                    {{$item['url']}}
+                                                @endslot
+                                                @slot('img')
+                                                    {{ $item['img'] }}
+                                                @endslot
+                                                @slot('description')
+                                                    {{ $item['description'] }}
+                                                @endslot
+                                                @slot('quantity')
+                                                    {{ $item['quantity'] }}
+                                                @endslot
+                                                @slot('name')
+                                                    {{ $item['name'] }}
+                                                @endslot
+                                                @slot('priceSum')
+                                                    {{ $item['priceSum'] }}
+                                                @endslot
+                                                @slot('currencyIcon')
+                                                    {{ $currency2 }}
+                                                @endslot
+                                            @endcomponent
+                                        @endforeach
+                                    @else
+                                        <li>
+                                            Your shopping cart is empty!
+                                        </li>
+                                    @endif
+                                </ul>
+                                <div class="pull-right">
+
+                                    <a href="{{ url('cart') }}" class="btn btn-default">
+                                        View Cart
+                                    </a>
+                                    <a href="{{ url('checkout') }}" class="btn btn-primary">
+                                        Checkout
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>            
+                    </div>
                 </div>
-            </div>
+            @endif
             <!--END CART -->
 
             <!-- BEGIN NAVIGATION -->

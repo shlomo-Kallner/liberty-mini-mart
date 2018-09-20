@@ -9,6 +9,7 @@ use App\Utilities\Functions\Functions;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use Illuminate\Http\Request;
+use Zend\Diactoros\Request;
 
 class Cart extends Model
 {
@@ -89,7 +90,7 @@ class Cart extends Model
     static public function getFrom($id)
     {
         if (is_int($id)) {
-            return self::getFromId($id);
+            return self::where('id', $id)->first();
         } elseif ($id instanceof Request) {
             $whereWith = [
                 ['ip_address', '=', $id->ip()],
@@ -166,11 +167,20 @@ class Cart extends Model
         return null;
     }
 
-    static public function createNewFrom(array $array)
+    static public function createNewFrom($data, $user = null, $content = null)
     {
-        return self::createNew(
-            $array['user'], $array['session_id'], $array['ip'],
-            $array['agent'], $array['content']
-        );
+        if (is_array($data)) {
+            return self::createNew(
+                $data['user'], $data['session_id'], $data['ip'],
+                $data['agent'], $data['content']
+            );
+        } elseif ($data instanceof Request && Functions::testVar($user)
+            && $data->hasSession()
+        ) {
+            return self::createNew(
+                $user, $data->session()->getId(), $data->ip(),
+                $data->userAgent(), $content
+            );
+        }
     }
 }

@@ -34,20 +34,16 @@
     <div class="row">
         <div class="col-md-12" id="masterPageAlertContainer">
 
-            @if (true)
-                
-                <div id="masterPageAlert" class="alert {{ $class2 }} 
-                    {{ true ?'alert-dismissible fade in' : '' }}" 
-                    style="display: {{ $display ? 'block' : 'none' }};" 
-                    data-server-rendered="true">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                        <i class="fa fa-close" aria-hidden="true"></i>
-                    </button>
-                    <strong>{{ $title2 }}</strong> 
-                    {!! $content2 !!}
-                </div>
-    
-            @endif
+            <div id="masterPageAlert" class="alert {{ $class2 }} 
+                {{ true ?'alert-dismissible fade in' : '' }}" 
+                style="display: {{ $display ? 'block' : 'none' }};" 
+                data-server-rendered="true">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                    <i class="fa fa-close" aria-hidden="true"></i>
+                </button>
+                <strong>{{ $title2 }}</strong> 
+                {!! $content2 !!}
+            </div>
 
         </div>
         <script>
