@@ -9,7 +9,6 @@ use App\Utilities\Functions\Functions;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use Illuminate\Http\Request;
-use Zend\Diactoros\Request;
 
 class Cart extends Model
 {
@@ -40,16 +39,32 @@ class Cart extends Model
         ];
     }
 
+    static public function getSessionCart()
+    {
+        return DarrylCart::session('cart');
+    }
+
+    /**
+     * Function getCurrentCart() - Get the current shopping cart in a view friendly 
+     *                           array format.
+     *
+     * @param Request $request
+     * @param boolean $asArray
+     * @param string $currencyIcon - a default currency Font Awesome icon.
+     * 
+     * @return array
+     */
     static public function getCurrentCart(
-        Request $request = null, bool $asArray = true
+        Request $request = null, bool $asArray = true,
+        string $currencyIcon = 'fa-usd'
     ) {
         $sess = Functions::testVar($request) && $request->hasSession()
                     ? $request->session() 
                     : session();
         $cart = self::getNewCartArray(
-            $sess->has('currency') ? $sess->get('currency') : 'fa-usd'
+            $sess->has('currency') ? $sess->get('currency') : $currencyIcon
         );
-        $darrylCart = DarrylCart::session('cart');
+        $darrylCart = self::getSessionCart();
         if (!$darrylCart->isEmpty()) {
             $cTmp = $darrylCart->getContent()->all();
             foreach ($cTmp as $item) {
@@ -74,23 +89,91 @@ class Cart extends Model
             $cart['subTotal'] = $darrylCart->getSubTotal();
             $cart['totalItems'] = $darrylCart->getTotalQuantity();
         }
-        //dd($cart, $darrylCart);
+        //dd($cart, $darrylCart, $darrylCart->getContent(), DarrylCart::getContent());
         return $cart;
     }
 
-    static public function setCurrentCart(Request $request)
+    static public function storeOrCreateCurrentCart(Request $request, $user)
     {
-        $sess = Functions::testVar($request) && $request->hasSession()
-                    ? $request->session() 
-                    : session();
-        
+        $content = DarrylCart::session('cart')->getContent();
+        if (!Functions::testVar($cart = self::getFrom($request))) {
+            $cart1 = self::createNewFrom($request, $user, $content);
+            if (Functions::testVar($cart1)) {
+                return self::getFrom($cart1);
+            }
+        } else {
+            if ($cart->updateCartFrom($request, $user, $content)) {
+                return $cart;
+            }
+        }
         return null;
+    }
+
+    public function updateCart(
+        $content, string $session_id = '', string $ip = '',
+        string $agent = '', $user = null
+    ) {
+        if (Functions::testVar($content)) {
+            $tmp1 = $this->getCartContent();
+            foreach ($content as $key => $value) {
+                if (Functions::isValIn($tmp1, $key, $value) === false) {
+                    Functions::setPropKey($tmp1, $key, $value);
+                }
+            }
+            $cnTmp = base64_encode(serialize($tmp1));
+            $this->content = $cnTmp;
+            $this->verihash = Hash::make($cnTmp);
+        }
+        if (Functions::testVar($session_id)) {
+            $this->session_id = $session_id;
+        }
+        if (Functions::testVar($ip)) {
+            $this->ip_address = $ip;
+        }
+        if (Functions::testVar($agent)) {
+            $this->user_agent = $agent;
+        }
+        if (Functions::testVar($user)) {
+            $user_id = Functions::getVar(User::getUserId($user), 0);
+            $this->user_id = $user_id;
+        }
+        return $this->save();
+    }
+
+    public function updateCartWithSession($data, $user = null)
+    {
+        return $this->updateCartFrom($data, $user, self::getSessionCart());
+    }
+
+    public function updateCartFrom($data, $user = null, $content = null)
+    {
+        if (is_array($data)) {
+            return $this->updateCart(
+                $data['content'], $data['session_id'], $data['ip'],
+                $data['agent'], $data['user']
+            );
+        } elseif ($data instanceof Request && Functions::testVar($user)
+            && $data->hasSession()
+        ) {
+            return $this->updateCart(
+                $content, $data->session()->getId(), $data->ip(),
+                $data->userAgent(), $user
+            );
+        }
+        return false;
+    }
+
+    public function getCartContent()
+    {
+        return unserialize(base64_decode($this->content));
     }
 
     static public function getFrom($id)
     {
         if (is_int($id)) {
             return self::where('id', $id)->first();
+        } elseif ($id instanceof self) {
+            return $id;
         } elseif ($id instanceof Request) {
             $whereWith = [
                 ['ip_address', '=', $id->ip()],
@@ -115,16 +198,6 @@ class Cart extends Model
     static public function exists($id)
     {
         return Functions::testVar(self::getFrom($id));
-    }
-
-    static public function getFromId(int $id)
-    {
-        return self::where('id', $id)->first();
-    }
-
-    static public function existsId(int $id)
-    {
-        return Functions::testVar(self::getFromId($id));
     }
 
     static public function createNew(

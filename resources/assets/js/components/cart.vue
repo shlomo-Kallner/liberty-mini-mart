@@ -32,8 +32,10 @@
                             <i :class="'fa' + this.currency"></i>
                             {{ item.priceSum }}
                         </em>
-                        <a href="javascript:void(0);" class="del-goods text-center"
-                            :data-cart-item-id="item.id" :data-cart-api-url="item.url + '/delFromCart'">
+                        <a href="javascript:void(0);" class="del-goods text-center delFromCart"
+                            :data-cart-item-id="item.id"
+                            :data-cart-item-quantity="item.quantity" 
+                            :data-cart-api-url="item.url + '/delfromcart'">
                             <i class="fa fa-times-circle"></i>
                         </a>
                     </li>

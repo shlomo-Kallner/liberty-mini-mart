@@ -328,9 +328,11 @@ class Functions
         if (self::testVar($data) && self::testVar($name)) {
             if (is_array($data) && (is_int($name) || is_string($name))) {
                 $bol = array_key_exists($name, $data);
+            } elseif ($data instanceof Collection) {
+                $bol = $data->offsetExists($name); 
             } elseif (is_object($data)) {
                 $bol = property_exists($data, $name) || isset($data->$name) 
-                    || empty($data->$name); 
+                    || !empty($data->$name); 
             }
         }
         return $bol;
@@ -353,6 +355,8 @@ class Functions
             if (self::isPropKeyIn($data, $name)) {
                 if (is_array($data)) {
                     $res = $data[$name];
+                } elseif ($data instanceof Collection) {
+                    $res = $data->offsetGet($name); 
                 } elseif (is_object($data)) {
                     $res = $data->$name;
                 }
@@ -367,6 +371,8 @@ class Functions
         if (self::testVar($data) && self::testVar($name)) {
             if (is_array($data)) {
                 $data[$name] = $val;
+            } elseif ($data instanceof Collection) {
+                $data->offsetSet($name, $val); 
             } elseif (is_object($data)) {
                 $data->$name = $val;
             }

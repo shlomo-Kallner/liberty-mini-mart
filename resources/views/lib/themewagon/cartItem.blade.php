@@ -4,7 +4,7 @@
 use \App\Utilities\Functions\Functions,
     \Darryldecode\Cart\Cart;
 
-    $apiUrl = $url . '/delFromCart';
+    $apiUrl = $url . '/delfromcart';
 @endphp
 
 <li>
@@ -45,8 +45,10 @@ use \App\Utilities\Functions\Functions,
         <i class="fa {{ $currencyIcon }}"></i>
         {{ $priceSum }}
     </em>
-    <a href="javascript:void(0);" class="del-goods text-center"
-        data-cart-item-id="{{ $id }}" data-cart-api-url="{{ $apiUrl }}">
+    <a href="javascript:void(0);" class="del-goods text-center delFromCart"
+        data-cart-item-id="{{ $id }}" 
+        data-cart-item-quantity="{{ $quantity }}"
+        data-cart-api-url="{{ $apiUrl }}">
         <i class="fa fa-times-circle"></i>
     </a>
 </li>

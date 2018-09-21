@@ -161,6 +161,11 @@ jQuery(function ($) {
             );
             handleCart.doAjax($, data);
         },
+        delFromCart: function (item) {
+            var data = null; /...
+            ///
+            handleCart.doAjax($,data);
+        }
         isScalar: function (data) {
             if (typeof data == 'boolean' 
                 || typeof data == 'number'
@@ -216,7 +221,7 @@ jQuery(function ($) {
       });
     }
   };
-  checkTimeOut($);
+  //checkTimeOut($);
 
   $('.addToCart').on('click', function(e) {
       handleCart.addToCart($(this));
@@ -224,6 +229,8 @@ jQuery(function ($) {
   $('.orderNow').on('click', function(e) {
     handleCart.addToCart($(this));
     });
-  //$('.delFromCart')
+  $('.delFromCart').on('click', function (e) {
+      handleCart.delFromCart($(this));
+  });
 
 });

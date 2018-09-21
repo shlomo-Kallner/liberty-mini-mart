@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model,
     Illuminate\Http\Request;
 use App\Utilities\Functions\Functions;
 use App\User;
+use App\Cart;
 
 class UserSession extends Model
 {
@@ -212,8 +213,12 @@ class UserSession extends Model
     static function updateRegenerate(
         Request $request, int $user_id = 0, bool $retObj = false
     ) {
+        $cart = Cart::storeOrCreateCurrentCart($request, $user_id);
         $us = UserSession::createNewOrUpdate($request, $user_id);
         $request->session()->regenerate();
+        if (Functions::testVar($cart)) {
+            $cart->updateCartWithSession($request, $user_id);
+        }
         $bol = $us->updateWith($request, $user_id);
         return $retObj ? $us : $bol;
     }
