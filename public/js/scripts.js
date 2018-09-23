@@ -71,7 +71,7 @@ jQuery(function ($) {
             }
             return result;
         },
-        doAjax: function (jquery, data, type = 'POST') {
+        doAjax: function (jquery, data, type = 'POST', callback = null) {
             handleCart.dumpData(data);
             jquery.ajax(
                 {
@@ -162,7 +162,15 @@ jQuery(function ($) {
             handleCart.doAjax($, data);
         },
         delFromCart: function (item) {
-            var data = null; /...
+            var info = {
+                id: item.data('cartItemId'),
+                numProducts: item.data('cartItemQuantity')
+            };
+            var url = item.data('cartApiUrl');
+            var data = handleCart.makeData(
+                info, url, window.Laravel.csrfToken, 
+                '', 'delFromCart', window.Laravel.nut
+                );
             ///
             handleCart.doAjax($,data);
         }
@@ -190,6 +198,7 @@ jQuery(function ($) {
             }
         }
     };
+    window.Laravel.handleCart = handleCart;
        // return cartForStore;
     //};
     /* jQuery.fn.extend({
