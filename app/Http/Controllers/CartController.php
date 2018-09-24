@@ -104,7 +104,7 @@ class CartController extends MainController
 
     public function addToCart(Request $request) 
     {
-        if (true) {
+        if (false) {
             return $this->dataTester($request);
         } else {
             $section = Section::getSection($request->section, false);
@@ -127,7 +127,7 @@ class CartController extends MainController
             $cart1 = Cart::storeOrCreateCurrentCart(
                 $request, $user, $cart
             );
-            return Functions::jsonRetOrDump($request, $cart1, $user, $cart);
+            return Functions::genDumpResponse($request, $cart1, $user, $cart);
         }
     }
 
