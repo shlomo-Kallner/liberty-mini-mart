@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Darryldecode\Cart\Facades\CartFacade as DarrylCart;
+use Darryldecode\Cart\Cart as DarrylCartCart;
 use App\Utilities\Functions\Functions;
 use Illuminate\Support\Facades\Hash;
 use App\User;
@@ -93,9 +94,14 @@ class Cart extends Model
         return $cart;
     }
 
-    static public function storeOrCreateCurrentCart(Request $request, $user)
-    {
-        $content = DarrylCart::session('cart')->getContent();
+    static public function storeOrCreateCurrentCart(
+        Request $request, $user = null, $dcart = null
+    ) {
+        if (Functions::testVar($dcart) && $dcart instanceof DarrylCartCart) {
+            $content = $dcart->getContent();
+        } else {
+            $content = DarrylCart::session('cart')->getContent();
+        }
         $cart = self::getFrom($request);
         if (!Functions::testVar($cart)) {
             $cart1 = self::createNewFrom($request, $user, $content);

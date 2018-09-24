@@ -121,6 +121,13 @@ class CartController extends MainController
                     'description' => $product->description,
                 ]
             );
+            $user = $request->session()->has('user') 
+                ? $request->session()->get('user.id')
+                : null;
+            $cart1 = Cart::storeOrCreateCurrentCart(
+                $request, $user, $cart
+            );
+            return Functions::jsonRetOrDump($request, $cart1, $user, $cart);
         }
     }
 
