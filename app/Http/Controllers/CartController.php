@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Cart,
     App\User,
+    App\Section,
+    App\Categorie,
+    App\Product,
     App\Utilities\Functions\Functions,
     App\UserSession;
 use Illuminate\Http\Request;
 use Darryldecode\Cart as DarrylCart;
 use App\Utilities\CsrfTokenVerifier as Verifier;
+use Zend\Diactoros\Request;
 
 class CartController extends MainController
 {
@@ -99,6 +103,28 @@ class CartController extends MainController
     }
 
     public function addToCart(Request $request) 
+    {
+        if (true) {
+            return $this->dataTester($request);
+        } else {
+            $section = Section::getSection($request->section, false);
+            $category = $section->getCategory($request->category);
+            $product = $category->getProduct($request->product);
+            $productSB = $product->toSidebar('store');
+            $cart = Cart::getSessionCart();
+            $cart->add(
+                $product->id, $product->name, $productSB['price'],
+                $request->input('info.numProduct'),
+                [
+                    'url' => $productSB['url'],
+                    'img' => $productSB['img'],
+                    'description' => $product->description,
+                ]
+            );
+        }
+    }
+
+    public function delFromCart(Request $request)
     {
         return $this->dataTester($request);
     }

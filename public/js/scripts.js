@@ -173,7 +173,7 @@ jQuery(function ($) {
                 );
             ///
             handleCart.doAjax($,data);
-        }
+        },
         isScalar: function (data) {
             if (typeof data == 'boolean' 
                 || typeof data == 'number'

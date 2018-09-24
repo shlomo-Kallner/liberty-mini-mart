@@ -40,11 +40,13 @@ if (!$testing) {
     $fakeID = 'MyFAKESEssionID123';
     //$myCart = new Cart();
     \Cart::session($fakeID);
-    \Cart::session($fakeID)->add(123, 'Rolex Classic Watch', 230.5, 5, [
+    \Cart::session($fakeID)->add(
+        123, 'Rolex Classic Watch', 230.5, 5, [
         'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
         'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg',
         'description' => 'Rolex Classic Watch',
-    ]);
+        ]
+    );
     //$cartContent = \Cart::session($fakeID)->getContent();
     $cart2 = [
         'items' => \Cart::session($fakeID)->getContent(),

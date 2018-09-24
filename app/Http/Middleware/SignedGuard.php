@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Http\Controllers\UserController,
+    App\UserSession,
     App\User;
 
 class SignedGuard

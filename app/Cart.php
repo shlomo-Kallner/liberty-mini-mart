@@ -96,12 +96,13 @@ class Cart extends Model
     static public function storeOrCreateCurrentCart(Request $request, $user)
     {
         $content = DarrylCart::session('cart')->getContent();
-        if (!Functions::testVar($cart = self::getFrom($request))) {
+        $cart = self::getFrom($request);
+        if (!Functions::testVar($cart)) {
             $cart1 = self::createNewFrom($request, $user, $content);
             if (Functions::testVar($cart1)) {
                 return self::getFrom($cart1);
             }
-        } else {
+        } elseif ($cart instanceof self) {
             if ($cart->updateCartFrom($request, $user, $content)) {
                 return $cart;
             }
@@ -240,8 +241,9 @@ class Cart extends Model
         return null;
     }
 
-    static public function createNewFrom($data, $user = null, $content = null)
-    {
+    static public function createNewFrom(
+        $data, $user = null, $content = null
+    ) {
         if (is_array($data)) {
             return self::createNew(
                 $data['user'], $data['session_id'], $data['ip'],

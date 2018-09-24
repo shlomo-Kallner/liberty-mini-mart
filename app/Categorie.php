@@ -176,9 +176,11 @@ class Categorie extends Model
         return null;
     }
 
-    public function getProduct(string $url)
+    public function getProduct(string $url, bool $withTrashed = true)
     {
-        return $this->products()->where('url', $url)->first();
+        return $withTrashed 
+            ? $this->products()->withTrashed()->where('url', $url)->first()
+            : $this->products()->where('url', $url)->first();
     }
 
     public function getProducts(bool $withTrashed = true, string $dir = 'asc')

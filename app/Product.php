@@ -253,7 +253,7 @@ class Product extends Model
             'url' => $this->getFullUrl($baseUrl),
             'img' => $this->image->toImageArray()['img'],
             'alt' => $this->title,
-            'price' => $this->sale != '' || $this->sale != $this->price 
+            'price' => Functions::testVar($this->sale) || $this->sale != $this->price 
                 ? $this->sale 
                 : $this->price,
         ];
@@ -266,7 +266,7 @@ class Product extends Model
             'name' => $this->title,
             'id' => $this->id,
             'url' => $this->getFullUrl($baseUrl),
-            'price' => $this->sale != '' || $this->sale != $this->price
+            'price' => Functions::testVar($this->sale) || $this->sale != $this->price
                 ? $this->sale : $this->price,
             'sticker' => $this->sticker,
         ];
@@ -277,7 +277,7 @@ class Product extends Model
         return [
             'productImage' => $this->image->toImageArray()['img'],
             'productImageAlt' => $this->title,
-            'productOtherImages' => [], // a wishList Item!
+            'productOtherImages' => Image::getArraysFor($this->otherImages),// [], // a wishList Item!
             'productTitle' => $this->title,
             'productPrice' => $this->price,
             'productSalePrice' => $this->sale,
