@@ -12,7 +12,6 @@ use App\Cart,
 use Illuminate\Http\Request;
 use Darryldecode\Cart as DarrylCart;
 use App\Utilities\CsrfTokenVerifier as Verifier;
-use Zend\Diactoros\Request;
 
 class CartController extends MainController
 {
@@ -114,20 +113,30 @@ class CartController extends MainController
             $cart = Cart::getSessionCart();
             $cart->add(
                 $product->id, $product->name, $productSB['price'],
-                $request->input('info.numProduct'),
+                $request->input('info.numProduct') ?? 1,
                 [
-                    'url' => $productSB['url'],
-                    'img' => $productSB['img'],
+                    'url' => url($productSB['url']),
+                    'img' => asset($productSB['img']),
                     'description' => $product->description,
                 ]
             );
             $user = $request->session()->has('user') 
                 ? $request->session()->get('user.id')
                 : null;
+            //dd($request, $user, $cart);
             $cart1 = Cart::storeOrCreateCurrentCart(
                 $request, $user, $cart
             );
-            return Functions::genDumpResponse($request, $cart1, $user, $cart);
+            if (!true) {
+                return Functions::genDumpResponse($request, $cart1, $user, $cart);
+            } elseif (true) {
+                return Cart::getCurrentCart($request);
+            } else {
+                return Functions::genDumpResponse(
+                    $request, $cart1, Cart::getCurrentCart($request), 
+                    $cart
+                );
+            }
         }
     }
 

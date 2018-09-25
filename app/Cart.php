@@ -97,12 +97,14 @@ class Cart extends Model
     static public function storeOrCreateCurrentCart(
         Request $request, $user = null, $dcart = null
     ) {
+        //dd($request, $user, $dcart);
         if (Functions::testVar($dcart) && $dcart instanceof DarrylCartCart) {
             $content = $dcart->getContent();
         } else {
             $content = DarrylCart::session('cart')->getContent();
         }
         $cart = self::getFrom($request);
+        //dd($request, $user, $cart, $content);
         if (!Functions::testVar($cart)) {
             $cart1 = self::createNewFrom($request, $user, $content);
             if (Functions::testVar($cart1)) {
@@ -113,6 +115,7 @@ class Cart extends Model
                 return $cart;
             }
         }
+        //dd($cart, $cart1, $request, $user, $content);
         return null;
     }
 
@@ -175,10 +178,12 @@ class Cart extends Model
         return unserialize(base64_decode($this->content));
     }
 
-    static public function getFrom($id)
+    static public function getFrom($id, bool $useGet = false)
     {
         if (is_int($id)) {
-            return self::where('id', $id)->first();
+            return $useGet 
+                ? self::where('id', $id)->get()
+                : self::where('id', $id)->first();
         } elseif ($id instanceof self) {
             return $id;
         } elseif ($id instanceof Request) {
@@ -189,7 +194,9 @@ class Cart extends Model
             if ($id->hasSession()) {
                 $whereWith[] = ['session_id', '=', $id->session()->getId()];
             }
-            return self::where($whereWith)->get();
+            return $useGet 
+                ? self::where($whereWith)->get()
+                : self::where($whereWith)->first();
         } elseif (is_array($id)) {
             // is a User Array ...
             $whereWith = [
@@ -197,18 +204,21 @@ class Cart extends Model
                 ['user_agent', '=', $id['agent']],
                 ['user_id', '=', $id['id']]
             ];
-            return self::where($whereWith)->get();
+            return $useGet 
+                ? self::where($whereWith)->get()
+                : self::where($whereWith)->first();
         }
         return null;
     }
 
-    static public function exists($id)
+    static public function exists($id, bool $useGet = false)
     {
-        return Functions::testVar(self::getFrom($id));
+        return Functions::testVar(self::getFrom($id, $useGet));
     }
 
     static public function createNew(
-        $user, string $session_id, string $ip, string $agent, $content = null
+        $user, string $session_id, string $ip, 
+        string $agent, $content = null
     ) {
         $user_id = Functions::getVar(User::getUserId($user), 0);
         /**
@@ -231,7 +241,8 @@ class Cart extends Model
                 ['user_agent', '=', $agent]
             ]
         )->get();
-        if (!Functions::testVar($cTmp) && count($cTmp) === 0) {
+        //dd($cTmp, !Functions::testVar($cTmp));
+        if (!Functions::testVar($cTmp) || count($cTmp) === 0) {
             $tmp = new self;
             $tmp->user_id = $user_id;
             $tmp->session_id = $session_id;
@@ -255,13 +266,13 @@ class Cart extends Model
                 $data['user'], $data['session_id'], $data['ip'],
                 $data['agent'], $data['content']
             );
-        } elseif ($data instanceof Request && Functions::testVar($user)
-            && $data->hasSession()
-        ) {
+        } elseif ($data instanceof Request && $data->hasSession()) {
+            //dd($data, $user, $content, __METHOD__);
             return self::createNew(
                 $user, $data->session()->getId(), $data->ip(),
                 $data->userAgent(), $content
             );
         }
+        return null;
     }
 }

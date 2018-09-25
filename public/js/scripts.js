@@ -181,6 +181,8 @@ jQuery(function ($) {
                 || typeof data == 'undefined'
             ) {
                 return true;
+            } else if (typeof data == 'object') {
+                return false;
             } else {
                 return false;
             }
@@ -190,9 +192,9 @@ jQuery(function ($) {
             for (var i in data) {
                 if (handleCart.isScalar(i)) {
                     console.log( i + ' => ' + data[i]);
-                } else {
+                } else if (typeof i == 'object') {
                     console.log( i + ' => [ ');
-                    handleCart.dumpData(i);
+                    handleCart.dumpData(data[i]);
                     console.log(']');
                 }
             }
