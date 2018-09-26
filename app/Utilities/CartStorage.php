@@ -16,7 +16,9 @@ use Darryldecode\Cart\CartCollection;
 
 class CartStorage
 {
-    protected $request, $session, $storage, $data;
+    protected $request, $storage, $data;
+
+    //protected $session;
 
     public function __construct(Request $request = request())
     {
@@ -33,31 +35,38 @@ class CartStorage
     }
     public function has($key)
     {
-        return Cart::exists($key);
+        return $this->data->has($key);
     }
     
     public function get($key)
     {
-        if (Functions::testVar($tC = Cart::getFrom($key)) {
-            
-            return new CartCollection(Cart::find($key)->cart_data);
+        // Functions::testVar($tC = Cart::getFrom($key)
+        if ($this->has($key)) {
+            //$cart_data = $this->data->get($key);
+            return new CartCollection($this->data->get($key));
         }
         return [];
     }
     
     public function put($key, $value)
     {
-        if ($row = Cart::find($key)) {
-            // update
-            $row->cart_data = $value;
-            $row->save();
-        } else {
-            Cart::create(
-                [
-                    'id' => $key,
-                    'cart_data' => $value
-                ]
-            );
-        }
+        $this->data->put($key, $value);
+        $this->storage->updateCartFrom($this->request, null, $this->data);
+
+        /* 
+            if ($this->has($key)) {
+                $this->data->put($key, $value);
+                // update
+                //$row->cart_data = $value;
+                $this->storage->updateCartFrom($this->request, null, $this->data);
+            } else {
+                Cart::create(
+                    [
+                        'id' => $key,
+                        'cart_data' => $value
+                    ]
+                );
+            } 
+        */
     }
 }
