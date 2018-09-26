@@ -57,7 +57,7 @@ class Cart extends Model
      */
     static public function getCurrentCart(
         Request $request = null, bool $asArray = true,
-        string $currencyIcon = 'fa-usd'
+        string $currencyIcon = 'fa-usd', $dcart = null
     ) {
         $sess = Functions::testVar($request) && $request->hasSession()
                     ? $request->session() 
@@ -65,7 +65,13 @@ class Cart extends Model
         $cart = self::getNewCartArray(
             $sess->has('currency') ? $sess->get('currency') : $currencyIcon
         );
-        $darrylCart = self::getSessionCart();
+        if (Functions::testVar($dcart) 
+        && $dcart instanceof DarrylCartCart
+        ) {
+            $darrylCart = &$dcart;
+        } else {
+            $darrylCart = self::getSessionCart();
+        }
         if (!$darrylCart->isEmpty()) {
             $cTmp = $darrylCart->getContent()->all();
             foreach ($cTmp as $item) {
@@ -110,12 +116,19 @@ class Cart extends Model
             if (Functions::testVar($cart1)) {
                 return self::getFrom($cart1);
             }
+            //dd($cart, $cart1, $request, $user, $content);
         } elseif ($cart instanceof self) {
             if ($cart->updateCartFrom($request, $user, $content)) {
+                //dd($cart, $request, $user, $content, __METHOD__, 0);
                 return $cart;
             }
+            //dd($cart, $request, $user, $content, __METHOD__, 1);
+        } elseif (Functions::testVar($cart) && count($cart) > 0) {
+            if ($cart[0]->updateCartFrom($request, $user, $content)) {
+                return $cart[0];
+            }
         }
-        //dd($cart, $cart1, $request, $user, $content);
+        //dd($cart, $request, $user, $content, __METHOD__);
         return null;
     }
 
@@ -162,8 +175,7 @@ class Cart extends Model
                 $data['content'], $data['session_id'], $data['ip'],
                 $data['agent'], $data['user']
             );
-        } elseif ($data instanceof Request && Functions::testVar($user)
-            && $data->hasSession()
+        } elseif ($data instanceof Request && $data->hasSession()
         ) {
             return $this->updateCart(
                 $content, $data->session()->getId(), $data->ip(),
@@ -186,6 +198,10 @@ class Cart extends Model
                 : self::where('id', $id)->first();
         } elseif ($id instanceof self) {
             return $id;
+        } elseif (is_string($id)) {
+            return $useGet 
+                ? self::where('session_id', $id)->get()
+                : self::where('session_id', $id)->first();
         } elseif ($id instanceof Request) {
             $whereWith = [
                 ['ip_address', '=', $id->ip()],
@@ -218,7 +234,7 @@ class Cart extends Model
 
     static public function createNew(
         $user, string $session_id, string $ip, 
-        string $agent, $content = null
+        string $agent, $content = null, bool $retId = true
     ) {
         $user_id = Functions::getVar(User::getUserId($user), 0);
         /**
@@ -252,27 +268,36 @@ class Cart extends Model
             $tmp->content = $cnTmp;
             $tmp->verihash = Hash::make($cnTmp);
             if ($tmp->save()) {
-                return $tmp->id;
+                return $retId ? $tmp->id : $tmp;
             }
         }
         return null;
     }
 
     static public function createNewFrom(
-        $data, $user = null, $content = null
+        $data, $user = null, $content = null, bool $retId = true
     ) {
         if (is_array($data)) {
             return self::createNew(
                 $data['user'], $data['session_id'], $data['ip'],
-                $data['agent'], $data['content']
+                $data['agent'], $data['content'], $retId
             );
         } elseif ($data instanceof Request && $data->hasSession()) {
             //dd($data, $user, $content, __METHOD__);
             return self::createNew(
                 $user, $data->session()->getId(), $data->ip(),
-                $data->userAgent(), $content
+                $data->userAgent(), $content, $retId
             );
         }
         return null;
+    } 
+
+    static public function getFromOrCreate($data, bool $retId = true)
+    {
+        if (Functions::testVar($cart = self::getFrom($data))) {
+            return $cart;
+        } else {
+            return self::createNewFrom($data, null, null, false);
+        }
     }
 }

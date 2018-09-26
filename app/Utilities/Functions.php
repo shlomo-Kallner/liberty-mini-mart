@@ -249,12 +249,14 @@ class Functions
         if ($request->ajax()) {
             $tmp = [];
             $dumper = new CliDumper;
+            $tmp[] = $dumper->dump((new VarCloner)->cloneVar($request), true);
             foreach ($data as $val) {
                 $tmp[] = $dumper->dump((new VarCloner)->cloneVar($val), true);
             }
             return new JsonResponse($tmp);
         } else {
             $dumper = new HtmlDumper;
+            $data[] = $request;
             $tmp = $dumper->dump((new VarCloner)->cloneVar($data), true);
             return new Response($tmp);
         }

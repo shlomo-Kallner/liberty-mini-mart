@@ -111,15 +111,20 @@ class CartController extends MainController
             $product = $category->getProduct($request->product);
             $productSB = $product->toSidebar('store');
             $cart = Cart::getSessionCart();
-            $cart->add(
-                $product->id, $product->name, $productSB['price'],
-                $request->input('info.numProduct') ?? 1,
-                [
-                    'url' => url($productSB['url']),
-                    'img' => asset($productSB['img']),
-                    'description' => $product->description,
-                ]
-            );
+            $numProducts = $request->input('info.numProduct') ?? 1;
+            if ($cart->has($product->id)) {
+                $cart->update($product->id, ['quantity' => $numProducts]);
+            } else {
+                $cart->add(
+                    $product->id, $product->name, $productSB['price'],
+                    $numProducts,
+                    [
+                        'url' => url($productSB['url']),
+                        'img' => asset($productSB['img']),
+                        'description' => $product->description,
+                    ]
+                );
+            }
             $user = $request->session()->has('user') 
                 ? $request->session()->get('user.id')
                 : null;
@@ -127,10 +132,12 @@ class CartController extends MainController
             $cart1 = Cart::storeOrCreateCurrentCart(
                 $request, $user, $cart
             );
-            if (!true) {
+            if (true) {
                 return Functions::genDumpResponse($request, $cart1, $user, $cart);
             } elseif (true) {
-                return Cart::getCurrentCart($request);
+                return Cart::getCurrentCart(
+                    $request, true, 'fa-usd', $cart
+                );
             } else {
                 return Functions::genDumpResponse(
                     $request, $cart1, Cart::getCurrentCart($request), 
