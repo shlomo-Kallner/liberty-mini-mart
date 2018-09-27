@@ -90,5 +90,5 @@ window.Laravel.masterCart = new Vue(
 
 window.Laravel.page.setCart = function (data) {
   window.Laravel.page.cart = data;
-  window.Laravel.masterCart.cart = window.Laravel.page.cart;
+  window.Laravel.masterCart.cartData = data;
 };

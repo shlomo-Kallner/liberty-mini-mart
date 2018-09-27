@@ -91,8 +91,11 @@ jQuery(function ($) {
                     success: function (result, status, xhr) {
                         // console.log(status + ' -> ' + JSON.stringify(result));
                         console.log(status + ' -> ');
-                        handleCart.dumpData(result);
                         // handleCart.dumpData(xhr);
+                        if (callback) {
+                            callback(result);
+                        }
+                        handleCart.dumpData(result);
                         if (data.redirect) {
                             window.location.assign(data.redirect);
                         } else if (result.redirect) {
@@ -152,14 +155,20 @@ jQuery(function ($) {
                 item, window.Laravel.csrfToken, val, 'addToCart',
                 window.Laravel.nut
             );
-            handleCart.doAjax($, data);
+            var callback = function (result) {
+                window.Laravel.page.setCart(result);
+            };
+            handleCart.doAjax($, data, 'POST', callback);
         },
         remFromCart: function (item) {
             var data = handleCart.getData(
                 item, window.Laravel.csrfToken, 1, 'remFromCart',
                 window.Laravel.nut
             );
-            handleCart.doAjax($, data);
+            var callback = function (result) {
+                window.Laravel.page.setCart(result);
+            };
+            handleCart.doAjax($, data, 'POST', callback);
         },
         delFromCart: function (item) {
             var info = {
@@ -170,9 +179,12 @@ jQuery(function ($) {
             var data = handleCart.makeData(
                 info, url, window.Laravel.csrfToken, 
                 '', 'delFromCart', window.Laravel.nut
-                );
+            );
+            var callback = function (result) {
+                window.Laravel.page.setCart(result);
+            };
             ///
-            handleCart.doAjax($,data);
+            handleCart.doAjax($, data, 'POST', callback);
         },
         isScalar: function (data) {
             if (typeof data == 'boolean' 

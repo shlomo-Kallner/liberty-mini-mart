@@ -111,7 +111,7 @@ class CartController extends MainController
             $product = $category->getProduct($request->product);
             $productSB = $product->toSidebar('store');
             $cart = Cart::getSessionCart();
-            $numProducts = $request->input('info.numProduct') ?? 1;
+            $numProducts = $request->input('info.numProducts') ?? 1;
             if ($cart->has($product->id)) {
                 $cart->update($product->id, ['quantity' => $numProducts]);
             } else {
@@ -129,18 +129,20 @@ class CartController extends MainController
                 ? $request->session()->get('user.id')
                 : null;
             //dd($request, $user, $cart);
-            $cart1 = Cart::storeOrCreateCurrentCart(
-                $request, $user, $cart
-            );
-            if (true) {
-                return Functions::genDumpResponse($request, $cart1, $user, $cart);
+            /* 
+                $cart1 = Cart::storeOrCreateCurrentCart(
+                    $request, $user, $cart
+                ); 
+            */
+            if (!true) {
+                return Functions::genDumpResponse($request, $user, $cart);
             } elseif (true) {
                 return Cart::getCurrentCart(
                     $request, true, 'fa-usd', $cart
                 );
             } else {
                 return Functions::genDumpResponse(
-                    $request, $cart1, Cart::getCurrentCart($request), 
+                    $request, Cart::getCurrentCart($request), 
                     $cart
                 );
             }

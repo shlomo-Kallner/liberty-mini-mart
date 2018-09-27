@@ -29240,7 +29240,7 @@ window.Laravel.masterCart = new Vue({
 
 window.Laravel.page.setCart = function (data) {
   window.Laravel.page.cart = data;
-  window.Laravel.masterCart.cart = window.Laravel.page.cart;
+  window.Laravel.masterCart.cartData = data;
 };
 
 /***/ }),
@@ -42838,6 +42838,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 var _ = __webpack_require__(40);
 // var isArray = require('isarray');
@@ -42964,11 +42966,12 @@ var render = function() {
                   _c(
                     "a",
                     {
-                      staticClass: "del-goods text-center",
+                      staticClass: "del-goods text-center delFromCart",
                       attrs: {
                         href: "javascript:void(0);",
                         "data-cart-item-id": item.id,
-                        "data-cart-api-url": item.url + "/delFromCart"
+                        "data-cart-item-quantity": item.quantity,
+                        "data-cart-api-url": item.url + "/delfromcart"
                       }
                     },
                     [_c("i", { staticClass: "fa fa-times-circle" })]

@@ -2,8 +2,6 @@
 
 namespace App\Utilities;
 
-use 
-
 use App\Utilities\Functions\Functions,
     App\User,
     App\Cart,
@@ -20,9 +18,9 @@ class CartStorage
 
     //protected $session;
 
-    public function __construct(Request $request = request())
+    public function __construct(Request $request = null)
     {
-        $this->request = $request;
+        $request2 = $request ?? request();
         /* 
             if ($request->ajax()) {
                 if (Functions::testVar($us = UserSession::getFrom($request))) {
@@ -30,9 +28,27 @@ class CartStorage
                 }
             } 
         */
-        $this->storage = Cart::getFromOrCreate($request);
-        $this->data = $this->storage->getCartContent() ?? Collection::make();
+        $this->loadStorage($request);
     }
+
+    protected function loadStorage(Request $request = null)
+    {
+        $request2 = $request ?? request();
+        if (!functions::testVar($this->request)
+        || $this->request !== $request2
+        ) {
+            $this->request = $request2;
+        }
+        $cart = Cart::getFromOrCreate($this->request);
+        if (!Functions::testVar($this->storage) 
+        || $cart->id !== $this->storage->id
+        ) {
+            $this->storage = $cart;
+        }
+        $tmp = $this->storage->getCartContent();
+        $this->data = Collection::make(Functions::getVar($tmp, []));
+    }
+
     public function has($key)
     {
         return $this->data->has($key);
@@ -40,6 +56,7 @@ class CartStorage
     
     public function get($key)
     {
+        $this->loadStorage($this->request);
         // Functions::testVar($tC = Cart::getFrom($key)
         if ($this->has($key)) {
             //$cart_data = $this->data->get($key);
@@ -50,9 +67,9 @@ class CartStorage
     
     public function put($key, $value)
     {
+        $this->loadStorage($this->request);
         $this->data->put($key, $value);
-        $this->storage->updateCartFrom($this->request, null, $this->data);
-
+        $this->storage->updateCartFrom($this->request, null, $this->data->all());
         /* 
             if ($this->has($key)) {
                 $this->data->put($key, $value);

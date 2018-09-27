@@ -327,7 +327,7 @@ class Functions
     static public function isPropKeyIn($data, $name) 
     {
         $bol = null;
-        if (self::testVar($data) && self::testVar($name)) {
+        if (isset($data) && self::testVar($name)) {
             if (is_array($data) && (is_int($name) || is_string($name))) {
                 $bol = array_key_exists($name, $data);
             } elseif ($data instanceof Collection) {
@@ -343,7 +343,7 @@ class Functions
     static public function hasPropKeyIn($data, $name)
     {
         $bol = null;
-        if (self::testVar($data) && self::testVar($name)) {
+        if (isset($data) && self::testVar($name)) {
             $bol = self::isPropKeyIn($data, $name) 
                 && self::testVar(self::getPropKey($data, $name));
         }
@@ -353,7 +353,7 @@ class Functions
     static public function getPropKey($data, $name) 
     {
         $res = null;
-        if (self::testVar($data) && self::testVar($name)) {
+        if (isset($data) && self::testVar($name)) {
             if (self::isPropKeyIn($data, $name)) {
                 if (is_array($data)) {
                     $res = $data[$name];
@@ -370,7 +370,7 @@ class Functions
     static public function setPropKey(&$data, $name, $val = null)
     {
         $res = self::isPropKeyIn($data, $name);
-        if (self::testVar($data) && self::testVar($name)) {
+        if (isset($data) && self::testVar($name)) {
             if (is_array($data)) {
                 $data[$name] = $val;
             } elseif ($data instanceof Collection) {
@@ -379,6 +379,7 @@ class Functions
                 $data->$name = $val;
             }
         } 
+        //dd($res, $data, $name, $val, is_array($data));
         return $res;
     }
 

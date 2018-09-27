@@ -136,13 +136,21 @@ class Cart extends Model
         $content, string $session_id = '', string $ip = '',
         string $agent = '', $user = null
     ) {
+        //dd($content)
         if (Functions::testVar($content)) {
             $tmp1 = $this->getCartContent();
+            //dd($content, $tmp1);
             foreach ($content as $key => $value) {
-                if (Functions::isValIn($tmp1, $key, $value) === false) {
-                    Functions::setPropKey($tmp1, $key, $value);
-                }
+                /* 
+                    if (Functions::isValIn($tmp1, $key, $value) === false) {
+                        dd(true);
+                        Functions::setPropKey($tmp1, $key, $value);
+                    } 
+                */
+                Functions::setPropKey($tmp1, $key, $value);
+                //dd(false);
             }
+            //dd($content, $tmp1);
             $cnTmp = base64_encode(serialize($tmp1));
             $this->content = $cnTmp;
             $this->verihash = Hash::make($cnTmp);
@@ -177,11 +185,13 @@ class Cart extends Model
             );
         } elseif ($data instanceof Request && $data->hasSession()
         ) {
+            //dd($data, $data->hasSession());
             return $this->updateCart(
                 $content, $data->session()->getId(), $data->ip(),
                 $data->userAgent(), $user
             );
         }
+        //dd($data, $data->hasSession());
         return false;
     }
 
