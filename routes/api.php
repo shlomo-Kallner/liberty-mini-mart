@@ -25,5 +25,6 @@ Route::prefix('store')->group(
         Route::get('section/{section}/category/{category}/product/{product}/addtocart', 'CartController@addToCart');
         Route::post('section/{section}/category/{category}/product/{product}/addtocart', 'CartController@addToCart');
         Route::post('section/{section}/category/{category}/product/{product}/delfromcart', 'CartController@delFromCart');
+        Route::post('section/{section}/category/{category}/product/{product}/remfromcart', 'CartController@remFromCart');
     }
 );

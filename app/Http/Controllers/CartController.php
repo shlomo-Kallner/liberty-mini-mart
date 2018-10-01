@@ -101,17 +101,15 @@ class CartController extends MainController
         // display 'ARE YOU SURE' PAGE...
     }
 
-    public function addToCart(Request $request) 
+    public function doCartAction(Request $request, string $action = '')
     {
-        if (false) {
-            return $this->dataTester($request);
-        } else {
-            $section = Section::getSection($request->section, false);
-            $category = $section->getCategory($request->category);
-            $product = $category->getProduct($request->product);
-            $productSB = $product->toSidebar('store');
-            $cart = Cart::getSessionCart();
-            $numProducts = $request->input('info.numProducts') ?? 1;
+        $section = Section::getSection($request->section, false);
+        $category = $section->getCategory($request->category);
+        $product = $category->getProduct($request->product);
+        $productSB = $product->toSidebar('store');
+        $cart = Cart::getSessionCart();
+        $numProducts = $request->input('info.numProducts') ?? 1;
+        if ($action == 'addToCart') {
             if ($cart->has($product->id)) {
                 $cart->update($product->id, ['quantity' => $numProducts]);
             } else {
@@ -122,36 +120,70 @@ class CartController extends MainController
                         'url' => url($productSB['url']),
                         'img' => asset($productSB['img']),
                         'description' => $product->description,
+                        'api' => url($product->getFullUrl('api/store')),
                     ]
                 );
             }
-            $user = $request->session()->has('user') 
-                ? $request->session()->get('user.id')
-                : null;
-            //dd($request, $user, $cart);
-            /* 
-                $cart1 = Cart::storeOrCreateCurrentCart(
-                    $request, $user, $cart
-                ); 
-            */
-            if (!true) {
-                return Functions::genDumpResponse($request, $user, $cart);
-            } elseif (true) {
-                return Cart::getCurrentCart(
-                    $request, true, 'fa-usd', $cart
-                );
-            } else {
-                return Functions::genDumpResponse(
-                    $request, Cart::getCurrentCart($request), 
-                    $cart
+        } elseif ($action == 'delFromCart') {
+            if ($cart->has($product->id)) {
+                $cart->remove($product->id);
+            }
+        } elseif ($acton == 'remFromCart') {
+            if ($cart->has($product->id)) {
+                $cart->update(
+                    $product->id, 
+                    ['quantity' => $numProducts > 0 ? -1 * $numProducts : $numProducts ]
                 );
             }
+        }
+        $user = $request->session()->has('user') 
+            ? $request->session()->get('user.id')
+            : null;
+        //dd($request, $user, $cart);
+        /* 
+            $cart1 = Cart::storeOrCreateCurrentCart(
+                $request, $user, $cart
+            ); 
+        */
+        if (!true) {
+            return Functions::genDumpResponse($request, $user, $cart);
+        } elseif (true) {
+            return Cart::getCurrentCart(
+                $request, true, 'fa-usd', $cart
+            );
+        } else {
+            return Functions::genDumpResponse(
+                $request, Cart::getCurrentCart($request), 
+                $cart
+            );
+        }
+    }
+
+    public function addToCart(Request $request) 
+    {
+        if (false) {
+            return $this->dataTester($request);
+        } else {
+            return $this->doCartAction($request, 'addToCart');
         }
     }
 
     public function delFromCart(Request $request)
     {
-        return $this->dataTester($request);
+        if (false) {
+            return $this->dataTester($request);
+        } else {
+            return $this->doCartAction($request, 'delFromCart');
+        }
+    }
+
+    public function remFromCart(Request $request)
+    {
+        if (false) {
+            return $this->dataTester($request);
+        } else {
+            return $this->doCartAction($request, 'remFromCart');
+        }
     }
 
     public function dataTester(Request $request)

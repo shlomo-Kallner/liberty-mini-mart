@@ -42851,6 +42851,11 @@ var _ = __webpack_require__(40);
             cart: this.initCart
         };
     },
+    watch: {
+        initCart: function initCart(newCart, oldCart) {
+            this.cart = newCart;
+        }
+    },
     computed: {
         items: function items() {
             return this.cart.items;
@@ -42971,7 +42976,7 @@ var render = function() {
                         href: "javascript:void(0);",
                         "data-cart-item-id": item.id,
                         "data-cart-item-quantity": item.quantity,
-                        "data-cart-api-url": item.url + "/delfromcart"
+                        "data-cart-api-url": item.api + "/delfromcart"
                       }
                     },
                     [_c("i", { staticClass: "fa fa-times-circle" })]

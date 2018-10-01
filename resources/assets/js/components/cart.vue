@@ -35,7 +35,7 @@
                         <a href="javascript:void(0);" class="del-goods text-center delFromCart"
                             :data-cart-item-id="item.id"
                             :data-cart-item-quantity="item.quantity" 
-                            :data-cart-api-url="item.url + '/delfromcart'">
+                            :data-cart-api-url="item.api + '/delfromcart'">
                             <i class="fa fa-times-circle"></i>
                         </a>
                     </li>
@@ -69,6 +69,11 @@
         data: function () {
             return {
                 cart: this.initCart
+            }
+        },
+        watch: {
+            initCart : function (newCart, oldCart) {
+                this.cart = newCart;
             }
         },
         computed: {
