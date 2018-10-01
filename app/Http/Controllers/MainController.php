@@ -364,7 +364,7 @@ class MainController extends Controller {
         //
         UserSession::updateRegenerate($request, intval($userData['id']));
         //
-        self::$data['cart'] = Cart::getCurrentCart($request);
+        self::$data['cart'] = Cart::getCurrentCart($request, true);
 
         //dd($userData, $tmp, $nut, $request->session()->getId(), $request->session()->all());
         // dd($request->session(), self::$data['cart']);

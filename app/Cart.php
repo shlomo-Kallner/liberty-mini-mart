@@ -88,6 +88,9 @@ class Cart extends Model
                         'description' => $item->attributes['description'],
                         'quantity' => $item->quantity,
                         'priceSum' => $item->getPriceSumWithConditions(),
+                        'api' => $request->ajax() 
+                        ? url($item->attributes['api'])
+                        : $item->attributes['api'],
                     ];
                 } else {
                     $cart['items'][] = $item;

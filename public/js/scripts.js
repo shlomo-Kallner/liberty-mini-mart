@@ -255,5 +255,8 @@ jQuery(function ($) {
   $('.delFromCart').on('click', function (e) {
       handleCart.delFromCart($(this));
   });
+  $('.del-goods').on('click', function (e) {
+      handleCart.delFromCart($(this));
+  });
 
 });
