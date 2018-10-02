@@ -254,9 +254,11 @@ jQuery(function ($) {
     });
   $('.delFromCart').on('click', function (e) {
       handleCart.delFromCart($(this));
+      //console.log('in .delFromCart');
   });
-  $('.del-goods').on('click', function (e) {
-      handleCart.delFromCart($(this));
-  });
+  //$('.del-goods').on('click', function (e) {
+      //handleCart.delFromCart($(this));
+  //    console.log('in .del-goods');
+  //});
 
 });

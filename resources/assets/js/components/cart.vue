@@ -32,7 +32,7 @@
                             <i :class="'fa' + this.currency"></i>
                             {{ item.priceSum }}
                         </em>
-                        <a href="javascript:void(0);" class="del-goods text-center delFromCart"
+                        <a href="javascript:;" class="del-goods text-center delFromCart"
                             :data-cart-item-id="item.id"
                             :data-cart-item-quantity="item.quantity" 
                             :data-cart-api-url="item.api + '/delfromcart'">

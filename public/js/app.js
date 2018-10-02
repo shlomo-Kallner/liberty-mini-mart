@@ -42973,7 +42973,7 @@ var render = function() {
                     {
                       staticClass: "del-goods text-center delFromCart",
                       attrs: {
-                        href: "javascript:void(0);",
+                        href: "javascript:;",
                         "data-cart-item-id": item.id,
                         "data-cart-item-quantity": item.quantity,
                         "data-cart-api-url": item.api + "/delfromcart"
