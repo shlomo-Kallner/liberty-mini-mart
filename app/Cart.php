@@ -109,43 +109,9 @@ class Cart extends Model
         $sess = Functions::testVar($request) && $request->hasSession()
                     ? $request->session() 
                     : session();
-        $cart = self::getNewCartArray(
-            $sess->has('currency') ? $sess->get('currency') : $currencyIcon
-        );
-        if (Functions::testVar($dcart) 
-        && $dcart instanceof DarrylCartCart
-        ) {
-            $darrylCart = &$dcart;
-        } else {
-            $darrylCart = self::getSessionCart();
-        }
-        if (!$darrylCart->isEmpty()) {
-            $cTmp = $darrylCart->getContent()->all();
-            foreach ($cTmp as $item) {
-                if ($asArray) {
-                    $cart['items'][] = [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                        'url' => $request->ajax() 
-                            ? url($item->attributes['url'])
-                            : $item->attributes['url'],
-                        'img' => $request->ajax() 
-                            ? asset($item->attributes['img'])
-                            : $item->attributes['img'],
-                        'description' => $item->attributes['description'],
-                        'quantity' => $item->quantity,
-                        'priceSum' => $item->getPriceSumWithConditions(),
-                        'api' => $request->ajax() 
-                        ? url($item->attributes['api'])
-                        : $item->attributes['api'],
-                    ];
-                } else {
-                    $cart['items'][] = $item;
-                }
-            }
-            $cart['subTotal'] = $darrylCart->getSubTotal();
-            $cart['totalItems'] = $darrylCart->getTotalQuantity();
-        }
+        $ci = $sess->has('currency') ? $sess->get('currency') : $currencyIcon;
+        $acart = self::getNewCartArray($ci);
+        $cart = self::cartToArray($dcart, $acart, $request->ajax(), $asArray, $ci);
         //dd($cart, $darrylCart, $darrylCart->getContent(), DarrylCart::getContent());
         return $cart;
     }
