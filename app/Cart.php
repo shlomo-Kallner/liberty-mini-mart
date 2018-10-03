@@ -78,9 +78,13 @@ class Cart extends Model
                         'description' => $item->attributes['description'],
                         'quantity' => $item->quantity,
                         'priceSum' => $item->getPriceSumWithConditions(),
+                        'price' => $item->price,
                         'api' => $asUrl 
                         ? url($item->attributes['api'])
                         : $item->attributes['api'],
+                        'options' => Functions::getVar(
+                            $item->attributes['options'], []
+                        ),
                     ];
                 } else {
                     $cart['items'][] = $item;
