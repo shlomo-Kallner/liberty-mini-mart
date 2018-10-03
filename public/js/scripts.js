@@ -53,6 +53,15 @@ jQuery(function ($) {
     };
     handleSearch();
 
+    var handleCartInit = function () {
+        $(".product-quantity #product-quantity").TouchSpin({
+            buttondown_class: "btn quantity-down",
+            buttonup_class: "btn quantity-up"
+        });
+        $(".quantity-down").html("<i class='fa fa-angle-down'></i>");
+        $(".quantity-up").html("<i class='fa fa-angle-up'></i>");
+    };
+
     /* var getOptionVals = function (options, jquery) {
         var result = {};
         for (var i in options) {

@@ -125,14 +125,15 @@
                                                     {{ $optName }}: {{ $optVal }}
                                                 @endforeach
                                             </p>
-                                            <em>More info is here</em>
+                                            {{-- <em>More info is here</em> --}}
+                                            
                                         </td>
                                         <td class="goods-page-ref-no">
                                                 {{ $item['refNo'] }}
                                         </td>
                                         <td class="goods-page-quantity">
                                             <div class="product-quantity">
-                                                <input id="product-quantity" type="text" value="{{ $item['quantity'] }}" readonly class="form-control input-sm">
+                                                <input id="product-quantity" type="text" value="{{ $item['quantity'] }}" class="form-control input-sm">
                                             </div>
                                         </td>
                                         <td class="goods-page-price">

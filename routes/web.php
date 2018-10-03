@@ -100,7 +100,7 @@ Route::middleware('userguard')->group(
         );
 
         Route::get('cart/{cart?}', 'CartController@show');
-        Route::get('wishlist/{wishlist?}', 'WishlistController@show');
+        //Route::get('wishlist/{wishlist?}', 'WishlistController@show');
         Route::get('checkout', 'ShopController@checkout');
         //Route::post('checkout', )
 

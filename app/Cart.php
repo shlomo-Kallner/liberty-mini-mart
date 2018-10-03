@@ -45,6 +45,53 @@ class Cart extends Model
         return DarrylCart::session('cart');
     }
 
+    static public function cartToArray(
+        $dcart, array $acart = null,
+        bool $asUrl = true, bool $asArray = true,
+        string $currencyIcon = 'fa-usd'
+    ) {
+        if (Functions::testVar($dcart) 
+        && $dcart instanceof DarrylCartCart
+        ) {
+            $darrylCart = &$dcart;
+        } else {
+            $darrylCart = self::getSessionCart();
+        }
+        if (Functions::testVar($acart)) {
+            $cart = &$acart;
+        } else {
+            $cart = self::getNewCartArray($currencyIcon);
+        }
+        if (!$darrylCart->isEmpty()) {
+            $cTmp = $darrylCart->getContent()->all();
+            foreach ($cTmp as $item) {
+                if ($asArray) {
+                    $cart['items'][] = [
+                        'id' => $item->id,
+                        'name' => $item->name,
+                        'url' => $asUrl 
+                            ? url($item->attributes['url'])
+                            : $item->attributes['url'],
+                        'img' => $asUrl 
+                            ? asset($item->attributes['img'])
+                            : $item->attributes['img'],
+                        'description' => $item->attributes['description'],
+                        'quantity' => $item->quantity,
+                        'priceSum' => $item->getPriceSumWithConditions(),
+                        'api' => $asUrl 
+                        ? url($item->attributes['api'])
+                        : $item->attributes['api'],
+                    ];
+                } else {
+                    $cart['items'][] = $item;
+                }
+            }
+            $cart['subTotal'] = $darrylCart->getSubTotal();
+            $cart['totalItems'] = $darrylCart->getTotalQuantity();
+        }
+        return $cart;
+    }
+
     /**
      * Function getCurrentCart() - Get the current shopping cart in a view friendly 
      *                           array format.
