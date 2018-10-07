@@ -46,13 +46,11 @@ class Cart extends Model
     }
 
     static public function cartToArray(
-        $dcart, array $acart = null,
+        DarrylCartCart $dcart = null, array $acart = null,
         bool $asUrl = true, bool $asArray = true,
         string $currencyIcon = 'fa-usd'
     ) {
-        if (Functions::testVar($dcart) 
-        && $dcart instanceof DarrylCartCart
-        ) {
+        if (Functions::testVar($dcart)) {
             $darrylCart = &$dcart;
         } else {
             $darrylCart = self::getSessionCart();
@@ -92,6 +90,7 @@ class Cart extends Model
             }
             $cart['subTotal'] = $darrylCart->getSubTotal();
             $cart['totalItems'] = $darrylCart->getTotalQuantity();
+            $cart['total'] = $darrylCart->getTotal();
         }
         return $cart;
     }

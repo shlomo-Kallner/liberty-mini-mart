@@ -82,7 +82,83 @@
             ]
         ];
     } else {
-
+        $cart2 = [
+            [
+                'url' => 'javascript:;',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model3.jpg',
+                'imgAlt' => 'Berry Lace Dress',
+                'shortDescription' => 'Cool green dress with red bell',
+                'options' => [
+                    'Color' => 'Green',
+                    'Size' => 'S'
+                ],
+                'refNo' => 'javc2133',
+                'quantity' => '1',
+                'price' => '47.00',
+                'subtotal' => '47.00',
+                'buttons' => [
+                    [
+                        'class' => 'del-goods',
+                        'text' => '&nbsp;',
+                        'url' => 'javascript:;',
+                        'icon' => '',
+                    ],
+                    [
+                        'class' => 'add-goods',
+                        'text' => '&nbsp;',
+                        'url' => 'javascript:;',
+                        'icon' => '',
+                    ]
+                ],
+            ],
+            [
+                'url' => 'javascript:;',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model4.jpg',
+                'imgAlt' => 'Berry Lace Dress',
+                'shortDescription' => 'Cool green dress with red bell',
+                'options' => [
+                    'Color' => 'Green',
+                    'Size' => 'S'
+                ],
+                'refNo' => 'javc2133',
+                'quantity' => '1',
+                'price' => '47.00',
+                'subtotal' => '47.00',
+                'buttons' => [
+                    [
+                        'class' => 'del-goods',
+                        'text' => '&nbsp;',
+                        'url' => 'javascript:;',
+                        'icon' => '',
+                    ],
+                    [
+                        'class' => 'add-goods',
+                        'text' => '&nbsp;',
+                        'url' => 'javascript:;',
+                        'icon' => '',
+                    ]
+                ],
+            ]
+        ];
+        $subTotal2 = '47.00';
+        $shippingCost2 = '3.00';
+        $totalPrice2 = '50.00';
+        $currency2 = 'fa-usd';
+        $cartTitle2 = 'Your Cart&apos;s Content:';
+        $cartType2 = 'shopping cart';
+        $extraContainerCss2 = 'col-sm-12';
+        $pageButtons2 = [
+            [
+                'class' => 'btn-default',
+                'text' => 'Continue shopping',
+                'icon' => 'fa-shopping-cart',
+            ],
+            [
+                'class' => 'btn-primary',
+                'text' => 'Checkout',
+                'icon' => 'fa-check',
+            ]
+        ];
     }
         
 
@@ -150,7 +226,11 @@
                                         </td>
                                         <td class="del-goods-col">
                                             @foreach ($item['buttons'] as $button)
-                                                <a class="{{ $button['class'] }}" href="{{ url($button['url']) }}"></a>
+                                                <a class="{{ $button['class'] }}" href="{{ url($button['url']) }}">
+                                                    @if (Functions::isPropKeyIn($button, 'text'))
+                                                        {!! $button['text'] !!}
+                                                    @endif
+                                                </a>
                                             @endforeach
                                         </td>
                                     </tr>
