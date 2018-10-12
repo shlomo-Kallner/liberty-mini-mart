@@ -311,7 +311,7 @@ class User extends Model
 
     static public function createNew(
         string $name, string $email, string $password, $img, 
-        int $plan = 1
+        int $plan = 1, bool $setRememberToken = false
     ) {
         $tu = self::where('email', $email)->get();
         if (count($tu) === 0) {
@@ -322,6 +322,9 @@ class User extends Model
             $tmp->password = Hash::make($password);
             $tmp->image_id = $tImg;
             $tmp->plan_id = $plan;
+            if ($setRememberToken) {
+                $tmp->remember_token = self::genRememberToken();
+            }
             if ($tmp->save()) {
                 $perm = new Basic($tmp->id);
                 if (Functions::testVar($perm)) {
@@ -336,12 +339,88 @@ class User extends Model
         return null;
     }
 
+    static public function rememberToken(
+        string $token, bool $getUser = true,
+        bool $withTrashed = false
+    ) {
+        $tmp = $withTrashed
+            ? self::withTrashed()->where('remember_token', $token)->get()
+            : self::where('remember_token', $token)->get();
+        if (!$getUser) {
+            // checking availability of a given token..
+            // (not accounting for the value of $withTrashed...)
+            return !Functions::testVar($tmp) || count($tmp) ===  0;
+        } else {
+            if (!Functions::testVar($tmp) || count($tmp) ===  0) {
+                // no user found, so return null.
+                return null;
+            } elseif (count($tmp) === 1) {
+                return $tmp[0];
+            } elseif (!$withTrashed) {
+                throw new \InvalidArgumentException(
+                    'Multiple Users With The Same Remember_Token!'
+                );
+            } else {
+                // $withTrashed is true so 
+                // (just a admin looking in the db)
+                // return all..
+                return $tmp;
+            }
+        }
+    }
+
+    static public function genRememberToken()
+    {
+        $bl = true;
+        while ($bl){
+            $trt = str_random(100);
+            if (self::rememberToken($trt, false)) {
+                $bl = false;
+            }
+        }
+        return $trt;
+    }
+
+    public function updateUser(
+        $args = null, 
+        $img, 
+    ) {
+        $doSave = false;
+        $name = Functions::isPropKeyIn($args, 'name') 
+            && is_string($args['name'])
+            ? $args['name'] : null;
+        $email = Functions::isPropKeyIn($args, 'email') 
+            && is_string($args['email'])
+            ? $args['email'] : null;
+        $password = Functions::isPropKeyIn($args, 'password') 
+            && is_string($args['password'])
+            ? $args['password'] : null;
+        $plan = Functions::isPropKeyIn($args, 'plan') 
+            && is_int($args['plan'])
+            ? $args['plan'] : null;
+        if (Functions::isPropKeyIn($args, 'rememberToken')) {
+            if (is_bool($args['rememberToken'])) {
+                if ($args['rememberToken']) {
+                    $rememberToken = self::genRememberToken();
+                } else {
+                    $rememberToken = null;
+                }
+            } else {
+                $rememberToken = '';
+            }
+        }
+        // update imgs and ..
+    }
+
     static public function createNewFrom(array $array) 
     {
         return self::createNew(
             $array['name'], $array['email'], 
             $array['password'], $array['img'], 
-            $array['plan']
+            $array['plan'], 
+            isset($array['setRememberToken']) 
+                ? $array['setRememberToken']
+                : false
         );
     }
 

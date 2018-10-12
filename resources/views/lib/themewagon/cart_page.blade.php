@@ -152,11 +152,13 @@
                 'class' => 'btn-default',
                 'text' => 'Continue shopping',
                 'icon' => 'fa-shopping-cart',
+                'url' => 'javascript:;',
             ],
             [
                 'class' => 'btn-primary',
                 'text' => 'Checkout',
                 'icon' => 'fa-check',
+                'url' => 'javascript:;',
             ]
         ];
     }
@@ -272,9 +274,15 @@
             </div>
             
             @foreach ($pageButtons2 as $button)
-                <button class="btn {{ $button['class'] }}" type="submit">
-                    {{ $button['text'] }} <i class="fa {{ $button['icon'] }}"></i>
-                </button>
+                @if (true)
+                    <button class="btn {{ $button['class'] }}" type="submit">
+                        {{ $button['text'] }} <i class="fa {{ $button['icon'] }}"></i>
+                    </button>
+                @else
+                    <a class="btn {{ $button['class'] }}" href="{{ $button['url']??'#' }}" role="button">
+                        {{ $button['text'] }} <i class="fa {{ $button['icon'] }}"></i>
+                    </a>
+                @endif
             @endforeach
         </div>
     </div>
