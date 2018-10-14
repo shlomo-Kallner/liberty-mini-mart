@@ -30,18 +30,10 @@ class UserImage extends Pivot
 
     static public function createNew($user, $image)
     {
-        if ($user instanceof User) {
-            $user_id = $user->id;
-        } elseif (is_int($user) && $user > 0) {
-            $user_id = $user;
-        } else {
+        if (!Functions::testVar($user_id = User::getUserId($user))) {
             return null;
         }
-        if ($image instanceof Image) {
-            $image_id = $image->id;
-        } elseif (is_int($image) && $image > 0) {
-            $image_id = $image;
-        } else {
+        if (!Functions::testVar($image_id = Image::getImageToID($image))) {
             return null;
         }
         // duplication avoidance..
@@ -75,11 +67,7 @@ class UserImage extends Pivot
     static public function getAllImages($user, bool $toArray = false) 
     {
         
-        if ($user instanceof User) {
-            $user_id = $user->id;
-        } elseif (is_int($user) && $user > 0) {
-            $user_id = $user;
-        } else {
+        if (!Functions::testVar($user_id = User::getUserId($user))) {
             return null;
         }
         $tmp = self::where('user_id', $user_id)->get();
@@ -88,11 +76,7 @@ class UserImage extends Pivot
 
     static public function getForImage($img)
     {
-        if ($img instanceof Image) {
-            $img_id = $img->id;
-        } elseif (is_int($img) && $img > 0) {
-            $img_id = $img;
-        } else {
+        if (!Functions::testVar($img_id = Image::getImageToID($img))) {
             return null;
         }
         $t = self::where('image_id', $img_id)->first();

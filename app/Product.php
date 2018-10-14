@@ -28,7 +28,7 @@ class Product extends Model
         string $name, string $url, float $price, 
         float $sale, int $category_id, string $sticker,
         $image, string $description,
-        string $title, $article
+        string $title, $article, $payload = null
     ) {
         $tmp = self::withTrashed()
             ->where(
@@ -59,6 +59,11 @@ class Product extends Model
                 $data->sale = $sale;
                 $data->sticker = $sticker;
                 $data->description = Functions::purifyContent($description);
+                if (Functions::testVar($payload)) {
+                    $cnTmp = base64_encode(serialize($payload));
+                    $data->payload = $cnTmp;
+                    $data->verihash = Hash::make($cnTmp);
+                }
                 if ($data->save()) {
                     $pi = ProductImage::createNewFrom($data);
                     if (Functions::testVar($pi)) {
@@ -76,8 +81,13 @@ class Product extends Model
             $array['name'], $array['url'], $array['price'], 
             $array['sale'], $array['category_id'], $array['sticker'], 
             $array['image'], $array['description'], 
-            $array['title'], $array['article']
+            $array['title'], $array['article'], $array['payload']
         );
+    }
+
+    public function getPayload()
+    {
+        return unserialize(base64_decode($this->payload));
     }
 
     static public function getFromId(int $id, bool $withTrashed = true)
@@ -274,6 +284,7 @@ class Product extends Model
 
     public function toFull(string $baseUrl, int $version = 1)
     {
+        //$payload = $this->getPayload(); // wishlist item?
         return [
             'productImage' => $this->image->toImageArray()['img'],
             'productImageAlt' => $this->title,
@@ -283,7 +294,7 @@ class Product extends Model
             'productSalePrice' => $this->sale,
             'productAvailability' => '', // a wishList Item!
             'productShortDescription' => $this->description,
-            'productLongDescription' => '', // a wishList Item!
+            'productLongDescription' => Article::getFromId($this->article_id)->article??'',
             'productRating' => '', // a wishList Item!
             'productOptions' => [], // a wishList Item!
             'productReviews' => [], // a wishList Item!

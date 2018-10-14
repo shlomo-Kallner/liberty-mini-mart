@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Utilities\Permits\Basic;
 use App\UserImage;
 use App\Image;
+use Darryldecode\Cart\Helpers\Helpers;
 
 class User extends Model
 {
@@ -314,7 +315,7 @@ class User extends Model
         int $plan = 1, bool $setRememberToken = false
     ) {
         $tu = self::where('email', $email)->get();
-        if (count($tu) === 0) {
+        if (!Functions::testVar($tu) || count($tu) === 0) {
             $tImg = Image::getImageToID($img);
             $tmp = new self;
             $tmp->name = $name;
@@ -324,6 +325,8 @@ class User extends Model
             $tmp->plan_id = $plan;
             if ($setRememberToken) {
                 $tmp->remember_token = self::genRememberToken();
+            } else {
+                $tmp->remember_token = '';
             }
             if ($tmp->save()) {
                 $perm = new Basic($tmp->id);
@@ -381,35 +384,102 @@ class User extends Model
         return $trt;
     }
 
-    public function updateUser(
-        $args = null, 
-        $img, 
-    ) {
-        $doSave = false;
-        $name = Functions::isPropKeyIn($args, 'name') 
+    public function updateUser(array $args = null) 
+    {
+        if (Functions::testVar($args)) {
+            $didSave = false;
+            if (Functions::isPropKeyIn($args, 'name') 
             && is_string($args['name'])
-            ? $args['name'] : null;
-        $email = Functions::isPropKeyIn($args, 'email') 
-            && is_string($args['email'])
-            ? $args['email'] : null;
-        $password = Functions::isPropKeyIn($args, 'password') 
-            && is_string($args['password'])
-            ? $args['password'] : null;
-        $plan = Functions::isPropKeyIn($args, 'plan') 
-            && is_int($args['plan'])
-            ? $args['plan'] : null;
-        if (Functions::isPropKeyIn($args, 'rememberToken')) {
-            if (is_bool($args['rememberToken'])) {
-                if ($args['rememberToken']) {
-                    $rememberToken = self::genRememberToken();
-                } else {
-                    $rememberToken = null;
-                }
-            } else {
-                $rememberToken = '';
+            ) {
+                $this->name = $args['name'];
             }
-        }
-        // update imgs and ..
+            if (Functions::isPropKeyIn($args, 'email') 
+                && is_string($args['email'])
+            ) {
+                $this->email = $args['email'];
+            }
+            if (Functions::isPropKeyIn($args, 'password') 
+                && is_string($args['password'])
+            ) {
+                $this->password = Hash::make($args['password']);
+            }
+            if (Functions::isPropKeyIn($args, 'plan') 
+                && is_int($args['plan'])
+            ) {
+                $this->plan_id = $args['plan'];
+            }
+            if (Functions::isPropKeyIn($args, 'rememberToken')) {
+                if ((is_bool($args['rememberToken'])
+                && $args['rememberToken']) 
+                || (is_string($args['rememberToken'])
+                && $args['rememberToken'] === 'reset')
+                ) {
+                    $this->remember_token = self::genRememberToken();
+                } elseif (is_string($args['rememberToken'])
+                && $args['rememberToken'] === 'unset'
+                ) {
+                    $this->remember_token = '';
+                } 
+            } 
+            if (Functions::isPropKeyIn($args, 'img')) {
+                if (is_array($args['img']) 
+                && Helpers::isMultiArray($args['img'], true)
+                ) {
+                    foreach ($args['img'] as $img) {
+                        // update otherImages...
+                        $ui = UserImage::createNew($this, $img);
+                        //return $tmp; return false?
+                        // break out of the loop? 
+                        // throw an error? silently fail?
+                        // ignore?... ignore!
+                        if (Functions::testVar($ui) && !$didSave) {
+                            $didSave = true;
+                        }
+                    }
+                } else {
+                    $this->image_id = Image::getImageToID($args['img']);
+                }
+                if (Functions::isPropKeyIn($args, 'otherImages')) {
+                    if (is_array($args['otherImages'])) {
+                        foreach ($args['otherImages'] as $idx => $img) {
+                            // update otherImages...
+                            if (is_int($idx)) {
+                                $ui = UserImage::createNew($this, $img);
+                                //return $tmp; return false?
+                                // break out of the loop? 
+                                // throw an error? silently fail?
+                                // ignore?... ignore!
+                                if (Functions::testVar($ui) && !$didSave) {
+                                    $didSave = true;
+                                }
+                            } elseif (is_string($idx)) {
+                                $ui = UserImage::createNew($this, $args['otherImages']);
+                                //return $tmp; return false?
+                                // break out of the loop? 
+                                // throw an error? silently fail?
+                                // ignore?... ignore!
+                                if (Functions::testVar($ui) && !$didSave) {
+                                    $didSave = true;
+                                }
+                                break;
+                            }
+                        }
+                    } elseif (is_int($args['otherImages'])) {
+                        $ui = UserImage::createNew($this, $args['otherImages']);
+                        //return $tmp; return false?
+                        // break out of the loop? 
+                        // throw an error? silently fail?
+                        // ignore?... ignore!
+                        if (Functions::testVar($ui) && !$didSave) {
+                            $didSave = true;
+                        }
+                    }
+                }
+            }
+            // update imgs and ..
+            return $tmp->save() || $didSave;
+        } 
+        return null;
     }
 
     static public function createNewFrom(array $array) 
