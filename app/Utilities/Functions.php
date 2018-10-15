@@ -350,9 +350,9 @@ class Functions
         return $bol;
     }
 
-    static public function getPropKey($data, $name) 
+    static public function getPropKey($data, $name, $default = null) 
     {
-        $res = null;
+        $res = $default; // null;
         if (isset($data) && self::testVar($name)) {
             if (self::isPropKeyIn($data, $name)) {
                 if (is_array($data)) {

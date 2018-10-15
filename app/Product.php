@@ -284,7 +284,8 @@ class Product extends Model
 
     public function toFull(string $baseUrl, int $version = 1)
     {
-        //$payload = $this->getPayload(); // wishlist item?
+        $payload = $this->getPayload(); // wishlist item?
+        $reviews = $this->reviews;
         return [
             'productImage' => $this->image->toImageArray()['img'],
             'productImageAlt' => $this->title,
@@ -292,16 +293,21 @@ class Product extends Model
             'productTitle' => $this->title,
             'productPrice' => $this->price,
             'productSalePrice' => $this->sale,
-            'productAvailability' => '', // a wishList Item!
+            'productAvailability' => $this->availablity, // a wishList Item!
             'productShortDescription' => $this->description,
             'productLongDescription' => Article::getFromId($this->article_id)->article??'',
-            'productRating' => '', // a wishList Item!
-            'productOptions' => [], // a wishList Item!
-            'productReviews' => [], // a wishList Item!
-            'productAdditionalInfo' => [], // a wishList Item!
+            'productRating' => $reviews->avg(
+                function ($item) {
+                    return $item->rating;
+                }
+            ), // a wishList Item!
+            'productOptions' => Functions::getPropKey($payload, 'options', []), // a wishList Item!
+            'productReviews' => $reviews, // a wishList Item!
+            'productAdditionalInfo' => Functions::getPropKey($payload, 'additionalInfo', []), // a wishList Item!
             'productSticker' => $this->sticker,
             'productID' => $this->id,
             'productURL' => $this->getFullUrl($baseUrl),
+            'productApiUrl' => $this->getFullUrl('api/' . $baseUrl),
         ];
     }
 
@@ -355,6 +361,11 @@ class Product extends Model
     public function image()
     {
         return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany('App\ProductReview', 'product_id', 'id');
     }
 
     /**
