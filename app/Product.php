@@ -282,13 +282,15 @@ class Product extends Model
         ];
     }
 
-    public function toFull(string $baseUrl, int $version = 1)
-    {
+    public function toFull(
+        string $baseUrl, int $version = 1, bool $useTitle = true
+    ) {
         $payload = $this->getPayload(); // wishlist item?
         $reviews = $this->reviews;
+        $image = $this->image->toImageArray();
         return [
-            'productImage' => $this->image->toImageArray()['img'],
-            'productImageAlt' => $this->title,
+            'productImage' => $image['img'],
+            'productImageAlt' => $useTitle ? $this->title : $image['alt'],
             'productOtherImages' => Image::getArraysFor($this->otherImages),// [], // a wishList Item!
             'productTitle' => $this->title,
             'productPrice' => $this->price,
@@ -302,7 +304,7 @@ class Product extends Model
                 }
             ), // a wishList Item!
             'productOptions' => Functions::getPropKey($payload, 'options', []), // a wishList Item!
-            'productReviews' => $reviews, // a wishList Item!
+            'productReviews' => count($reviews) > 0 ? $reviews : [], // a wishList Item!
             'productAdditionalInfo' => Functions::getPropKey($payload, 'additionalInfo', []), // a wishList Item!
             'productSticker' => $this->sticker,
             'productID' => $this->id,
