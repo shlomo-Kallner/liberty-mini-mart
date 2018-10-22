@@ -28,7 +28,8 @@ class Product extends Model
         string $name, string $url, float $price, 
         float $sale, int $category_id, string $sticker,
         $image, string $description,
-        string $title, $article, $payload = null
+        string $title, $article, $payload = null,
+        bool $retObj = false
     ) {
         $tmp = self::withTrashed()
             ->where(
@@ -67,7 +68,7 @@ class Product extends Model
                 if ($data->save()) {
                     $pi = ProductImage::createNewFrom($data);
                     if (Functions::testVar($pi)) {
-                        return $data->id;
+                        return $retObj ? $data : $data->id;
                     }
                 }
             }
@@ -286,7 +287,6 @@ class Product extends Model
         string $baseUrl, int $version = 1, bool $useTitle = true
     ) {
         $payload = $this->getPayload(); // wishlist item?
-        $reviews = $this->reviews;
         $image = $this->image->toImageArray();
         return [
             'productImage' => $image['img'],
@@ -304,7 +304,7 @@ class Product extends Model
                 }
             ), // a wishList Item!
             'productOptions' => Functions::getPropKey($payload, 'options', []), // a wishList Item!
-            'productReviews' => count($reviews) > 0 ? $reviews : [], // a wishList Item!
+            'productReviews' => ProductReview::getContentArrays($this->reviews), // a wishList Item!
             'productAdditionalInfo' => Functions::getPropKey($payload, 'additionalInfo', []), // a wishList Item!
             'productSticker' => $this->sticker,
             'productID' => $this->id,
@@ -320,12 +320,14 @@ class Product extends Model
         $img, $article, $price, $sale, 
         string $description, array $otherImages = null,
         string $sticker = '', array $dates = null,
-        int $id = 0
+        int $id = 0, string $api = '', array $reviews = null,
+        $availablity = '', array $payload = null
     ) {
         return [
             'id' => $id,
             'name' => $name,
             'url' => $url,
+            'api' => $api,
             'title' => $title,
             'img' => Image::getImageArray($img),
             'article' => Article::getArticle($article, true),
@@ -333,15 +335,19 @@ class Product extends Model
             'sale' => $sale,
             'sticker' => $sticker,
             'description' => $description,
-            'otherImages' => $otherImages??[],
-            'dates' => $dates??[],
+            'otherImages' => $otherImages?? [],
+            'reviews' => $reviews ?? [],
+            'payload' => $payload ?? [],
+            'dates' => $dates ?? [],
         ];
     }
 
-    public function toContentArray(bool $withTrashed = true)
+    public function toContentArray(string $baseUrl = 'store')
     {
+        $url = $this->getFullUrl($baseUrl);
+        $api = $this->getFullUrl('api/' . $baseUrl);
         return self::makeContentArray(
-            $this->name, $this->url, $this->title,
+            $this->name, $url, $this->title,
             $this->image, $this->article, $this->price,
             $this->sale??'', $this->description,
             Image::getArraysFor($this->otherImages),
@@ -349,8 +355,25 @@ class Product extends Model
                 'created' => $this->created_at,
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
-            ], $this->id
+            ], $this->id, $api, ProductReview::getContentArrays($this->reviews),
+            $this->availablity, $this->getPayload()
         );
+    }
+
+    static function getContentArrays(
+        $arrays, string $baseUrl = 'store', $default = []
+    ) {
+        $res = $default;
+        if (Functions::testVar($arrays)
+            && (is_array($arrays) || $arrays instanceof Collection)
+        ) {
+            foreach ($arrays as $val) {
+                if (Functions::testVar($val) && $val instanceof self) {
+                    $res[] = $val->toContentArray($baseUrl);
+                }
+            }
+        }
+        return $res;
     }
 
     ///

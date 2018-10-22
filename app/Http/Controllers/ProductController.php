@@ -6,9 +6,14 @@ use App\Product,
     App\Categorie,
     App\Section,
     App\Page,
+    App\User,
     App\Utilities\Functions\Functions,
     Illuminate\Http\Request,
     Illuminate\Http\Response;
+use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\JsonResponse;
+use App\Http\Resources\ProductResource;
+use App\ProductReview;
 
 class ProductController extends MainController
 {
@@ -48,12 +53,60 @@ class ProductController extends MainController
     public function store(Request $request)
     {
         //
+        $sect = Section::getNamed($request->section);
+        if (Functions::testVar($sect)) {
+            $cat = $sect->getCategory($request->category);
+            if (Functions::testVar($cat)) {
+                if (Functions::testVar(
+                    $product = Product::createNew(
+                        $request->product, $request->url, $request->price,
+                        $request->sale??0.0, $cat->id, $request->sticker??'',
+                        $request->image, $request->description, $request->title,
+                        $request->article, $request->payload??[]
+                    )
+                ))
+                $product = $cat->getProduct($request->product);
+                // 'store/section/{section}/category/{category}/product/{product}'...
+                if (Functions::testVar($product)) {
+                    if ($request->ajax()) {
+                        //$user = User::getIdFromUserArray();
+                        
+                    } 
+                }
+            }
+        } 
+        abort(404);
     }
 
-    public function postReveiw(Request $request) 
+    public function postReview(Request $request) 
     {
-        $request->session()->put('lastRequest', $request->all());
-        return redirect('php');
+        //$request->session()->put('lastRequest', $request->all());
+        //return redirect('php');
+        $sect = Section::getNamed($request->section);
+        if (Functions::testVar($sect)) {
+            $cat = $sect->getCategory($request->category);
+            if (Functions::testVar($cat)) {
+                $product = $cat->getProduct($request->product);
+                // 'store/section/{section}/category/{category}/product/{product}'...
+                if (Functions::testVar($product)) {
+                    if ($request->ajax()) {
+                        $user = User::getIdFromUserArray();
+                        if (ProductReview::createNew(
+                            $user, $product->id, $request->rating,
+                            $request->content, false
+                        )
+                        ) {
+                            return ProductReview::getContentArrays(
+                                ProductReview::getFrom(
+                                    ['user' => $user]
+                                )
+                            );
+                        }
+                    } 
+                }
+            }
+        } 
+        abort(404);
     }
 
     /**
@@ -71,24 +124,32 @@ class ProductController extends MainController
             if (Functions::testVar($cat)) {
                 $product = $cat->getProduct($request->product);
                 // 'store/section/{section}/category/{category}/product/{product}'...
-                $breadcrumbs = Page::getBreadcrumbs( 
-                    Page::genBreadcrumb($product->title, $product->getFullUrl('store')),
-                    [
-                        Page::genBreadcrumb('Store', 'store'),
-                        Page::genBreadcrumb($sect->title, $sect->getFullUrl('store')),
-                        Page::genBreadcrumb($cat->title, $cat->getFullUrl('store')),
-                    ]
-                );
-                //dd($product);
-                $content_data = [
-                    'product' => $product->toFull('store'),
-                    'bestsellers' => Product::getBestsellers(),
-                
-                ];
-                return parent::getView(
-                    $request, 'content.product', $request->product, 
-                    $content_data, false, $breadcrumbs
-                );
+                if (Functions::testVar($product)) {
+                    if ($request->ajax()) {
+                        return new ProductResource($product);
+                        // JsonResponse::create($product->toContentArray());
+                    } else {
+                        $breadcrumbs = Page::getBreadcrumbs( 
+                            Page::genBreadcrumb($product->title, $product->getFullUrl('store')),
+                            [
+                                Page::genBreadcrumb('Store', 'store'),
+                                Page::genBreadcrumb($sect->title, $sect->getFullUrl('store')),
+                                Page::genBreadcrumb($cat->title, $cat->getFullUrl('store')),
+                            ]
+                        );
+                        //dd($product);
+                        $content_data = [
+                            'product' => $product->toFull('store'),
+                            'bestsellers' => Product::getBestsellers(),
+                        
+                        ];
+                        return parent::getView(
+                            $request, 'content.product', 
+                            'Product: ' . $request->product, 
+                            $content_data, false, $breadcrumbs
+                        );
+                    }
+                }
             }
         } 
         abort(404);
