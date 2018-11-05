@@ -21,7 +21,7 @@ class Image extends Model
 
     static public function createNew(
         string $name, string $path, string $alt, 
-        string $caption
+        string $caption, bool $retObj = false
     ) {
         $tC = self::where(
             [
@@ -36,7 +36,7 @@ class Image extends Model
             $tmp->alt = $alt;
             $tmp->caption = $caption;
             if ($tmp->save()) {
-                return $tmp->id;
+                return $retObj ? $tmp : $tmp->id;
             }
         } elseif (Functions::testVar($tC) || count($tC) === 1) {
             return $tC[0]->id;
@@ -44,17 +44,20 @@ class Image extends Model
         return null;
     }
 
-    static public function createNewFromArray(array $array)
-    {
+    static public function createNewFromArray(
+        array $array, bool $retObj = false
+    ) {
         return self::createNew(
             $array['name'], $array['path'], 
-            $array['alt'], $array['caption']
+            $array['alt'], $array['caption'],
+            $retObj
         );
     }
 
-    static public function createNewFrom(array $array)
-    {
-        return self::createNewFromArray($array);
+    static public function createNewFrom(
+        array $array, bool $retObj = false
+    ) {
+        return self::createNewFromArray($array, $retObj);
     }
 
     static public function getImageToID($image)
@@ -112,30 +115,20 @@ class Image extends Model
         }
     }
 
-    static public function getImageArray($image)
-    {
-        $tmp = self::getImage($image);
-        if (Functions::testVar($tmp)) {
-            if ($tmp instanceof self) {
-                $imgPath = Functions::testVar($tmp->path) ? $tmp->path . '/' : '';
-                $img = $imgPath . $tmp->name;
-                $alt = $tmp->alt;
-                $cap = $tmp->caption;
-                $id = $tmp->id;
-            } elseif (self::isImageArray($tmp)) {
-                return $tmp;
-            } else {
-                $img = '';
-                $alt = '';
-                $cap = '';
-                $id = '';
-            }
-        } else {
-            $img = '';
-            $alt = '';
-            $cap = '';
-            $id = '';
-        }
+    /**
+     * Function makeImageArray() - a factory function for the central
+     *                            organized creation of image arrays. 
+     *
+     * @param integer $id
+     * @param string $img
+     * @param string $alt
+     * @param string $cap
+     * @return array
+     */
+    static public function makeImageArray(
+        int $id = 0, string $img = '',
+        string $alt = '', string $cap = ''
+    ) {
         return [
             'id' => $id,
             'img' => $img,
@@ -144,14 +137,48 @@ class Image extends Model
         ];
     }
 
+    /**
+     * Function makeContentArray() - Common API function name 
+     *                              (is an alias for makeImageArray().)
+     *
+     * @param integer $id
+     * @param string $img
+     * @param string $alt
+     * @param string $cap
+     * @return array
+     */
+    static public function makeContentArray(
+        int $id = 0, string $img = '',
+        string $alt = '', string $cap = ''
+    ) {
+        return self::makeImageArray($id, $img, $alt, $cap);
+    }
+
+    static public function getImageArray($image)
+    {
+        $tmp = self::getImage($image);
+        if (Functions::testVar($tmp)) {
+            if ($tmp instanceof self) {
+                return $tmp->toImageArray();
+            } elseif (self::isImageArray($tmp)) {
+                return $tmp;
+            } 
+        }
+        return null;
+    }
+
     public function toContentArray()
     {
-        return self::getImageArray($this);
+        return $this->toImageArray();
     }
 
     public function toImageArray()
     {
-        return self::getImageArray($this);
+        $imgPath = Functions::testVar($this->path) ? $this->path . '/' : '';
+        return self::makeImageArray(
+            $this->id, $imgPath . $this->name, 
+            $this->alt, $this->caption
+        );
     }
 
     static public function getArraysFor($images)

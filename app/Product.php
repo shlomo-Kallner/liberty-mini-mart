@@ -76,13 +76,15 @@ class Product extends Model
         return null;
     }
 
-    static public function createNewFrom(array $array)
-    {
+    static public function createNewFrom(
+        array $array, bool $retObj = false
+    ) {
         return self::createNew(
             $array['name'], $array['url'], $array['price'], 
             $array['sale'], $array['category_id'], $array['sticker'], 
             $array['image'], $array['description'], 
-            $array['title'], $array['article'], $array['payload']
+            $array['title'], $array['article'], $array['payload'],
+            $retObj
         );
     }
 

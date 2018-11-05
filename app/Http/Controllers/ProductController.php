@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Product,
+    App\Article,
     App\Categorie,
     App\Section,
     App\Page,
+    App\Image,
     App\User,
     App\Utilities\Functions\Functions,
     Illuminate\Http\Request,
@@ -14,6 +16,7 @@ use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\ProductResource;
 use App\ProductReview;
+use Intervention\Image\Facades\Image as ImageTool;
 
 class ProductController extends MainController
 {
@@ -57,15 +60,30 @@ class ProductController extends MainController
         if (Functions::testVar($sect)) {
             $cat = $sect->getCategory($request->category);
             if (Functions::testVar($cat)) {
-                if (Functions::testVar(
-                    $product = Product::createNew(
-                        $request->product, $request->url, $request->price,
-                        $request->sale??0.0, $cat->id, $request->sticker??'',
-                        $request->image, $request->description, $request->title,
-                        $request->article, $request->payload??[]
-                    )
-                ))
-                $product = $cat->getProduct($request->product);
+                
+                //$request->file('key', 'default');
+                //$request->hasFile('key');
+                if ($request->hasFile('image')) {
+                    $file = $request->file('image');
+                    $path = '';
+                    $filename = $file->getClientOriginalName() . '<placeholder>.' . $file->getClientOriginalExtension();
+                    $file->storeAs($path, $filename);
+                    $image_id = Functions::getVar(Image::createNew($filename, $path, $request->title, $request->description), 0);
+                } else {
+                    $image_id = 0;
+                }
+                $article_id = Article::createNew(
+                    $request->article, $request->title, 
+                    $image = null, string $subheading = '',
+                    bool $purify = true, bool $retObj = false
+                );
+                $product = Product::createNew(
+                    $request->product, $request->url, $request->price,
+                    $request->sale??0.0, $cat->id, $request->sticker??'',
+                    $request->image, $request->description, $request->title,
+                    $request->article, $request->payload??[]
+                );
+                // $product = $cat->getProduct($request->product);
                 // 'store/section/{section}/category/{category}/product/{product}'...
                 if (Functions::testVar($product)) {
                     if ($request->ajax()) {

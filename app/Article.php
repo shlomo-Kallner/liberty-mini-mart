@@ -22,7 +22,7 @@ class Article extends Model
     static public function createNew(
         string $article, string $header = '', 
         $image = null, string $subheading = '',
-        bool $purify = true
+        bool $purify = true, bool $retObj = false
     ) {
         if (Functions::testVar($article)) {
             $tImg = Image::getImageToID($image);
@@ -32,19 +32,21 @@ class Article extends Model
             $tmp->subheading = $purify ? Functions::purifyContent($subheading) : $subheading;
             $tmp->article = $purify ? Functions::purifyContent($article) : $article;
             if ($tmp->save()) {
-                return $tmp->id;
+                return $retObj ? $tmp : $tmp->id;
             }
         }
         return null;
     }
 
-    static public function createNewFrom(array $array)
-    {
+    static public function createNewFrom(
+        array $array, bool $retObj = false
+    ) {
         return self::createNew(
             $array['article'], $array['header'],
             $array['image']??($array['img']??0), 
             $array['subheading'],
-            $array['purify']??true
+            $array['purify']??true,
+            $retObj
         );
     }
 
