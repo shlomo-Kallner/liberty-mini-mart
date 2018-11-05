@@ -17,6 +17,8 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Resources\ProductResource;
 use App\ProductReview;
 use Intervention\Image\Facades\Image as ImageTool;
+use Intervention\Image\Size, 
+    Intervention\Image\Image;
 
 class ProductController extends MainController
 {
@@ -65,9 +67,14 @@ class ProductController extends MainController
                 //$request->hasFile('key');
                 if ($request->hasFile('image')) {
                     $file = $request->file('image');
-                    $path = '';
-                    $filename = $file->getClientOriginalName() . '<placeholder>.' . $file->getClientOriginalExtension();
-                    $file->storeAs($path, $filename);
+                    $tmpPath = 'tmp/products';
+                    $filename = $file->getClientOriginalName() 
+                        . '_'. Functions::getDateTimeStr('_', '-', '-');
+                    $ext = $file->getClientOriginalExtension();
+                    $fullFilename = $filename . '_.' . $ext;
+                    // storing original file..
+                    //$file->storeAs($tmpPath, $fullFilename);
+                    $img = ImageTool::make($file)->resize(300, 200);  //($path . '/' . $fullFilename);
                     $image_id = Functions::getVar(Image::createNew($filename, $path, $request->title, $request->description), 0);
                 } else {
                     $image_id = 0;
@@ -75,10 +82,10 @@ class ProductController extends MainController
                 $article_id = Article::createNew(
                     $request->article, $request->title, 
                     $image = null, string $subheading = '',
-                    bool $purify = true, bool $retObj = false
+                    true, false
                 );
                 $product = Product::createNew(
-                    $request->product, $request->url, $request->price,
+                    $request->name, $request->url, $request->price,
                     $request->sale??0.0, $cat->id, $request->sticker??'',
                     $request->image, $request->description, $request->title,
                     $request->article, $request->payload??[]

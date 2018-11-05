@@ -158,7 +158,6 @@ Route::middleware('adminguard')->prefix('admin')->group(
             'section/{section}/category', 'CategorieController', [
                 'parameters'=> [
                     'categorie' => 'category',
-                    'section' => 'section'
                 ],
                 'except' => [
                     'show'
@@ -172,8 +171,6 @@ Route::middleware('adminguard')->prefix('admin')->group(
             'section/{section}/category/{category}/product', 'ProductController', [
                 'parameters'=> [
                     'categorie' => 'category',
-                    'section' => 'section',
-                    'product' => 'product',
                 ],
                 'except' => [
                     'show'

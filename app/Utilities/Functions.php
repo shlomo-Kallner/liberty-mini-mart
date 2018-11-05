@@ -114,6 +114,20 @@ class Functions
         }
     }
 
+    static public function getURLRegexStr()
+    {
+        return '/^[:lower:]{3,}(-[:lower:]{3,})*$/';
+    }
+
+    static public function getDateTimeStr(
+        string $sep = '', string $dateSep = '/',
+        string $timeSep = ':'
+    ) {
+        $date = 'd' . $dateSep . 'm' . $dateSep . 'Y';
+        $time = 'h' . $timeSep . 'i' . $timeSep . 's';
+        return date('D' . $sep . $date . $sep . $time);
+    }
+
     static public function purifyContent($content)
     {
         if (static::testVar($content)) {
