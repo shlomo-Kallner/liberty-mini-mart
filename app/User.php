@@ -141,11 +141,7 @@ class User extends Model
         if (session()->has('user.id')) {
             $tmp = intval(session()->get('user.id'));
             if (Functions::testVar($tmp) && $tmp !== 0) {
-                if ($getUser) {
-                    return self::getFromId($tmp);
-                } else {
-                    return $tmp;
-                }
+                return $getUser ? self::getFromId($tmp) : $tmp;
             }
         } else {
             return null;

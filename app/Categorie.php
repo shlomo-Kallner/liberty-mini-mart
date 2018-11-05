@@ -183,15 +183,21 @@ class Categorie extends Model
             : $this->products()->where('url', $url)->first();
     }
 
-    public function getProducts(bool $withTrashed = true, string $dir = 'asc')
-    {
+    public function getProducts(
+        bool $retAsArray = true, bool $withTrashed = true, 
+        string $dir = 'asc'
+    ) {
         $tmp = $withTrashed 
             ? $this->products()->withTrashed()->orderBy('name', $dir)->get()
             : $this->products()->orderBy('name', $dir)->get();
         $res = [];
-        if (Functions::testVar($tmp)) {
-            foreach ($tmp as $product) {
-                $res[] = $product->toContentArray();
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            if ($retAsArray) {
+                foreach ($tmp as $product) {
+                    $res[] = $product->toContentArray();
+                }
+            } else {
+                return $tmp;
             }
         }
         return $res;

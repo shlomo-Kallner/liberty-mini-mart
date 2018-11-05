@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Database\Eloquent\Collection;
+use App\Product;
 
 class ProductsResource extends ResourceCollection
 {
@@ -14,6 +16,12 @@ class ProductsResource extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        if ($this->collection instanceof Collection) {
+            return [
+                'data' => Product::getContentArrays($this->collection)
+            ];
+        } else {
+            return parent::toArray($request);
+        }
     }
 }

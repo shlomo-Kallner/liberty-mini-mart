@@ -153,6 +153,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
         );
         // 'category/' goes to 'index()' which returns 'all-categories' of the section..
         Route::get('category/create', 'CategorieController@create');
+        Route::post('category/create', 'CategorieController@store');
         
         Route::resource(
             'section/{section}/category', 'CategorieController', [
@@ -166,6 +167,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
         );
         // 'product/' goes to 'index()' which returns 'all-products' of the category..
         Route::get('product/create', 'ProductController@create');
+        Route::post('product/create', 'ProductController@store');
         
         Route::resource(
             'section/{section}/category/{category}/product', 'ProductController', [
@@ -223,17 +225,19 @@ Route::middleware('adminguard')->prefix('admin')->group(
 
         // MEMBERSHIP PLANS ARE A WISHLIST ITEM!!!
         // 'plan/' goes to 'index()' which returns 'all-pages' of the site..
-        /* Route::resource(
-            'plan', 'PlanController', [
-                'parameters'=> [
-                    'plan' => 'plan',
-                ],
-                'except' => [
-                    'show', 'index'
+        /* 
+            Route::resource(
+                'plan', 'PlanController', [
+                    'parameters'=> [
+                        'plan' => 'plan',
+                    ],
+                    'except' => [
+                        'show', 'index'
+                    ]
                 ]
-            ]
-        );
-        Route::get('plan/{plan}/delete', 'PlanController@showDelete'); */
+            );
+            Route::get('plan/{plan}/delete', 'PlanController@showDelete'); 
+        */
     }
 );
 

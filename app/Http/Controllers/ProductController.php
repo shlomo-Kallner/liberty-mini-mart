@@ -9,6 +9,7 @@ use App\Product,
     App\Page,
     App\Image,
     App\User,
+    App\UserSession,
     App\Utilities\Functions\Functions,
     Illuminate\Http\Request,
     Illuminate\Http\Response;
@@ -18,7 +19,8 @@ use App\Http\Resources\ProductResource;
 use App\ProductReview;
 use Intervention\Image\Facades\Image as ImageTool;
 use Intervention\Image\Size, 
-    Intervention\Image\Image;
+    Intervention\Image\Image as ImageFile;
+use App\Http\Requests\ProductRequest;
 
 class ProductController extends MainController
 {
@@ -52,10 +54,10 @@ class ProductController extends MainController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ProductRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
         //
         $sect = Section::getNamed($request->section);
@@ -71,32 +73,45 @@ class ProductController extends MainController
                     $filename = $file->getClientOriginalName() 
                         . '_'. Functions::getDateTimeStr('_', '-', '-');
                     $ext = $file->getClientOriginalExtension();
-                    $fullFilename = $filename . '_.' . $ext;
+                    $fullFilename = $filename . '.' . $ext;
                     // storing original file..
                     //$file->storeAs($tmpPath, $fullFilename);
+                    $pubPath = 'public/images/products/';
                     $img = ImageTool::make($file)->resize(300, 200);  //($path . '/' . $fullFilename);
-                    $image_id = Functions::getVar(Image::createNew($filename, $path, $request->title, $request->description), 0);
+                    $img->save($pubPath . $fullFilename);
+                    $image_id = Functions::getVar(
+                        Image::createNew(
+                            $fullFilename, $pubPath, 
+                            $request->title, $request->description
+                        ), 0
+                    );
                 } else {
                     $image_id = 0;
                 }
                 $article_id = Article::createNew(
                     $request->article, $request->title, 
-                    $image = null, string $subheading = '',
-                    true, false
+                    null, $request->subheading??'', true, false
                 );
                 $product = Product::createNew(
                     $request->name, $request->url, $request->price,
                     $request->sale??0.0, $cat->id, $request->sticker??'',
-                    $request->image, $request->description, $request->title,
-                    $request->article, $request->payload??[]
+                    $image_id, $request->description, $request->title,
+                    $article_id, $request->payload??[], true
                 );
                 // $product = $cat->getProduct($request->product);
                 // 'store/section/{section}/category/{category}/product/{product}'...
                 if (Functions::testVar($product)) {
                     if ($request->ajax()) {
                         //$user = User::getIdFromUserArray();
-                        
-                    } 
+                        $products = $cat->getProducts(false);
+                        $pages = $products->paginate();
+                    } else {
+                        UserSession::updateRegenerate(
+                            $request, intval(User::getIdFromUserArray(false))
+                        );
+                        //$request->session()->regenerate();
+                        return redirect('admin');
+                    }
                 }
             }
         } 

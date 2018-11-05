@@ -119,6 +119,11 @@ class Functions
         return '/^[:lower:]{3,}(-[:lower:]{3,})*$/';
     }
 
+    static public function getImageFileMIMETypeStr()
+    {
+        return 'image/jpeg,image/gif,image/png';
+    }
+
     static public function getDateTimeStr(
         string $sep = '', string $dateSep = '/',
         string $timeSep = ':'

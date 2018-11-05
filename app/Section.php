@@ -54,14 +54,22 @@ class Section extends Model
             : $this->categories()->where('url', $url)->first();
     }
 
-    public function getCategories(bool $withTrashed = true)
-    {
+    public function getCategories(
+        bool $retAsArray = true, bool $withTrashed = true, 
+        string $dir = 'asc'
+    ) {
         $tCats = $withTrashed 
-            ? $this->categories()->withTrashed()->get() 
-            : $this->categories;
+            ? $this->categories()->withTrashed()->orderBy('name', $dir)->get() 
+            : $this->categories()->orderBy('name', $dir)->get();
         $cats = [];
-        foreach ($tCats as $cat) {
-            $cats[] = $cat->toContentArray($withTrashed);
+        if (Functions::testVar($tCats) && count($tCats) > 0) {
+            if ($retAsArray) {
+                foreach ($tCats as $cat) {
+                    $cats[] = $cat->toContentArray($withTrashed);
+                }
+            } else {
+                return $tCats;
+            }
         }
         return $cats;
     }

@@ -26,18 +26,21 @@ class ProductRequest extends FormRequest
     {
         return [
             //
+            'section' => 'required|max:255|string|min:3',
+            'category' => 'required|max:255|string|min:3',
             'image' => 'image',
-            'article' => '',
-            'title' => '',
-            'name' => '',
-            'description' => '',
+            'article' => 'required|max:255000|string|min:3',
+            'subheading' => 'string|max:255',
+            'title' => 'required|max:255|string|min:3',
+            'name' => 'required|max:255|string|min:3',
+            'description' => 'required|max:255|string|min:3',
             'url' => [
-                'required|max:255|string', 
+                'required|max:255|string|min:3', 
                 'regex:'. Functions::getURLRegexStr(),
             ],
-            'price' => '',
-            'sale' => '',
-            '' => '',
+            'price' => 'required|numeric',
+            'sale' => 'numeric|nullable',
+            'sticker' => 'string|regex:/new|sale/',
         ];
     }
 

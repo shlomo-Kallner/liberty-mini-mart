@@ -356,9 +356,10 @@ class MainController extends Controller {
         self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
         //
         $nut = self::setSiteNut($request);
-        $tmp = self::getRequestData($request);
+        //$tmp = self::getRequestData($request);
         //
         //dd($nut, self::getRequestData($request));
+        //
         $userData = User::getUserArray($request);
         self::$data['user'] = $userData;
         //

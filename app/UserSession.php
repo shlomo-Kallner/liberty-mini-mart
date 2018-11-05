@@ -210,7 +210,7 @@ class UserSession extends Model
         );
     }
 
-    static function updateRegenerate(
+    static public function updateRegenerate(
         Request $request, int $user_id = 0, bool $retObj = false
     ) {
         $cart = Cart::storeOrCreateCurrentCart($request, $user_id);
