@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model,
     App\Image,
     App\SectionImage;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 class Section extends Model
 {
@@ -24,8 +25,49 @@ class Section extends Model
     static public function getNamed(string $name, bool $withTrashed = false)
     {
         return $withTrashed 
-        ? self::withTrashed()->where('url', $name)->first()
-        : self::where('url', $name)->first();
+        ? self::withTrashed()
+            ->where('url', $name)
+            ->orWhere('name', $name)
+            ->first()
+        : self::where('url', $name)
+            ->orWhere('name', $name)
+            ->first();
+    }
+
+    public function toNameListing()
+    {
+        return [
+            'name' => $this->name,
+            'url' => $this->url,
+        ];
+    }
+
+    static public function getNameListingOf($array) 
+    {
+        $res = [];
+        if (is_array($array) || $array instanceof Collection) {
+            foreach ($tmp as $section) {
+                if ($section instanceof self) {
+                    $res[] = $section->toNameListing();
+                }
+            }
+        }
+        return $res;
+    }
+
+    static public function getNameListing(
+        bool $withTrashed = false, string $dir = 'asc'
+    ) {
+        $tmp = $withTrashed 
+            ? self::withTrashed()->orderBy('name', $dir)->all()
+            : self::orderBy('name', $dir)->all();
+        $res = [];
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            foreach ($tmp as $section) {
+                $res[] = $section->toNameListing();
+            }
+        }
+        return $res;
     }
 
     static public function getSection(

@@ -27,6 +27,14 @@ class CategorieController extends MainController
         //
     }
 
+    public function list(Request $request)
+    {
+        $sect = Section::getNamed($request->section);
+        if (Functions::testVar($sect)) {
+            return Categorie::getNameListingOf($sect->categories);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      *

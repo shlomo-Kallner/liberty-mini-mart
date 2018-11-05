@@ -176,6 +176,42 @@ class Categorie extends Model
         return null;
     }
 
+    public function toNameListing()
+    {
+        return [
+            'name' => $this->name,
+            'url' => $this->url,
+        ];
+    }
+
+    static public function getNameListingOf($array)
+    {
+        $res = [];
+        if (is_array($array) || $array instanceof Collection) {
+            foreach ($tmp as $cat) {
+                if ($cat instanceof self) {
+                    $res[] = $cat->toNameListing();
+                }
+            }
+        }
+        return $res;
+    }
+
+    static public function getNameListing(
+        bool $withTrashed = false, string $dir = 'asc'
+    ) {
+        $tmp = $withTrashed 
+            ? self::withTrashed()->orderBy('section_id', $dir)->all()
+            : self::orderBy('section_id', $dir)->all();
+        $res = [];
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            foreach ($tmp as $cat) {
+                $res[] = $cat->toNameListing();
+            }
+        }
+        return $res;
+    }
+
     public function getProduct(string $url, bool $withTrashed = true)
     {
         return $withTrashed 

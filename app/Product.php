@@ -378,6 +378,42 @@ class Product extends Model
         return $res;
     }
 
+    public function toNameListing()
+    {
+        return [
+            'name' => $this->name,
+            'url' => $this->url,
+        ];
+    }
+
+    static public function getNameListingOf($array)
+    {
+        $res = [];
+        if (is_array($array) || $array instanceof Collection) {
+            foreach ($tmp as $product) {
+                if ($product instanceof self) {
+                    $res[] = $product->toNameListing();
+                }
+            }
+        }
+        return $res;
+    }
+
+    static public function getNameListing(
+        bool $withTrashed = false, string $dir = 'asc'
+    ) {
+        $tmp = $withTrashed 
+            ? self::withTrashed()->orderBy('category_id', $dir)->all()
+            : self::orderBy('category_id', $dir)->all();
+        $res = [];
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            foreach ($tmp as $product) {
+                $res[] = $product->toNameListing();
+            }
+        }
+        return $res;
+    }
+
     ///
 
     public function article()

@@ -37,6 +37,11 @@ class SectionController extends MainController
         return self::getView($request, 'cms.forms.new.section', 'Create a New Store Section');
     }
 
+    public function list(Request $request)
+    {
+        return Section::getNameListing();
+    }
+
     /**
      * Store a newly created resource in storage.
      *

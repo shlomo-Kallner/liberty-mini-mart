@@ -40,6 +40,17 @@ class ProductController extends MainController
         //
     }
 
+    public function list(Request $request)
+    {
+        $sect = Section::getNamed($request->section);
+        if (Functions::testVar($sect)) {
+            $cat = $sect->getCategory($request->category);
+            if (Functions::testVar($cat)) {
+                return Product::getNameListingOf($cat->products);
+            }
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -48,7 +59,25 @@ class ProductController extends MainController
     public function create(Request $request)
     {
         // PARTIAL!! Requires further Implementation!
-        return self::getView($request, 'cms.forms.new.product', 'Create a New Product');
+        $content = [];
+        if ($request->has('section') && $request->has('category')) {
+            $slist = Section::getNameListing();
+            $sect = Section::getNamed($request->section);
+            if (Functions::testVar($sect)) {
+                $clist = Categorie::getNameListingOf($sect->categories);
+                $cat = $sect->getCategory($request->category);
+                if (Functions::testVar($cat)) {
+                    $content['lists'] = [
+                        'sections' => $slist,
+                        'categories' => $clist,
+                    ];
+                }
+            }
+        } 
+        return self::getView(
+            $request, 'cms.forms.new.product', 'Create a New Product',
+            $content 
+        );
     }
 
     /**
@@ -104,7 +133,8 @@ class ProductController extends MainController
                     if ($request->ajax()) {
                         //$user = User::getIdFromUserArray();
                         $products = $cat->getProducts(false);
-                        $pages = $products->paginate();
+                        $pages = $products->paginate(12);
+                        $pages->withPath();
                     } else {
                         UserSession::updateRegenerate(
                             $request, intval(User::getIdFromUserArray(false))
