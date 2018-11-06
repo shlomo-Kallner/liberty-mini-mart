@@ -142,7 +142,7 @@ class Page extends Model
     }
 
     static public function getNavBar(
-        $genFakeData = false, string $area = 'store', 
+        bool $genFakeData = false, string $area = 'store', 
         string $defDropName = 'All Pages', int $numPerView = 6
     ) {
         $testing = $genFakeData;
@@ -220,7 +220,7 @@ class Page extends Model
         return $navbar;
     }
 
-    static public function getPreHeader($genFakeData = false) 
+    static public function getPreHeader(bool $genFakeData = false) 
     {
         $testing = $genFakeData; // no-op ... for now..
         //$testing = true;
@@ -250,7 +250,7 @@ class Page extends Model
         return $preheader;
     }
     
-    static public function getSidebar($genFakeData = false)
+    static public function getSidebar(bool $genFakeData = false)
     {
         $res = [];
         if ($genFakeData) {
@@ -332,16 +332,17 @@ class Page extends Model
         return static::genURLMenuItem($url, $name);
     }
 
-    static public function getBreadcrumbs(array $current = null, array $links = null)
-    {
+    static public function getBreadcrumbs(
+        array $current = null, array $links = null
+    ) {
         $res = [
-                'links' => $links ?? static::genBreadcrumb(),
-                'current' => $current ?? static::genBreadcrumb()
-            ];
+            'links' => $links ?? [ static::genBreadcrumb() ],
+            'current' => $current ?? static::genBreadcrumb()
+        ];
         return $res;
     }
 
-    static public function genBreadcrumbsFromPath(string $url = '')
+    static private function genBreadcrumbsFromPath(string $url = '')
     {
         $links = [];
         if (str_contains($url, '/')) {
@@ -584,13 +585,14 @@ class Page extends Model
     ) {
         $i = Image::getImageArray($img);
         /**
-         * [
-                    'header' => $description,
-                    'subheading' => $i['cap'],
-                    'img' => $i['img'],
-                    'imgAlt' => $i['alt'],
-                    'article' => $article
-                ]
+         * 
+           [
+                'header' => $description,
+                'subheading' => $i['cap'],
+                'img' => $i['img'],
+                'imgAlt' => $i['alt'],
+                'article' => $article
+            ]
          */
         $a = Article::getArticle($article, true);
         return [

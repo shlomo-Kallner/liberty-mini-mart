@@ -37,6 +37,7 @@ class MainController extends Controller {
                 */
             ],
             'nut' => '',
+            'lang' => 'en',
         ],
         'preheader' => [], // the preheader navbar data...
         'navbar' => [], // the header navbar data...
@@ -178,13 +179,13 @@ class MainController extends Controller {
 
     static public function setSiteName($name = '', $titleNameSep = ' | ') 
     {
-        self::$data['site']['name'] = !empty($name) ?
-                $name :
-                self::$data['site']['name'];
+        self::$data['site']['name'] = !empty($name) 
+            ? $name 
+            : self::$data['site']['name'];
         self::$data['siteName'] = & self::$data['site']['name'];
-        self::$data['site']['titleNameSep'] = !empty($titleNameSep) ?
-                $titleNameSep :
-                self::$data['site']['titleNameSep'];
+        self::$data['site']['titleNameSep'] = !empty($titleNameSep) 
+            ? $titleNameSep 
+            : self::$data['site']['titleNameSep'];
     }
 
     /**
@@ -464,9 +465,11 @@ class MainController extends Controller {
                 e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
                 true
             ),
-            'newProducts' => Product::getNewProducts(),
-            'sampleProducts' => Product::getNewProducts(7, 'Multi-Items'),
-            'bestsellers' => Product::getBestsellers()
+            'newProducts' => Product::getNewProducts(12, 'New Arrivals'),
+            'sampleProducts' => Product::getNewProducts(3, 'Three Sample Items'),
+            'bestsellers' => Product::getBestsellers(),
+            'filters' => [], // search filters are a WISH-LIST ITEM!!!
+            'pricings' => [], // membership plan pricings are a WISH-LIST ITEM!!
         ];
         $useFakeData = false;
         //self::$data['sidebar'] = Page::getSidebar($useFakeData);

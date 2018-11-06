@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Page,
+    App\Product,
     App\Article;
 use Illuminate\Http\Request,
     App\Utilities\Functions\Functions;
@@ -109,7 +110,7 @@ class PageController extends MainController
             return self::getView(
                 $request, 'cms.forms.delete.page', 
                 'Are You Sure That You Want To Delete This Page?',
-                [ 'data' => $page],
+                ['data' => $page],
                 false,
                 Page::getBreadcrumbs(
                     Page::genBreadcrumb('Delete Page', $request->path()),
@@ -124,7 +125,40 @@ class PageController extends MainController
     public function home(Request $request) 
     {
         // for now...
-        return $this->test3($request);
+        if (true) {
+            
+            //$title = 'test ' . $requestedPage . ' page';
+            $content = [
+                'article'=> Article::makeContentArray(
+                    e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
+                    e("<b>Home</b>"), (2),
+                    e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
+                    true
+                ),
+                'newProducts' => Product::getNewProducts(12, 'New Arrivals'),
+                'sampleProducts' => Product::getNewProducts(3, 'Three Sample Items'),
+                'bestsellers' => Product::getBestsellers(),
+                'filters' => [], // search filters are a WISH-LIST ITEM!!!
+                'pricings' => [], // membership plan pricings are a WISH-LIST ITEM!!
+            ];
+            $useFakeData = false;
+            //self::$data['sidebar'] = Page::getSidebar($useFakeData);
+            //dd($request->path());
+            $breadcrumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb('Home', '/')
+            );
+
+            //return $this->getTemplateView($title, $content);
+            //dd($request->session()->all());
+            //dd(session()->all());
+            return self::getView(
+                $request, 'content.index', 'Home', 
+                $content, false, $breadcrumbs
+            );
+        } else {
+            return $this->test3($request);
+        }
+
     }
 
     /// UTILITY METHODS:

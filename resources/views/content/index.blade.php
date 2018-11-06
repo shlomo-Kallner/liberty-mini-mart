@@ -30,6 +30,9 @@
 
         if (!$testing) {
             $newProducts2 = serialize(Functions::getContent($page['newProducts']['products']??'',''));
+            $newProductsTitle2 = Functions::getContent($page['newProducts']['title']??'','New Arrivals');
+            $sampleProducts2 = serialize(Functions::getContent($page['sampleProducts']['products']??''));
+            $sampleProductsTitle2 = Functions::getContent($page['sampleProducts']['title']??'','Three Sample Items');
         } else {
             $newProducts2 = serialize([
                 [
@@ -96,10 +99,7 @@
                     'sticker' => '',
                 ],
             ]);
-        }
-        if (!$testing) {
-            $sampleProducts2 = serialize(Functions::getContent($page['sampleProducts']['products']??''));
-        } else {
+            $newProductsTitle2 = 'New Arrivals';
             $sampleProducts2 = serialize([
                 [
                     'extraOuterCss' => '',
@@ -165,13 +165,16 @@
                     'sticker' => '',
                 ],
             ]);
+            $sampleProductsTitle2 = 'Three Sample Items';
         }
         $sidebar2 = serialize(Functions::getContent($sidebar??''));
-        $pricing2 = Functions::getContent($pricing??'');
-        $currency2 = Functions::getContent($currency??'','fa-usd');
-        $filters2 = Functions::getContent($filters2??'');
+        $currency2 = Functions::getContent($cart['currencyIcon']??'','fa-usd');
         $bestsellers2 = serialize(Functions::getContent($page['bestsellers']??''));
 
+        // Filters and Membership Pricings are currently WISH-LIST ITEMS!!!
+        $filters2 = serialize(Functions::getContent($page['filters']??'', []));
+        $pricing2 = Functions::getContent($page['pricing']??'', []);
+        
         if (Functions::testVar($pricing2)) {
             $usePricings = true;
         } else {
@@ -184,7 +187,7 @@
 
     @component('lib.themewagon.article-sm')
         @foreach ($page['article'] as $key => $item)
-            @if ($key === 'img')
+            @if ($key === 'img' || !is_string($item))
                 @php
                     //dd($item);
                     //dd(serialize($item));
@@ -216,10 +219,10 @@
                 {!! $sampleProducts2 !!}
             @endslot
             @slot('newProductsTitle')
-                {!! "New Arrivals" !!}
+                {!! $newProductsTitle2 !!}
             @endslot
             @slot('sampleProductsTitle')
-                {!! "Three Items" !!}
+                {!! $sampleProductsTitle2 !!}
             @endslot
             @slot('currency')
                 {!! $currency2 !!}

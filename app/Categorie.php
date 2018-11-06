@@ -310,25 +310,31 @@ class Categorie extends Model
         ];
     }
 
-    public function toSidebar(string $baseUrl, int $version = 1)
-    {
+    public function toSidebar(
+        string $baseUrl, int $version = 1
+    ) {
+        $img = $this->image->toImageArray();
         return [
             'url' => $this->getFullUrl($baseUrl),
-            'img' => $this->image->toImageArray()['img'],
-            'alt' => $this->title,
+            'img' => $img['img'],
+            'alt' => $useTitle ? $this->title : $img['alt'],
+            'price' => '',
             /* 'price' => $this->sale != '' || $this->sale != $this->price 
                 ? $this->sale 
                 : $this->price, */
         ];
     }
 
-    public function toMini(string $baseUrl, int $version = 1)
-    {
+    public function toMini(
+        string $baseUrl, int $version = 1, bool $useTitle = true
+    ) {
+        $img = $this->image->toImageArray();
         return [
-            'img' => $this->image->toImageArray()['img'],
-            'name' => $this->title,
+            'img' => $img['img'],
+            'name' => $useTitle ? $this->title : $img['alt'],
             'id' => $this->id,
             'url' => $this->getFullUrl($baseUrl),
+            'price' => '',
             /* 'price' => $this->sale != '' || $this->sale != $this->price
                 ? $this->sale : $this->price, */
             'sticker' => $this->sticker,

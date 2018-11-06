@@ -37,7 +37,23 @@ class ProductController extends MainController
      */
     public function index(Request $request)
     {
-        //
+        $sect = Section::getNamed($request->section);
+        if (Functions::testVar($sect)) {
+            $cat = $sect->getCategory($request->category);
+            if (Functions::testVar($cat)) {
+                UserSession::updateRegenerate(
+                    $request, intval(User::getIdFromUserArray(false))
+                );
+                //$request->session()->regenerate();
+                return redirect(
+                    $cat->getFullUrl(
+                        $request->ajax() 
+                            ? 'api/store' 
+                            : 'store'
+                        )
+                );
+            }
+        }
     }
 
     public function list(Request $request)
@@ -70,6 +86,10 @@ class ProductController extends MainController
                     $content['lists'] = [
                         'sections' => $slist,
                         'categories' => $clist,
+                    ];
+                    $content['selected'] = [
+                        'section' => $sect->toNameListing(),
+                        'category' => $cat->toNameListing(),
                     ];
                 }
             }

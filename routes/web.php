@@ -52,20 +52,21 @@ Route::get(
     }
 );
 /* *
- * Route::get(
- *    'php', function () {
- *      phpinfo();
- *      return '';
- *  }
- *);
+ *  Route::get(
+ *      'php', function () {
+ *          phpinfo();
+ *          return '';
+ *      }
+ *  );
+    Route::get(
+        'template', function () {
+            return view('master_themewagon');
+        }
+    );
  *
  */
 
-/* Route::get(
-    'template', function () {
-        return view('master_themewagon');
-    }
-); */
+/*  */
 
 
 Route::middleware('userguard')->group(
@@ -92,7 +93,7 @@ Route::middleware('userguard')->group(
                 Route::get('section/{section}/category/{category}/product/{product?}', 'ProductController@show');
                 Route::post('section/{section}/category/{category}/product/{product?}', 'ProductController@postReveiw');
                 //
-                // a category 'all' should return all products in the catalog/store..
+                // a category 'all' should return all products in the catalog/store.. nope.
 
                 //Route::get('{page}', 'PageController@test4');
                 //Route::get('{page}/{page}', 'PageController@test2');

@@ -17,8 +17,8 @@
 
     $sidebar2 = serialize(Functions::getContent($sidebar??''));
     $bestsellers2 = serialize(Functions::getContent($page['bestsellers']??'', ''));
-    $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
-    $filters2 = '';
+    $currency2 = Functions::getContent($cart['currencyIcon']??'','fa-usd');
+    $filters2 = serialize(Functions::getContent($page['filters']??'', ''));
     
 @endphp
 

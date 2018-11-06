@@ -136,11 +136,13 @@ class Section extends Model
         ];
     }
 
-    public function toContentArray(bool $withTrashed = true)
-    {
+    public function toContentArray(
+        bool $withTrashed = true, string $baseUrl = 'store', 
+        int $version = 1, bool $useTitle = true
+    ) {
         return self::makeContentArray(
-            $this->name, $this->url, $this->image,
-            $this->title, $this->article, 
+            $this->name, $this->getFullUrl($baseUrl), $this->image,
+            $useTitle ? $this->title : $this->image->alt, $this->article, 
             $this->description,
             //SectionImage::getAllImages($this->id),
             Image::getArraysFor($this->otherImages),
@@ -154,23 +156,28 @@ class Section extends Model
         );
     }
 
-    public function toSidebar(string $baseUrl, int $version = 1)
+    public function toSidebar(string $baseUrl = 'store', int $version = 1, bool $useTitle = true)
     {
+        $img = $this->image->toImageArray();
         return [
             'url' => $this->getFullUrl($baseUrl),
-            'img' => $this->image->toImageArray()['img'],
-            'alt' => $this->title,
+            'img' => $img['img'],
+            'alt' => $useTitle ? $this->title : $img['alt'],
+            'price' => '', // this does not HAVE a price listing but
+                           //  for conformity...
             /* 'price' => $this->sale != '' || $this->sale != $this->price 
                 ? $this->sale 
                 : $this->price, */
         ];
     }
 
-    public function toMini(string $baseUrl, int $version = 1)
-    {
+    public function toMini(
+        string $baseUrl = 'store', int $version = 1, bool $useTitle = true
+    ) {
+        $img = $this->image->toImageArray();
         return [
-            'img' => $this->image->toImageArray()['img'],
-            'name' => $this->title,
+            'img' => $img['img'],
+            'name' => $useTitle ? $this->title : $img['alt'],
             'id' => $this->id,
             'url' => $this->getFullUrl($baseUrl),
             /* 'price' => $this->sale != '' || $this->sale != $this->price
@@ -179,28 +186,91 @@ class Section extends Model
         ];
     }
 
-    static public function getAll(
-        bool $toArray = true, bool $withTrashed = true
+    static public function getFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true
     ) {
-        return self::getAllModels($toArray, $withTrashed);
+        
+        $res = [];
+        if ((is_array($args) || $args instanceof Collection) 
+        && count($args) > 0) {
+            foreach ($args as $section) {
+                if ($section instanceof self) {
+                    if (is_string($transform) && !empty($transform)) {
+                        switch ($transform) {
+                        case 'mini':
+                            $res[] = $section->toMini($baseUrl, $version, $useTitle);
+                            break;
+                        case 'sidebar':
+                            $res[] = $section->toSidebar($baseUrl, $version, $useTitle);
+                            break;
+                        case 'content':
+                            $res[] = $section->toContentArray($withTrashed, $baseUrl, $version, $useTitle);
+                            break;
+                        }
+                    } elseif (is_callable($transform)) {
+                        $res[] = $transform($section, $baseUrl, $version, $useTitle, $withTrashed);
+                    } else {
+                        $res[] = $section;
+                    }
+                }
+            }
+        }
+        return $res;
+    }
+
+    const TO_MINI_TRANSFORM = 'mini';
+    //const TO_FULL_TRANSFORM = 'full';
+    const TO_SIDEBAR_TRANSFORM = 'sidebar';
+    const TO_CONTENT_ARRAY_TRANSFORM = 'content';
+
+    static public function getAllWithTransform(
+        $transform = null, string $dir = 'asc', 
+        bool $withTrashed = true, string $baseUrl = 'store', 
+        bool $useTitle = true, int $version = 1
+    ) {
+        $tmp = $withTrashed 
+            ? self::withTrashed()->orderBy('catalog_id', $dir)->get() 
+            : self::orderBy('catalog_id', $dir)->all();
+        return self::getFor(
+            $tmp, $baseUrl, $transform,
+            $useTitle, $version, $withTrashed
+        );
+    }
+
+    static public function getAll(
+        bool $toArray = true, string $dir = 'asc', 
+        bool $withTrashed = true, string $baseUrl = 'store', 
+        bool $useTitle = true, int $version = 1
+    ) {
+        return self::getAllModels(
+            $toArray, $dir, $withTrashed, $baseUrl,
+            $useTitle, $version
+        );
     }
 
     static public function getAllModels(
-        bool $toArray = true, bool $withTrashed = true
+        bool $toArray = true, string $dir = 'asc', 
+        bool $withTrashed = true, string $baseUrl = 'store', 
+        bool $useTitle = true, int $version = 1
     ) {
-        $tmp = $withTrashed ? self::withTrashed()->get() : self::all();
+        // ['catalog_id', '=', $catalog_id]
+        $tmp = $withTrashed 
+            ? self::withTrashed()->orderBy('catalog_id', $dir)->get() 
+            : self::orderBy('catalog_id', $dir)->all();
         /* foreach ($tmp as $section) {
             $section = Functions::dbModel2ViewModel($section);
         } */
-        $res = [];
-        if ($toArray && count($tmp) > 0) {
-            foreach ($tmp as $sect) {
-                $res[] = $sect->toContentArray();
-            }
-        } elseif (count($tmp) > 0) {
-            return $tmp; 
+        if (count($tmp) > 0) {
+            return $toArray 
+                ? self::getFor(
+                    $tmp, $baseUrl, self::TO_CONTENT_ARRAY_TRANSFORM,
+                    $useTitle, $version, $withTrashed
+                )
+                : $tmp; 
         }
-        return $res;
+        return [];
     }
 
     public function article()

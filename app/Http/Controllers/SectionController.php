@@ -23,8 +23,25 @@ class SectionController extends MainController
      */
     public function index(Request $request)
     {
-        // display ALL Sections...
-        return self::getView($request, 'content.catalog');
+        // get a listing of all sections... 
+        $breadcumbs = Page::getBreadcrumbs(
+            Page::genBreadcrumb('Our Sections', 'store/section'),
+            [
+                Page::genBreadcrumb('Store', 'store'),
+            ]
+        );
+        $content = [
+            'sections' => Section::getAllWithTransform(
+                Section::TO_MINI_TRANSFORM, 'asc', false, 'store',
+                true, 1
+            ),
+        ];
+        // create a special 'content.sections' view for such a listing.. 
+        // optionally add pagination... 
+        return self::getView(
+            $request, 'content.catalog', 'Our Sections', 
+            $content, false, $breadcumbs
+        );
     }
 
     /**
@@ -32,7 +49,7 @@ class SectionController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         return self::getView($request, 'cms.forms.new.section', 'Create a New Store Section');
     }
@@ -62,9 +79,9 @@ class SectionController extends MainController
      */
     public function show(Request $request)
     {
-        if (isset($request->section)) {
+        if (isset($request->section) && !empty($request->section)) {
             
-            //dd($request->section);
+            //dd($request->section, 'in show()');
             $section = Section::getNamed($request->section);
             //$section_items = Categorie::getCategoriesOfSection($section->id);
             //$section_items = $section->getCategories(false);
@@ -91,16 +108,7 @@ class SectionController extends MainController
                 false, $breadcumbs
             );
         } else {
-            // get a listing of all sections... 
-            $breadcumbs = Page::getBreadcrumbs(
-                [
-                    Page::genBreadcrumb('Store', 'store'),
-                ],
-                Page::genBreadcrumb('Our Sections', 'store/section')
-            );
-            // create a special 'content.sections' view for such a listing.. 
-            // optionally add pagination... 
-            return self::getView($request, 'content.catalog', 'Our Sections', null, false, $breadcumbs);
+            return $this->index($request);
         }
 
         

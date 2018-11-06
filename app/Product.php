@@ -126,7 +126,9 @@ class Product extends Model
     }
 
     static public function getAll(
-        bool $toArray = false, string $dir = 'asc', bool $withTrashed = true
+        bool $toArray = false, string $dir = 'asc', 
+        bool $withTrashed = true, string $baseUrl = 'store', 
+        bool $useTitle = true, int $version = 1
     ) {
         $tmp = $withTrashed 
             ? self::withTrashed()->orderBy('category_id', $dir)->get()
@@ -134,8 +136,8 @@ class Product extends Model
         if (Functions::testVar($tmp) && count($tmp) > 0) {
             if ($toArray) {
                 $res = [];
-                foreach($products as $product) {
-                    $res[] = $product->toContentArray($withTrashed);
+                foreach ($products as $product) {
+                    $res[] = $product->toContentArray($baseUrl, $version, $useTitle);
                 }
                 return $res;
             } else {
@@ -146,7 +148,9 @@ class Product extends Model
     }
 
     static public function getRandomSample(
-        int $numProducts, bool $toArray = false
+        int $numProducts, bool $toArray = false, 
+        string $baseUrl = 'store', 
+        bool $useTitle = true, int $version = 1
     ) {
         $numTotal = self::count();
         $res = [];
@@ -158,17 +162,21 @@ class Product extends Model
                     if (!array_key_exists($smp, $res) 
                         && Functions::testVar($t = self::getFromId($smp, false))
                     ) {
-                        $res[$smp] = $toArray ? $t->toContentArray(false) : $t;
+                        $res[$smp] = $toArray 
+                            ? $t->toContentArray($baseUrl, $version, $useTitle) 
+                            : $t;
                         $bol = false;
                     }
                 }
             }
-        } elseif ($numProducts === $numTotal) {
+        } elseif ($numProducts >= $numTotal) {
             $rng = Functions::genRange(1, $numTotal);
             shuffle($rng);
             foreach ($rng as $idx) {
                 if (Functions::testVar($t = self::getFromId($idx, false))) {
-                    $res[] = $toArray ? $t->toContentArray(false) : $t;
+                    $res[] = $toArray 
+                        ? $t->toContentArray($baseUrl, $version, $useTitle) 
+                        : $t;
                 }
             }
         }
@@ -178,7 +186,7 @@ class Product extends Model
     static public function genProductGallery(
         $name, array &$products, 
         //array &$cssClasses = [],
-        string $url = 'store', string $sizeClass = 'col-md-12',
+        string $baseUrl = 'store', string $sizeClass = 'col-md-12',
         string $owlClass = 'owl-carousel5', 
         string $productClass = 'sale-product',
         bool $serializeProducts = false
@@ -206,52 +214,89 @@ class Product extends Model
 
     static public function getNewProducts(
         int $numProducts = 12, string $name = 'New Arrivals', 
-        string $url = 'store', string $sizeClass = 'col-md-12',
+        string $baseUrl = 'store', string $sizeClass = 'col-md-12',
         string $owlClass = 'owl-carousel5', 
-        string $productClass = 'sale-product'
+        string $productClass = 'sale-product', 
+        bool $useTitle = true, int $version = 1
     ) {
         $products = [];
-        if (!Functions::testVar($products)) {
-            foreach (self::getRandomSample($numProducts) as $np) {
-                $products[] = $np->toMini($url);
-            }
+        foreach (self::getRandomSample($numProducts) as $np) {
+            $products[] = $np->toMini($baseUrl, $version, $useTitle);
         }
         return self::genProductGallery(
-            $name, $products, $url, $sizeClass, $owlClass, $productClass
+            $name, $products, $baseUrl, $sizeClass, $owlClass, $productClass
         );
     }
 
     static public function getBestsellers(
-        int $numProducts = 3, string $url = 'store'
+        int $numProducts = 3, string $baseUrl = 'store', 
+        bool $useTitle = true, int $version = 1
     ) {
         $bestsellers = [];
         foreach (self::getRandomSample($numProducts) as $bs) {
-            $bestsellers[] = $bs->toSidebar($url);
+            $bestsellers[] = $bs->toSidebar($baseUrl, $version, $useTitle);
         }
         return $bestsellers;
     }
 
-    static public function getProductsForCategory($category_id, $transform, string $baseUrl) 
-    {
+    static public function getFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1
+    ) {
+        return self::getProductsFor(
+            $args, $baseUrl, $transform, $useTitle,
+            $version
+        );
+    }
+
+    const TO_MINI_TRANSFORM = 'mini';
+    const TO_FULL_TRANSFORM = 'full';
+    const TO_SIDEBAR_TRANSFORM = 'sidebar';
+    const TO_CONTENT_ARRAY_TRANSFORM = 'content';
+
+    static public function getProductsFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1
+    ) {
         $res = [];
-        $products = self::where('category_id', $category_id)->get();
-        foreach ($products as $product) {
-            if (is_string($transform)) {
-                switch ($transform) {
-                    case 'mini':
-                        $res[] = $product->toMini($baseUrl);
-                        break;
-                    case 'full':
-                        $res[] = $product->toFull($baseUrl);
-                        break;
-                    case 'sidebar':
-                        $res[] = $product->toSidebar($baseUrl);
-                        break;
-                    //$res[] = ($product);
+        if ((is_array($args) || $args instanceof Collection) 
+        && count($args) > 0) {
+            foreach ($args as $product) {
+                if ($product instanceof self) {
+                    if (is_string($transform) && !empty($transform)) {
+                        switch ($transform) {
+                        case 'mini':
+                            $res[] = $product->toMini($baseUrl, $version, $useTitle);
+                            break;
+                        case 'full':
+                            $res[] = $product->toFull($baseUrl, $version, $useTitle);
+                            break;
+                        case 'sidebar':
+                            $res[] = $product->toSidebar($baseUrl, $version, $useTitle);
+                            break;
+                        case 'content':
+                            $res[] = $product->toContentArray($baseUrl, $version, $useTitle);
+                            break;
+                        }
+                    } elseif (is_callable($transform)) {
+                        $res[] = $transform($product, $baseUrl, $version, $useTitle);
+                    } else {
+                        $res[] = $product;
+                    }
                 }
             }
         }
         return $res;
+    }
+
+    static public function getProductsForCategory(
+        $category_id, $transform, string $baseUrl = 'store', 
+        bool $useTitle = true, int $version = 1
+    ) {
+        $products = self::where('category_id', $category_id)->get();
+        return self::getProductsFor(
+            $products, $baseUrl, $transform, $useTitle, $version
+        );
     }
 
     public function getFullUrl(string $baseUrl)
@@ -260,23 +305,27 @@ class Product extends Model
         return $surl . '/product/' . $this->url;
     }
 
-    public function toSidebar(string $baseUrl, int $version = 1)
-    {
+    public function toSidebar(
+        string $baseUrl = 'store', int $version = 1, bool $useTitle = true
+    ) {
+        $img = $this->image->toImageArray();
         return [
             'url' => $this->getFullUrl($baseUrl),
-            'img' => $this->image->toImageArray()['img'],
-            'alt' => $this->title,
+            'img' => $img['img'],
+            'alt' => $useTitle ? $this->title : $img['alt'],
             'price' => Functions::testVar($this->sale) || $this->sale != $this->price 
                 ? $this->sale 
                 : $this->price,
         ];
     }
 
-    public function toMini(string $baseUrl, int $version = 1)
-    {
+    public function toMini(
+        string $baseUrl = 'store', int $version = 1, bool $useTitle = true
+    ) {
+        $img = $this->image->toImageArray();
         return [
-            'img' => $this->image->toImageArray()['img'],
-            'name' => $this->title,
+            'img' => $img['img'],
+            'name' => $useTitle ? $this->title : $img['alt'],
             'id' => $this->id,
             'url' => $this->getFullUrl($baseUrl),
             'price' => Functions::testVar($this->sale) || $this->sale != $this->price
@@ -286,7 +335,7 @@ class Product extends Model
     }
 
     public function toFull(
-        string $baseUrl, int $version = 1, bool $useTitle = true
+        string $baseUrl = 'store', int $version = 1, bool $useTitle = true
     ) {
         $payload = $this->getPayload(); // wishlist item?
         $image = $this->image->toImageArray();
@@ -344,12 +393,13 @@ class Product extends Model
         ];
     }
 
-    public function toContentArray(string $baseUrl = 'store')
-    {
+    public function toContentArray(
+        string $baseUrl = 'store', int $version = 1, bool $useTitle = true
+    ) {
         $url = $this->getFullUrl($baseUrl);
         $api = $this->getFullUrl('api/' . $baseUrl);
         return self::makeContentArray(
-            $this->name, $url, $this->title,
+            $this->name, $url, $useTitle ? $this->title : $this->image->alt,
             $this->image, $this->article, $this->price,
             $this->sale??'', $this->description,
             Image::getArraysFor($this->otherImages),

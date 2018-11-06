@@ -16,7 +16,8 @@ class ShopController extends MainController {
         parent::__construct($name, $titleNameSep);
     }
 
-    /* public function categories(Request $request) 
+    /* 
+        public function categories(Request $request) 
         {
             $request->page = 'store/categories';
             return parent::test2($request);
@@ -39,7 +40,11 @@ class ShopController extends MainController {
         //self::$data['sidebar'] = Page::getSidebar($useFakeData);
 
         //return parent::getView('content.store');
-        return self::test($request, false);
+        if (false) {
+
+        } else {
+            return self::test($request, false);
+        }
     }
 
     public function getStore(Request $request) 
@@ -52,21 +57,23 @@ class ShopController extends MainController {
         
         //self::$data['sidebar'] = Page::getSidebar($useFakeData);
         $breadcrumbs = Page::getBreadcrumbs(
-            Page::genBreadcrumb('Store','store')
+            Page::genBreadcrumb('Store', 'store')
         );
         $title = 'test Store page';
-        /* $newProducts = [];
-        foreach (Product::getRandomSample(12) as $np) {
-            $newProducts[] = $np->toMini('store');
-        } */
-        /* $bestsellers = [];
-        foreach (Product::getRandomSample(3) as $bs) {
-            $bestsellers[] = $bs->toSidebar('store');
-        } */
-        $sections = [];
-        foreach (Section::getAllModels(false, false) as $sect) {
-            $sections[] = $sect->toMini('store');
-        }
+        /* 
+            $newProducts = [];
+            foreach (Product::getRandomSample(12) as $np) {
+                $newProducts[] = $np->toMini('store');
+            } 
+            $bestsellers = [];
+            foreach (Product::getRandomSample(3) as $bs) {
+                $bestsellers[] = $bs->toSidebar('store');
+            } 
+            $sections = [];
+            foreach (Section::getAllModels(false, false) as $sect) {
+                $sections[] = $sect->toMini('store');
+            }
+        */
         $content = [
             'article' => Article::makeContentArray(
                 self::getLoremIpsum(),
@@ -77,7 +84,7 @@ class ShopController extends MainController {
             ),
             'newProducts' => Product::getNewProducts(),
             'bestsellers' => Product::getBestsellers(),
-            'sections' => $sections,
+            'sections' => Section::getAllWithTransform(Section::TO_MINI_TRANSFORM),
         ];
         return parent::getView($request, 'content.store', $title, $content, $useFakeData, $breadcrumbs);
     }

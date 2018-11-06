@@ -22,9 +22,22 @@ class CategorieController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $sect = Section::getNamed($request->section);
+        if (Functions::testVar($sect)) {
+            UserSession::updateRegenerate(
+                $request, intval(User::getIdFromUserArray(false))
+            );
+            //$request->session()->regenerate();
+            return redirect(
+                $sect->getFullUrl(
+                    $request->ajax() 
+                        ? 'api/store' 
+                        : 'store'
+                )
+            );
+        }
     }
 
     public function list(Request $request)
@@ -90,20 +103,19 @@ class CategorieController extends MainController
             );
             //dd($cat);
             // getting the products of the category..
-            $prods = [];
-            foreach ($cat->products as $product) {
-                $prods[] = $product->toMini('store');
-            }
             $content_data = [
-                'products' => $prods,
-                'bestsellers' => Product::getBestsellers(),
+                'products' => Product::getProductsFor(
+                    $cat->products, 'store', Product::TO_MINI_TRANSFORM,
+                    true, 1
+                ),
+                'bestsellers' => Product::getBestsellers(3, 'store', true, 1),
             
             ];
             //self::$data['products'] = Product::getProductsForCategory($cat->id, 'mini', $cat_url);
             //self::$data['products'] = $prods;
             //dd($products);
             return parent::getView(
-                $request, 'content.category', $request->category, 
+                $request, 'content.category', $cat->title, 
                 $content_data, false, $breadcrumbs
             );
         } 

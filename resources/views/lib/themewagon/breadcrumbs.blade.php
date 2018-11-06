@@ -26,13 +26,13 @@ $crumbs = Functions::getUnBladedContent($breadcrumbs??'', [
 
 @endphp
 
-@if ($testing || Functions::testVar($crumbs['current']['name']))
+@if ($testing || !empty($crumbs['current']['name']))
 <div class="row padding-top-5">
     <ul class="breadcrumb pull-left">
             
 @endif
 
-@if( !empty($crumbs['current']['name'] ) )
+@if( !empty($crumbs['current']['name']) )
     
         <li><a href="{{ url('') }}">Home</a></li>
         @if(Functions::testVar($crumbs['links']) && is_array($crumbs['links']) )

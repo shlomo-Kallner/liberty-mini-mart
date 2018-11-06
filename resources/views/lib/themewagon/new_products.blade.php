@@ -6,6 +6,7 @@
     
     if (true) {
         $newProducts2 = Functions::getContent($newProducts??'','');
+        $sampleProducts2 = Functions::getContent($sampleProducts??'');
     } else {
         $newProducts2 = serialize([
             [
@@ -72,11 +73,6 @@
                 'sticker' => '',
             ],
         ]);
-    }
-    
-    if (true) {
-        $sampleProducts2 = Functions::getContent($sampleProducts??'');
-    } else {
         $sampleProducts2 = serialize([
             [
                 'extraOuterCss' => '',
@@ -143,6 +139,7 @@
             ],
         ]);
     }
+    
     $menu2 = Functions::getContent($sidebar??'');
     //dd($sidebar2);
     $newProductsTitle2 = Functions::getBladedString($newProductsTitle??'','New Arrivals');
