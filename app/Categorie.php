@@ -206,13 +206,35 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
             ? $this->products()->withTrashed()
                 ->orderBy('name', $dir)->get()
             : $this->products()->orderBy('name', $dir)->get();
-        $transform = is_bool($transform) 
-            ? self::TO_CONTENT_ARRAY_TRANSFORM
-            : $transform;
         return Product::getFor(
             $tmp, $baseUrl, $transform, $useTitle,
             $version, $withTrashed, $default
         );
+    }
+
+    public function getProductsWithPagination(
+        $pageNum, $firstIndex, $lastIndex, 
+        int $numShown = 4, string $pagingFor = '',
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, int $version = 1, 
+        $default = []
+    ) {
+        $tmp = $this->getProducts(
+            $transform, $withTrashed, $dir,
+            $baseUrl, $useTitle, $version, $default
+        );
+        $num = count($tmp);
+        return [
+            'items' => $tmp,
+            'pagination' => Page::genPagination(
+                $pageNum, 
+                $firstIndex <= $num ? $firstIndex : 0,
+                $lastIndex <= $num ? $lastIndex : $num,
+                $num,
+                Page::genRange(0, $num), $numShown, $pagingFor
+            )
+        ];
     }
 
     static public function getCategoriesOfSection(
@@ -224,9 +246,6 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         $tmp = $withTrashed 
             ? self::withTrashed()->where('section_id', $section_id)->get()
             : self::where('section_id', $section_id)->get();
-        $transform = is_bool($transform) 
-            ? self::TO_CONTENT_ARRAY_TRANSFORM
-            : $transform;
         return self::getFor(
             $tmp, $baseUrl, $transform, $useTitle,
             $version, $withTrashed, $default
@@ -250,6 +269,8 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
             )
         ];
     }
+
+    /// the Eloquent Relationship methods:
 
     public function image()
     {

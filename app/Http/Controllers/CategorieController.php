@@ -84,12 +84,14 @@ class CategorieController extends MainController
         //dd($sect->id);
         //dd($sect);
         if (Functions::testVar($sect)) {
-            /* $cat = Categorie::where(
-                [
-                    ['section_id', $sect->id],
-                    ['url', $request->category]
-                ]
-            )->first(); */
+            /* 
+                $cat = Categorie::where(
+                    [
+                        ['section_id', $sect->id],
+                        ['url', $request->category]
+                    ]
+                )->first(); 
+            */
             $cat = $sect->getCategory($request->category);
             // 'store/section/{section}/category/{category}/product/{product}'...
             //$sect_url = 'store/section/'. $sect->url;
@@ -106,7 +108,7 @@ class CategorieController extends MainController
             $content_data = [
                 'items' => Product::getProductsFor(
                     $cat->products, 'store', Product::TO_MINI_TRANSFORM,
-                    true, 1
+                    true, 1, false
                 ),
                 'bestsellers' => Product::getBestsellers(3, 'store', true, 1),
             

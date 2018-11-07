@@ -97,8 +97,12 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         return unserialize(base64_decode($this->payload));
     }
 
-    static public function getAllProducts($surl, $curl, bool $toArray = true) 
-    {
+    /** 
+     * Undocumented Function - DO NOT USE! 
+    */
+    static public function getAllProducts(
+        string $surl, string $curl, bool $toArray = true
+    ) {
         $products = self::join(
             'categories', 'categories.id', '=', 'products.category_id'
         )
@@ -115,28 +119,6 @@ class Product extends Model implements TransformableContainer, ContainerAPI
             return $products->toArray(); 
         } 
         return $products;
-    }
-
-    static public function getAll(
-        bool $toArray = false, string $dir = 'asc', 
-        bool $withTrashed = true, string $baseUrl = 'store', 
-        bool $useTitle = true, int $version = 1
-    ) {
-        $tmp = $withTrashed 
-            ? self::withTrashed()->orderBy('category_id', $dir)->get()
-            : self::orderBy('category_id', $dir)->get();
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
-            if ($toArray) {
-                $res = [];
-                foreach ($products as $product) {
-                    $res[] = $product->toContentArray($baseUrl, $version, $useTitle);
-                }
-                return $res;
-            } else {
-                return $tmp->all();
-            }
-        }
-        return null;
     }
 
     static public function getRandomSample(
@@ -233,21 +215,24 @@ class Product extends Model implements TransformableContainer, ContainerAPI
 
     static public function getProductsFor(
         $args, string $baseUrl = 'store', $transform = null, 
-        bool $useTitle = true, int $version = 1
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, $default = []
     ) {
         return self::getFor(
             $args, $baseUrl, $transform, $useTitle,
-            $version
+            $version, $withTrashed, $default
         );
     }
 
     static public function getProductsForCategory(
         $category_id, $transform, string $baseUrl = 'store', 
-        bool $useTitle = true, int $version = 1
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, $default = []
     ) {
         $products = self::where('category_id', $category_id)->get();
         return self::getFor(
-            $products, $baseUrl, $transform, $useTitle, $version
+            $products, $baseUrl, $transform, $useTitle, $version, 
+            $withTrashed, $default
         );
     }
 
@@ -262,14 +247,13 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         bool $useTitle = true, bool $withTrashed = true
     ) {
         $img = $this->image->toImageArray();
-        return [
-            'url' => $this->getFullUrl($baseUrl),
-            'img' => $img['img'],
-            'alt' => $useTitle ? $this->title : $img['alt'],
-            'price' => Functions::testVar($this->sale) || $this->sale != $this->price 
+        return self::makeSidebar(
+            $this->getFullUrl($baseUrl), $img['img'], 
+            $useTitle ? $this->title : $img['alt'],
+            Functions::testVar($this->sale) || $this->sale != $this->price 
                 ? $this->sale 
-                : $this->price,
-        ];
+                : $this->price, $this->id
+        ); 
     }
 
     public function toMini(
@@ -277,15 +261,13 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         bool $useTitle = true, bool $withTrashed = true
     ) {
         $img = $this->image->toImageArray();
-        return [
-            'img' => $img['img'],
-            'name' => $useTitle ? $this->title : $img['alt'],
-            'id' => $this->id,
-            'url' => $this->getFullUrl($baseUrl),
-            'price' => Functions::testVar($this->sale) || $this->sale != $this->price
-                ? $this->sale : $this->price,
-            'sticker' => $this->sticker,
-        ];
+        return self::makeMini(
+            $img['img'], $useTitle ? $this->title : $img['alt'], 
+            $this->getFullUrl($baseUrl),
+            Functions::testVar($this->sale) || $this->sale != $this->price
+                ? $this->sale : $this->price, 
+            $this->id, $this->sticker
+        ); 
     }
 
     public function toFull(

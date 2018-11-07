@@ -26,50 +26,59 @@ class Section extends Model implements TransformableContainer, ContainerAPI
      */
     protected $dates = ['deleted_at'];
 
+    public function getFullUrl(string $baseUrl)
+    {
+        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
+        // $surl = $this->catalog->getFullUrl($baseUrl);
+        return $baseUrl . '/section/' . $this->url;
+    }
+
     static public function getSection(
-        $section, bool $toArray = false, bool $withTrashed = false
+        $section, $transform = null, bool $withTrashed = false,
+        string $baseUrl = 'store', bool $useTitle = true, 
+        int $version = 1, bool $withTrashed = true, $default = null
     ) {
         if (Functions::testVar($section)) {
             if (is_string($section)) {
-                $tmp = self::getNamed($section, $withTrashed);
-                return $toArray && Functions::testVar($tmp) 
-                    ? $tmp->toContentArray($withTrashed) : $tmp;
-            } elseif (is_int($section) 
-                && Functions::testVar($ts = self::getFromId($section))
-            ) {
-                return $toArray ? $ts->toContentArray($withTrashed) : $ts;
+                $tmp = self::getNamed($section, $withTrashed, null);          
+            } elseif (is_int($section) && $section > 0) {
+                $tmp = self::getFromId($section, $withTrashed);
             } elseif ($section instanceof self) {
-                return $toArray ? $section->toContentArray($withTrashed) : $section;
+                $tmp = $section;
+            }
+            if (Functions::testVar($tmp)) {
+                return self::doTransform(
+                    $tmp, $transform, $baseUrl,
+                    $useTitle, $version, 
+                    $withTrashed, $default
+                );
             }
         }
-        return null;
+        return $default;
     }
 
     public function getCategory(string $url, bool $withTrashed = false)
     {
         return $withTrashed 
-            ? $this->categories()->withTrashed()->where('url', $url)->first()
+            ? $this->categories()->withTrashed()
+                ->where('url', $url)->first()
             : $this->categories()->where('url', $url)->first();
     }
 
     public function getCategories(
-        bool $retAsArray = true, bool $withTrashed = true, 
-        string $dir = 'asc'
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, int $version = 1, 
+        $default = []
     ) {
-        $tCats = $withTrashed 
-            ? $this->categories()->withTrashed()->orderBy('name', $dir)->get() 
+        $tmp = $withTrashed 
+            ? $this->categories()->withTrashed()
+                ->orderBy('name', $dir)->get() 
             : $this->categories()->orderBy('name', $dir)->get();
-        $cats = [];
-        if (Functions::testVar($tCats) && count($tCats) > 0) {
-            if ($retAsArray) {
-                foreach ($tCats as $cat) {
-                    $cats[] = $cat->toContentArray($withTrashed);
-                }
-            } else {
-                return $tCats;
-            }
-        }
-        return $cats;
+        return Categorie::getFor(
+            $tmp, $baseUrl, $transform, $useTitle,
+            $version, $withTrashed, $default
+        );
     }
 
     static public function makeContentArray(
@@ -117,16 +126,11 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         bool $useTitle = true, bool $withTrashed = true
     ) {
         $img = $this->image->toImageArray();
-        return [
-            'url' => $this->getFullUrl($baseUrl),
-            'img' => $img['img'],
-            'alt' => $useTitle ? $this->title : $img['alt'],
-            'price' => '', // this does not HAVE a price listing but
-                           //  for conformity...
-            /* 'price' => $this->sale != '' || $this->sale != $this->price 
-                ? $this->sale 
-                : $this->price, */
-        ];
+        return self::makeSidebar(
+            $this->getFullUrl($baseUrl), $img['img'], 
+            $useTitle ? $this->title : $img['alt'],
+            '', $this->id
+        ); 
     }
 
     public function toMini(
@@ -134,15 +138,11 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         bool $useTitle = true, bool $withTrashed = true
     ) {
         $img = $this->image->toImageArray();
-        return [
-            'img' => $img['img'],
-            'name' => $useTitle ? $this->title : $img['alt'],
-            'id' => $this->id,
-            'url' => $this->getFullUrl($baseUrl),
-            /* 'price' => $this->sale != '' || $this->sale != $this->price
-                ? $this->sale : $this->price, */
-            //'sticker' => $this->sticker,
-        ];
+        return self::makeMini(
+            $img['img'], $useTitle ? $this->title : $img['alt'], 
+            $this->getFullUrl($baseUrl), '', $this->id, 
+            $this->sticker??''
+        );
     }
 
     public function toFull(
@@ -152,100 +152,22 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         return $this->toContentArray(
             $baseUrl, $version, $useTitle, $withTrashed
         );
-    }
-
+    } 
     
-
     static public function getOrderByKey()
     {
         return 'catalog_id';
     }
 
-    static public function getFor(
-        $args, string $baseUrl = 'store', $transform = null, 
-        bool $useTitle = true, int $version = 1, 
-        bool $withTrashed = true
-    ) {
-        
-        $res = [];
-        if ((is_array($args) || $args instanceof Collection) 
-        && count($args) > 0) {
-            foreach ($args as $section) {
-                if ($section instanceof self) {
-                    if (is_string($transform) && !empty($transform)) {
-                        switch ($transform) {
-                        case 'mini':
-                            $res[] = $section->toMini($baseUrl, $version, $useTitle);
-                            break;
-                        case 'sidebar':
-                            $res[] = $section->toSidebar($baseUrl, $version, $useTitle);
-                            break;
-                        case 'content':
-                            $res[] = $section->toContentArray($withTrashed, $baseUrl, $version, $useTitle);
-                            break;
-                        }
-                    } elseif (is_callable($transform)) {
-                        $res[] = $transform($section, $baseUrl, $version, $useTitle, $withTrashed);
-                    } else {
-                        $res[] = $section;
-                    }
-                }
-            }
-        }
-        return $res;
-    }
-
-    const TO_MINI_TRANSFORM = 'mini';
-    const TO_FULL_TRANSFORM = 'full';
-    const TO_SIDEBAR_TRANSFORM = 'sidebar';
-    const TO_CONTENT_ARRAY_TRANSFORM = 'content';
-
-    static public function getAllWithTransform(
+    static public function getAllModels(
         $transform = null, string $dir = 'asc', 
         bool $withTrashed = true, string $baseUrl = 'store', 
         bool $useTitle = true, int $version = 1
     ) {
-        $tmp = $withTrashed 
-            ? self::withTrashed()->orderBy('catalog_id', $dir)->get() 
-            : self::orderBy('catalog_id', $dir)->get();
-        return self::getFor(
-            $tmp, $baseUrl, $transform,
-            $useTitle, $version, $withTrashed
-        );
-    }
-
-    static public function getAll(
-        bool $toArray = true, string $dir = 'asc', 
-        bool $withTrashed = true, string $baseUrl = 'store', 
-        bool $useTitle = true, int $version = 1
-    ) {
-        return self::getAllModels(
-            $toArray, $dir, $withTrashed, $baseUrl,
+        return self::getAllWithTransform(
+            $transform, $dir, $withTrashed, $baseUrl, 
             $useTitle, $version
         );
-    }
-
-    static public function getAllModels(
-        bool $toArray = true, string $dir = 'asc', 
-        bool $withTrashed = true, string $baseUrl = 'store', 
-        bool $useTitle = true, int $version = 1
-    ) {
-        // ['catalog_id', '=', $catalog_id]
-        $tmp = $withTrashed 
-            ? self::withTrashed()->orderBy('catalog_id', $dir)->get() 
-            : self::orderBy('catalog_id', $dir)->all();
-        /* foreach ($tmp as $section) {
-            $section = Functions::dbModel2ViewModel($section);
-        } */
-        if (count($tmp) > 0) {
-            return $toArray 
-                ? self::getFor(
-                    $tmp, $baseUrl, self::TO_CONTENT_ARRAY_TRANSFORM,
-                    $useTitle, $version, $withTrashed
-                )
-                : $tmp; 
-        }
-        return [];
     }
 
     public function article()
@@ -278,35 +200,10 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         //return SectionImage::getAllImages($this->id);
     }
 
-    public function getFullUrl(string $baseUrl)
-    {
-        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
-        // $surl = $this->catalog->getFullUrl($baseUrl);
-        return $baseUrl . '/section/' . $this->url;
-    }
-
-    static public function getAllWithPagination(
-        bool $toArray = true,
-        $pageNum, $firstIndex, $lastIndex, int $numShown = 4,
-        string $pagingFor = ''
-    ) {
-        $tmp = self::getAllModels($toArray);
-        $num = count($tmp);
-        return [
-            'sections' => $tmp,
-            'pagination' => Page::genPagination(
-                $pageNum, 
-                $firstIndex <= $num ? $firstIndex : 0,
-                $lastIndex <= $num ? $lastIndex : 0,
-                $num,
-                Page::genRange(0, $num), $numShown, $pagingFor
-            )
-        ];
-    }
-
     static public function createNew(
         string $name, string $url, string $title, $article,
-        string $description, $img, int $catalog_id = 1
+        string $description, $img, int $catalog_id = 1,
+        bool $retObj = false
     ) {
         $tmp = self::withTrashed()
             ->where(
@@ -334,7 +231,7 @@ class Section extends Model implements TransformableContainer, ContainerAPI
                 $data->catalog_id = $catalog_id;
                 if ($data->save()) {
                     if (Functions::testVar(SectionImage::createNewFrom($data))) {
-                        return $data->id;
+                        return $retObj ? $data : $data->id;
                     }
                 }
             }
@@ -342,24 +239,13 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         return null;
     }
 
-    static public function createNewFrom(Array $array)
-    {
+    static public function createNewFrom(
+        array $array, bool $retObj = false
+    ) {
         return self::createNew(
             $array['name'], $array['url'], $array['title'], 
             $array['article'], $array['description'], 
-            $array['img'], $array['catalog_id']
+            $array['img'], $array['catalog_id'], $retObj
         );
-    }
-
-    static public function getFromId(int $id, bool $withTrashed = true)
-    {
-        return $withTrashed 
-            ? self::withTrashed()->where('id', $id)->first()
-            : self::where('id', $id)->first();
-    }
-
-    static public function existsId(int $id, bool $withTrashed = true)
-    {
-        return Functions::testVar(self::getFromId($id, $withTrashed));
     }
 }

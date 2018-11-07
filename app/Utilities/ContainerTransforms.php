@@ -4,6 +4,7 @@ namespace App\Utilities;
 
 use App\Utilities\Functions\Functions;
 use Illuminate\Support\Collection;
+use App\Page;
 
 interface TransformableContainer
 {
@@ -122,42 +123,115 @@ trait ContainerTransforms
         );
     }
 
+    static public function getAllWithPagination(
+        $transform, $pageNum, $firstIndex, $lastIndex, int $numShown = 4,
+        string $pagingFor = '', string $dir = 'asc', 
+        bool $withTrashed = true, string $baseUrl = 'store', 
+        bool $useTitle = true, int $version = 1
+    ) {
+        $tmp = self::getAllWithTransform(
+            $transform, $dir, $withTrashed, $baseUrl, 
+            $useTitle, $version
+        );
+        $num = count($tmp);
+        return [
+            'items' => $tmp,
+            'pagination' => Page::genPagination(
+                $pageNum, 
+                $firstIndex <= $num ? $firstIndex : 0,
+                $lastIndex <= $num ? $lastIndex : 0,
+                $num,
+                Page::genRange(0, $num), $numShown, $pagingFor
+            )
+        ];
+    }
+
+    static public function doTransform(
+        $item, $transform = null, string $baseUrl = 'store',
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, $default = null
+    ) {
+        if ($item instanceof self) {
+            if (is_string($transform) && !empty($transform)) {
+                switch ($transform) {
+                case 'mini':
+                    return $item->toMini($baseUrl, $version, $useTitle, $withTrashed);
+                case 'full':
+                    return $item->toFull($baseUrl, $version, $useTitle, $withTrashed);
+                case 'sidebar':
+                    return $item->toSidebar($baseUrl, $version, $useTitle, $withTrashed);
+                case 'content':
+                    return $item->toContentArray($baseUrl, $version, $useTitle, $withTrashed);
+                case 'name':
+                    return $item->toNameListing();
+                }
+            } elseif (is_callable($transform)) {
+                return $transform($item, $baseUrl, $version, $useTitle, $withTrashed);
+            } elseif (is_bool($transform) && $transform) {
+                /// allows $transform be a renamed $asArray..
+                return $item->toContentArray($baseUrl, $version, $useTitle, $withTrashed);
+            } else {
+                return $item;
+            }
+        } else {
+            return $default;
+        }
+    }
+
     static public function getFor(
         $args, string $baseUrl = 'store', $transform = null, 
         bool $useTitle = true, int $version = 1, 
         bool $withTrashed = true, $default = []
     ) {
         if ((is_array($args) || $args instanceof Collection) 
-        && count($args) > 0) {
-            $res = [];
-            foreach ($args as $item) {
-                if ($item instanceof self) {
-                    if (is_string($transform) && !empty($transform)) {
-                        switch ($transform) {
-                        case 'mini':
-                            $res[] = $item->toMini($baseUrl, $version, $useTitle, $withTrashed);
-                            break;
-                        case 'full':
-                            $res[] = $item->toFull($baseUrl, $version, $useTitle, $withTrashed);
-                            break;
-                        case 'sidebar':
-                            $res[] = $item->toSidebar($baseUrl, $version, $useTitle, $withTrashed);
-                            break;
-                        case 'content':
-                            $res[] = $item->toContentArray($baseUrl, $version, $useTitle, $withTrashed);
-                            break;
-                        case 'name':
-                            $res[] = $item->toNameListing();
-                            break;
-                        }
-                    } elseif (is_callable($transform)) {
-                        $res[] = $transform($item, $baseUrl, $version, $useTitle, $withTrashed);
-                    } else {
-                        $res[] = $item;
+            && count($args) > 0
+        ) {
+            if (empty($transform)) {
+                return $args instanceof Collection 
+                    ? $args->all() 
+                    : $args;
+            } else {
+                $res = [];
+                foreach ($args as $item) {
+                    if (Functions::testVar(
+                        $tmp = self::doTransform(
+                            $item, $transform, $baseUrl, $useTitle,
+                            $version, $withTrashed, null
+                        )
+                    )
+                    ) {
+                        $res[] = $tmp;
                     }
                 }
             }
             return $res;
+        } else {
+            return $default;
+        }
+    }
+
+    static public function getForWithPagination(
+        $args, $transform, $pageNum, $firstIndex, $lastIndex, 
+        int $numShown = 4, string $pagingFor = '', string $dir = 'asc', 
+        bool $withTrashed = true, string $baseUrl = 'store', 
+        bool $useTitle = true, int $version = 1, $default = []
+    ) {
+        $tmp = self::getFor(
+            $args, $baseUrl, $transform, $useTitle, $version,
+            $withTrashed, $default
+        );
+        if (Functions::testVar($tmp)) {
+            $num = count($tmp);
+            return [
+                'items' => $tmp,
+                'pagination' => Page::genPagination(
+                    $pageNum, 
+                    $firstIndex <= $num ? $firstIndex : 0,
+                    $lastIndex <= $num ? $lastIndex : 0,
+                    $num,
+                    Page::genRange(0, $num), $numShown, $pagingFor
+                )
+            ];
         } else {
             return $default;
         }
