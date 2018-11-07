@@ -4,6 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model,
     App\Utilities\Functions\Functions,
+    App\Utilities\ContainerTransforms,
+    App\Utilities\TransformableContainer,
+    App\Utilities\ContainerAPI,
+    App\Utilities\ContainerID,
     App\Section,
     App\Product,
     App\Image,
@@ -11,10 +15,10 @@ use Illuminate\Database\Eloquent\Model,
     App\Page;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Categorie extends Model
+class Categorie extends Model implements TransformableContainer, ContainerAPI
 {
 
-    use SoftDeletes;
+    use SoftDeletes, ContainerTransforms, ContainerID;
 
     /**
      * The attributes that should be mutated to dates.
@@ -75,16 +79,43 @@ class Categorie extends Model
         );
     }
 
-    static public function getFromId(int $id, bool $withTrashed = true)
+    public function getFullUrl(string $baseUrl)
     {
-        return $withTrashed 
-            ? self::withTrashed()->where('id', $id)->first()
-            : self::where('id', $id)->first();
+        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
+        $surl = $this->section->getFullUrl($baseUrl);
+        return $surl . '/category/' . $this->url;
     }
 
-    static public function existsId(int $id, bool $withTrashed = true)
+    public function toSidebar(
+        string $baseUrl, int $version = 1, bool $useTitle = true
+    ) {
+        $img = $this->image->toImageArray();
+        return self::makeSidebar(
+            $this->getFullUrl($baseUrl), $img['img'],
+            $useTitle ? $this->title : $img['alt'],
+            '', $this->id
+        );
+    }
+
+    public function toMini(
+        string $baseUrl, int $version = 1, bool $useTitle = true
+    ) {
+        $img = $this->image->toImageArray();
+        return self::makeMini(
+            $img['img'], $useTitle ? $this->title : $img['alt'],
+            $this->getFullUrl($baseUrl), '', $this->id, 
+            $this->sticker
+        );
+        /* 
+            'price' => $this->sale != '' 
+            || $this->sale != $this->price
+                ? $this->sale : $this->price, 
+        */
+    }
+
+    static public function getOrderByKey()
     {
-        return Functions::testVar(self::getFromId($id, $withTrashed));
+        return 'section_id';
     }
 
     static public function makeContentArray(
@@ -108,10 +139,13 @@ class Categorie extends Model
         ];
     }
 
-    public function toContentArray(bool $withTrashed = true)
-    {
+    public function toContentArray(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ) {
         return self::makeContentArray(
-            $this->name, $this->url, $this->title,
+            $this->name, $this->getFullUrl($baseUrl), 
+            $useTitle ? $this->title : $this->image->alt,
             $this->image, $this->article, $this->description,
             $this->getProducts($withTrashed), 
             Image::getArraysFor($this->otherImages),
@@ -123,14 +157,13 @@ class Categorie extends Model
         );
     }
 
-    static public function getNamed(string $name, $section_id)
-    {
-        return self::where(
-            [
-                'url' => $name,
-                'section_id' => $section_id
-            ]
-        )->first();
+    public function toFull(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ) {
+        return $this->toContentArray(
+            $baseUrl, $version, $useTitle, $withTrashed
+        );
     }
 
     /**
@@ -156,62 +189,6 @@ class Categorie extends Model
         }
     }
 
-    static public function getAll(
-        bool $toArray = false, string $dir = 'asc', bool $withTrashed = true
-    ) {
-        $tmp = $withTrashed 
-        ? self::withTrashed()->orderBy('section_id', $dir)->get()
-        : self::orderBy('section_id', $dir)->get();
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
-            if ($toArray) {
-                $res = [];
-                foreach ($tmp as $cat) {
-                    $res[] = $cat->toContentArray($withTrashed);
-                }
-                return $res;
-            } else {
-                return $tmp->all();
-            }
-        }
-        return null;
-    }
-
-    public function toNameListing()
-    {
-        return [
-            'name' => $this->name,
-            'url' => $this->url,
-        ];
-    }
-
-    static public function getNameListingOf($array)
-    {
-        $res = [];
-        if (is_array($array) || $array instanceof Collection) {
-            foreach ($tmp as $cat) {
-                if ($cat instanceof self) {
-                    $res[] = $cat->toNameListing();
-                }
-            }
-        }
-        return $res;
-    }
-
-    static public function getNameListing(
-        bool $withTrashed = false, string $dir = 'asc'
-    ) {
-        $tmp = $withTrashed 
-            ? self::withTrashed()->orderBy('section_id', $dir)->all()
-            : self::orderBy('section_id', $dir)->all();
-        $res = [];
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
-            foreach ($tmp as $cat) {
-                $res[] = $cat->toNameListing();
-            }
-        }
-        return $res;
-    }
-
     public function getProduct(string $url, bool $withTrashed = true)
     {
         return $withTrashed 
@@ -220,23 +197,58 @@ class Categorie extends Model
     }
 
     public function getProducts(
-        bool $retAsArray = true, bool $withTrashed = true, 
-        string $dir = 'asc'
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, int $version = 1, 
+        $default = []
     ) {
         $tmp = $withTrashed 
-            ? $this->products()->withTrashed()->orderBy('name', $dir)->get()
+            ? $this->products()->withTrashed()
+                ->orderBy('name', $dir)->get()
             : $this->products()->orderBy('name', $dir)->get();
-        $res = [];
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
-            if ($retAsArray) {
-                foreach ($tmp as $product) {
-                    $res[] = $product->toContentArray();
-                }
-            } else {
-                return $tmp;
-            }
-        }
-        return $res;
+        $transform = is_bool($transform) 
+            ? self::TO_CONTENT_ARRAY_TRANSFORM
+            : $transform;
+        return Product::getFor(
+            $tmp, $baseUrl, $transform, $useTitle,
+            $version, $withTrashed, $default
+        );
+    }
+
+    static public function getCategoriesOfSection(
+        int $section_id, $transform = null, 
+        bool $withTrashed = false, string $baseUrl = 'store',
+        bool $useTitle = true, int $version = 1, 
+        $default = []
+    ) {
+        $tmp = $withTrashed 
+            ? self::withTrashed()->where('section_id', $section_id)->get()
+            : self::where('section_id', $section_id)->get();
+        $transform = is_bool($transform) 
+            ? self::TO_CONTENT_ARRAY_TRANSFORM
+            : $transform;
+        return self::getFor(
+            $tmp, $baseUrl, $transform, $useTitle,
+            $version, $withTrashed, $default
+        );
+    }
+
+    static public function getCategoriesOfSectionWithPagination(
+        int $section_id, $pageNum, $firstIndex, $lastIndex, 
+        int $numShown = 4, string $pagingFor = ''
+    ) {
+        $tmp = self::getCategoriesOfSection($section_id);
+        $num = count($tmp);
+        return [
+            'items' => $tmp,
+            'pagination' => Page::genPagination(
+                $pageNum, 
+                $firstIndex <= $num ? $firstIndex : 0,
+                $lastIndex <= $num ? $lastIndex : 0,
+                $num,
+                Page::genRange(0, $num), $numShown, $pagingFor
+            )
+        ];
     }
 
     public function image()
@@ -267,77 +279,5 @@ class Categorie extends Model
     {
         return $this->belongsTo('App\Section', 'section_id');
     }
-
-    public function getFullUrl(string $baseUrl)
-    {
-        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
-        $surl = $this->section->getFullUrl($baseUrl);
-        return $surl . '/category/' . $this->url;
-    }
-
-    static public function getCategoriesOfSection(
-        $section_id, bool $toArray = true, bool $withTrashed = false
-    ) {
-        $res = [];
-        $tmp = $withTrashed 
-            ? self::withTrashed()->where('section_id', $section_id)->get()
-            : self::where('section_id', $section_id)->get();
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
-            foreach ($tmp as $category) {
-                //dd($category);
-                $res[] = $category->toContentArray();
-            }
-        }
-        //dd($res);
-        return $res;
-    }
-
-    static public function getCategoriesOfSectionWithPagination(
-        $section_id, $pageNum, $firstIndex, $lastIndex, int $numShown = 4,
-        string $pagingFor = ''
-    ) {
-        $tmp = self::getCategoriesOfSection($section_id);
-        $num = count($tmp);
-        return [
-            'categories' => $tmp,
-            'pagination' => Page::genPagination(
-                $pageNum, 
-                $firstIndex <= $num ? $firstIndex : 0,
-                $lastIndex <= $num ? $lastIndex : 0,
-                $num,
-                Page::genRange(0, $num), $numShown, $pagingFor
-            )
-        ];
-    }
-
-    public function toSidebar(
-        string $baseUrl, int $version = 1
-    ) {
-        $img = $this->image->toImageArray();
-        return [
-            'url' => $this->getFullUrl($baseUrl),
-            'img' => $img['img'],
-            'alt' => $useTitle ? $this->title : $img['alt'],
-            'price' => '',
-            /* 'price' => $this->sale != '' || $this->sale != $this->price 
-                ? $this->sale 
-                : $this->price, */
-        ];
-    }
-
-    public function toMini(
-        string $baseUrl, int $version = 1, bool $useTitle = true
-    ) {
-        $img = $this->image->toImageArray();
-        return [
-            'img' => $img['img'],
-            'name' => $useTitle ? $this->title : $img['alt'],
-            'id' => $this->id,
-            'url' => $this->getFullUrl($baseUrl),
-            'price' => '',
-            /* 'price' => $this->sale != '' || $this->sale != $this->price
-                ? $this->sale : $this->price, */
-            'sticker' => $this->sticker,
-        ];
-    }
+    
 }

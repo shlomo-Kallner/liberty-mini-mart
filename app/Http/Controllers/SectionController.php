@@ -31,7 +31,7 @@ class SectionController extends MainController
             ]
         );
         $content = [
-            'sections' => Section::getAllWithTransform(
+            'items' => Section::getAllWithTransform(
                 Section::TO_MINI_TRANSFORM, 'asc', false, 'store',
                 true, 1
             ),
@@ -39,7 +39,7 @@ class SectionController extends MainController
         // create a special 'content.sections' view for such a listing.. 
         // optionally add pagination... 
         return self::getView(
-            $request, 'content.catalog', 'Our Sections', 
+            $request, 'content.items_list', 'Our Sections', 
             $content, false, $breadcumbs
         );
     }
@@ -90,8 +90,7 @@ class SectionController extends MainController
                 $section_items[] = $cat->toMini('store');
             }
             $section_data = [
-                'section' => $section,
-                'items' => $section_items,
+                'items' => Categorie::,
                 'bestsellers' => Product::getBestsellers(),
                 
             ];
@@ -104,7 +103,7 @@ class SectionController extends MainController
                 ]
             );
             return self::getView(
-                $request, 'content.section', $section->title, $section_data, 
+                $request, 'content.items_list', $section->title, $section_data, 
                 false, $breadcumbs
             );
         } else {

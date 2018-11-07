@@ -5,6 +5,10 @@ namespace App;
 use Illuminate\Database\Eloquent\Model,
     Illuminate\Database\Eloquent\Collection,
     App\Utilities\Functions\Functions,
+    App\Utilities\ContainerTransforms,
+    App\Utilities\TransformableContainer,
+    App\Utilities\ContainerAPI,
+    App\Utilities\ContainerID,
     App\Image,
     App\ProductImage,
     App\Article,
@@ -12,9 +16,9 @@ use Illuminate\Database\Eloquent\Model,
 use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends Model 
+class Product extends Model implements TransformableContainer, ContainerAPI
 {
-    use SoftDeletes;
+    use SoftDeletes, ContainerTransforms, ContainerID;
 
     /**
      * The attributes that should be mutated to dates.
@@ -91,18 +95,6 @@ class Product extends Model
     public function getPayload()
     {
         return unserialize(base64_decode($this->payload));
-    }
-
-    static public function getFromId(int $id, bool $withTrashed = true)
-    {
-        return $withTrashed 
-            ? self::withTrashed()->where('id', $id)->first()
-            : self::where('id', $id)->first();
-    }
-
-    static public function existsId(int $id, bool $withTrashed = true)
-    {
-        return Functions::testVar(self::getFromId($id, $withTrashed));
     }
 
     static public function getAllProducts($surl, $curl, bool $toArray = true) 
@@ -239,54 +231,14 @@ class Product extends Model
         return $bestsellers;
     }
 
-    static public function getFor(
-        $args, string $baseUrl = 'store', $transform = null, 
-        bool $useTitle = true, int $version = 1
-    ) {
-        return self::getProductsFor(
-            $args, $baseUrl, $transform, $useTitle,
-            $version
-        );
-    }
-
-    const TO_MINI_TRANSFORM = 'mini';
-    const TO_FULL_TRANSFORM = 'full';
-    const TO_SIDEBAR_TRANSFORM = 'sidebar';
-    const TO_CONTENT_ARRAY_TRANSFORM = 'content';
-
     static public function getProductsFor(
         $args, string $baseUrl = 'store', $transform = null, 
         bool $useTitle = true, int $version = 1
     ) {
-        $res = [];
-        if ((is_array($args) || $args instanceof Collection) 
-        && count($args) > 0) {
-            foreach ($args as $product) {
-                if ($product instanceof self) {
-                    if (is_string($transform) && !empty($transform)) {
-                        switch ($transform) {
-                        case 'mini':
-                            $res[] = $product->toMini($baseUrl, $version, $useTitle);
-                            break;
-                        case 'full':
-                            $res[] = $product->toFull($baseUrl, $version, $useTitle);
-                            break;
-                        case 'sidebar':
-                            $res[] = $product->toSidebar($baseUrl, $version, $useTitle);
-                            break;
-                        case 'content':
-                            $res[] = $product->toContentArray($baseUrl, $version, $useTitle);
-                            break;
-                        }
-                    } elseif (is_callable($transform)) {
-                        $res[] = $transform($product, $baseUrl, $version, $useTitle);
-                    } else {
-                        $res[] = $product;
-                    }
-                }
-            }
-        }
-        return $res;
+        return self::getFor(
+            $args, $baseUrl, $transform, $useTitle,
+            $version
+        );
     }
 
     static public function getProductsForCategory(
@@ -294,7 +246,7 @@ class Product extends Model
         bool $useTitle = true, int $version = 1
     ) {
         $products = self::where('category_id', $category_id)->get();
-        return self::getProductsFor(
+        return self::getFor(
             $products, $baseUrl, $transform, $useTitle, $version
         );
     }
@@ -306,7 +258,8 @@ class Product extends Model
     }
 
     public function toSidebar(
-        string $baseUrl = 'store', int $version = 1, bool $useTitle = true
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
     ) {
         $img = $this->image->toImageArray();
         return [
@@ -320,7 +273,8 @@ class Product extends Model
     }
 
     public function toMini(
-        string $baseUrl = 'store', int $version = 1, bool $useTitle = true
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
     ) {
         $img = $this->image->toImageArray();
         return [
@@ -335,7 +289,8 @@ class Product extends Model
     }
 
     public function toFull(
-        string $baseUrl = 'store', int $version = 1, bool $useTitle = true
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
     ) {
         $payload = $this->getPayload(); // wishlist item?
         $image = $this->image->toImageArray();
@@ -394,7 +349,8 @@ class Product extends Model
     }
 
     public function toContentArray(
-        string $baseUrl = 'store', int $version = 1, bool $useTitle = true
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
     ) {
         $url = $this->getFullUrl($baseUrl);
         $api = $this->getFullUrl('api/' . $baseUrl);
@@ -412,56 +368,9 @@ class Product extends Model
         );
     }
 
-    static function getContentArrays(
-        $arrays, string $baseUrl = 'store', $default = []
-    ) {
-        $res = $default;
-        if (Functions::testVar($arrays)
-            && (is_array($arrays) || $arrays instanceof Collection)
-        ) {
-            foreach ($arrays as $val) {
-                if (Functions::testVar($val) && $val instanceof self) {
-                    $res[] = $val->toContentArray($baseUrl);
-                }
-            }
-        }
-        return $res;
-    }
-
-    public function toNameListing()
+    static public function getOrderByKey()
     {
-        return [
-            'name' => $this->name,
-            'url' => $this->url,
-        ];
-    }
-
-    static public function getNameListingOf($array)
-    {
-        $res = [];
-        if (is_array($array) || $array instanceof Collection) {
-            foreach ($tmp as $product) {
-                if ($product instanceof self) {
-                    $res[] = $product->toNameListing();
-                }
-            }
-        }
-        return $res;
-    }
-
-    static public function getNameListing(
-        bool $withTrashed = false, string $dir = 'asc'
-    ) {
-        $tmp = $withTrashed 
-            ? self::withTrashed()->orderBy('category_id', $dir)->all()
-            : self::orderBy('category_id', $dir)->all();
-        $res = [];
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
-            foreach ($tmp as $product) {
-                $res[] = $product->toNameListing();
-            }
-        }
-        return $res;
+        return 'category_id';
     }
 
     ///

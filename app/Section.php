@@ -4,6 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model,
     App\Utilities\Functions\Functions,
+    App\Utilities\ContainerTransforms,
+    App\Utilities\TransformableContainer,
+    App\Utilities\ContainerAPI,
+    App\Utilities\ContainerID,
     App\Categorie,
     App\Page,
     App\Image,
@@ -11,9 +15,9 @@ use Illuminate\Database\Eloquent\Model,
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
-class Section extends Model
+class Section extends Model implements TransformableContainer, ContainerAPI
 {
-    use SoftDeletes;
+    use SoftDeletes, ContainerTransforms, ContainerID;
 
     /**
      * The attributes that should be mutated to dates.
@@ -21,54 +25,6 @@ class Section extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
-
-    static public function getNamed(string $name, bool $withTrashed = false)
-    {
-        return $withTrashed 
-        ? self::withTrashed()
-            ->where('url', $name)
-            ->orWhere('name', $name)
-            ->first()
-        : self::where('url', $name)
-            ->orWhere('name', $name)
-            ->first();
-    }
-
-    public function toNameListing()
-    {
-        return [
-            'name' => $this->name,
-            'url' => $this->url,
-        ];
-    }
-
-    static public function getNameListingOf($array) 
-    {
-        $res = [];
-        if (is_array($array) || $array instanceof Collection) {
-            foreach ($tmp as $section) {
-                if ($section instanceof self) {
-                    $res[] = $section->toNameListing();
-                }
-            }
-        }
-        return $res;
-    }
-
-    static public function getNameListing(
-        bool $withTrashed = false, string $dir = 'asc'
-    ) {
-        $tmp = $withTrashed 
-            ? self::withTrashed()->orderBy('name', $dir)->all()
-            : self::orderBy('name', $dir)->all();
-        $res = [];
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
-            foreach ($tmp as $section) {
-                $res[] = $section->toNameListing();
-            }
-        }
-        return $res;
-    }
 
     static public function getSection(
         $section, bool $toArray = false, bool $withTrashed = false
@@ -137,8 +93,8 @@ class Section extends Model
     }
 
     public function toContentArray(
-        bool $withTrashed = true, string $baseUrl = 'store', 
-        int $version = 1, bool $useTitle = true
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
     ) {
         return self::makeContentArray(
             $this->name, $this->getFullUrl($baseUrl), $this->image,
@@ -156,8 +112,10 @@ class Section extends Model
         );
     }
 
-    public function toSidebar(string $baseUrl = 'store', int $version = 1, bool $useTitle = true)
-    {
+    public function toSidebar(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ) {
         $img = $this->image->toImageArray();
         return [
             'url' => $this->getFullUrl($baseUrl),
@@ -172,7 +130,8 @@ class Section extends Model
     }
 
     public function toMini(
-        string $baseUrl = 'store', int $version = 1, bool $useTitle = true
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
     ) {
         $img = $this->image->toImageArray();
         return [
@@ -184,6 +143,22 @@ class Section extends Model
                 ? $this->sale : $this->price, */
             //'sticker' => $this->sticker,
         ];
+    }
+
+    public function toFull(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ) {
+        return $this->toContentArray(
+            $baseUrl, $version, $useTitle, $withTrashed
+        );
+    }
+
+    
+
+    static public function getOrderByKey()
+    {
+        return 'catalog_id';
     }
 
     static public function getFor(
@@ -221,7 +196,7 @@ class Section extends Model
     }
 
     const TO_MINI_TRANSFORM = 'mini';
-    //const TO_FULL_TRANSFORM = 'full';
+    const TO_FULL_TRANSFORM = 'full';
     const TO_SIDEBAR_TRANSFORM = 'sidebar';
     const TO_CONTENT_ARRAY_TRANSFORM = 'content';
 
@@ -232,7 +207,7 @@ class Section extends Model
     ) {
         $tmp = $withTrashed 
             ? self::withTrashed()->orderBy('catalog_id', $dir)->get() 
-            : self::orderBy('catalog_id', $dir)->all();
+            : self::orderBy('catalog_id', $dir)->get();
         return self::getFor(
             $tmp, $baseUrl, $transform,
             $useTitle, $version, $withTrashed

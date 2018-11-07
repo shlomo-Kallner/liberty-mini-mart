@@ -104,7 +104,7 @@ class CategorieController extends MainController
             //dd($cat);
             // getting the products of the category..
             $content_data = [
-                'products' => Product::getProductsFor(
+                'items' => Product::getProductsFor(
                     $cat->products, 'store', Product::TO_MINI_TRANSFORM,
                     true, 1
                 ),
@@ -115,7 +115,7 @@ class CategorieController extends MainController
             //self::$data['products'] = $prods;
             //dd($products);
             return parent::getView(
-                $request, 'content.category', $cat->title, 
+                $request, 'content.items_list', $cat->title, 
                 $content_data, false, $breadcrumbs
             );
         } 
