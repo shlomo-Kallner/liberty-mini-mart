@@ -30,7 +30,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
     static public function createNew(
         string $name, string $url, string $description, 
         string $title, $article, int $section_id,
-        $image, string $sticker
+        $image, string $sticker, bool $retObj = false
     ) {
         $tmp = self::withTrashed()
             ->where(
@@ -62,7 +62,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
                 if ($res->save()) {
                     $ci = CategoryImage::createNewFrom($res);
                     if (Functions::testVar($ci)) {
-                        return $res->id;
+                        return $retObj ? $res : $res->id;
                     }
                 }
             }
@@ -70,12 +70,12 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         return null;
     }
 
-    static public function createNewFrom(array $array)
+    static public function createNewFrom(array $array, bool $retObj = false)
     {
         return self::createNew(
             $array['name'], $array['url'], $array['description'], 
             $array['title'], $array['article'], $array['section_id'], 
-            $array['image'], $array['sticker']
+            $array['image'], $array['sticker'], $retObj
         );
     }
 
@@ -87,7 +87,8 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
     }
 
     public function toSidebar(
-        string $baseUrl, int $version = 1, bool $useTitle = true
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
     ) {
         $img = $this->image->toImageArray();
         return self::makeSidebar(
@@ -98,7 +99,8 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
     }
 
     public function toMini(
-        string $baseUrl, int $version = 1, bool $useTitle = true
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
     ) {
         $img = $this->image->toImageArray();
         return self::makeMini(

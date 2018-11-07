@@ -28,7 +28,7 @@ class AddContentColumnToProducts extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['payload', 'verihash'])
+            $table->dropColumn(['payload', 'verihash', 'availablity']);
         });
     }
 }

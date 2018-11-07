@@ -33,7 +33,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         float $sale, int $category_id, string $sticker,
         $image, string $description,
         string $title, $article, $payload = null,
-        bool $retObj = false
+        int $availablity = 0, bool $retObj = false
     ) {
         $tmp = self::withTrashed()
             ->where(
@@ -63,6 +63,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
                 $data->price = $price;
                 $data->sale = $sale;
                 $data->sticker = $sticker;
+                $data->availablity = $availablity;
                 $data->description = Functions::purifyContent($description);
                 if (Functions::testVar($payload)) {
                     $cnTmp = base64_encode(serialize($payload));
@@ -88,7 +89,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
             $array['sale'], $array['category_id'], $array['sticker'], 
             $array['image'], $array['description'], 
             $array['title'], $array['article'], $array['payload'],
-            $retObj
+            $array['availablity'], $retObj
         );
     }
 
@@ -276,6 +277,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
     ) {
         $payload = $this->getPayload(); // wishlist item?
         $image = $this->image->toImageArray();
+        $reviews = $this->reviews;
         return [
             'productImage' => $image['img'],
             'productImageAlt' => $useTitle ? $this->title : $image['alt'],
@@ -292,7 +294,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
                 }
             ), // a wishList Item!
             'productOptions' => Functions::getPropKey($payload, 'options', []), // a wishList Item!
-            'productReviews' => ProductReview::getContentArrays($this->reviews), // a wishList Item!
+            'productReviews' => ProductReview::getContentArrays($reviews), // a wishList Item!
             'productAdditionalInfo' => Functions::getPropKey($payload, 'additionalInfo', []), // a wishList Item!
             'productSticker' => $this->sticker,
             'productID' => $this->id,

@@ -109,7 +109,8 @@ class Cart extends Model
         Request $request = null, bool $asArray = true,
         string $currencyIcon = 'fa-usd', $dcart = null
     ) {
-        $sess = Functions::testVar($request) && $request->hasSession()
+        $request = Functions::testVar($request) ? $request : request();
+        $sess = $request->hasSession()
                     ? $request->session() 
                     : session();
         $ci = $sess->has('currency') ? $sess->get('currency') : $currencyIcon;

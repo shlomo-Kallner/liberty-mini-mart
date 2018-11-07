@@ -24,8 +24,9 @@ class SectionController extends MainController
     public function index(Request $request)
     {
         // get a listing of all sections... 
+        $title = 'All Our Sections';
         $breadcumbs = Page::getBreadcrumbs(
-            Page::genBreadcrumb('Our Sections', 'store/section'),
+            Page::genBreadcrumb($title, 'store/section'),
             [
                 Page::genBreadcrumb('Store', 'store'),
             ]
@@ -35,11 +36,11 @@ class SectionController extends MainController
                 Section::TO_MINI_TRANSFORM, 'asc', false, 'store',
                 true, 1
             ),
+            'bestsellers' => Product::getBestsellers(),
         ];
-        // create a special 'content.sections' view for such a listing.. 
         // optionally add pagination... 
         return self::getView(
-            $request, 'content.items_list', 'Our Sections', 
+            $request, 'content.items_list', $title, 
             $content, false, $breadcumbs
         );
     }
@@ -85,21 +86,20 @@ class SectionController extends MainController
             $section = Section::getNamed($request->section);
             //$section_items = Categorie::getCategoriesOfSection($section->id);
             //$section_items = $section->getCategories(false);
-            $section_items = [];
-            foreach ($section->categories as $cat) {
-                $section_items[] = $cat->toMini('store');
-            }
             $section_data = [
-                'items' => Categorie::,
+                'items' => Categorie::getFor(
+                    $section->categories, 
+                    $request->ajax() ? 'api/store' : 'store', 
+                    Categorie::TO_MINI_TRANSFORM, true, 1, 
+                    $request->withTrashed??false, []
+                ),
                 'bestsellers' => Product::getBestsellers(),
-                
             ];
-            
             $breadcumbs = Page::getBreadcrumbs(
                 Page::genBreadcrumb($section->name, $section->getFullUrl('store')),
                 [
                     Page::genBreadcrumb('Store', 'store'),
-                    Page::genBreadcrumb('Our Sections', 'store/section'),
+                    //Page::genBreadcrumb('All Our Sections', 'store/section'),
                 ]
             );
             return self::getView(

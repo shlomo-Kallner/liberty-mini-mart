@@ -19,6 +19,8 @@ class CategorieController extends MainController
 
     /**
      * Display a listing of the resource.
+     * Basicly you get here if either you did not enter 
+     * the category's url fragment in the url or ..
      *
      * @return \Illuminate\Http\Response
      */
@@ -36,6 +38,26 @@ class CategorieController extends MainController
                         ? 'api/store' 
                         : 'store'
                 )
+            );
+        } else {
+            $title = 'All Our Categories';
+            $breadcrumbs = Page::getBreadcrumbs( 
+                Page::genBreadcrumb($title, $request->path()),
+                [
+                    Page::genBreadcrumb('Store', 'store'),
+                    Page::genBreadcrumb($sect->title, $sect->getFullUrl('store'))
+                ]
+            );
+            $content = [
+                'items' => Categorie::getAllWithTransform(
+                    Categorie::TO_MINI_TRANSFORM, 'asc', false, 'store',
+                    true, 1
+                ),
+                'bestsellers' => Product::getBestsellers(),
+            ];
+            return self::getView(
+                $request, 'content.items_list', $title, 
+                $content, false, $breadcumbs
             );
         }
     }
@@ -105,7 +127,7 @@ class CategorieController extends MainController
             );
             //dd($cat);
             // getting the products of the category..
-            $content_data = [
+            $content = [
                 'items' => Product::getProductsFor(
                     $cat->products, 'store', Product::TO_MINI_TRANSFORM,
                     true, 1, false
@@ -118,7 +140,7 @@ class CategorieController extends MainController
             //dd($products);
             return parent::getView(
                 $request, 'content.items_list', $cat->title, 
-                $content_data, false, $breadcrumbs
+                $content, false, $breadcrumbs
             );
         } 
         abort(404);

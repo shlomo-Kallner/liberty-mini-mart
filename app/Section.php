@@ -36,7 +36,7 @@ class Section extends Model implements TransformableContainer, ContainerAPI
     static public function getSection(
         $section, $transform = null, bool $withTrashed = false,
         string $baseUrl = 'store', bool $useTitle = true, 
-        int $version = 1, bool $withTrashed = true, $default = null
+        int $version = 1, $default = null
     ) {
         if (Functions::testVar($section)) {
             if (is_string($section)) {
