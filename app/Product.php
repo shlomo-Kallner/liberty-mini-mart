@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model,
     Illuminate\Database\Eloquent\Collection,
+    Illuminate\Support\Facades\Hash,
     App\Utilities\Functions\Functions,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer,
@@ -65,11 +66,9 @@ class Product extends Model implements TransformableContainer, ContainerAPI
                 $data->sticker = $sticker;
                 $data->availablity = $availablity;
                 $data->description = Functions::purifyContent($description);
-                if (Functions::testVar($payload)) {
-                    $cnTmp = base64_encode(serialize($payload));
-                    $data->payload = $cnTmp;
-                    $data->verihash = Hash::make($cnTmp);
-                }
+                $cnTmp = base64_encode(serialize(Functions::getVar($payload, [])));
+                $data->payload = $cnTmp;
+                $data->verihash = Hash::make($cnTmp);
                 if ($data->save()) {
                     $pi = ProductImage::createNewFrom($data);
                     if (Functions::testVar($pi)) {

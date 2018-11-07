@@ -187,9 +187,9 @@
 
     @component('lib.themewagon.article-sm')
         @foreach ($page['article'] as $key => $item)
-            @if ($key === 'img' || !is_string($item))
+            @if ($key === 'img' || is_array($item) || is_object($item))
                 @php
-                    //dd($item);
+                    //dd($key, $item);
                     //dd(serialize($item));
                 @endphp
                 @slot($key)

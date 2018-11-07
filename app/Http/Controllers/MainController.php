@@ -325,6 +325,7 @@ class MainController extends Controller {
         bool $useFakeData = false, array $breadcrumbs = null, 
         array $alert = null, array $sidebar = null
     ) {
+        //dd('hello', 4);
         self::setTitle($title);
         self::setPageContent($content);
         if ($alert !== null || count($alert??[]) > 0) {
@@ -369,7 +370,7 @@ class MainController extends Controller {
         self::$data['cart'] = Cart::getCurrentCart($request, true);
 
         //dd($userData, $tmp, $nut, $request->session()->getId(), $request->session()->all());
-        // dd($request->session(), self::$data['cart']);
+        //dd($request->session(), self::$data['cart']);
 
         return view($viewName, self::$data);
     }
@@ -481,7 +482,10 @@ class MainController extends Controller {
         //return $this->getTemplateView($title, $content);
         //dd($request->session()->all());
         //dd(session()->all());
-        return self::getView($request, 'content.index', $title, $content, $useFakeData, $breadcrumbs, $alert);
+        return self::getView(
+            $request, 'content.index', $title, $content, 
+            $useFakeData, $breadcrumbs, $alert
+        );
     }
 
     public function test4(Request $request)

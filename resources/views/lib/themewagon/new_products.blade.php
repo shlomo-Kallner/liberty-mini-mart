@@ -139,9 +139,12 @@
             ],
         ]);
     }
+
+    //dd($newProducts2);
+    //dd($sampleProducts2);
     
     $menu2 = Functions::getContent($sidebar??'');
-    //dd($sidebar2);
+    //dd($menu2);
     $newProductsTitle2 = Functions::getBladedString($newProductsTitle??'','New Arrivals');
     $sampleProductsTitle2 = Functions::getBladedString($sampleProductsTitle??'','Three Items');
     $currency2 = Functions::getContent($currency??'','fa-usd');

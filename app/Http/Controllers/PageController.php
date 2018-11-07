@@ -124,9 +124,11 @@ class PageController extends MainController
 
     public function home(Request $request) 
     {
+        //dd('hello');
         // for now...
         if (true) {
-            
+            //dd('hello');
+        
             //$title = 'test ' . $requestedPage . ' page';
             $content = [
                 'article'=> Article::makeContentArray(
@@ -141,6 +143,8 @@ class PageController extends MainController
                 'filters' => [], // search filters are a WISH-LIST ITEM!!!
                 'pricings' => [], // membership plan pricings are a WISH-LIST ITEM!!
             ];
+            //dd('hello', 3);
+        
             $useFakeData = false;
             //self::$data['sidebar'] = Page::getSidebar($useFakeData);
             //dd($request->path());
