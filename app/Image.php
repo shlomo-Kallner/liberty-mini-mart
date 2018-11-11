@@ -3,14 +3,16 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Utilities\Functions\Functions;
+use App\Utilities\Functions\Functions,
+    App\Utilities\ContainerAPI,
+    App\Utilities\ContainerID;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
-class Image extends Model
+class Image extends Model implements ContainerAPI
 {
-    use SoftDeletes;
+    use SoftDeletes, ContainerID;
 
     /**
      * The attributes that should be mutated to dates.
@@ -39,7 +41,7 @@ class Image extends Model
                 return $retObj ? $tmp : $tmp->id;
             }
         } elseif (Functions::testVar($tC) || count($tC) === 1) {
-            return $tC[0]->id;
+            return $retObj ? $tC[0] : $tC[0]->id;
         }
         return null;
     }
@@ -215,15 +217,5 @@ class Image extends Model
         } else {
             return null;
         }
-    }
-
-    static public function getFromId(int $id)
-    {
-        return self::where('id', $id)->first();
-    }
-
-    static public function existsId(int $id)
-    {
-        return Functions::testVar(self::getFromId($id));
     }
 }

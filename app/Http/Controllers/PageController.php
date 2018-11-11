@@ -145,7 +145,7 @@ class PageController extends MainController
             ];
             //dd('hello', 3);
         
-            $useFakeData = false;
+            // $useFakeData = false;
             //self::$data['sidebar'] = Page::getSidebar($useFakeData);
             //dd($request->path());
             $breadcrumbs = Page::getBreadcrumbs(

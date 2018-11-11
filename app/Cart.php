@@ -132,9 +132,9 @@ class Cart extends Model
         $cart = self::getFrom($request);
         //dd($request, $user, $cart, $content);
         if (!Functions::testVar($cart)) {
-            $cart1 = self::createNewFrom($request, $user, $content);
-            if (Functions::testVar($cart1)) {
-                return self::getFrom($cart1);
+            $cart1 = self::createNewFrom($request, $user, $content, false);
+            if (Functions::testVar($cart1) && $cart1 instanceof self) {
+                return $cart1;
             }
             //dd($cart, $cart1, $request, $user, $content);
         } elseif ($cart instanceof self) {
@@ -220,18 +220,20 @@ class Cart extends Model
         return unserialize(base64_decode($this->content));
     }
 
-    static public function getFrom($id, bool $useGet = false)
-    {
-        if (is_int($id)) {
-            return $useGet 
-                ? self::where('id', $id)->get()
-                : self::where('id', $id)->first();
-        } elseif ($id instanceof self) {
+    static public function getFrom(
+        $id, bool $useGet = false, bool $withTrashed = false
+    ) {
+        $tmp = null;
+        if ($id instanceof self) {
             return $id;
+        } elseif (is_int($id)) {
+            $tmp = $withTrashed
+                ? self::withTrashed()->where('id', $id)
+                : self::where('id', $id);
         } elseif (is_string($id)) {
-            return $useGet 
-                ? self::where('session_id', $id)->get()
-                : self::where('session_id', $id)->first();
+            $tmp = $withTrashed
+                ? self::withTrashed()->where('session_id', $id)
+                : self::where('session_id', $id);
         } elseif ($id instanceof Request) {
             $whereWith = [
                 ['ip_address', '=', $id->ip()],
@@ -240,9 +242,9 @@ class Cart extends Model
             if ($id->hasSession()) {
                 $whereWith[] = ['session_id', '=', $id->session()->getId()];
             }
-            return $useGet 
-                ? self::where($whereWith)->get()
-                : self::where($whereWith)->first();
+            $tmp = $withTrashed
+                ? self::withTrashed()->where($whereWith)
+                : self::where($whereWith);
         } elseif (is_array($id)) {
             // is a User Array ...
             $whereWith = [
@@ -250,9 +252,14 @@ class Cart extends Model
                 ['user_agent', '=', $id['agent']],
                 ['user_id', '=', $id['id']]
             ];
-            return $useGet 
-                ? self::where($whereWith)->get()
-                : self::where($whereWith)->first();
+            $tmp = $withTrashed
+                ? self::withTrashed()->where($whereWith)
+                : self::where($whereWith);
+        }
+        if (Functions::testVar($tmp)) {
+            return $useGet
+                ? $tmp->get()
+                : $tmp->first();
         }
         return null;
     }
@@ -322,7 +329,7 @@ class Cart extends Model
         return null;
     } 
 
-    static public function getFromOrCreate($data, bool $retId = true)
+    static public function getFromOrCreate($data)
     {
         if (Functions::testVar($cart = self::getFrom($data))) {
             return $cart;

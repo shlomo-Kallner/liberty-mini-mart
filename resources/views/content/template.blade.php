@@ -49,7 +49,7 @@ if (!Functions::testVar($cart??'')) {
         {!! serialize($cart) !!}
     @endslot
     @slot('currency')
-        {{ 'fa-usd' }}
+        {{ $cart['currencyIcon']??'fa-usd' }}
     @endslot
 @endcomponent
 

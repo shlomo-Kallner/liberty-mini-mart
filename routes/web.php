@@ -20,7 +20,7 @@ use App\User,
     App\Page;
 use Illuminate\Http\Request;
 Route::get(
-    'php', function (Request $request) {
+    'test/php', function (Request $request) {
         $dump = true;
         //$tmp = User::getUserArray($request);
         //$tmp = $request->session()->all();

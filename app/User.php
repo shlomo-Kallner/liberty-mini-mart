@@ -7,16 +7,18 @@ use Illuminate\Database\Eloquent\Model,
     Session, DB,
     Illuminate\Support\Facades\Hash,
     App\Utilities\Functions\Functions,
-    App\Utilities\Permits\Permits;
+    App\Utilities\Permits\Permits,
+    App\Utilities\ContainerID,
+    App\Utilities\ContainerAPI;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Utilities\Permits\Basic;
 use App\UserImage;
 use App\Image;
 use Darryldecode\Cart\Helpers\Helpers;
 
-class User extends Model
+class User extends Model implements ContainerAPI
 {
-    use SoftDeletes;
+    use SoftDeletes, ContainerID;
 
     /**
      * The attributes that should be mutated to dates.
@@ -308,7 +310,8 @@ class User extends Model
 
     static public function createNew(
         string $name, string $email, string $password, $img, 
-        int $plan = 1, bool $setRememberToken = false
+        int $plan = 1, bool $setRememberToken = false, 
+        bool $retObj = false
     ) {
         $tu = self::where('email', $email)->get();
         if (!Functions::testVar($tu) || count($tu) === 0) {
@@ -330,7 +333,7 @@ class User extends Model
                     $perm->makeFakes(1, false, 1);
                     $ui = UserImage::createNewFrom($tmp);
                     if (Functions::testVar($ui)) {
-                        return $tmp;
+                        return $retObj ? $tmp : $tmp->id;
                     }
                 }
             }
@@ -478,26 +481,18 @@ class User extends Model
         return null;
     }
 
-    static public function createNewFrom(array $array) 
-    {
+    static public function createNewFrom(
+        array $array, bool $retObj = false
+    ) {
         return self::createNew(
             $array['name'], $array['email'], 
             $array['password'], $array['img'], 
             $array['plan'], 
             isset($array['setRememberToken']) 
                 ? $array['setRememberToken']
-                : false
+                : false, 
+            $retObj
         );
-    }
-
-    static public function getFromId(int $id) 
-    {
-        return self::where('id', $id)->first();
-    }
-
-    static public function existsId(int $id)
-    {
-        return Functions::testVar(self::getFromId($id));
     }
 
     public function setIsAdmin(bool $regen = false)

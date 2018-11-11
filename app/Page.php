@@ -171,9 +171,9 @@ class Page extends Model
           //
         **/
 
+        $navbar = [];
         if (true) {
             //$navbar = DB::table('pages')::all()->toArray();
-            $navbar = [];
             $tg = PageGroup::getAllGroups(false);
             if (Functions::testVar($tg) && count($tg) > 0) {
                 $t1 = [];
@@ -208,14 +208,16 @@ class Page extends Model
             $navbar[] = self::genURLMenuItem('store', 'Store');
         } else {
             // for pre-database testing:
-            $navbar = [
-                self::genURLMenuItem('about', 'About'),
-                self::genURLMenuItem('store', 'Store'),
-                //self::genURLMenuItem('store/section/test', 'TEST-SECTION'),
-                //self::genURLMenuItem('store/section/test/category/test', 'TEST-CATEGORY'),
-                //self::genURLMenuItem('store/section/test/category/test/product/test', 'TEST-PRODUCT'),
-                //self::genURLMenuItem('template', 'My Template'),
-            ];
+            $navbar[] = self::genURLMenuItem('about', 'About');
+            $navbar[] = self::genURLMenuItem('store', 'Store');
+            if (false) {
+                $navbar[] = self::genURLMenuItem('store/section/test', 'TEST-SECTION');
+                $navbar[] = self::genURLMenuItem('store/section/test/category/test', 'TEST-CATEGORY');
+                $navbar[] = self::genURLMenuItem('store/section/test/category/test/product/test', 'TEST-PRODUCT');
+            }
+            if (false) {
+                $navbar[] = self::genURLMenuItem('template', 'My Template');
+            }
         }
         return $navbar;
     }

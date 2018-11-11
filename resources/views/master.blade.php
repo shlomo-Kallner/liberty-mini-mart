@@ -288,7 +288,7 @@
         @endif
 
         {{-- from Laravel.. Vue.js is now ENABLED! --}}
-        <script src="{{ asset('js/app.js') }}"></script>
+        <script src="{{ asset('js/app.js') }}" type="text/javascript"></script>
         
         {{-- 
             this stuff is ours.. so it should come last.. 

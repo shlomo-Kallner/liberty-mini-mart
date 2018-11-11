@@ -27,7 +27,9 @@ class UserSession extends Model
 
     static public function createNew(
         string $session_id, $user, string $ip, string $userAgent,
-        $payload = null, int $lastActivity = self::CREATED_ACTIVITY
+        $payload = null, int $lastActivity = self::CREATED_ACTIVITY,
+        bool $retObj = false
+
     ) {
         if (Functions::testVar($session_id) 
             && Functions::testVar($ip)
@@ -59,7 +61,7 @@ class UserSession extends Model
                 $data->payload  = base64_encode(serialize($tPay??[]));
                 $data->last_activity = $lastActivity;
                 if ($data->save()) {
-                    return $data->id;
+                    return $retObj ? $data : $data->id;
                 }
             }
         }
@@ -135,20 +137,23 @@ class UserSession extends Model
         return $this->last_activity === self::LOCKED_ACTIVITY;
     }
 
-    static public function createNewFrom(Request $request)
-    {
+    static public function createNewFrom(
+        Request $request, bool $retObj = false
+    ) {
         $tmp = User::getUserArray($request);
         return self::createNew(
             $request->hasSession() ? $request->session()->getId() : '',
             intval(Functions::getVar(Functions::getPropKey($tmp, 'id'), 0)),
             $request->ip(),
             $request->userAgent(),
-            $request->hasSession() ? $request->session()->all() : []
+            $request->hasSession() ? $request->session()->all() : [],
+            self::CREATED_ACTIVITY, $retObj
         );
     }
 
-    static public function createNewOrUpdate(Request $request, int $user_id = 0)
-    {
+    static public function createNewOrUpdate(
+        Request $request, int $user_id = 0, bool $retObj = false
+    ) {
         $session_id = $request->hasSession()
             ? $request->session()->getId()
             : '';
@@ -159,7 +164,7 @@ class UserSession extends Model
             $tus = UserSession::createNew(
                 $session_id, $user_id,
                 $request->ip(), $request->userAgent(),
-                $session_data
+                $session_data, self::CREATED_ACTIVITY, $retObj
             );
             if (false) {
                 if ($tus1 = UserSession::getFromId($tus)) {
@@ -223,17 +228,21 @@ class UserSession extends Model
         return $retObj ? $us : $bol;
     }
 
-    static public function getFrom($id)
+    static public function getFrom($id, bool $withTrashed = false)
     {
-        return self::getFromId($id);
+        return self::getFromId($id, $withTrashed);
     }
 
-    static public function getFromId($id) 
+    static public function getFromId($id, bool $withTrashed = false) 
     {
         if (is_int($id)) {
-            return self::where('id', $id)->first();
+            return $withTrashed
+                ? self::withTrashed()->where('id', $id)->first()
+                : self::where('id', $id)->first();
         } elseif (is_string($id)) {
-            return self::where('session_id', $id)->first();
+            return $withTrashed
+                ? self::withTrashed()->where('session_id', $id)->first()
+                : self::where('session_id', $id)->first();
         } else {
             $whereData = null;
             if (is_array($id) && Functions::hasPropKeyIn($id, 'ip')
@@ -257,19 +266,21 @@ class UserSession extends Model
                 }
             } 
             if (Functions::testVar($whereData)) {
-                return self::where($whereData)->first();
+                return $withTrashed
+                    ? self::withTrashed()->where($whereData)->first()
+                    : self::where($whereData)->first();
             }
         }
         return null;
     }
 
-    static public function existsId($id)
+    static public function existsId($id, bool $withTrashed = false)
     {
-        return Functions::testVar(self::getFromId($id));
+        return Functions::testVar(self::getFromId($id, $withTrashed));
     }
 
-    static public function exists($id)
+    static public function exists($id, bool $withTrashed = false)
     {
-        return self::existsId($id);
+        return self::existsId($id, $withTrashed);
     }
 }

@@ -207,6 +207,9 @@
         
         
     @else
+        @php
+            //dd('in' . __FILE__, 'content.index') ;
+        @endphp
         {{-- Use the old new_products component --}}
         @component('lib.themewagon.new_products')
             @slot('sidebar')
@@ -237,8 +240,10 @@
 
     @endif
 
-    @if ($usePricings)
-    
+    @if ($usePricings && false)
+        @php
+            //dd('ggg');
+        @endphp
         @component('lib.themewagon.article')
             @foreach ($page['article'] as $key => $item)
                 @slot($key)

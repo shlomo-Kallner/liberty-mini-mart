@@ -193,7 +193,7 @@ if (!$testing) {
                             @component('lib.themewagon.menu_links')
                                 @foreach ($nav as $key => $value)
                                     @slot($key)
-                                        @if ($key == 'submenus' || !is_string($value))
+                                        @if ($key == 'submenus' || is_array($value) || is_object($value))
                                             {!! serialize($value) !!}
                                         @else
                                             {{ $value }}
