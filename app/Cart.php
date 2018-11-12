@@ -22,8 +22,10 @@ class Cart extends Model
      */
     protected $dates = ['deleted_at'];
 
-    static public function getNewCartArray(string $currencyIcon = 'fa-usd')
-    {
+    static public function getNewCartArray(
+        string $currencyIcon = 'fa-usd', array $items = [],
+        float $subTotal = 0.0, int $totalItems = 0
+    ) {
         /*
             'cart' => [
                 'items' => [],
@@ -33,16 +35,84 @@ class Cart extends Model
             ],
         */
         return [
-            'items' => [],
+            'items' => $items,
             'currencyIcon' => $currencyIcon,
-            'subTotal' => 0,
-            'totalItems' => 0,
+            'subTotal' => $subTotal,
+            'totalItems' => $totalItems,
         ];
     }
 
-    static public function getSessionCart()
+    static public function getSessionCart(bool $retObj = true)
     {
-        return DarrylCart::session('cart');
+        $cart = DarrylCart::session('cart');
+        return $retObj
+            ? $cart
+            : [
+                'cart' => $cart->getContent(),
+                'conditions' => $cart->getConditions()
+            ];
+    }
+
+    static public function makeItemContentArray(
+        string $name = '', string $url = '', 
+        string $img = '', string $description = '',
+        int $quantity = 0, float $price = 0.0, 
+        float $priceSum = 0.0, string $api = '',
+        array $opts = [], int $id = 0, 
+        bool $asUrl = false
+    ) {
+        return [
+            'id' => $id,
+            'name' => $name,
+            'url' => $asUrl 
+                ? url($url)
+                : $url,
+            'img' => $asUrl 
+                ? asset($img)
+                : $img,
+            'description' => $description,
+            'quantity' => $quantity,
+            'priceSum' => $priceSum,
+            'price' => $price,
+            'api' => $asUrl 
+                ? url($api)
+                : $api,
+            'options' => $opts,
+        ];
+    }
+
+    public function toCartContentArray(
+        string $currencyIcon = 'fa-usd', bool $asUrl = false
+    ) {
+        $content = $this->getCartContent();
+        $count = 0;
+        $subTotal = 0.0;
+        $res = [];
+        foreach ($content['cart'] as $item) {
+            $opts = $item->attributes->has('options') 
+                ? $item->attributes['options']
+                : [];
+            $count += $item->quantity;
+            $subTotal += $item->getPriceSumWithConditions(false);
+            $res[] = self::makeItemContentArray(
+                $item->name, $asUrl 
+                    ? url($item->attributes['url'])
+                    : $item->attributes['url'], 
+                $asUrl 
+                    ? asset($item->attributes['img'])
+                    : $item->attributes['img'], 
+                $item->attributes['description'],
+                $item->quantity, $item->price, 
+                $item->getPriceSumWithConditions(false), 
+                $asUrl 
+                    ? url($item->attributes['api'])
+                    : $item->attributes['api'],
+                $opts, $item->id, $asUrl
+            );
+        }
+        return self::getNewCartArray(
+            $currencyIcon, $res, $subTotal, $count
+        );
     }
 
     static public function cartToArray(
@@ -64,6 +134,9 @@ class Cart extends Model
             $cTmp = $darrylCart->getContent()->all();
             foreach ($cTmp as $item) {
                 if ($asArray) {
+                    $opts = $item->attributes->has('options') 
+                        ? $item->attributes['options']
+                        : [];
                     $cart['items'][] = [
                         'id' => $item->id,
                         'name' => $item->name,
@@ -75,14 +148,12 @@ class Cart extends Model
                             : $item->attributes['img'],
                         'description' => $item->attributes['description'],
                         'quantity' => $item->quantity,
-                        'priceSum' => $item->getPriceSumWithConditions(),
+                        'priceSum' => $item->getPriceSumWithConditions(false),
                         'price' => $item->price,
                         'api' => $asUrl 
-                        ? url($item->attributes['api'])
-                        : $item->attributes['api'],
-                        'options' => Functions::getVar(
-                            $item->attributes['options'], []
-                        ),
+                            ? url($item->attributes['api'])
+                            : $item->attributes['api'],
+                        'options' => $opts,
                     ];
                 } else {
                     $cart['items'][] = $item;
@@ -125,9 +196,16 @@ class Cart extends Model
     ) {
         //dd($request, $user, $dcart);
         if (Functions::testVar($dcart) && $dcart instanceof DarrylCartCart) {
-            $content = $dcart->getContent();
+            $content = [ 
+                'cart' => $dcart->getContent(),
+                'conditions' => $dcart->getConditions()
+            ];
         } else {
-            $content = DarrylCart::session('cart')->getContent();
+            $dcart = DarrylCart::session('cart');
+            $content = [
+                'cart' => $dcart->getContent(),
+                'conditions' => $dcart->getConditions()
+            ];
         }
         $cart = self::getFrom($request);
         //dd($request, $user, $cart, $content);
@@ -193,7 +271,9 @@ class Cart extends Model
 
     public function updateCartWithSession($data, $user = null)
     {
-        return $this->updateCartFrom($data, $user, self::getSessionCart());
+        return $this->updateCartFrom(
+            $data, $user, self::getSessionCart(false)
+        );
     }
 
     public function updateCartFrom($data, $user = null, $content = null)

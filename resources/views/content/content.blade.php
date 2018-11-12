@@ -17,7 +17,7 @@
             @endslot
         @endcomponent
 
-        @component('lib.themewagon.article')
+        @component('lib.themewagon.article-comp')
             @slot('containerCss')
                 {!! 'col-md-9 col-sm-9' !!}
             @endslot

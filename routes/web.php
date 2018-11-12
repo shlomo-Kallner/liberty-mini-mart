@@ -280,7 +280,7 @@ Route::resource(
 ); 
 */
 
-Route::get('{page}', 'PageController@show');
+Route::get('page/{page}', 'PageController@show');
 
 
 //

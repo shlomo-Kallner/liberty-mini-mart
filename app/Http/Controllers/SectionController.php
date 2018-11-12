@@ -109,8 +109,6 @@ class SectionController extends MainController
         } else {
             return $this->index($request);
         }
-
-        
     }
 
     /**
@@ -154,6 +152,7 @@ class SectionController extends MainController
 
     public function test(Request $request)
     {
-        return static::getView($request, 'content.section', 'TEST-SECTION', [], true);
+        //return static::getView($request, 'content.section', 'TEST-SECTION', [], true);
+        return static::getView($request, 'content.items_list', 'TEST-SECTION', [], true);
     }
 }

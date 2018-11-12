@@ -81,10 +81,10 @@ class UserTableSeeder extends Seeder
         // create my..
         $admin = User::createNew(
             'artisan', 'artisan@liberty-mini-mart.bit.il',
-            'phpMyAdmin127', 1, 1
+            'phpMyAdmin127', 1, 1, false, true
         );
-        $ai = User::getUserId($admin);
-        $perm = new Basic($ai);
+        //$ai = User::getUserId($admin);
+        $perm = new Basic($admin->id);
         $perm->setGuestUser();
         $perm->setAuthUser();
         $perm->setContentCreator();
@@ -94,7 +94,7 @@ class UserTableSeeder extends Seeder
         // create several regular users..
         $user = User::createNew(
             'critic', 'indulgent.critic@example.com',
-            'criticalReveiwer123',  1, 1
+            'criticalReveiwer123',  1, 1, false, true
         );
         $ui = User::getUserId($user);
         $perm = new Basic($user->id);

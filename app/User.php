@@ -230,20 +230,20 @@ class User extends Model implements ContainerAPI
                 'modified' => $this->updated_at,
                 'deleted' => $this->deleted_at
             ],
-            'orders' => [],
-            'carts' => [],
+            'orders' => $this->orders??[],
+            'carts' => $this->carts??[],
             'wishlist' => [],
         ];
     }
 
     public function orders()
     {
-        return $this->hasMany('App\Order', 'user_id');
+        return $this->hasMany('App\Order', 'user_id', 'id');
     }
 
     public function carts()
     {
-        //return $this->hasMany('App\Cart', 'user_id');
+        return $this->hasMany('App\Cart', 'user_id', 'id');
     }
 
     public function image()

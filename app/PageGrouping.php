@@ -25,8 +25,10 @@ class PageGrouping extends Model
      */
     protected $dates = ['deleted_at'];
 
-    static public function createNew(int $group, int $page, int $order)
-    {
+    static public function createNew(
+        int $group, int $page, int $order, 
+        bool $retObj = false
+    ) {
         if ($page > 0) {
             if ($group < 1) {
                 $tgi = PageGroup::getRandId(); //self::max('group_id') + 1;
@@ -67,7 +69,7 @@ class PageGrouping extends Model
                     //dd($tmp, "myFifth");
                     if (self::reorderAround($tmp->group_id, $tmp->page_id, $tmp->order, $tmp->id)) {
                         //dd($tmp, "mySixth");
-                        return $tmp->id;
+                        return $retObj ? $tmp : $tmp->id;
                     }
                 }
             }
@@ -75,10 +77,12 @@ class PageGrouping extends Model
         return null;
     }
 
-    static public function createNewFrom(array $array) 
-    {
+    static public function createNewFrom(
+        array $array, bool $retObj = false
+    ) {
         return self::createNew(
-            $array['group'], $array['page'], $array['order']
+            $array['group'], $array['page'], 
+            $array['order'], $retObj
         );
     }
 

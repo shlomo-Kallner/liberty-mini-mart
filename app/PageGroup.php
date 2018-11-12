@@ -39,7 +39,7 @@ class PageGroup extends Model
     }
 
     static public function createNew(
-        string $name, int $order = -1
+        string $name, int $order = -1, bool $retObj = false
     ) {
         $tmp = self::where('name', $name)->get();
         if (!Functions::testVar($tmp) || count($tmp) === 0) {
@@ -53,15 +53,18 @@ class PageGroup extends Model
             $data->name = $name;
             $data->order = $o;
             if ($data->save()) {
-                return $data->id;
+                return $retObj ? $data : $data->id;
             }
         }
         return null;
     }
 
-    static public function createNewFrom(array $array)
+    static public function createNewFrom(array $array, bool $retObj = false)
     {
-        return self::createNew($array['name'], $array['order']??-1);
+        return self::createNew(
+            $array['name'], $array['order']??-1,
+            $retObj
+        );
     }
 
     static public function getFrom($pg) 

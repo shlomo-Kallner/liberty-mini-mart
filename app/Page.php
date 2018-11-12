@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model, 
     Illuminate\Http\Request,
     App\Utilities\Functions\Functions,
+    App\Utilities\ContainerAPI,
+    App\Utilities\ContainerID,
     DB,
     App\Article,
     App\Section,
@@ -15,9 +17,9 @@ use Illuminate\Database\Eloquent\Model,
     Session;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Page extends Model
+class Page extends Model implements ContainerAPI
 {
-    use SoftDeletes;
+    use SoftDeletes, ContainerID;
 
     /**
      * The attributes that should be mutated to dates.
@@ -187,14 +189,20 @@ class Page extends Model
                             $t3 = [];
                             foreach ($tpg1 as $pg1) {
                                 $tp1 = $pg1->page;
-                                $t3[] = self::genURLMenuItem($tp1->url, $tp1->name);
+                                $t3[] = self::genURLMenuItem(
+                                    'page/' . $tp1->url, $tp1->name
+                                );
                             }
-                            $t2[] = self::genDropdownLink($g->name . ' Part ' . $i, $t3);
+                            $t2[] = self::genDropdownLink(
+                                $g->name . ' Part ' . $i, $t3
+                            );
                         }
                     } else {
                         foreach ($tpg as $pg1) {
                             $tp1 = $pg1->page;
-                            $t2[] = self::genURLMenuItem($tp1->url, $tp1->name);
+                            $t2[] = self::genURLMenuItem(
+                                'page/' . $tp1->url, $tp1->name
+                            );
                         }
                     }
                     $t1[] = self::genDropdownLink($g->name, $t2);
@@ -329,8 +337,9 @@ class Page extends Model
         }
     }
 
-    static public function genBreadcrumb(string $name = '', string $url = '')
-    {
+    static public function genBreadcrumb(
+        string $name = '', string $url = ''
+    ) {
         return static::genURLMenuItem($url, $name);
     }
 
@@ -413,8 +422,9 @@ class Page extends Model
         );
     }
 
-    static public function getPagingVars(Request $request, string $pagingFor)
-    {
+    static public function getPagingVars(
+        Request $request, string $pagingFor
+    ) {
         if ($request->has('pageNum') && $request->has('pagingFor') && $request->has('viewNum')) {
             if ($pagingFor == $request->input('pagingFor')) {
                 return [
@@ -432,7 +442,7 @@ class Page extends Model
         string $name, string $url, $img,
         string $title, $article, string $description,
         int $visible = 1, string $sticker = '',
-        $group = -1, int $order = -1
+        $group = -1, int $order = -1, bool $retObj = false
     ) {
         if (!Functions::testVar($gId = PageGroup::getFrom($group))) {
             $group_id = PageGroup::getRandId();
@@ -480,7 +490,7 @@ class Page extends Model
                         $pi = PageImage::createNewFrom($data);
                         if (Functions::testVar($pg) && Functions::testVar($pi)) {
                             //dd($data, $pg, 4, "my");
-                            return $data->id;
+                            return $retObj ? $data : $data->id;
                         }
                     }
                 }
@@ -489,24 +499,15 @@ class Page extends Model
         return null;
     }
 
-    static public function createNewFrom(array $array) 
-    {
+    static public function createNewFrom(
+        array $array, bool $retObj = false
+    ) {
         return self::createNew(
             $array['name'], $array['url'], $array['img'], 
             $array['title'], $array['article'], $array['description'], 
             $array['visible'], $array['sticker'], $array['group'], 
-            $array['order']
+            $array['order'], $retObj
         );
-    }
-
-    static public function getFromId(int $id)
-    {
-        return self::where('id', $id)->first();
-    }
-
-    static public function existsId(int $id)
-    {
-        return Functions::testVar(self::getFromId($id));
     }
 
     /// 
@@ -546,7 +547,23 @@ class Page extends Model
 
     ///
 
-    public function toContentArray(
+    public function toContentArray()
+    {
+        
+        return self::makeContentArray(
+            $this->article, $this->description, $this->url,
+            $this->name, $this->title, 
+            Image::getImageArray($this->image), 
+            Image::getArraysFor($this->images), 
+            self::getBreadcrumbs(
+                self::genBreadcrumb($this->name, $this->url),
+                self::genBreadcrumb('Home', '/')
+            ), 
+            $this->getVisibility()
+        );
+    }
+
+    public function toContentArrayPlus(
         array $img = null, array $otherImages = null,
         array $links = null
     ) {
@@ -631,31 +648,48 @@ class Page extends Model
     }
 
     static public function getAllPages(
-        bool $getObj = false, string $dir = 'asc'
+        bool $getObj = false, string $dir = 'asc',
+        bool $usePageGroupings = true
     ) {
-        /* $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
+        /* 
+            $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
             //->orderBy('page_groups.group', $order)
             ->select('pages.*', 'page_groups.page', 'page_groups.group', 'page_groups.order')
             ->groupBy('pages.id', 'page_groups.group')
             ->orderBy('page_groups.order', $order)
-            ->get(); */
-        $tmp = self::all();
+            ->get(); 
+        */
+        // TODO BASICLIST ITEM:
+        // create a manual groupBy function
+        // as PDO '@BARFED@' on the query above...
+        // Optional: create a 'PageGroupInfo' 
+        //  Table + Migration for use with PageGroup..
+        /// UPDATE: DONE (on PageGroup) AND DONE (as PageGrouping)
         $pages = [];
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
-            //dd($tmp);
-            if ($getObj) {
-                $pages = $tmp->all();
-            } else {
-                foreach ($tmp as $p) {
-                    $pages[] = $p->toContentArray();
+        if ($usePageGroupings) {
+            $tpg = PageGroup::orderBy('order', $dir)->all();
+            if (Functions::testVar($tpg) && count($tpg) > 0) {
+                foreach ($tpg as $group) {
+                    $pg = $group->pages()->orderBy('order', $dir)->get();
+                    foreach ($pg as $page) {
+                        $pages[] = $getObj
+                            ? $page
+                            : $page->toContentArray();
+                    }
                 }
             }
-            // TODO BASICLIST ITEM:
-            // create a manual groupBy function
-            // as PDO '@BARFED@' on the query above...
-            // Optional: create a 'PageGroupInfo' 
-            //  Table + Migration for use with PageGroup..
-            /// UPDATE: DONE (on PageGroup) AND DONE (as PageGrouping)
+        } else {
+            $tmp = self::all();
+            if (Functions::testVar($tmp) && count($tmp) > 0) {
+                //dd($tmp);
+                if ($getObj) {
+                    $pages = $tmp->all();
+                } else {
+                    foreach ($tmp as $p) {
+                        $pages[] = $p->toContentArray();
+                    }
+                }
+            }
             //dd($pages);
         }
         return $pages;

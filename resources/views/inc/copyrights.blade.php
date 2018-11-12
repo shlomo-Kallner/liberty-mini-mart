@@ -29,7 +29,9 @@
                 @php
                     $sn = $siteName ?? App\Http\Controllers\MainController::$data['site']['name'];
                 @endphp
-                <p class="text-center"> <a href="{{url('')}}">{{ $sn }}</a> &copy; {{ date('Y') }}</p>
+                <p class="text-center"> 
+                    <a href="{{url('')}}">{{ $sn }}</a> &copy; {{ date('Y') }}
+                </p>
             </div>
         </div>
     </div>
