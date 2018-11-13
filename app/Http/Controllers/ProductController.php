@@ -251,7 +251,7 @@ class ProductController extends MainController
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit(Request $request)
     {
         //
     }
@@ -263,7 +263,7 @@ class ProductController extends MainController
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request)
     {
         //
     }
@@ -274,7 +274,7 @@ class ProductController extends MainController
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(Request $request)
     {
         //
     }

@@ -28,7 +28,7 @@ class ProductRequest extends FormRequest
             //
             'section' => 'required|max:255|string|min:3',
             'category' => 'required|max:255|string|min:3',
-            'image' => 'image',
+            'image' => 'required|file|image',
             'article' => 'required|max:255000|string|min:3',
             'subheading' => 'string|max:255',
             'title' => 'required|max:255|string|min:3',

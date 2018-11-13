@@ -152,7 +152,7 @@ class CategorieController extends MainController
      * @param  \App\Categorie  $categorie
      * @return \Illuminate\Http\Response
      */
-    public function edit(Categorie $categorie)
+    public function edit(Request $request)
     {
         //
     }
@@ -164,7 +164,7 @@ class CategorieController extends MainController
      * @param  \App\Categorie  $categorie
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Categorie $categorie)
+    public function update(Request $request)
     {
         //
     }
@@ -175,7 +175,7 @@ class CategorieController extends MainController
      * @param  \App\Categorie  $categorie
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Categorie $categorie)
+    public function destroy(Request $request)
     {
         //
     }

@@ -11,63 +11,71 @@
   |
  */
 
-Route::get('/', 'PageController@home');
-
 use App\User,
     App\Utilities\Functions\Functions,
     App\PageGroup,
     App\PageGrouping,
     App\Page;
 use Illuminate\Http\Request;
-Route::get(
-    'test/php', function (Request $request) {
-        $dump = true;
-        //$tmp = User::getUserArray($request);
-        //$tmp = $request->session()->all();
-        //$num = 44;
-        //$n = Functions::int2url_encode($num);
-        //$k = Functions::url2int_decode($n);
-        //$j = pack('V', $num);
-        //$l = bin2hex($j);
 
-        $tmp = [
-            //User::getUserArray($request),
-            $request->session()->all(),
-            //'page_groups' => PageGrouping::getGroups(),
-            //'users' => App\User::getUsers(1, true),
-            //'num' => [ $n, $k, $j, $l ],
-            //'in_array' => in_array(null, [2, 'a', null, 2.4]),
-        ];
-        //$tmp = new \DatabaseSeeder;
-        //dd($tmp);
-        //$tmp->run();
-        //PageGroup::where('group_id', 2)
-        //->max('order');
-        //->get(); //all(); //getAllPages();
-        if ($dump) {
-            dd($tmp);
-        } else {
-            return $tmp;
-        }
+Route::get('/', 'PageController@home');
+
+Route::prefix('test')->group(
+    function () {
+        Route::get(
+            '/', function () {
+                return view('welcome');
+            }
+        );
+        Route::get(
+            'url', function (Request $request) {
+                $num = 44;
+                $n = Functions::int2url_encode($num);
+                $k = Functions::url2int_decode($n);
+                $j = pack('V', $num);
+                $l = bin2hex($j);
+                $array = [
+                    'num' => $num, 
+                    'url_encoded' => $n, 
+                    'url_decode' => $k, 
+                    'packed' => $j,
+                    'bin2hed' => $l,
+                ];
+                if (!$request->ajax()) {
+                    dd($array);
+                } else {
+                    return $array;
+                }
+            }
+        );
+        Route::get(
+            'dump', function (Request $request) {
+                $dump = true;
+                $tmp = [
+                    'user' => User::getUserArray($request),
+                    'session' => $request->session()->all(),
+                ];
+                if ($dump) {
+                    dd($tmp);
+                } else {
+                    return $tmp;
+                }
+            }
+        );
+        Route::get(
+            'info', function () {
+                phpinfo();
+                return '';
+            }
+        );
+        Route::get(
+            'template', function () {
+                return view('master_themewagon');
+            }
+        );
+
     }
 );
-/* *
- *  Route::get(
- *      'php', function () {
- *          phpinfo();
- *          return '';
- *      }
- *  );
-    Route::get(
-        'template', function () {
-            return view('master_themewagon');
-        }
-    );
- *
- */
-
-/*  */
-
 
 Route::middleware('userguard')->group(
     function () {
@@ -266,59 +274,82 @@ Route::resource(
     ]
 );
 
-/// MEMBERSHIP PLANS ARE A WISHLIST ITEM!!
-/* 
-Route::resource(
-    'plan', 'PlanController', [
-        'parameters'=> [
-            'plan' => 'plan',
-        ],
-        'only' => [
-            'index', 'show'
+
+/* /// MEMBERSHIP PLANS ARE A WISHLIST ITEM!!
+    Route::resource(
+        'plan', 'PlanController', [
+            'parameters'=> [
+                'plan' => 'plan',
+            ],
+            'only' => [
+                'index', 'show'
+            ]
         ]
-    ]
-); 
+    ); 
 */
 
 Route::get('page/{page}', 'PageController@show');
 
+/* 
 
-//
-//
-//Route::prefix('store')->group(function() {
-//
-//    Route::resource('cart', 'CartController');
-//
-//    Route::resource('catalog', 'CatalogController');
-//
-//    Route::resource('catalog/{catalog}/category', 'CategorieController');
-//
-//    Route::resource('catalog/{catalog}/category/{category}/product', 'ProductController');
-//
-//    // Advanced stuff...
-//    //    Route::resource('catalog/{catalog}/department', 'DepartmentController');
-//    //    Route::resource('catalog/{catalog}/department/{department}/section', 'SectionController');
-//    //    Route::resource('catalog/{catalog}/department/{department}/section/{section}/product', 'ProductController');
-//});
-//
-//
-//Route::prefix('admin')->group(function() {
-//    Route::get('/', function () {
-//        return view('welcome');
-//    });
-//
-//    Route::resource('user', 'UserController');
-//
-//    Route::resource('catalog', 'CatalogController');
-//
-//    Route::resource('catalog/{catalog}/category', 'CategorieController');
-//
-//    Route::resource('catalog/{catalog}/category/{category}/product', 'ProductController');
-//
-//    // Advanced stuff...
-//    //    Route::resource('catalog/{catalog}/department', 'DepartmentController');
-//    //    Route::resource('catalog/{catalog}/department/{department}/section', 'SectionController');
-//    //    Route::resource('catalog/{catalog}/department/{department}/section/{section}/product', 'ProductController');
-//});
-//
-//Route::resource('{page}', 'PagesController');
+    Route::prefix('store')->group(
+        function () {
+
+            Route::resource('cart', 'CartController');
+
+            Route::resource('catalog', 'CatalogController');
+
+            Route::resource('catalog/{catalog}/category', 'CategorieController');
+
+            Route::resource(
+                'catalog/{catalog}/category/{category}/product', 
+                'ProductController'
+            );
+
+            // Advanced stuff...
+            Route::resource(
+                'catalog/{catalog}/department', 'DepartmentController'
+            );
+            Route::resource(
+                'catalog/{catalog}/department/{department}/section', 
+                'SectionController'
+            );
+            Route::resource(
+                'catalog/{catalog}/department/{department}/section/{section}/product', 
+                'ProductController'
+            );
+        }
+    );
+
+
+    Route::prefix('admin')->group(function() {
+    Route::get(
+        '/', function () {
+                return view('welcome');
+            }
+        );
+
+    Route::resource('user', 'UserController');
+
+    Route::resource('catalog', 'CatalogController');
+
+    Route::resource('catalog/{catalog}/category', 'CategorieController');
+
+    Route::resource(
+        'catalog/{catalog}/category/{category}/product', 
+        'ProductController'
+        );
+
+    // Advanced stuff...
+    Route::resource('catalog/{catalog}/department', 'DepartmentController');
+    Route::resource(
+        'catalog/{catalog}/department/{department}/section', 
+        'SectionController'
+        );
+    Route::resource(
+        'catalog/{catalog}/department/{department}/section/{section}/product', 
+        'ProductController'
+        );
+    });
+
+*/
