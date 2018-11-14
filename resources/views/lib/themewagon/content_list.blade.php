@@ -99,7 +99,8 @@
                 <div class="pull-right">
                     <label class="control-label">Show:</label>
                     <select class="form-control input-sm">
-                    <option value="#?limit=24" selected="selected">24</option>
+                    <option value="#?limit=none" selected="selected">All</option>
+                    <option value="#?limit=12">12</option>
                     <option value="#?limit=25">25</option>
                     <option value="#?limit=50">50</option>
                     <option value="#?limit=75">75</option>
@@ -116,8 +117,6 @@
                     <option value="#?sort=p.price&amp;order=DESC">Price (High &gt; Low)</option>
                     <option value="#?sort=rating&amp;order=DESC">Rating (Highest)</option>
                     <option value="#?sort=rating&amp;order=ASC">Rating (Lowest)</option>
-                    <option value="#?sort=p.model&amp;order=ASC">Model (A - Z)</option>
-                    <option value="#?sort=p.model&amp;order=DESC">Model (Z - A)</option>
                     </select>
                 </div>
             </div>

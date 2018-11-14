@@ -142,7 +142,7 @@
             ];
         }
         //dd($sidebarMenu2, $sidebarProducts2);
-        $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
+        $currency2 = Functions::getContent($cart['currencyIcon']??'fa-usd','fa-usd');
 
     @endphp
 
@@ -169,7 +169,11 @@
 
                 @foreach ($product2 as $key => $item)
                     @slot($key)
-                        {!! $item !!}
+                        @if (is_array($item) || is_object($item))
+                            {!! serialize($item) !!}
+                        @else
+                            {!! $item !!}
+                        @endif
                     @endslot
                 @endforeach
                 

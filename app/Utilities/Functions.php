@@ -457,7 +457,7 @@ class Functions
     }
 
     /**
-     * function genRowsPerPage
+     * Function genRowsPerPage
      * 
      * Should have been called getNumRowsPerPage ..
      * or getNumItemsPerUnit ..
@@ -488,7 +488,7 @@ class Functions
 
 
     /**
-     * function genPageArray
+     * Function genPageArray
      *
      * @param  array   $range      - must be a Range from 
      *                             genRange() or similar array!

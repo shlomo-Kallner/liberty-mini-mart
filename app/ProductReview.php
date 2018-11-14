@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use App\Utilities\Functions\Functions;
 
 class ProductReview extends Model
 {

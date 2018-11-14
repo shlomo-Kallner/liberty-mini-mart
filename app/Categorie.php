@@ -141,6 +141,19 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         ];
     }
 
+    static public function makeCmcContentArray(
+        $item, string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ) {
+        return $item->toCmsContentArray();
+    }
+
+    public function toCmsContentArray(
+        int $i = 0
+    ) {
+
+    }
+
     public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true
@@ -149,7 +162,10 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
             $this->name, $this->getFullUrl($baseUrl), 
             $useTitle ? $this->title : $this->image->alt,
             $this->image, $this->article, $this->description,
-            $this->getProducts($withTrashed), 
+            $this->getProducts(
+                true, $withTrashed, 'asc', $baseUrl, $useTitle,
+                $version, []
+            ),
             Image::getArraysFor($this->otherImages),
             $this->sticker, [
                 'created' => $this->created_at,

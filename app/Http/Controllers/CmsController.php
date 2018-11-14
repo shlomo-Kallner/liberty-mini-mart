@@ -43,7 +43,18 @@ class CmsController extends MainController
         //dd($request->session()->getId());
         //$sections = Section::getAllWithPagination();
         //dd(Page::get()->count());
-        $sections = Section::getAllModels(true, true);
+        $sectNumShown = 4;
+        $sectPageNum = 1;
+        $sectPagingFor = 'sectionPanel';
+        $sectDir = 'asc';
+        $sectBaseUrl = 'store';
+        $sectViewNum = 0;
+        $sections = Section::getAllWithPagination(
+            true, $sectPageNum, $sectNumShown, 
+            $sectPagingFor, $sectDir, true, $sectBaseUrl, 
+            $request->path(), $sectViewNum, 
+            true, 1
+        );
         //dd($sections);
         if (Functions::testVar($pv = Page::getPagingVars($request, 'usersPanel'))) {
             $userPn = $pv['pageNum'];
@@ -52,11 +63,18 @@ class CmsController extends MainController
             $userPn = 1;
             $userVn = 0;
         }
-        
-        
         $users = User::getUsers($userPn, true, true, $userVn, $request->path());
-        //dd($users); // []; // 
-        $pages = Page::getAllPages();
+        //dd($users); 
+
+        $pagesDir = 'asc';
+        $pagesPn = 1;
+        $pagesVn = 0;
+        $pagesNumShown = 4;
+        $usePageGroupings = true;
+        $pages = Page::getAllPages(
+            true, $pagesDir, $usePageGroupings, $request->path(),
+            'pagesPanel', $pagesVn, $pagesPn, $pagesNumShown
+        );
         //dd($pages);
         $articles = []; // Article::getAll();
         $sidebar = self::getAdminSidebar();
@@ -71,18 +89,9 @@ class CmsController extends MainController
                     null,
                     'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
                 ),
-                'sections' => [
-                    'items' => $sections,
-                    'pagination' => ''
-                ],
-                'users'=> [
-                    'items' => $users[0],
-                    'pagination' => $users[1]
-                ],
-                'pages'=> [
-                    'items' => $pages,
-                    'pagination' => ''
-                ],
+                'sections' => $sections,
+                'users'=> $users,
+                'pages'=> $pages,
                 /*
                     ''=> [
                         'items' => $->toArray(),

@@ -111,7 +111,10 @@ class Section extends Model implements TransformableContainer, ContainerAPI
             $this->description,
             //SectionImage::getAllImages($this->id),
             Image::getArraysFor($this->otherImages),
-            $this->getCategories(), 
+            $this->getCategories(
+                true, $withTrashed, 'asc', $baseUrl,
+                $useTitle, $version, []
+            ), 
             [
                 'created' => $this->created_at,
                 'updated' => $this->updated_at,

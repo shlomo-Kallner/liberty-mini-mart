@@ -297,8 +297,8 @@ class User extends Model implements ContainerAPI
                 }
                 //dd($perm);
             }
-            $res[] = $users;
-            $res[] = Page::genPagingFor(
+            $res['items'] = $users;
+            $res['pagination'] = Page::genPagingFor(
                 $pn - 1, count($tmp), $numPerPage,
                 'usersPanel', $paginatorViewNum, 
                 $paginatorBaseUrl

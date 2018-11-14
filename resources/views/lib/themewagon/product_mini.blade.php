@@ -40,7 +40,7 @@
             </div>
             <a href="javascript:;" class="btn btn-default addToCart" 
             data-product-id="{{ $id2 }}" data-product-url="{{ url($apiURL) }}"
-            data-product-option="@json([])"data-redirect-to=""
+            data-product-option="@json([])" data-redirect-to=""
             >Add to cart</a>
             <a href="javascript:;" class="btn btn-default pull-right orderNow" 
             data-product-id="{{ $id2 }}" data-product-url="{{ url($apiURL) }}"

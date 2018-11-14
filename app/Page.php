@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model, 
     Illuminate\Http\Request,
     App\Utilities\Functions\Functions,
+    App\Utilities\ContainerTransforms,
+    App\Utilities\TransformableContainer,
     App\Utilities\ContainerAPI,
     App\Utilities\ContainerID,
     DB,
@@ -17,9 +19,9 @@ use Illuminate\Database\Eloquent\Model,
     Session;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Page extends Model implements ContainerAPI
+class Page extends Model implements TransformableContainer, ContainerAPI
 {
-    use SoftDeletes, ContainerID;
+    use SoftDeletes, ContainerTransforms, ContainerID;
 
     /**
      * The attributes that should be mutated to dates.
@@ -368,73 +370,6 @@ class Page extends Model implements ContainerAPI
         }
         return $links;
     }
-    
-    /**
-     * Function genPagination() - Generate Pagination Information as acceptable by
-     *                            'lib.themewagon.paginator'...
-     *  All Numbers passed are indexes starting from zero, 
-     *  although they are displayed by the component with one added to them..
-     * Based on the calculations made in 'lib.themewagon.content_list'..
-     *
-     * @param integer $pageNum  - the current page number
-     * @param integer $firstItemShownOnPage - the index of the first item being shown
-     * @param integer $lastItemShownOnPage - the index of the last item being shown
-     * @param integer $totalItems - the total number of items that can be paged through
-     * @param array $rangeOfAllItemIndexes - an array created by Functions::genRange()
-     *                                       of all the indexes of all the items..
-     * @return array 
-     */
-    static public function genPagination(
-        int $pageNum, int $firstItemShownOnPage, int $lastItemShownOnPage,
-        int $totalItems, array $rangeOfAllItemIndexes, int $numPagesPerPagingView = 4,
-        string $pagingFor = '', int $viewNumber = 0, string $baseUrl = ''
-    ) {
-        return [
-            'currentRange' => [
-                'index' => $pageNum,
-                'begin' => $firstItemShownOnPage,
-                'end' => $lastItemShownOnPage,
-            ],
-            'totalItems' => $totalItems,
-            'ranges' => $rangeOfAllItemIndexes,
-            'numPerView' => $numPagesPerPagingView,
-            'pagingFor' => $pagingFor,
-            'viewNumber' => $viewNumber,
-            'baseUrl' => $baseUrl
-        ];
-    }
-
-    static public function genPagingFor(
-        int $pageNum, int $totalItems, int $numItemsPerPage = 4, 
-        string $pagingFor = '', int $viewNumber = 0, 
-        string $baseUrl = ''
-    ) {
-        $rngs = Functions::genRange(0, $totalItems);
-        $pgs = collect($rngs);
-        $tpr = $pgs->forPage($pageNum + 1, $numItemsPerPage);
-        $pa = Functions::genPageArray($rngs, $numItemsPerPage);
-        //dd($rngs, $pgs, $tpr, $pa, $tpr->first(), $tpr->last());
-        return self::genPagination(
-            $pageNum, Functions::getVar($tpr->first(), 0), 
-            Functions::getVar($tpr->last(), 0),
-            $totalItems, $pa, $numItemsPerPage,
-            $pagingFor, $viewNumber, $baseUrl
-        );
-    }
-
-    static public function getPagingVars(
-        Request $request, string $pagingFor
-    ) {
-        if ($request->has('pageNum') && $request->has('pagingFor') && $request->has('viewNum')) {
-            if ($pagingFor == $request->input('pagingFor')) {
-                return [
-                    'pageNum' => $request->input('pageNum'),
-                    'viewNum' => $request->input('viewNum'),
-                ];
-            }
-        }
-        return null;
-    }
 
     ///
 
@@ -547,19 +482,69 @@ class Page extends Model implements ContainerAPI
 
     ///
 
-    public function toContentArray()
+    static public function getOrderByKey()
     {
-        
+        return 'url';
+    }
+
+    public function getFullUrl(string $baseUrl = 'store')
+    {
+        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
+        // $surl = $this->catalog->getFullUrl($baseUrl);
+        //return $baseUrl . '/page/' . $this->url;
+        return 'pages/' . $this->url;
+    }
+
+    public function toContentArray(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ) {
         return self::makeContentArray(
-            $this->article, $this->description, $this->url,
-            $this->name, $this->title, 
+            $this->article, $this->description, 
+            $this->getFullUrl($baseUrl), $this->name, 
+            $useTitle ? $this->title : $this->image->alt, 
             Image::getImageArray($this->image), 
             Image::getArraysFor($this->images), 
             self::getBreadcrumbs(
-                self::genBreadcrumb($this->name, $this->url),
+                self::genBreadcrumb(
+                    $this->name, $this->getFullUrl($baseUrl)
+                ),
                 self::genBreadcrumb('Home', '/')
             ), 
             $this->getVisibility()
+        );
+    }
+
+    public function toFull(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ) {
+        return $this->toContentArray(
+            $baseUrl, $version, $useTitle, $withTrashed
+        );
+    }
+
+    public function toMini(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ) {
+        $i = Image::getImageArray($this->image);
+        return makeMini(
+            $i['img'], $this->name, 
+            $this->getFullUrl($baseUrl),
+            '', $this->id, ''
+        );
+    }
+
+    public function toSidebar(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ) {
+        $i = Image::getImageArray($this->image);
+        return self::makeSidebar(
+            $this->getFullUrl($baseUrl), $i['img'], 
+            $useTitle ? $this->title : $i['alt'],
+            '', $this->id
         );
     }
 
@@ -568,7 +553,7 @@ class Page extends Model implements ContainerAPI
         array $links = null
     ) {
         if (!Functions::testVar($img)) {
-            $i = Image::getImageArray($this->image);
+            $i = $this->image;
         } else {
             $i = $img;
         }
@@ -584,10 +569,10 @@ class Page extends Model implements ContainerAPI
             $o = $otherImages;
         }
         return self::makeContentArray(
-            $this->article, $this->description, $this->url,
+            $this->article, $this->description, $this->getFullUrl(),
             $this->name, $this->title, $i, $o, 
             self::getBreadcrumbs(
-                self::genBreadcrumb($this->name, $this->url),
+                self::genBreadcrumb($this->name, $this->getFullUrl()),
                 $b
             ), 
             $this->getVisibility()
@@ -647,9 +632,32 @@ class Page extends Model implements ContainerAPI
         }
     }
 
+    static public function getOrderedByPageGroupings(
+        string $dir = 'asc', $transform = null, bool $useTitle = true
+    ) {
+        $pages = [];
+        $tpg = PageGroup::orderBy('order', $dir)->all();
+        if (Functions::testVar($tpg) && count($tpg) > 0) {
+            foreach ($tpg as $group) {
+                $pg = $group->pages()->orderBy('order', $dir)->get();
+                foreach ($pg as $page) {
+                    if (Functions::testVar($page)) {
+                        $pages[] = self::doTransform(
+                            $page, $transform, 'store', $useTitle, 1, 
+                            true, null
+                        );
+                    }
+                }
+            }
+        }
+        return $pages;
+    }
+
     static public function getAllPages(
-        bool $getObj = false, string $dir = 'asc',
-        bool $usePageGroupings = true
+        bool $asArrays = true, string $dir = 'asc',
+        bool $usePageGroupings = true, string $path = '',
+        string $pagingFor = '', int $viewNumber = 0, 
+        int $pageNum = 0, int $numShown = 4
     ) {
         /* 
             $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
@@ -665,33 +673,20 @@ class Page extends Model implements ContainerAPI
         // Optional: create a 'PageGroupInfo' 
         //  Table + Migration for use with PageGroup..
         /// UPDATE: DONE (on PageGroup) AND DONE (as PageGrouping)
-        $pages = [];
         if ($usePageGroupings) {
-            $tpg = PageGroup::orderBy('order', $dir)->all();
-            if (Functions::testVar($tpg) && count($tpg) > 0) {
-                foreach ($tpg as $group) {
-                    $pg = $group->pages()->orderBy('order', $dir)->get();
-                    foreach ($pg as $page) {
-                        $pages[] = $getObj
-                            ? $page
-                            : $page->toContentArray();
-                    }
-                }
-            }
+            $pages = self::getOrderedByPageGroupings(
+                $dir, $asArrays, true
+            );
+            return self::getPaginatedItemsArray(
+                $pages, $pageNum, $numShown, 
+                $pagingFor, $path, 
+                $viewNumber
+            );
         } else {
-            $tmp = self::all();
-            if (Functions::testVar($tmp) && count($tmp) > 0) {
-                //dd($tmp);
-                if ($getObj) {
-                    $pages = $tmp->all();
-                } else {
-                    foreach ($tmp as $p) {
-                        $pages[] = $p->toContentArray();
-                    }
-                }
-            }
-            //dd($pages);
+            return self::getAllWithPagination(
+                $asArrays, $pageNum, $numShown, $pagingFor, $dir, 
+                true, 'store', $path, $viewNumber, true, 1
+            );
         }
-        return $pages;
     }
 }

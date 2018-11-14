@@ -9,7 +9,7 @@
             \App\Page;
 
         $sidebar2 = Functions::getContent($sidebar??[],[]);
-        $page2 = Functions::getContent($page['article']??[],[]);
+        $article2 = Functions::getContent($page['article']??[],[]);
         $sections2 = Functions::getContent($page['sections']['items']??[],[]);
         $sections_paginator2 = Functions::getContent($page['sections']['pagination']??[],[]);
         $users2 = Functions::getContent($page['users']['items']??[],[]);
@@ -58,15 +58,15 @@
         <div class="col-md-9 col-sm-7">
             @if (true)
                 @component('lib.themewagon.article')
-                    @foreach ($page2 as $key => $item)
+                    @foreach ($article2 as $key => $item)
                         @slot($key)
                             {!! $item !!}
                         @endslot
                     @endforeach
                 @endcomponent
             @else
-                <h1>{{ $page2['header'] }}</h1>
-                <h2>{{ $page2['subheading'] }}</h2>
+                <h1>{{ $article2['header'] }}</h1>
+                <h2>{{ $article2['subheading'] }}</h2>
             @endif
 
             @section('cms-content')
@@ -87,7 +87,7 @@
 
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a class="btn btn-primary" href="{{ url('admin/section/create') }}" role="button">
+                            <a class="btn btn-primary pull-left" href="{{ url('admin/section/create') }}" role="button">
                                 Create a New Section
                             </a>
                         </div>

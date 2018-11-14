@@ -21,9 +21,9 @@ class PageController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() 
+    public function index(Request $request) 
     {
-        //
+        $pages = Page::getAllWithPagination();
     }
 
     /**

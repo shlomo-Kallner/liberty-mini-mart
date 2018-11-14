@@ -19,15 +19,15 @@
         $imageAlt2 = 'Cool green dress with red bell';
         $otherImages2 = [
             [
-                'image' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model3.jpg',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model3.jpg',
                 'alt' => 'Berry Lace Dress',
             ],
             [
-                'image' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model4.jpg',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model4.jpg',
                 'alt' => 'Berry Lace Dress',
             ],
             [
-                'image' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model5.jpg',
+                'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/products/model5.jpg',
                 'alt' => 'Berry Lace Dress',
             ]
         ];
@@ -179,8 +179,8 @@
                   </div>
                   <div class="product-other-images">
                     @foreach ($otherImages2 as $item)
-                        <a href="{{ asset($item['image']) }}" class="fancybox-button" rel="photos-lib">
-                            <img alt="{{ $item['alt'] }}" src="{{ asset($item['image']) }}">
+                        <a href="{{ asset($item['img']) }}" class="fancybox-button fancybox.image" rel="photos-lib">
+                            <img alt="{{ $item['alt'] }}" src="{{ asset($item['img']) }}">
                         </a>
                     @endforeach
                   </div>

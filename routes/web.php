@@ -74,6 +74,10 @@ Route::prefix('test')->group(
             }
         );
 
+        Route::get(
+            'cms', 'CmsController@index'
+        );
+
     }
 );
 
@@ -288,7 +292,8 @@ Route::resource(
     ); 
 */
 
-Route::get('page/{page}', 'PageController@show');
+Route::get('pages', 'PageController@index');
+Route::get('pages/{page}', 'PageController@show');
 
 /* 
 
