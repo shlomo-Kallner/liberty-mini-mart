@@ -49,12 +49,16 @@ class CmsController extends MainController
         $sectDir = 'asc';
         $sectBaseUrl = 'store';
         $sectViewNum = 0;
-        $sections = Section::getAllWithPagination(
-            true, $sectPageNum, $sectNumShown, 
-            $sectPagingFor, $sectDir, true, $sectBaseUrl, 
-            $request->path(), $sectViewNum, 
-            true, 1
-        );
+        if (false) {
+            $sections = Section::getAllWithPagination(
+                true, $sectPageNum, $sectNumShown, 
+                $sectPagingFor, $sectDir, true, $sectBaseUrl, 
+                $request->path(), $sectViewNum, 
+                true, 1
+            );
+        } else {
+            $sections = [];
+        }
         //dd($sections);
         if (Functions::testVar($pv = Page::getPagingVars($request, 'usersPanel'))) {
             $userPn = $pv['pageNum'];

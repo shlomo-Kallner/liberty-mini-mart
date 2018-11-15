@@ -579,6 +579,17 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
+    // TO BE IMPLEMENTED!!!
+    public function toContentArrayWithPagination(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        int $pageNum, int $numItemsPerPage = 4, 
+        string $pagingFor = '', int $viewNumber = 0, 
+        string $listUrl = '#'
+    ) {
+        return $this->toContentArray($baseUrl);
+    }
+
     static public function makeContentArray(
         $article, string $header, string $url,
         string $name, string $title, $img, 
@@ -636,7 +647,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         string $dir = 'asc', $transform = null, bool $useTitle = true
     ) {
         $pages = [];
-        $tpg = PageGroup::orderBy('order', $dir)->all();
+        $tpg = PageGroup::orderBy('order', $dir)->get();
         if (Functions::testVar($tpg) && count($tpg) > 0) {
             foreach ($tpg as $group) {
                 $pg = $group->pages()->orderBy('order', $dir)->get();
@@ -685,7 +696,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         } else {
             return self::getAllWithPagination(
                 $asArrays, $pageNum, $numShown, $pagingFor, $dir, 
-                true, 'store', $path, $viewNumber, true, 1
+                true, '', $path, $viewNumber, true, 1
             );
         }
     }

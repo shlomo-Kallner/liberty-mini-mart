@@ -72,12 +72,12 @@ window.Laravel.masterCart = new Vue(
       cartData: JSON.parse(window.Laravel.cart)
     },
     computed: {
-      cart : {
+      cart: {
         get: function () {
           return this.cartData;
         },
         set: function (data) {
-          if (typeof data == 'string') {
+          if (typeof data === 'string') {
             this.cartData = JSON.parse(data);
           } else if (typeof data == 'object') {
             this.cartData = data;

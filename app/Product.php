@@ -351,6 +351,17 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
+    // TO BE IMPLEMENTED!!!
+    public function toContentArrayWithPagination(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        int $pageNum, int $numItemsPerPage = 4, 
+        string $pagingFor = '', int $viewNumber = 0, 
+        string $listUrl = '#'
+    ) {
+        return $this->toContentArray($baseUrl);
+    }
+
     static public function getOrderByKey()
     {
         return 'category_id';

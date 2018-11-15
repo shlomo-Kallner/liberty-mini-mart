@@ -465,8 +465,8 @@ class Functions
      * 
      * Can also be used for determining the number 
      * of Pages of content, using the total
-     * number of content items as $ppp
-     * and the number of Items per Page as $ppr.
+     * number of content items as $ppp (productsPerPage)
+     * and the number of Items per Page as $ppr (productsPerRow).
      * 
      * @param integer $ppp - productsPerPage
      * @param integer $ppr - productsPerRow

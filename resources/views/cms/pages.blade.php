@@ -15,21 +15,26 @@
     @forelse ($pages2 as $page)
 
         @php
-            $panelId1 = 'headingPagePanel-of-' . $page['url'];
-            $panelId2 = 'collapsePagePanel-of-' . $page['url'];
-            $panelId3 = 'pageContentCollapsedDiv-of-' . $page['url'];
+            $tmpURL = explode('/', $page['url']);
+            if (count($tmpURL) > 1) {
+                $endUrlForId = collect($tmpURL)->last();
+            } else {
+                $endUrlForId = $tmpURL[0];
+            }
+            $panelId1 = 'headingPagePanel-of-' . $endUrlForId;
+            $panelId2 = 'collapsePagePanel-of-' . $endUrlForId;
+            $panelId3 = 'pageContentCollapsedDiv-of-' . $endUrlForId;
             $urls = [
-                //'page/{page}'
-                'edit' => 'admin/page/' . $page['url'] . '/edit',
-                //'create' => 'admin/page/create',
-                'delete' => 'admin/page/' . $page['url'] . '/delete',
-                //'show' => $section['url']  ,
+                //'pages/{page}'
+                'edit' => 'admin/' . $page['url'] . '/edit',
+                //'create' => 'admin/pages/create',
+                'delete' => 'admin/' . $page['url'] . '/delete',
+                //'show' => 'admin/pages/{page}',
+                //'index' => 'admin/pages/',
             ];
-            $pageEditUrl = 'admin/page/' . $page['url'] . '/edit';
-            $pageDeleteUrl = 'admin/page/' . $page['url'] . '/delete';
-            //$newCategoryCreateUrl = 'admin/page/' . $page['url'] . '/category/create';
-        
-            //$sectionPanelID = '';
+            $pageEditUrl = 'admin/' . $page['url'] . '/edit';
+            $pageDeleteUrl = 'admin/' . $page['url'] . '/delete';
+            
         @endphp
 
         <div class="panel panel-default">
@@ -123,9 +128,6 @@
                             @endif
                         @endslot
                     @endforeach
-                    {{--  @slot('pagingFor')
-                        {!! 'admin.PagesPanel' !!}
-                    @endslot  --}}
                 @endcomponent
             </div>
         </div>

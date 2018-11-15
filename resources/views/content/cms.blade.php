@@ -176,3 +176,8 @@
 
     
 @endsection
+
+@section('js-extra')
+    <script src="{{ asset('js/admin.js') }}" type="text/javascript"></script>
+    @parent
+@endsection

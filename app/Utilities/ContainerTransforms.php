@@ -5,7 +5,8 @@ namespace App\Utilities;
 use App\Utilities\Functions\Functions;
 use Illuminate\Support\Collection,
     Illuminate\Http\Request;
-use App\Page;
+use App\Page,
+    App\Image;
 
 interface TransformableContainer
 {
@@ -21,6 +22,19 @@ interface TransformableContainer
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true
     );
+
+    public function toContentArrayWithPagination(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        int $pageNum, int $numItemsPerPage = 4, 
+        string $pagingFor = '', int $viewNumber = 0, 
+        string $listUrl = '#'
+    );
+
+    /* public function toTableArray(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ); */
 
     public function toFull(
         string $baseUrl = 'store', int $version = 1, 
@@ -210,7 +224,8 @@ trait ContainerTransforms
      *                          updating by the backend.
      * @param integer $viewNumber - The current (or to-be Current) Display-Page's index,
      *                            as received via user input (the user having clicked 
-     *                            on a pagination link).
+     *                            on a pagination link). (May actually have to do with 
+     *                            Display-Pages of the PAGINATION's own links!)
      * @param string $baseUrl - The URL to be used in generating pagination links.
      * @return array 
      */
@@ -254,25 +269,29 @@ trait ContainerTransforms
      * @param integer $viewNumber - The current (or to-be Current) 
      *                            Display-Page's index, as received via 
      *                            user input (the user having clicked on 
-     *                            a pagination link).
+     *                            a pagination link). 
+     *                            (May actually have to do with 
+     *                            Display-Pages of the PAGINATION's own links!)
      * @param string $baseUrl - The URL to be used in generating pagination links.
      * @return array
      */
     static public function genPagingFor(
         int $pageNum, int $totalItems, int $numItemsPerPage = 4, 
         string $pagingFor = '', int $viewNumber = 0, 
-        string $baseUrl = ''
+        string $listUrl = '#'
     ) {
         $rngs = Functions::genRange(0, $totalItems);
         $pgs = collect($rngs);
-        $tpr = $pgs->forPage($pageNum + 1, $numItemsPerPage);
+        $tpr = $pgs->forPage(
+            $pageNum <= 0 ? 1 : $pageNum, $numItemsPerPage
+        );
         $pa = Functions::genPageArray($rngs, $numItemsPerPage);
         //dd($rngs, $pgs, $tpr, $pa, $tpr->first(), $tpr->last());
         return self::genPagination(
             $pageNum, Functions::getVar($tpr->first(), 0), 
             Functions::getVar($tpr->last(), 0),
             $totalItems, $pa, $numItemsPerPage,
-            $pagingFor, $viewNumber, $baseUrl
+            $pagingFor, $viewNumber, $listUrl
         );
     }
 
@@ -291,14 +310,15 @@ trait ContainerTransforms
     }
 
     static public function getPaginatedItemsArray(
-        $args, $pageNum, int $numShown = 4, 
+        $args, int $pageNum, int $numShown = 4, 
         string $pagingFor = '', string $listUrl = '', 
         int $viewNumber = 0 
     ) {
         $num = count($args);
         if (Functions::testVar($args) && $num > 0) {
+            $tp = collect($args)->forPage($pageNum, $numShown);
             return [
-                'items' => $args,
+                'items' => $tp->all(),
                 'pagination' => self::genPagingFor(
                     $pageNum, $num, $numShown, 
                     $pagingFor, $viewNumber, 
@@ -311,18 +331,23 @@ trait ContainerTransforms
     }
 
     static public function getAllWithPagination(
-        $transform, $pageNum, int $numShown = 4, 
+        bool $transform, int $pageNum, int $numShown = 4, 
         string $pagingFor = '', string $dir = 'asc', 
         bool $withTrashed = true, string $baseUrl = 'store', 
         string $listUrl = '', int $viewNumber = 0, 
         bool $useTitle = true, int $version = 1
     ) {
-        $tmp = self::getAllWithTransform(
-            $transform, $dir, $withTrashed, $baseUrl, 
-            $useTitle, $version
+        $paging = collect(Functions::genRange(0, self::count()));
+        $page = $paging->forPage($pageNum, $numShown);
+        $tmp = self::getOrderedBy($dir, $withTrashed)
+            ->offset($page->first())->limit($numShown)
+            ->get();
+        $tmp1 = self::getFor(
+            $tmp, $baseUrl, $transform,
+            $useTitle, $version, $withTrashed
         );
         return self::getPaginatedItemsArray(
-            $tmp, $pageNum, $numShown, 
+            $tmp1, $pageNum, $numShown, 
             $pagingFor, $listUrl, 
             $viewNumber
         );
@@ -392,16 +417,34 @@ trait ContainerTransforms
         }
     }
 
+    /** 
+     * Function getForWithPagination() - 
+     * 
+     * Usefull for lib.themewagon.content_list, 
+     *             lib.themewagon.sidebar,
+     *             or lib.themewagon.bestsellers views..
+    */
     static public function getForWithPagination(
-        $args, $transform, $pageNum,
+        $args, $transform, int $pageNum,
         int $numShown = 4, string $pagingFor = '', 
         string $listUrl = '', string $baseUrl = 'store', 
         string $dir = 'asc', int $viewNumber = 0, 
         bool $withTrashed = true, bool $useTitle = true, 
         int $version = 1, $default = []
     ) {
+        $cTmp = count($args);
+        if ($cTmp <= $numShown) {
+            $argTmp = $args;
+        } else {
+            $paging = collect(Functions::genRange(0, $cTmp));
+            $page = $paging->forPage($pageNum, $numShown);
+            $argTmp = [];
+            foreach ($page as $idx) {
+                $argTmp[] = $args[$idx];
+            }
+        }
         $tmp = self::getFor(
-            $args, $baseUrl, $transform, $useTitle, $version,
+            $argTmp, $baseUrl, $transform, $useTitle, $version,
             $withTrashed, $default
         );
         if (Functions::testVar($tmp)) {
@@ -413,6 +456,55 @@ trait ContainerTransforms
         } else {
             return $default;
         }
+    }
+
+    static public function getForWithRecursivePagination(
+        $args, int $pageNum, bool $transform = true,
+        int $numShown = 4, string $pagingFor = '', 
+        string $listUrl = '', string $baseUrl = 'store', 
+        string $dir = 'asc', int $viewNumber = 0, 
+        bool $withTrashed = true, bool $useTitle = true, 
+        int $version = 1, $default = []
+    ) {
+        if (is_array($args) || $args instanceof Collection) {
+            $cTmp = count($args);
+            if ($cTmp <= $numShown && $cTmp > 0) {
+                $argTmp = $args instanceof Collection 
+                    ? $args->all() 
+                    : $args;
+            } elseif ($cTmp > 0) {
+                $paging = collect(Functions::genRange(0, $cTmp));
+                $page = $paging->forPage($pageNum, $numShown);
+                $argTmp = [];
+                foreach ($page as $idx) {
+                    $argTmp[] = $args[$idx];
+                }
+            }
+            $tmp = [];
+            foreach ($argTmp as $item) {
+                if ($item instanceof self) {
+                    if ($transform) {
+                        if ($res = $item->toContentArrayWithPagination(
+                            $baseUrl, $version, $useTitle, $withTrashed,
+                            $pageNum, $numShown, $pagingFor, $viewNumber, 
+                            $listUrl
+                        )) {
+                            $tmp[] = $res;
+                        }
+                    } else {
+                        $tmp[] = $item;
+                    }
+                }
+            }
+            if (Functions::testVar($tmp) && count($tmp) > 0) {
+                return self::getPaginatedItemsArray(
+                    $tmp, $pageNum, $numShown, 
+                    $pagingFor, $listUrl, 
+                    $viewNumber
+                );
+            } 
+        }
+        return $default;
     }
 
     static public function getContentArrays(

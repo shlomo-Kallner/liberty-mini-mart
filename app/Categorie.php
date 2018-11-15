@@ -120,6 +120,22 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         return 'section_id';
     }
 
+    static public function makeTableArray(
+        string $name, string $url, string $title,
+        $img, string $description,
+        string $sticker = '', array $dates = [], int $id = 0
+    ) {
+        return [
+            'id' => $id,
+            'name' => $name,
+            'img' => Image::getImageArray($img),
+            'title' => $title,
+            'url' => $url,
+            'description' => $description,
+            'dates' => $dates??[],
+        ];
+    }
+
     static public function makeContentArray(
         string $name, string $url, string $title,
         $img, $article, string $description,
@@ -152,6 +168,17 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         int $i = 0
     ) {
 
+    }
+
+    // TO BE IMPLEMENTED!!!
+    public function toContentArrayWithPagination(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        int $pageNum, int $numItemsPerPage = 4, 
+        string $pagingFor = '', int $viewNumber = 0, 
+        string $listUrl = '#'
+    ) {
+        return $this->toContentArray($baseUrl);
     }
 
     public function toContentArray(

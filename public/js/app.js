@@ -29228,7 +29228,7 @@ window.Laravel.masterCart = new Vue({
         return this.cartData;
       },
       set: function set(data) {
-        if (typeof data == 'string') {
+        if (typeof data === 'string') {
           this.cartData = JSON.parse(data);
         } else if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default()(data)) == 'object') {
           this.cartData = data;

@@ -245,6 +245,7 @@ class UserSession extends Model
                 : self::where('session_id', $id)->first();
         } else {
             $whereData = null;
+            $orWhereData = null;
             if (is_array($id) && Functions::hasPropKeyIn($id, 'ip')
                 && Functions::hasPropKeyIn($id, 'agent')
             ) {
@@ -262,13 +263,26 @@ class UserSession extends Model
                     ['user_agent', '=', $id->userAgent()]
                 ];
                 if ($id->hasSession()) {
-                    $whereData[] = ['session_id', '=', $id->session()->getId()];
+                    $orWhereData = [
+                        ['session_id', '=', $id->session()->getId()]
+                    ];
                 }
             } 
             if (Functions::testVar($whereData)) {
-                return $withTrashed
-                    ? self::withTrashed()->where($whereData)->first()
-                    : self::where($whereData)->first();
+                if (Functions::testVar($orWhereData)) {
+                    return $withTrashed
+                        ? self::withTrashed()
+                            ->where($whereData)
+                            ->orWhere($orWhereData)
+                            ->first()
+                        : self::where($whereData)
+                            ->orWhere($orWhereData)
+                            ->first();
+                } else {
+                    return $withTrashed
+                        ? self::withTrashed()->where($whereData)->first()
+                        : self::where($whereData)->first();
+                }
             }
         }
         return null;

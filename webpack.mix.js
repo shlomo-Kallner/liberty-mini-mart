@@ -16,6 +16,11 @@ mix.js([
     ], 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css');
 
+mix.js(
+    [
+        'resources/assets/js/admin.js'
+    ], 'public/js');
+
 //mix.styles([],'public/css/.css');
 //mix.styles([],'public/css/support.css');
 //mix.styles([],'public/css/metronic.css');

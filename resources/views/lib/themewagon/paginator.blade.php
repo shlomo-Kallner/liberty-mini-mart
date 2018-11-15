@@ -77,7 +77,7 @@
                     $numberedViewUrls[Functions::getVar($val, 0)] = $baseUrl2 . '?' . http_build_query(
                         [
                             'viewNum' => $currentView, 
-                            'pageNum'=> Functions::getVar($val, 0) + 1,
+                            'pageNum'=> Functions::getVar($val, 0), // + 1,
                             'pagingFor' => $pagingFor2 
                         ]
                     );

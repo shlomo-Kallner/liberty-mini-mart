@@ -299,7 +299,7 @@ class User extends Model implements ContainerAPI
             }
             $res['items'] = $users;
             $res['pagination'] = Page::genPagingFor(
-                $pn - 1, count($tmp), $numPerPage,
+                $pn, count($tmp), $numPerPage,
                 'usersPanel', $paginatorViewNum, 
                 $paginatorBaseUrl
             );
