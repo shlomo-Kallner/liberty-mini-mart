@@ -19,22 +19,6 @@ class CmsController extends MainController
     public function __construct($name = '', $titleNameSep = ' | ') 
     {
         parent::__construct($name, $titleNameSep);
-        /* 
-            $this->middleware(
-                function ($request, $next) {
-                    if (User::getIsAdmin()) {
-                        return $next($request);
-                    } else {
-                        $request->session()->reflash();
-                        
-                        $request->session()->flash('redirectFullUrl', $request->fullUrl());
-                        $request->session()->flash('redirectPath', $request->path());
-                        
-                        return redirect('signin/' . UserController::pagePathJoin($request->path()));
-                    }
-                }
-            );
-        */
     }
 
     public function index(Request $request)
@@ -71,8 +55,13 @@ class CmsController extends MainController
         //dd($users); 
 
         $pagesDir = 'asc';
-        $pagesPn = 1;
-        $pagesVn = 0;
+        if (Functions::testVar($pv = Page::getPagingVars($request, 'pagesPanel'))) {
+            $pagesPn = $pv['pageNum'];;
+            $pagesVn = $pv['viewNum'];
+        } else {
+            $pagesPn = 1;
+            $pagesVn = 0;
+        }
         $pagesNumShown = 4;
         $usePageGroupings = true;
         $pages = Page::getAllPages(

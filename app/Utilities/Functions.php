@@ -471,7 +471,7 @@ class Functions
      * @param integer $ppp - productsPerPage
      * @param integer $ppr - productsPerRow
      *
-     * @return integer      - rowsPerPage
+     * @return integer      - numRowsPerPage
      */
     static public function genRowsPerPage(int $ppp, int $ppr) 
     {
@@ -490,7 +490,7 @@ class Functions
     /**
      * Function genPageArray
      *
-     * @param  array   $range      - must be a Range from 
+     * @param  array   $range      - must be a Range of Indexes from 
      *                             genRange() or similar array!
      * @param  integer $numPerPage
      * 
