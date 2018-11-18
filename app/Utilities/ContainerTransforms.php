@@ -278,7 +278,7 @@ trait ContainerTransforms
     static public function genPagingFor(
         int $pageNum, int $totalItems, int $numItemsPerPage = 4, 
         string $pagingFor = '', int $viewNumber = 0, 
-        string $listUrl = '#'
+        string $listUrl = '#', int $numPagingIdxsPerPagingView = 0
     ) {
         $rngs = Functions::genRange(0, $totalItems);
         $pgs = collect($rngs);
@@ -290,7 +290,8 @@ trait ContainerTransforms
         return self::genPagination(
             $pageNum, Functions::getVar($tpr->first(), 0), 
             Functions::getVar($tpr->last(), 0),
-            $totalItems, $pa, $numItemsPerPage,
+            $totalItems, $pa, 
+            $numPagingIdxsPerPagingView ?: $numItemsPerPage,
             $pagingFor, $viewNumber, $listUrl
         );
     }

@@ -2,6 +2,7 @@
 @php
     $testing = true;
     use \App\Utilities\Functions\Functions;
+    use \App\Page;
 
     // The DATA for the SLOTS of THIS COMPONENT are gathered HERE!!!  
     // Note: they CAN be empty... 
@@ -36,14 +37,20 @@
 
         // Initializing the row Indices while we are at it..
         $totalProducts = count($products2);
-        $rowIdxs = Functions::genPagesIndexes($productsPerPage2, $productsPerRow2, $totalProducts, $pageNumber2);
+        $rowIdxs = Functions::genPagesIndexes(
+            $productsPerPage2, $productsPerRow2, 
+            $totalProducts, $pageNumber2
+        );
         $currentPage = $pageNumber2 > -1 ? $pageNumber2 : 0;
         // if $productsPerPage is set then 
         //  EVEN IF $pageNumber2 IS NOT set then we have paganation!
         // THOUGH REALLY if we have more products than 
         //  $productsPerRow times $rowsPerPage then we have paganation
         // regardless...
-        //dd($totalProducts, $rowIdxs, $productsPerPage2, $productsPerRow2, $pageNumber2, $currentPage);
+        // dd(
+        //   $totalProducts, $rowIdxs, $productsPerPage2, 
+        //   $productsPerRow2, $pageNumber2, $currentPage
+        // );
 
         if ($pageNumber2 > -1) {
             // initializing the paginator
@@ -53,7 +60,11 @@
             //    $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1]
             //);
             //dd($rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])]);
-            $numPages = Functions::genRowsPerPage($totalProducts, $productsPerPage2);
+            $numPages = Functions::genRowsPerPage(
+                $totalProducts, $productsPerPage2
+            );
+            $firstItem = $rowIdxs[0][0][0];
+            $lastItem = $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1];
             $paginator = [
                 'totalItems' => $totalProducts,
                 'numRanges' => $numPages,
@@ -64,6 +75,11 @@
                     'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
                 ],
             ];
+            $paginator2 = Page::genPagination(
+                int $pageNum, int $firstItemShownOnPage, int $lastItemShownOnPage,
+                int $totalItems, array $rangeOfAllItemIndexes, int $numPagesPerPagingView = 4,
+                string $pagingFor = '', int $viewNumber = 0, string $baseUrl = ''
+            );
         } else {
             $paginator = [];
         }
@@ -335,9 +351,6 @@
                     {!! serialize($val) !!}
                 @endslot
             @endforeach
-            {{-- @slot('paginator')
-                {!! serialize($paginator) !!}
-            @endslot --}}
         @endcomponent
     @endif
 

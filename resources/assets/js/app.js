@@ -6,11 +6,16 @@
  */
 import { LaravelAlert } from './lib/LaravelAlert'
 
+import { Pagination } from 'vue-pagination-2'
+
+
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.Vue.component('pagination', Pagination);
 
-
+const uuidv5 = require('uuid/v5');
+const uuidv5 = require('uuid/v5');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -18,22 +23,23 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example', require('./components/Example.vue'));
+
 
 /*
-const app = new Vue({
-    el: '#app'
-});
+  window.Vue.component('example', require('./components/Example.vue'));
+  const app = new Vue({
+      el: '#app'
+  });
  */
 
-Vue.component('dismissable-alert', require('./components/dismissable-alert.vue'));
-Vue.component('cart-component', require('./components/cart.vue'));
+window.Vue.component('dismissable-alert', require('./components/dismissable-alert.vue'));
+window.Vue.component('cart-component', require('./components/cart.vue'));
 
 
 window.Laravel.page.alert = new LaravelAlert(window.Laravel.alert);
 
 
-window.Laravel.masterAlert = new Vue({
+window.Laravel.masterAlert = new window.Vue({
   el: '#masterPageAlertContainer',
   template: '<dismissable-alert v-bind:initAlert="alert"></dismissable-alert>',
   data: {
@@ -42,7 +48,7 @@ window.Laravel.masterAlert = new Vue({
   },
   created: function () {
     // `this` points to the vm instance
-    //console.log('alert is: ' + this.alert);
+    // console.log('alert is: ' + this.alert);
   },
 
   computed: {
@@ -63,7 +69,7 @@ window.Laravel.page.setAlert = function (data) {
 };
 
 
-window.Laravel.masterCart = new Vue(
+window.Laravel.masterCart = new window.Vue(
   {
     el: '#topCartComp',
     template: '<cart-component v-bind:initCart="cart" v-bind:baseUrl="baseUrl"></cart-component>',
