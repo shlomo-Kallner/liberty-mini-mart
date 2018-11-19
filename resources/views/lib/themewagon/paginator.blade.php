@@ -4,73 +4,55 @@
     $testing = false;
 
     use \App\Utilities\Functions\Functions;
+    use \App\Page;
     use \Illuminate\Support\Collection;
 
-    //$paginator2 = Functions::getUnBladedContent($paginator??'');
-    $currentRange2 = Functions::getUnBladedContent($currentRange??'','');
-    $totalItems2 = intval(Functions::getUnBladedContent($totalItems??'',''));
-    //$numRanges2 = intval(Functions::getUnBladedContent($numRanges??'',''));
-    $ranges2 = Functions::getUnBladedContent($ranges??'','');
-    $numPerView2 = intval(Functions::getUnBladedContent($numPerView??'','4'));
-    $pagingFor2 = Functions::getBladedString($pagingFor??'','');
-    $viewNumber2 = intval(Functions::getUnBladedContent($viewNumber??'', -1));
-    $baseUrl2 = Functions::getUnBladedContent($baseUrl??'', '');
-    
+    // $numRanges2 = intval(Functions::getUnBladedContent($numRanges??'',''));    
+    // $paginator2 = Functions::getUnBladedContent($paginator??'');
+    // $currentRange2 = Functions::getUnBladedContent($currentRange??'','');
+    // $ranges2 = Functions::getUnBladedContent($ranges??'','');
     //dd($paginator2);
     //dd($currentRange2, $totalItems2, $ranges2);
     //dd($currentRange, $totalItems, $ranges);
     //dd($numRanges2, $numRanges);
-    //dd($ranges2);
-    $paging = true;
-    if ($currentRange2 == '' || $totalItems2 == '' || $ranges2 == '' || $numPerView2 == '') // || $numRanges2 == '' 
-    {
+    //dd($ranges2);    
+        
+    $firstItemIndex2 = intval(Functions::getBladedString($firstItemIndex??'', 0));
+    $lastItemIndex2 = intval(Functions::getBladedString($lastItemIndex??'', 0));
+    $numItemsPerPage2 = intval(Functions::getBladedString($numItemsPerPage??'', 0));
+    $totalItems2 = intval(Functions::getBladedString($totalItems??'', -1));
+
+    $currentPage2 = intval(Functions::getBladedString($currentPage??'', 0));
+    $totalNumPages2 = intval(Functions::getBladedString($totalNumPages??'', -1));
+    $numPagesPerView2 = intval(Functions::getBladedString($numPerView??'', '4'));
+    $viewNumber2 = intval(Functions::getBladedString($viewNumber??'', 0));
+    
+    $pagingFor2 = Functions::getBladedString($pagingFor??'', 'null');
+    $baseUrl2 = Functions::getBladedString($baseUrl??'', '');
+
+    if (($currentPage2 === -1) || ($totalItems2 === -1) 
+    || ($firstItemIndex2 === -1) || ($lastItemIndex2 === -1) 
+    || ($totalNumPages2 === -1) || ($numPagesPerView2 === -1) 
+    ) {
         $paging = false;
-    } 
-    //dd($paging, $currentRange2, $totalItems2, $ranges2, $numPerView2);
-    if (Functions::testVar($paging)) {
-        //$numPerView = Functions::testVar($numPerView2) ? $numPerView2 : 4;
+    } else {
+        $paging = true;
+        
         $numViews = Functions::genRowsPerPage(
-            count($ranges2), $numPerView2
+            $totalNumPages2, $numPagesPerView2
+        );
+        $viewRangeIdx = Page::genFirstAndLastItemsIdxes( 
+            $totalNumPages2, $viewNumber2, $numPagesPerView2
         );
         //$viewIdxs = Functions::genPageArray($ranges2, $numPerView2);
-        $viewIdxs = Functions::genPageArray(
-            Functions::genRange(0, $numViews), 
-            $numPerView2
+        $viewIdxs = Functions::genRange(
+            $viewRangeIdx['begin'], 
+            $viewRangeIdx['end'] - 1
         );
-        $currentView = $viewNumber2 > 0 && $viewNumber2 < count($viewIdxs) 
+        $currentView = $viewNumber2 >= 0 && $viewNumber2 < $numViews
             ? $viewNumber2 
             : -1;
-        if ($currentView == -1) {
-            for ($i = 0; $i < count($viewIdxs); $i++) {
-                //dd($i, $viewIdxs[$i]);
-                $btmp = true;
-                if ($btmp) {
-                    for ($j = 0; $j < count($viewIdxs[$i]); $j++) {
-                        $thisRange = is_array($viewIdxs[$i][$j])
-                            ? $viewIdxs[$i][$j]
-                            : collect($ranges2)->forPage(
-                                $viewIdxs[$i][$j], $numPerView2
-                            )->all();
-                        //dd($i, $j, $currentView, $thisRange, $thisRange[0]);
-                        if ($btmp) {
-                            foreach ($thisRange as $k) {
-                                if (in_array($currentRange2['index'], $k)) {
-                                    $currentView = $i;
-                                    //dd($i, $j, $k, $currentView, $thisRange);
-                                    $btmp = false;
-                                    break;
-                                } 
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            }
-        }
-        //dd($ranges2, $numPerView2, $numViews, $viewIdxs, $currentView);
+        //dd($numPagesPerView2, $totalNumPages2, $numViews, $viewIdxs, $currentView, $viewRangeIdx);
 
         if ($currentView != -1) {
 
@@ -78,58 +60,44 @@
             $prevViewUrl = $baseUrl2 . '?' . http_build_query(
                 [
                     'viewNum' => $currentView - 1, 
-                    'pageNum'=> Functions::getVar($currentRange2['index'], 1),
+                    'pageNum'=> Functions::getVar($currentPage2, 1),
                     'pagingFor' => $pagingFor2
                 ]
             );
             $nextViewUrl = $baseUrl2 . '?' . http_build_query(
                 [
                     'viewNum' => $currentView + 1, 
-                    'pageNum'=> Functions::getVar($currentRange2['index'], 1),
+                    'pageNum'=> Functions::getVar($currentPage2, 1),
                     'pagingFor' => $pagingFor2 
                 ]
             );
             $numberedViewUrls = [];
             //dd($prevViewUrl, $nextViewUrl, $numberedViewUrls, $viewIdxs, $currentView);
-            //dd($viewIdxs, $currentView, $numPerView2, $ranges2);
-            foreach ($viewIdxs[$currentView] as $item) {
+            //dd($viewRangeIdx, $viewIdxs, $currentView, $numPagesPerView2, 'paginator1.blade.php');
+            foreach ($viewIdxs as $idx) {
                 //dd($item, is_int($item), is_array($item));
-                if (is_int($item)) {
-                    $veiwPage = collect($ranges2)
-                        ->forPage($item, $numPerView2)
-                        ->all();
-                    foreach ($veiwPage as $val) {
-                        $idx = Functions::getVar($val, 0);
-                        dd($idx, $val);
-                        $numberedViewUrls[$idx] = $baseUrl2 . '?' . http_build_query(
-                            [
-                                'viewNum' => $currentView, 
-                                'pageNum'=> Functions::getVar($val, 0), // + 1,
-                                'pagingFor' => $pagingFor2 
-                            ]
-                        );
-                    }
-                } elseif (is_array($item) || $item instanceof Collection) {
-                    foreach ($item as $val) {
-                        //dd($item, $val);
-                        $numberedViewUrls[Functions::getVar($val, 0)] = $baseUrl2 . '?' . http_build_query(
-                            [
-                                'viewNum' => $currentView, 
-                                'pageNum'=> Functions::getVar($val, 0), // + 1,
-                                'pagingFor' => $pagingFor2 
-                            ]
-                        );
-                    }
-                }
+                $numberedViewUrls[$idx] = $baseUrl2 . '?' . http_build_query(
+                    [
+                        'viewNum' => $currentView, 
+                        'pageNum'=> Functions::getVar($idx, 0), // + 1,
+                        'pagingFor' => $pagingFor2 
+                    ]
+                );
             }
 
         } else {
             $paging = false;
         }
 
-    } else {
-        //$testing = true;
-    }
+        if (false) {
+            dd(
+                $firstItemIndex2, $lastItemIndex2, $totalItems2, 
+                $currentPage2, $totalNumPages2, $numPagesPerView2,
+                $numViews, $viewRangeIdx, $viewIdxs, $currentView
+            );
+        }
+
+    } 
     //dd($numberedViewUrls, url($nextViewUrl));
     //dd($paging, $currentRange2, $totalItems2, $ranges2, $numPerView2);
     
@@ -142,8 +110,8 @@
     @if (Functions::testVar($paging))
         
             <div class="col-md-4 col-sm-4 items-info">
-                Items {{  Functions::getVar($currentRange2['begin'], 0) + 1 }} 
-                to {{  Functions::getVar($currentRange2['end'], 0) + 1 }} 
+                Items {{ Functions::getVar($firstItemIndex2, 0) + 1 }} 
+                to {{ Functions::getVar($lastItemIndex2, 0) + 1 }} 
                 of {{ $totalItems2 }} total
             </div>
 
@@ -157,18 +125,16 @@
                         </li>
                     @endif
 
-                    @foreach ($viewIdxs[$currentView] as $item)
-                        @foreach ($item as $value)
-                            <li>
-                                @if (Functions::getVar($value, 0) === Functions::getVar($currentRange2['index'], 0))
-                                    <span>{{ Functions::getVar($value, 0) + 1 }}</span> 
-                                @else
-                                    <a href="{{ url($numberedViewUrls[Functions::getVar($value, 0)]) }}">
-                                        {{ Functions::getVar($value, 0) + 1 }}
-                                    </a>
-                                @endif
-                            </li>
-                        @endforeach
+                    @foreach ($viewIdxs as $idx)
+                        <li>
+                            @if (Functions::getVar($idx, 0) === Functions::getVar($currentPage2, 0))
+                                <span>{{ Functions::getVar($idx, 0) + 1 }}</span> 
+                            @else
+                                <a href="{{ url($numberedViewUrls[Functions::getVar($idx, 0)]) }}">
+                                    {{ Functions::getVar($idx, 0) + 1 }}
+                                </a>
+                            @endif
+                        </li>
                     @endforeach
                     
                     @if ($numViews > 1 && $currentView < $numViews )

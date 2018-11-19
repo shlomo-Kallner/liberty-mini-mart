@@ -95,10 +95,14 @@ class UserSession extends Model
         if (Functions::testVar($payload)) {
             $tmp1 = is_string($payload) ? unserialize($payload) : $payload;
             if (self::acceptablePayloadType($tmp1)) {
-                $tmp2 = $this->getPayload();
-                //dd($tmp2, $payload);
-                foreach ($tmp1 as $key => $val) {
-                    Functions::setPropKey($tmp2, $key, $val);
+                if (false) {
+                    $tmp2 = $this->getPayload();
+                    //dd($tmp2, $payload);
+                    foreach ($tmp1 as $key => $val) {
+                        Functions::setPropKey($tmp2, $key, $val);
+                    }
+                } else {
+                    $tmp2 = $payload;
                 }
                 $this->payload = base64_encode(serialize($tmp2));
             }

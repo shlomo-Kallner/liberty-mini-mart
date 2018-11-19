@@ -200,6 +200,111 @@ trait ContainerTransforms
             $useTitle, $version, $withTrashed
         );
     }
+
+    static public function genFirstAndLastItemsIdxes( 
+        int $numItems, int $pageNum = 0, int $numItemsPerPage = 4
+    ) {
+        $numPages = Functions::genRowsPerPage(
+            $numItems, $numItemsPerPage
+        );
+        if ($pageNum > 0 && $pageNum > $numPages) {
+            $pageNum = $pageNum % $numPages;
+        } elseif ($pageNum < 0) {
+            $pageNum = -$pageNum;
+            if ($pageNum > $numPages) {
+                $pageNum = $pageNum % $numPages;
+            } 
+            $pageNum = $numPages - $pageNum;
+        } 
+        $first = max(0, $pageNum * $numItemsPerPage);
+        if ($first >= 0 && $first < $numItems) {
+            $last = $first + $numItemsPerPage;
+            if ($last >= $numItems) {
+                $last -= ($last - $numItems);  
+            } 
+        }
+        return [
+            // 'begin' and 'end' are indexes into a $items2 array..
+            'begin' => $first, 
+            'end' => $last,
+            'index' => $pageNum, // the current page's index
+        ];
+    }
+    
+    /**
+     * Function genPagination() - Generate Pagination Information as acceptable by
+     *                            'lib.themewagon.paginator'...
+     * All Numbers passed are indexes starting from zero, 
+     * although they are displayed by the component as starting from one,
+     * based on the calculations made in 'lib.themewagon.content_list'.
+     *
+     * @param integer $pageNum               - the current page number.
+     * @param integer $firstItemShownOnPage  - the index of the first item being shown
+     *                                       (not the First of the total range, unless 
+     *                                       this is the first page).
+     * @param integer $lastItemShownOnPage   - the index of the last item being shown
+     *                                       (not the Last of the total range, unless 
+     *                                       this is the last page).
+     * @param integer $totalItems            - the total number of items that can be paged through
+     * @param array $rangeOfAllItemIndexes   - an array created by Functions::genRange()
+     *                                       of all the indexes of all the items..
+     * @param integer $numPagesPerPagingView - the number of items..
+     * @param string $pagingFor - a selector string for web-pages with more than one 
+     *                          paginating view-port, to select the correct view for 
+     *                          updating by the backend.
+     * @param integer $viewNumber - The current (or to-be Current) Display-Page's index,
+     *                            as received via user input (the user having clicked 
+     *                            on a pagination link). (May actually have to do with 
+     *                            Display-Pages of the PAGINATION's own links!)
+     * @param string $baseUrl - The URL to be used in generating pagination links.
+     * @return array 
+     */
+    static public function genPagination1(
+        int $pageNum, int $numItemsShownOnPage, int $totalItems, 
+        array $rangeOfAllItemIndexes, int $numPageLinksPerPagingView = 4,
+        string $pagingFor = '', int $viewNumber = 0, string $baseUrl = ''
+    ) {
+        return [
+            'currentRange' => self::genFirstAndLastItemsIdxes( 
+                $totalItems, $pageNum, $numItemsShownOnPage
+            ),
+            'totalItems' => $totalItems, // the total number of items in the $items2 array
+            'ranges' => $rangeOfAllItemIndexes,
+            'numPerView' => $numPageLinksPerPagingView,
+            'pagingFor' => $pagingFor,
+            'viewNumber' => $viewNumber,
+            'baseUrl' => $baseUrl
+        ];
+    }
+
+    /** 
+     * Function genPagination2()  
+     * The Current OFFICIAL Pagination Generator!
+    */
+    static public function genPagination2(
+        int $pageNum, int $numItemsShownOnPage, int $totalItems, 
+        int $numPageLinksPerPagingView = 4, string $pagingFor = '', 
+        int $viewNumber = 0, string $baseUrl = ''
+    ) {
+        $totalNumPages = Functions::genRowsPerPage(
+            $totalItems, $numItemsShownOnPage
+        );
+        $itemIdxs = self::genFirstAndLastItemsIdxes(
+            $totalItems, $pageNum, $numItemsShownOnPage
+        );
+        return [
+            'firstItemIndex' => $itemIdxs['begin'],
+            'lastItemIndex' => $itemIdxs['end'] - 1,
+            'numItemsPerPage' => $numItemsShownOnPage,
+            'totalItems' => $totalItems,
+            'currentPage' => $pageNum,
+            'totalNumPages' => $totalNumPages,
+            'numPerView' => $numPageLinksPerPagingView,
+            'viewNumber' => $viewNumber,
+            'pagingFor' => $pagingFor,
+            'baseUrl' => $baseUrl,
+        ];
+    }
     
     /**
      * Function genPagination() - Generate Pagination Information as acceptable by
@@ -236,11 +341,12 @@ trait ContainerTransforms
     ) {
         return [
             'currentRange' => [
-                'index' => $pageNum,
-                'begin' => $firstItemShownOnPage,
+                'index' => $pageNum, // the current page's index
+                // 'begin' and 'end' are indexes into a $items2 array..
+                'begin' => $firstItemShownOnPage, 
                 'end' => $lastItemShownOnPage,
             ],
-            'totalItems' => $totalItems,
+            'totalItems' => $totalItems, // the total number of items in the $items2 array
             'ranges' => $rangeOfAllItemIndexes,
             'numPerView' => $numPagesPerPagingView,
             'pagingFor' => $pagingFor,
@@ -294,6 +400,11 @@ trait ContainerTransforms
             $numPagingIdxsPerPagingView ?: $numItemsPerPage,
             $pagingFor, $viewNumber, $listUrl
         );
+        return self::genPagination2(
+            $pageNum, $numItemsPerPage, $totalItems, 
+            $numPagingIdxsPerPagingView, $pagingFor, 
+            $viewNumber, $listUrl
+        )
     }
 
     static public function getPagingVars(

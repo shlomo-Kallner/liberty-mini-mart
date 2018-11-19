@@ -1,8 +1,10 @@
 
 @php
-    $testing = true;
+    $testing = false;
     use \App\Utilities\Functions\Functions;
     use \App\Page;
+    use \Illuminate\Support\HtmlString;
+    use Illuminate\Contracts\Support\Htmlable;
 
     // The DATA for the SLOTS of THIS COMPONENT are gathered HERE!!!  
     // Note: they CAN be empty... 
@@ -11,7 +13,7 @@
     //dd($products, $products2);
     $currency2 = Functions::getBladedString($currency??'fa-usd','fa-usd');
     $sorting2 = Functions::getBladedContent($sorting??'', '');
-    $pageNumber2 = intval(Functions::getBladedString($pageNumber??-1,-1));
+    $pageNumber2 = 0; // intval(Functions::getBladedString($pageNumber??0,0));
     // our default.. is 12 products per page (the template had 9..)
     $productsPerPage2 = intval(Functions::getBladedString($productsPerPage??12,12));
 
@@ -37,9 +39,11 @@
 
         // Initializing the row Indices while we are at it..
         $totalProducts = count($products2);
+        $numPages = 0;
+        // Functions::genRowsPerPage($totalProducts, $productsPerPage2);
         $rowIdxs = Functions::genPagesIndexes(
             $productsPerPage2, $productsPerRow2, 
-            $totalProducts, $pageNumber2
+            $totalProducts, $pageNumber2, $numPages
         );
         $currentPage = $pageNumber2 > -1 ? $pageNumber2 : 0;
         // if $productsPerPage is set then 
@@ -47,10 +51,19 @@
         // THOUGH REALLY if we have more products than 
         //  $productsPerRow times $rowsPerPage then we have paganation
         // regardless...
-        // dd(
-        //   $totalProducts, $rowIdxs, $productsPerPage2, 
-        //   $productsPerRow2, $pageNumber2, $currentPage
-        // );
+        if (false) {
+            dd(
+                [
+                    'productsPerPage' => $productsPerPage2, 
+                    'productsPerRow' => $productsPerRow2, 
+                    'totalProducts' => $totalProducts, 
+                    'pageNumber' => $pageNumber2, 
+                    'numPages' => $numPages, 
+                    'rowIdxs' => $rowIdxs,
+                    'currentPage' => $currentPage
+                ]
+            );
+        }
 
         if ($pageNumber2 > -1) {
             // initializing the paginator
@@ -60,36 +73,65 @@
             //    $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1]
             //);
             //dd($rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])]);
-            $numPages = Functions::genRowsPerPage(
-                $totalProducts, $productsPerPage2
-            );
             $firstItem = $rowIdxs[0][0][0];
             $lastItem = $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1];
+            $ranges = Functions::genRange(0, $numPages - 1, 1);
             $paginator = [
                 'totalItems' => $totalProducts,
                 'numRanges' => $numPages,
-                'ranges' => Functions::genRange(0, $numPages - 1, 1),
+                'ranges' => $ranges,
                 'currentRange' => [
-                    'begin' => $rowIdxs[0][0][0],
-                    'end' => $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1],
+                    'begin' => $firstItem,
+                    'end' => $lastItem,
                     'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
                 ],
             ];
+            $numPagesPerPagingView = 4;
+            $viewNumber = 0;
+            $baseUrl = '';
+            $pagingFor = '';
             $paginator2 = Page::genPagination(
-                int $pageNum, int $firstItemShownOnPage, int $lastItemShownOnPage,
-                int $totalItems, array $rangeOfAllItemIndexes, int $numPagesPerPagingView = 4,
-                string $pagingFor = '', int $viewNumber = 0, string $baseUrl = ''
+                $pageNumber2 > -1 ? $pageNumber2 : 0, 
+                $firstItem, $lastItem,
+                $totalProducts, $ranges, $numPagesPerPagingView ,
+                '', $viewNumber, $baseUrl
+            );
+            $paginator3 = Page::genPagination2(
+                $pageNumber2, $productsPerPage2, $totalProducts, 
+                $numPagesPerPagingView, $pagingFor, $viewNumber, 
+                $baseUrl
             );
         } else {
-            $paginator = [];
+            $paginator3 = [];
         }
         //dd("cont", $paginator, $currentPage, $products2);
             
     } else {
-        $paginator = [];
+        $paginator3 = [];
     }
     //dd("cont", $paginator, $products2);
 
+    if (false) {
+        $numPagesPerPagingView = 4;
+        $viewNumber = 0;
+        $baseUrl = '';
+        $pagingFor = '';
+        /*
+            $paginator2 = Page::genPagination(
+                $pageNumber2 > -1 ? $pageNumber2 : 0, 
+                $firstItem, $lastItem,
+                $totalProducts, $ranges, $numPagesPerPagingView ,
+                '', $viewNumber, $baseUrl
+            );
+        */ 
+        $paginator3 = Page::genPagination2(
+            $pageNumber2 > -1 ? $pageNumber2 : 0, 
+            $productsPerPage2, $totalProducts, 
+            $numPagesPerPagingView, $pagingFor, 
+            $viewNumber, $baseUrl
+        );
+    }
+    //dd($paginator3);
     
            
 @endphp
@@ -99,6 +141,7 @@
 
     @if (Functions::testVar($sorting2))
     @else
+
         <div class="row list-view-sorting clearfix">
             @if(false)
                 {{-- 
@@ -115,24 +158,24 @@
                 <div class="pull-right">
                     <label class="control-label">Show:</label>
                     <select class="form-control input-sm">
-                    <option value="#?limit=none" selected="selected">All</option>
-                    <option value="#?limit=12">12</option>
-                    <option value="#?limit=25">25</option>
-                    <option value="#?limit=50">50</option>
-                    <option value="#?limit=75">75</option>
-                    <option value="#?limit=100">100</option>
+                        <option value="#?limit=none" selected="selected">All</option>
+                        <option value="#?limit=12">12</option>
+                        <option value="#?limit=25">25</option>
+                        <option value="#?limit=50">50</option>
+                        <option value="#?limit=75">75</option>
+                        <option value="#?limit=100">100</option>
                     </select>
                 </div>
                 <div class="pull-right">
                     <label class="control-label">Sort&nbsp;By:</label>
                     <select class="form-control input-sm">
-                    <option value="#?sort=p.sort_order&amp;order=ASC" selected="selected">Default</option>
-                    <option value="#?sort=pd.name&amp;order=ASC">Name (A - Z)</option>
-                    <option value="#?sort=pd.name&amp;order=DESC">Name (Z - A)</option>
-                    <option value="#?sort=p.price&amp;order=ASC">Price (Low &gt; High)</option>
-                    <option value="#?sort=p.price&amp;order=DESC">Price (High &gt; Low)</option>
-                    <option value="#?sort=rating&amp;order=DESC">Rating (Highest)</option>
-                    <option value="#?sort=rating&amp;order=ASC">Rating (Lowest)</option>
+                        <option value="#?sort=default&amp;order=ASC" selected="selected">Default</option>
+                        <option value="#?sort=name&amp;order=ASC">Name (A - Z)</option>
+                        <option value="#?sort=name&amp;order=DESC">Name (Z - A)</option>
+                        <option value="#?sort=price&amp;order=ASC">Price (Low &gt; High)</option>
+                        <option value="#?sort=price&amp;order=DESC">Price (High &gt; Low)</option>
+                        <option value="#?sort=rating&amp;order=DESC">Rating (Highest)</option>
+                        <option value="#?sort=rating&amp;order=ASC">Rating (Lowest)</option>
                     </select>
                 </div>
             </div>
@@ -188,7 +231,8 @@
             
         @endforeach
         
-    @else
+    @elseif ($testing)
+
         <div class="row product-list">
             <!-- PRODUCT ITEM START -->
             <div class="col-md-4 col-sm-6 col-xs-12">
@@ -341,14 +385,37 @@
             </div>
             <!-- PRODUCT ITEM END -->
         </div>
+
+    @else
+        
+        
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                <div class="well">
+                    <h3>
+                        <i class="fa fa-exclamation-triangle"></i>
+                        <strong>We are Sorry!</strong>
+                        We Have no Items to Display!
+                    </h3>
+                </div>
+            </div>
+        </div>
+        
+
     @endif
     <!-- END PRODUCT LIST -->
 
-    @if (Functions::testVar($paginator))
+    @if (Functions::testVar($paginator3))
         @component('lib.themewagon.paginator')
-            @foreach ($paginator as $key => $val)
+            @foreach ($paginator3 as $key => $val)
                 @slot($key)
-                    {!! serialize($val) !!}
+                    @if ($val instanceof Htmlable) 
+                        {!! $val->toHtml() !!}
+                    @elseif (is_array($val) || is_object($val))
+                        {!! serialize($val) !!}
+                    @else
+                        {!! $val !!}
+                    @endif
                 @endslot
             @endforeach
         @endcomponent

@@ -156,6 +156,7 @@ class MainController extends Controller {
     {
         if (session()->has('msgs')) {
             $msgs = session()->pull('msgs');
+            session()->forget('msgs');
             //dd(session(), $msgs);
             if (Functions::testVar($msgs)) {
                 return $msgs;

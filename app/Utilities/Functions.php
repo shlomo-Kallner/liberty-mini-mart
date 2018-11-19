@@ -211,6 +211,18 @@ class Functions
         return $res;
     }
 
+    /**
+     * Function dbModel2ViewModel() - OBSOLETE - returns an empty array.
+     * 
+     * @deprecated 
+     *
+     * @param  array   $dbModel   - the content array of a compatable model.
+     * @param  boolean $useTitle  - if true, use the 'title' key for 'alt'.
+     *                            - if false, use the 'img' key_s 'alt' key 
+     *                            for 'alt'.
+     * 
+     * @return array|null
+     */
     static public function dbModel2ViewModel(
         array &$dbModel, bool $useTitle = false
     ) {
@@ -452,6 +464,9 @@ class Functions
             for ($i = $beg; $i >= $end; $i += $step) {
                 $tmp[] = $i;
             }
+        } else {
+            $tmp[] = $beg;
+            $tmp[] = $end;
         }
         return $tmp;
     }
@@ -524,19 +539,27 @@ class Functions
 
 
     /**
-     *  function genPagesIndexes
+     *  Function genPagesIndexes
      * 
-     * @param integer $ppp - productsPerPage
-     * @param integer $ppr - productsPerRow
-     * @param int     $tp  - totalProducts (total number OF products)
-     * @param int     $pn  - pageNumber ; valid page numbers are from 0 and up;
-     *                     - -1 for generate and return all as a single-page;
-     *                     - -2 for generate and return all pages;
+     * @param integer $ppp      - productsPerPage
+     * @param integer $ppr      - productsPerRow
+     * @param int     $tp       - totalProducts (total number OF products)
+     * @param int     $pn       - pageNumber ; valid page numbers are from 
+     *                          0 and up;
+     *                          - -1 for generate and return all as a 
+     *                          single-page;
+     *                          - -2 for generate and return all pages;
+     * @param int     $numPages - the number of pages of products as 
+     *                          calculated by this function and returned 
+     *                          to the caller by reference. 
+     *                          - This parameter is passed by reference.
      * 
      * @return array - a array of arrays of indices of rows..
      */
-    static public function genPagesIndexes(int $ppp, int $ppr, int $tp, int $pn = -1)
-    {
+    static public function genPagesIndexes(
+        int $ppp, int $ppr, int $tp, int $pn = -1,
+        int &$numPages = 0
+    ) {
         $res = [];
         $numPages = self::genRowsPerPage($tp, $ppp);
         //dd($ppp, $ppr, $tp, $pn, $numPages);
@@ -558,11 +581,15 @@ class Functions
             if ($pnValid || $pn == -2) {
                 // generate all pages_of_indexes ...
                 // for multiple/single_selected display_page..
-                $pageIndexRanges = self::genPageArray(self::genRange(0, $tp), $ppp);
+                $pageIndexRanges = self::genPageArray(
+                    self::genRange(0, $tp), $ppp
+                );
             } else {
                 // generate a single page_of_indexes with all products..
                 // for a single display_page of all products..
-                $pageIndexRanges = self::genPageArray(self::genRange(0, $tp), $tp);
+                $pageIndexRanges = self::genPageArray(
+                    self::genRange(0, $tp), $tp
+                );
             }
             // now create the Pages_Of_Rows ...
             if ($pnValid || $pn == -1) {
