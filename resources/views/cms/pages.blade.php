@@ -2,6 +2,8 @@
 @php
     $testing = true;
     use \App\Utilities\Functions\Functions;
+    use \Illuminate\Support\HtmlString;
+    use Illuminate\Contracts\Support\Htmlable;
 
     $pages2 = Functions::getUnBladedContent($pages??[],[]);
     $paginator2 = Functions::getUnBladedContent($paginator??[],[]);
@@ -121,10 +123,12 @@
                 @component('lib.themewagon.paginator')
                     @foreach ($paginator2 as $key => $val)
                         @slot($key)
-                            @if ($key == 'pagingFor')
-                                {{ $val }}
-                            @else
+                            @if ($val instanceof Htmlable) 
+                                {!! $val->toHtml() !!}
+                            @elseif (is_array($val) || is_object($val))
                                 {!! serialize($val) !!}
+                            @else
+                                {!! $val !!}
                             @endif
                         @endslot
                     @endforeach

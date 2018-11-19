@@ -137,7 +137,7 @@
                         </li>
                     @endforeach
                     
-                    @if ($numViews > 1 && $currentView < $numViews )
+                    @if ($numViews > 1 && $currentView < ($numViews - 1) )
                         <li>
                             <a href="{{ url($nextViewUrl) }}" aria-label="Next">
                                     <i class="fa fa-chevron-right"></i>

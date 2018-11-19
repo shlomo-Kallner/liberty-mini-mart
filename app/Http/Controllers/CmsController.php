@@ -28,7 +28,7 @@ class CmsController extends MainController
         //$sections = Section::getAllWithPagination();
         //dd(Page::get()->count());
         $sectNumShown = 4;
-        $sectPageNum = 1;
+        $sectPageNum = 0;
         $sectPagingFor = 'sectionPanel';
         $sectDir = 'asc';
         $sectBaseUrl = 'store';
@@ -48,7 +48,7 @@ class CmsController extends MainController
             $userPn = $pv['pageNum'];
             $userVn = $pv['viewNum'];
         } else {
-            $userPn = 1;
+            $userPn = 0;
             $userVn = 0;
         }
         $users = User::getUsers($userPn, true, true, $userVn, $request->path());
@@ -59,7 +59,7 @@ class CmsController extends MainController
             $pagesPn = $pv['pageNum'];;
             $pagesVn = $pv['viewNum'];
         } else {
-            $pagesPn = 1;
+            $pagesPn = 0;
             $pagesVn = 0;
         }
         $pagesNumShown = 4;

@@ -207,22 +207,23 @@ trait ContainerTransforms
         $numPages = Functions::genRowsPerPage(
             $numItems, $numItemsPerPage
         );
-        if ($pageNum > 0 && $pageNum > $numPages) {
+        if ($pageNum > 0 && $pageNum >= $numPages) {
             $pageNum = $pageNum % $numPages;
         } elseif ($pageNum < 0) {
             $pageNum = -$pageNum;
-            if ($pageNum > $numPages) {
+            if ($pageNum >= $numPages) {
                 $pageNum = $pageNum % $numPages;
             } 
             $pageNum = $numPages - $pageNum;
         } 
         $first = max(0, $pageNum * $numItemsPerPage);
-        if ($first >= 0 && $first < $numItems) {
-            $last = $first + $numItemsPerPage;
-            if ($last >= $numItems) {
-                $last -= ($last - $numItems);  
-            } 
+        if ($first > $numItems) {
+            $first -= $numItems;
         }
+        $last = $first + $numItemsPerPage;
+        if ($last >= $numItems) {
+            $last -= ($last - $numItems);  
+        } 
         return [
             // 'begin' and 'end' are indexes into a $items2 array..
             'begin' => $first, 
@@ -234,6 +235,7 @@ trait ContainerTransforms
     /**
      * Function genPagination() - Generate Pagination Information as acceptable by
      *                            'lib.themewagon.paginator'...
+     * OBSOLETE!!! Use genPagination2() instead!
      * All Numbers passed are indexes starting from zero, 
      * although they are displayed by the component as starting from one,
      * based on the calculations made in 'lib.themewagon.content_list'.
@@ -279,7 +281,10 @@ trait ContainerTransforms
 
     /** 
      * Function genPagination2()  
-     * The Current OFFICIAL Pagination Generator!
+     * The Current OFFICIAL Pagination Information 
+     * Generator as the API of the 
+     * lib.themewagon.paginator Component
+     * has CHANGED!
     */
     static public function genPagination2(
         int $pageNum, int $numItemsShownOnPage, int $totalItems, 
@@ -306,9 +311,10 @@ trait ContainerTransforms
         ];
     }
     
-    /**
+    /** 
      * Function genPagination() - Generate Pagination Information as acceptable by
      *                            'lib.themewagon.paginator'...
+     * OBSOLETE!!! Use genPagination2() instead!
      * All Numbers passed are indexes starting from zero, 
      * although they are displayed by the component as starting from one,
      * based on the calculations made in 'lib.themewagon.content_list'.
@@ -435,10 +441,11 @@ trait ContainerTransforms
         string $listUrl = '', int $viewNumber = 0, 
         bool $useTitle = true, int $version = 1
     ) {
-        $paging = collect(Functions::genRange(0, self::count()));
-        $page = $paging->forPage($pageNum, $numShown);
+        $pageIdx = self::genFirstAndLastItemsIdxes( 
+            self::count(), $pageNum, $numShown
+        );
         $tmp = self::getOrderedBy($dir, $withTrashed)
-            ->offset($page->first())->limit($numShown)
+            ->offset($pageIdx['begin'])->limit($numShown)
             ->get();
         $tmp1 = self::getFor(
             $tmp, $baseUrl, $transform,
@@ -534,10 +541,14 @@ trait ContainerTransforms
         if ($cTmp <= $numShown) {
             $argTmp = $args;
         } else {
-            $paging = collect(Functions::genRange(0, $cTmp));
-            $page = $paging->forPage($pageNum, $numShown);
+            $pageIdx = self::genFirstAndLastItemsIdxes( 
+                $cTmp, $pageNum, $numShown
+            );
+            $paging = Functions::genRange(
+                $pageIdx['begin'], ($pageIdx['end'] - 1)
+            );
             $argTmp = [];
-            foreach ($page as $idx) {
+            foreach ($paging as $idx) {
                 $argTmp[] = $args[$idx];
             }
         }
@@ -571,10 +582,14 @@ trait ContainerTransforms
                     ? $args->all() 
                     : $args;
             } elseif ($cTmp > 0) {
-                $paging = collect(Functions::genRange(0, $cTmp));
-                $page = $paging->forPage($pageNum, $numShown);
+                $pageIdx = self::genFirstAndLastItemsIdxes( 
+                    $cTmp, $pageNum, $numShown
+                );
+                $paging = Functions::genRange(
+                    $pageIdx['begin'], ($pageIdx['end'] - 1)
+                );
                 $argTmp = [];
-                foreach ($page as $idx) {
+                foreach ($paging as $idx) {
                     $argTmp[] = $args[$idx];
                 }
             }
@@ -586,7 +601,8 @@ trait ContainerTransforms
                             $baseUrl, $version, $useTitle, $withTrashed,
                             $pageNum, $numShown, $pagingFor, $viewNumber, 
                             $listUrl
-                        )) {
+                        )
+                        ) {
                             $tmp[] = $res;
                         }
                     } else {
