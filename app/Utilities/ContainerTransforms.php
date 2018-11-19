@@ -386,25 +386,11 @@ trait ContainerTransforms
         string $pagingFor = '', int $viewNumber = 0, 
         string $listUrl = '#', int $numPagingIdxsPerPagingView = 0
     ) {
-        $rngs = Functions::genRange(0, $totalItems);
-        $pgs = collect($rngs);
-        $tpr = $pgs->forPage(
-            $pageNum <= 0 ? 1 : $pageNum, $numItemsPerPage
-        );
-        $pa = Functions::genPageArray($rngs, $numItemsPerPage);
-        //dd($rngs, $pgs, $tpr, $pa, $tpr->first(), $tpr->last());
-        return self::genPagination(
-            $pageNum, Functions::getVar($tpr->first(), 0), 
-            Functions::getVar($tpr->last(), 0),
-            $totalItems, $pa, 
-            $numPagingIdxsPerPagingView ?: $numItemsPerPage,
-            $pagingFor, $viewNumber, $listUrl
-        );
         return self::genPagination2(
             $pageNum, $numItemsPerPage, $totalItems, 
             $numPagingIdxsPerPagingView, $pagingFor, 
             $viewNumber, $listUrl
-        )
+        );
     }
 
     static public function getPagingVars(
