@@ -2,8 +2,8 @@
     <!-- BEGIN PAGINATOR -->
     <div class="row">
         <div class="col-md-4 col-sm-4 items-info">
-            Items {{ firstItemIndex + 1 }} 
-            to {{ lastItemIndex + 1 }} 
+            Items {{ pageIdx.begin + 1 }} 
+            to {{ pageIdx.end }} 
             of {{ totalItems }} total
         </div>
 
@@ -15,11 +15,11 @@
                     </a>
                 </li>
 
-                <li v-for="item in pageSlice">
-                    <span v-if="item === currentPage">
+                <li v-for="(item, idx) in pageSlice" :key="idx">
+                    <span v-if="item === thisPage">
                         {{ item + 1 }}
                     </span> 
-                    <a v-else :href="this.genUrl(item, this.currentView)">
+                    <a v-else @click="goToPage(item)">
                         {{ item + 1 }}
                     </a>
                 </li>
@@ -37,26 +37,26 @@
 
 <script>
     import _ from 'lodash'
-    const url = require('url');
+    // const url = require('url');
     export default {
         name: 'bootPaginator',
         props: {
             numPages: Number,
             currentPage: Number,
             pagesPerView: Number,
-            firstItemIndex: Number,
-            lastItemIndex: Number,
+            itemsPerPage: Number,
             totalItems: Number,
-            baseUrl: String,
-            pagingFor: String
+            // baseUrl: String,
+            // pagingFor: String
         },
         data: function () {
             return {
                 numViews: this.genNumSubRanges(
                     this.numPages, this.pagesPerView
                 ),
-                currentView: this.getCurrentView(),
-                urlObj:  url.parse(this.baseUrl),
+                thisPage: this.currentPage,
+                currentView: this.getCurrentView(this.currentPage),
+                // urlObj:  url.parse(this.baseUrl),
             };
         },
         computed: {
@@ -75,6 +75,11 @@
             },
             paging: function () {
                 return this.numPages > 1;
+            },
+            pageIdx: function () {
+                return this.genFirstAndLastIndex(
+                    this.totalItems, this.thisPage, this.itemsPerPage
+                );
             }
         },
         methods: {
@@ -88,9 +93,8 @@
                     return ni % ipsr > 0 ? num + 1 : num;
                 } 
             },
-            getCurrentView: function () {
-                var current = _.floor(this.currentPage / this.pagesPerView);
-                return current < this.numViews ? current : ;
+            getCurrentView: function (currentPage) {
+                return _.floor(currentPage / this.pagesPerView);
             },
             genFirstAndLastIndex: function (numItems, pageNum, itemsPerPage) {
                 var numPages = this.genNumSubRanges(numItems, itemsPerPage);
@@ -117,17 +121,9 @@
                     index: pageNum
                 };
             },
-            genUrl: function (pageNum, viewNum) {
-                return url.format({
-                    protocol: this.urlObj.protocol,
-                    host: this.urlObj.host,
-                    pathname: this.urlObj.pathname,
-                    query: {
-                        pageNum: pageNum,
-                        viewNum: viewNum,
-                        pagingFor: this.pagingFor
-                    }
-                });
+            goToPage: function (pageNum) {
+                this.thisPage = pageNum;
+                this.$emit('paging-event', pageNum);
             },
             prevView: function () {
                 this.currentView--;

@@ -11,6 +11,7 @@
     $alert2 =  Functions::getContent($alert??'');
     $baseUrl = url('');
     $cart2 = Functions::getContent($cart??'');
+    $pagination2 = Functions::getContent($page['pagination']??[], []);
     //dd($cart2, $cart);
 ?>
 
@@ -60,7 +61,9 @@
                     nut: '{{ $nut2 }}',
                     page: {},
                     baseUrl: '{{ $baseUrl }}',
+                    thisUrl: '{{ request->url() }}',
                     cart: '@json($cart2)',
+                    pagination: '@json($pagination2)',
                     setAlert: function (data) {
                         this.alert = data;
                     }

@@ -6,13 +6,14 @@
  */
 import { LaravelAlert } from './lib/LaravelAlert'
 
-import { Pagination } from 'vue-pagination-2'
+// import { Pagination } from 'vue-pagination-2'
 
 
 require('./bootstrap');
 
 window.Vue = require('vue');
-window.Vue.component('pagination', Pagination);
+window.url = require('url');
+// window.Vue.component('pagination', Pagination);
 
 const uuidv5 = require('uuid/v5');
 const uuidv5 = require('uuid/v5');
@@ -34,10 +35,10 @@ const uuidv5 = require('uuid/v5');
 
 window.Vue.component('dismissable-alert', require('./components/dismissable-alert.vue'));
 window.Vue.component('cart-component', require('./components/cart.vue'));
+window.Vue.component('boot-pagination', require('./components/bootPaginator.vue'));
 
 
 window.Laravel.page.alert = new LaravelAlert(window.Laravel.alert);
-
 
 window.Laravel.masterAlert = new window.Vue({
   el: '#masterPageAlertContainer',
@@ -98,3 +99,35 @@ window.Laravel.page.setCart = function (data) {
   window.Laravel.page.cart = data;
   window.Laravel.masterCart.cartData = data;
 };
+
+window.Laravel.page.paginator = new window.Vue(
+  {
+    el: '#pageWidePagination',
+    template: '<boot-pagination v-bind=""></boot-pagination>',
+    data: {
+      urlObj: window.url.parse(window.Laravel.thisUrl),
+      pagingFor: 'content',
+      pagingData: {
+        numPages: Number,
+        currentPage: Number,
+        pagesPerView: Number,
+        itemsPerPage: Number,
+        totalItems: Number
+      }
+    },
+    methods: {
+      genUrl: function (pageNum, viewNum) {
+        return window.url.format({
+          protocol: this.urlObj.protocol,
+          host: this.urlObj.host,
+          pathname: this.urlObj.pathname,
+          query: {
+            pageNum: pageNum,
+            viewNum: viewNum,
+            pagingFor: this.pagingFor
+          }
+        });
+      }
+    }
+  }
+);

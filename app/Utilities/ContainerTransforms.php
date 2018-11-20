@@ -300,6 +300,7 @@ trait ContainerTransforms
         return [
             'firstItemIndex' => $itemIdxs['begin'],
             'lastItemIndex' => $itemIdxs['end'] - 1,
+            //'itemsPerPage' => $numItemsShownOnPage,
             'numItemsPerPage' => $numItemsShownOnPage,
             'totalItems' => $totalItems,
             'currentPage' => $pageNum,
