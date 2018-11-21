@@ -86,15 +86,44 @@ class SectionController extends MainController
             $section = Section::getNamed($request->section);
             //$section_items = Categorie::getCategoriesOfSection($section->id);
             //$section_items = $section->getCategories(false);
-            $section_data = [
-                'items' => Categorie::getFor(
+            if (false) {
+                $pagingFor = 'section-content';
+                if (Functions::testVar(
+                    $pa = Section::getPagingVars(
+                        $request, $pagingFor
+                    )
+                )
+                ) {
+                    $viewNumber = $pa['viewNum'];
+                    $pageNum = $pa['pageNum'];
+                } else {
+                    $viewNumber = 0;
+                    $pageNum = 0;
+                }
+                $numShown = 12;
+                $dir = 'asc';
+                $useTitle = true;
+                $withTrashed = false;
+                $section_data = Categorie::getForWithPagination(
                     $section->categories, 
+                    Categorie::TO_MINI_TRANSFORM, $pageNum,
+                    $numShown, $pagingFor, $request->url(), 
                     $request->ajax() ? 'api/store' : 'store', 
-                    Categorie::TO_MINI_TRANSFORM, true, 1, 
-                    $request->withTrashed??false, []
-                ),
-                'bestsellers' => Product::getBestsellers(),
-            ];
+                    $dir, $viewNumber, $withTrashed, 
+                    $useTitle, 1, []
+                );
+                $section_data['bestsellers'] = Product::getBestsellers();
+            } else {
+                $section_data = [
+                    'items' => Categorie::getFor(
+                        $section->categories, 
+                        $request->ajax() ? 'api/store' : 'store', 
+                        Categorie::TO_MINI_TRANSFORM, true, 1, 
+                        $request->withTrashed??false, []
+                    ),
+                    'bestsellers' => Product::getBestsellers(),
+                ];
+            }
             $breadcumbs = Page::getBreadcrumbs(
                 Page::genBreadcrumb($section->name, $section->getFullUrl('store')),
                 [

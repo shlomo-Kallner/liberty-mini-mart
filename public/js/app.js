@@ -60,33 +60,35 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 49);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
-/******/ ({
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ 130:
+__webpack_require__(1);
+__webpack_require__(2);
+module.exports = __webpack_require__(3);
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed: Error: Requires Babel \"^7.0.0-0\", but was loaded with \"6.26.3\". If you are sure you have a compatible version of @babel/core, it is likely that something in your build process is loading the wrong version. Inspect the stack trace of this error to look for the first entry that doesn't mention \"@babel/core\" or \"babel-core\" to see what is calling Babel. (While processing preset: \"C:\\\\xampp\\\\htdocs\\\\liberty-mini-mart\\\\node_modules\\\\@babel\\\\preset-typescript\\\\lib\\\\index.js\")\n    at throwVersionError (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\@babel\\helper-plugin-utils\\lib\\index.js:65:11)\n    at Object.assertVersion (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\@babel\\helper-plugin-utils\\lib\\index.js:13:11)\n    at _default (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\@babel\\preset-typescript\\lib\\index.js:35:7)\n    at C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\@babel\\helper-plugin-utils\\lib\\index.js:19:12\n    at C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\options\\option-manager.js:317:46\n    at Array.map (<anonymous>)\n    at OptionManager.resolvePresets (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\options\\option-manager.js:275:20)\n    at OptionManager.mergePresets (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\options\\option-manager.js:264:10)\n    at OptionManager.mergeOptions (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\options\\option-manager.js:249:14)\n    at OptionManager.init (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\options\\option-manager.js:368:12)\n    at File.initOptions (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\index.js:212:65)\n    at new File (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\index.js:135:24)\n    at Pipeline.transform (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\pipeline.js:46:16)\n    at transpile (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-loader\\lib\\index.js:50:20)\n    at C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-loader\\lib\\fs-cache.js:118:18\n    at ReadFileContext.callback (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-loader\\lib\\fs-cache.js:31:21)\n    at FSReqWrap.readFileAfterOpen [as oncomplete] (fs.js:420:13)");
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed: Error: Requires Babel \"^7.0.0-0\", but was loaded with \"6.26.3\". If you are sure you have a compatible version of @babel/core, it is likely that something in your build process is loading the wrong version. Inspect the stack trace of this error to look for the first entry that doesn't mention \"@babel/core\" or \"babel-core\" to see what is calling Babel. (While processing preset: \"C:\\\\xampp\\\\htdocs\\\\liberty-mini-mart\\\\node_modules\\\\@babel\\\\preset-typescript\\\\lib\\\\index.js\")\n    at throwVersionError (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\@babel\\helper-plugin-utils\\lib\\index.js:65:11)\n    at Object.assertVersion (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\@babel\\helper-plugin-utils\\lib\\index.js:13:11)\n    at _default (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\@babel\\preset-typescript\\lib\\index.js:35:7)\n    at C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\@babel\\helper-plugin-utils\\lib\\index.js:19:12\n    at C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\options\\option-manager.js:317:46\n    at Array.map (<anonymous>)\n    at OptionManager.resolvePresets (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\options\\option-manager.js:275:20)\n    at OptionManager.mergePresets (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\options\\option-manager.js:264:10)\n    at OptionManager.mergeOptions (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\options\\option-manager.js:249:14)\n    at OptionManager.init (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\options\\option-manager.js:368:12)\n    at File.initOptions (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\index.js:212:65)\n    at new File (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\file\\index.js:135:24)\n    at Pipeline.transform (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-core\\lib\\transformation\\pipeline.js:46:16)\n    at transpile (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-loader\\lib\\index.js:50:20)\n    at C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-loader\\lib\\fs-cache.js:118:18\n    at ReadFileContext.callback (C:\\xampp\\htdocs\\liberty-mini-mart\\node_modules\\babel-loader\\lib\\fs-cache.js:31:21)\n    at FSReqWrap.readFileAfterOpen [as oncomplete] (fs.js:420:13)");
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
-/***/ }),
-
-/***/ 49:
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(50);
-module.exports = __webpack_require__(130);
-
-
-/***/ }),
-
-/***/ 50:
-/***/ (function(module, __webpack_exports__) {
-
-"use strict";
-throw new Error("Module build failed: C:/xampp/htdocs/liberty-mini-mart/resources/assets/js/app.js: Duplicate declaration \"uuidv5\"\n\n\u001b[0m \u001b[90m 16 | \u001b[39m\n \u001b[90m 17 | \u001b[39m\u001b[36mconst\u001b[39m uuidv5 \u001b[33m=\u001b[39m require(\u001b[32m'uuid/v5'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 18 | \u001b[39m\u001b[36mconst\u001b[39m uuidv5 \u001b[33m=\u001b[39m require(\u001b[32m'uuid/v5'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    | \u001b[39m      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 19 | \u001b[39m\n \u001b[90m 20 | \u001b[39m\u001b[90m/**\u001b[39m\n \u001b[90m 21 | \u001b[39m\u001b[90m * Next, we will create a fresh Vue application instance and attach it to\u001b[39m\u001b[0m\n");
-
 /***/ })
-
-/******/ });
+/******/ ]);

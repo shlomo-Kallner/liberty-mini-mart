@@ -19,8 +19,13 @@
     $currency2 = Functions::getContent($cart['currencyIcon']??'','fa-usd');
     $filters2 = serialize(Functions::getContent($page['filters']??'', ''));
     
-    $itemsPerPage2 = intval(Functions::getContent($page['itemsPerPage']??'', '12'));
-    $pageNumber2 = intval(Functions::getContent($page['pageNumber']??'', '-1'));
+    if (!Functions::hasPropKeyIn($page, 'pagination')) {
+        $itemsPerPage2 = intval(Functions::getContent($page['itemsPerPage']??'', '12'));
+        $pageNumber2 = intval(Functions::getContent($page['pageNumber']??'', '-1'));
+    } else {
+        $itemsPerPage2 = intval(Functions::getContent($page['pagination']['numItemsPerPage']??'', '12'));
+        $pageNumber2 = intval(Functions::getContent($page['pagination']['currentPage']??'', '-1'));
+    }
     $sorting2 = serialize(Functions::getContent($page['sorting']??'', ''));
 @endphp
 

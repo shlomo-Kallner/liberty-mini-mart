@@ -406,19 +406,23 @@
     <!-- END PRODUCT LIST -->
 
     @if (Functions::testVar($paginator3))
-        @component('lib.themewagon.paginator')
-            @foreach ($paginator3 as $key => $val)
-                @slot($key)
-                    @if ($val instanceof Htmlable) 
-                        {!! $val->toHtml() !!}
-                    @elseif (is_array($val) || is_object($val))
-                        {!! serialize($val) !!}
-                    @else
-                        {!! $val !!}
-                    @endif
-                @endslot
-            @endforeach
-        @endcomponent
+        @if (false)
+            <div id="masterPagination"></div>
+        @else
+            @component('lib.themewagon.paginator')
+                @foreach ($paginator3 as $key => $val)
+                    @slot($key)
+                        @if ($val instanceof Htmlable) 
+                            {!! $val->toHtml() !!}
+                        @elseif (is_array($val) || is_object($val))
+                            {!! serialize($val) !!}
+                        @else
+                            {!! $val !!}
+                        @endif
+                    @endslot
+                @endforeach
+            @endcomponent
+        @endif
     @endif
 
 </div>

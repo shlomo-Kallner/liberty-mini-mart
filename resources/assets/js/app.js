@@ -13,9 +13,10 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 window.url = require('url');
+window.myUtils = require('./utils');
 // window.Vue.component('pagination', Pagination);
 
-const uuidv5 = require('uuid/v5');
+const uuidv3 = require('uuid/v3');
 const uuidv5 = require('uuid/v5');
 
 /**
@@ -36,6 +37,7 @@ const uuidv5 = require('uuid/v5');
 window.Vue.component('dismissable-alert', require('./components/dismissable-alert.vue'));
 window.Vue.component('cart-component', require('./components/cart.vue'));
 window.Vue.component('boot-pagination', require('./components/bootPaginator.vue'));
+window.Vue.component('boot-carousel', require('./components/bootCarousel.vue'));
 
 
 window.Laravel.page.alert = new LaravelAlert(window.Laravel.alert);
@@ -100,33 +102,35 @@ window.Laravel.page.setCart = function (data) {
   window.Laravel.masterCart.cartData = data;
 };
 
-window.Laravel.page.paginator = new window.Vue(
+window.Laravel.page.masterPaginator = new window.Vue(
   {
-    el: '#pageWidePagination',
-    template: '<boot-pagination v-bind=""></boot-pagination>',
+    el: '#masterPagination',
+    template: '<boot-pagination v-bind="pagingData" @paging-event="doPaging"></boot-pagination>',
     data: {
       urlObj: window.url.parse(window.Laravel.thisUrl),
-      pagingFor: 'content',
-      pagingData: {
-        numPages: Number,
-        currentPage: Number,
-        pagesPerView: Number,
-        itemsPerPage: Number,
-        totalItems: Number
+      paging: JSON.parse(window.Laravel.pagination),
+      pageAsync: false
+    },
+    computed: {
+      pagingFor: function () {
+        return this.paging.pagingFor;
+      },
+      pagingData: function () {
+        return window.myUtils.getPagingData(this.paging);
       }
     },
     methods: {
       genUrl: function (pageNum, viewNum) {
-        return window.url.format({
-          protocol: this.urlObj.protocol,
-          host: this.urlObj.host,
-          pathname: this.urlObj.pathname,
-          query: {
-            pageNum: pageNum,
-            viewNum: viewNum,
-            pagingFor: this.pagingFor
-          }
-        });
+        return window.myUtils.genUrl(
+          this.urlObj, pageNum, viewNum, this.pagingFor
+        );
+      },
+      doPaging: function (pageNum, viewNum) {
+        if (this.pageAsync) {
+          // for now, no-op..
+        } else {
+          window.location.assign(this.genUrl(pageNum, viewNum));
+        }
       }
     }
   }

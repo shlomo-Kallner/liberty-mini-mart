@@ -123,7 +123,7 @@
             },
             goToPage: function (pageNum) {
                 this.thisPage = pageNum;
-                this.$emit('paging-event', pageNum);
+                this.$emit('paging-event', pageNum, this.currentView);
             },
             prevView: function () {
                 this.currentView--;
