@@ -26,7 +26,7 @@
 </template>
 
 <script>
-    import Stack from '../../lib/LibertyStack.ts';
+    import Stack from '../../lib/LibertyStack.js';
     export default {
         name: 'admin-panel-component',
         props: {
