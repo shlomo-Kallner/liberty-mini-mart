@@ -1,15 +1,14 @@
 
-
 window.axios.defaults.baseURL = window.Laravel.baseUrl;
 
 window.Vue.component(
-    'admin-panel-component', 
-    require('./components/admin/adminPanel.vue')
+  'admin-panel-component',
+  require('./components/admin/adminPanel.vue')
 );
 
 window.Laravel.page.admin.app = new window.Vue({
-    el: '#cms-app',
-    template: '<admin-panel-component></admin-panel-component>'
+  el: '#cms-app',
+  template: '<admin-panel-component></admin-panel-component>'
 });
 
 window.Laravel.page.admin.makeData = function (info, url, token, redirect, action, nut = '') {

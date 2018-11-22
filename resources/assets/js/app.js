@@ -4,7 +4,9 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-import { LaravelAlert } from './lib/LaravelAlert'
+// import { LaravelAlert } from './lib/LaravelAlert'
+
+window.Laravel.LaravelAlert = require('./lib/LaravelAlert');
 
 // import { Pagination } from 'vue-pagination-2'
 
@@ -40,7 +42,7 @@ window.Vue.component('boot-pagination', require('./components/bootPaginator.vue'
 window.Vue.component('boot-carousel', require('./components/bootCarousel.vue'));
 
 
-window.Laravel.page.alert = new LaravelAlert(window.Laravel.alert);
+window.Laravel.page.alert = new window.Laravel.LaravelAlert(window.Laravel.alert);
 
 window.Laravel.masterAlert = new window.Vue({
   el: '#masterPageAlertContainer',
@@ -67,7 +69,7 @@ window.Laravel.masterAlert = new window.Vue({
 });
 
 window.Laravel.page.setAlert = function (data) {
-  window.Laravel.page.alert = new LaravelAlert(data);
+  window.Laravel.page.alert = new window.Laravel.LaravelAlert(data);
   window.Laravel.masterAlert.alert = window.Laravel.page.alert.getData();
 };
 
