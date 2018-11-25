@@ -32,6 +32,8 @@ try {
 window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// an addition by Shlomo Kallner, to preload axios's default baseURL.
+window.axios.defaults.baseURL = window.Laravel.baseUrl; 
 
 /**
  * Next we will register the CSRF Token as a common header with Axios so that

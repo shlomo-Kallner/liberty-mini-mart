@@ -18,8 +18,8 @@ window.url = require('url');
 window.myUtils = require('./utils');
 // window.Vue.component('pagination', Pagination);
 
-const uuidv3 = require('uuid/v3');
-const uuidv5 = require('uuid/v5');
+// let uuidv3 = require('uuid/v3');
+// let uuidv5 = require('uuid/v5');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -41,7 +41,6 @@ window.Vue.component('cart-component', require('./components/cart.vue'));
 window.Vue.component('boot-pagination', require('./components/bootPaginator.vue'));
 window.Vue.component('boot-carousel', require('./components/bootCarousel.vue'));
 
-
 window.Laravel.page.alert = new window.Laravel.LaravelAlert(window.Laravel.alert);
 
 window.Laravel.masterAlert = new window.Vue({
@@ -59,7 +58,11 @@ window.Laravel.masterAlert = new window.Vue({
   computed: {
     alert: {
       set: function (data) {
-        this.alertData = data;
+        if (typeof data === 'object') {
+          this.alertData = data;
+        } else if (typeof data === 'string') {
+          this.alertData = JSON.parse(data);
+        }
       },
       get: function () {
         return this.alertData;
@@ -90,7 +93,7 @@ window.Laravel.masterCart = new window.Vue(
         set: function (data) {
           if (typeof data === 'string') {
             this.cartData = JSON.parse(data);
-          } else if (typeof data == 'object') {
+          } else if (typeof data === 'object') {
             this.cartData = data;
           }
         }
@@ -111,7 +114,11 @@ window.Laravel.page.masterPaginator = new window.Vue(
     data: {
       urlObj: window.url.parse(window.Laravel.thisUrl),
       paging: JSON.parse(window.Laravel.pagination),
-      pageAsync: false
+      pageAsync: false,
+      pagingFunc: function (pUrl) {
+        // for now, no-op..
+        return pUrl;
+      }
     },
     computed: {
       pagingFor: function () {
@@ -128,10 +135,12 @@ window.Laravel.page.masterPaginator = new window.Vue(
         );
       },
       doPaging: function (pageNum, viewNum) {
+        var pUrl = this.genUrl(pageNum, viewNum);
         if (this.pageAsync) {
           // for now, no-op..
+          this.pagingFunc(pUrl);
         } else {
-          window.location.assign(this.genUrl(pageNum, viewNum));
+          window.location.assign(pUrl);
         }
       }
     }

@@ -60,6 +60,7 @@
 </template>
 
 <script>
+/* 
     import BootCarousel from '../bootCarousel.vue';
     import jquery from 'jquery';
     import bs3 from 'bootstrap-sass';
@@ -67,6 +68,7 @@
     import myUtils from '../../utils.js';
     import url from 'url';
     import axios from 'axios';
+     */
     export default {
         name: 'boot-content-item',
         props: {
