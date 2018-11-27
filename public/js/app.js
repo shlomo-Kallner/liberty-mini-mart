@@ -29192,8 +29192,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
  * building robust, powerful web applications using Vue and Laravel.
  */
 // import { LaravelAlert } from './lib/LaravelAlert'
-var la = __webpack_require__(82);
-window.Laravel.LaravelAlert = la.default;
+window.Laravel.LaravelAlert = __webpack_require__(82).default;
 
 // import { Pagination } from 'vue-pagination-2'
 

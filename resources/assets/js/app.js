@@ -5,8 +5,7 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 // import { LaravelAlert } from './lib/LaravelAlert'
-var la = require('./lib/LaravelAlert');
-window.Laravel.LaravelAlert = la.default;
+window.Laravel.LaravelAlert = require('./lib/LaravelAlert').default;
 
 // import { Pagination } from 'vue-pagination-2'
 
