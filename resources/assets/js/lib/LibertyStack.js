@@ -1,6 +1,6 @@
 // let _ = require('lodash');
 
-export class Stack {
+export default class Stack {
   // private data: Array<any>;
   constructor (data) {
     this.data = data;
