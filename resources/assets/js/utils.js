@@ -13,13 +13,23 @@ export default {
     });
   },
   getPagingData: function (paging) {
-    return {
-      numPages: paging.totalNumPages,
-      currentPage: paging.currentPage,
-      pagesPerView: paging.numPerView,
-      itemsPerPage: paging.numItemsPerPage,
-      totalItems: paging.totalItems
-    };
+    if (paging !== undefined && window._.size(paging) >= 5) {
+      return {
+        numPages: paging.totalNumPages !== undefined ? paging.totalNumPages : 0,
+        currentPage: paging.currentPage !== undefined ? paging.currentPage : 0,
+        pagesPerView: paging.numPerView !== undefined ? paging.numPerView : 0,
+        itemsPerPage: paging.numItemsPerPage !== undefined ? paging.numItemsPerPage : 0,
+        totalItems: paging.totalItems !== undefined ? paging.totalItems : 0
+      };
+    } else {
+      return {
+        numPages: 0,
+        currentPage: 0,
+        pagesPerView: 0,
+        itemsPerPage: 0,
+        totalItems: 0
+      };
+    }
   },
   testData: function (data) {
     return data !== undefined && data !== null;
@@ -66,11 +76,11 @@ export default {
       } 
       pageNum = numPages - pageNum;
     } 
-    var first = window._.max([0, pageNum * numItemsPerPage]);
+    var first = window._.max([0, pageNum * itemsPerPage]);
     if (first > numItems) {
       first -= numItems;
     }
-    var last = first + numItemsPerPage;
+    var last = first + itemsPerPage;
     if (last >= numItems) {
       last -= (last - numItems);  
     } 

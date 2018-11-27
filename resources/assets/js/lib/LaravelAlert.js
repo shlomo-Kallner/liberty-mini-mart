@@ -1,5 +1,5 @@
 
-export class LaravelAlert {
+export default class LaravelAlert {
   constructor (data) {
     let decoded = JSON.parse(data);
     this.data = {

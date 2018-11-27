@@ -5,8 +5,8 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 // import { LaravelAlert } from './lib/LaravelAlert'
-
-window.Laravel.LaravelAlert = require('./lib/LaravelAlert');
+var la = require('./lib/LaravelAlert');
+window.Laravel.LaravelAlert = la.default;
 
 // import { Pagination } from 'vue-pagination-2'
 
@@ -15,7 +15,7 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 window.url = require('url');
-window.myUtils = require('./utils');
+window.myUtils = require('./utils').default;
 // window.Vue.component('pagination', Pagination);
 
 // let uuidv3 = require('uuid/v3');
@@ -106,43 +106,48 @@ window.Laravel.page.setCart = function (data) {
   window.Laravel.page.cart = data;
   window.Laravel.masterCart.cartData = data;
 };
-
-window.Laravel.page.masterPaginator = new window.Vue(
-  {
-    el: '#masterPagination',
-    template: '<boot-pagination v-bind="pagingData" @paging-event="doPaging"></boot-pagination>',
-    data: {
-      urlObj: window.url.parse(window.Laravel.thisUrl),
-      paging: JSON.parse(window.Laravel.pagination),
-      pageAsync: false,
-      pagingFunc: function (pUrl) {
-        // for now, no-op..
-        return pUrl;
-      }
-    },
-    computed: {
-      pagingFor: function () {
-        return this.paging.pagingFor;
-      },
-      pagingData: function () {
-        return window.myUtils.getPagingData(this.paging);
-      }
-    },
-    methods: {
-      genUrl: function (pageNum, viewNum) {
-        return window.myUtils.genUrl(
-          this.urlObj, pageNum, viewNum, this.pagingFor
-        );
-      },
-      doPaging: function (pageNum, viewNum) {
-        var pUrl = this.genUrl(pageNum, viewNum);
-        if (this.pageAsync) {
+if (window.jQuery('#masterPagination').length > 0) {
+  window.Laravel.page.masterPaginator = new window.Vue(
+    {
+      el: '#masterPagination',
+      template: '<boot-pagination v-bind="pagingData" @paging-event="doPaging"></boot-pagination>',
+      data: {
+        urlObj: window.url.parse(window.Laravel.thisUrl),
+        paging: JSON.parse(window.Laravel.pagination),
+        pageAsync: false,
+        pagingFunc: function (pUrl) {
           // for now, no-op..
-          this.pagingFunc(pUrl);
-        } else {
-          window.location.assign(pUrl);
+          return pUrl;
+        }
+      },
+      computed: {
+        pagingFor: function () {
+          if (this.paging !== undefined && window._.size(this.paging) > 0) {
+            return this.paging.pagingFor;
+          } else {
+            return '';
+          }
+        },
+        pagingData: function () {
+          return window.myUtils.getPagingData(this.paging);
+        }
+      },
+      methods: {
+        genUrl: function (pageNum, viewNum) {
+          return window.myUtils.genUrl(
+            this.urlObj, pageNum, viewNum, this.pagingFor
+          );
+        },
+        doPaging: function (pageNum, viewNum) {
+          var pUrl = this.genUrl(pageNum, viewNum);
+          if (this.pageAsync) {
+            // for now, no-op..
+            this.pagingFunc(pUrl);
+          } else {
+            window.location.assign(pUrl);
+          }
         }
       }
     }
-  }
-);
+  );
+}

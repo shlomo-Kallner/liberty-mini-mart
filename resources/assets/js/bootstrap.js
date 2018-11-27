@@ -17,6 +17,16 @@ try {
     //alert('hello from vue-bootstrap!!');
     window.$ = window.jQuery = require('jquery');
   }
+  if (window.$ === undefined && $ !== undefined) {
+    window.$ = $;
+  } else if (window.$ !== undefined && $ === undefined) {
+    $ = window.$;
+  }
+  if (window.jQuery === undefined && jQuery !== undefined) {
+    window.jQuery = jQuery;
+  } else if (window.jQuery !== undefined && jQuery === undefined) {
+    jQuery = window.jQuery;  
+  }
 
   // we are appearing to have some conflict between this and
   //  and our local import... so commenting this out..
