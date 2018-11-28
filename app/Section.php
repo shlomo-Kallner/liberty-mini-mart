@@ -26,11 +26,17 @@ class Section extends Model implements TransformableContainer, ContainerAPI
      */
     protected $dates = ['deleted_at'];
 
-    public function getFullUrl(string $baseUrl)
+    public function getUrlFragment(string $baseUrl)
     {
         // {$tmp[0]}/section/{section}/category/{category}/product/{product}
         // $surl = $this->catalog->getFullUrl($baseUrl);
-        return $baseUrl . '/section/' . $this->url;
+        return $baseUrl . '/section/';
+    }
+
+    public function getFullUrl(string $baseUrl)
+    {
+        $surl = $this->getUrlFragment($baseUrl);
+        return $surl . $this->url;
     }
 
     static public function getSection(
