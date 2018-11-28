@@ -5,73 +5,68 @@
  */
 
 jQuery(function ($) {
-    // put your code here..
-    // console.log("Ready To Code with jQuery!!");
+  // put your code here..
+  // console.log("Ready To Code with jQuery!!");
+  /*
 
-    // from
+    BEGIN USERS Scrolled Links Panel Scripting
 
-    /*
+    Inspired From Styler Panel in 
+    '..\lib\themewagon\metronicShopUI\theme\assets\corporate\scripts\layout.js'
+  */
 
-        BEGIN USERS Scrolled Links Panel Scripting
+  var handleUsersLinks = function () {
+    var panel = $('.users-links-panel')
 
-        Inspired From Styler Panel in 
-        '..\lib\themewagon\metronicShopUI\theme\assets\corporate\scripts\layout.js'
-    */
+    $('.icon-users-links', panel).click(function () {
+      panel.addClass('icon-users-links-panel-open')
+      $('.users-links').show()
+      $('.icon-users-links-close').show()
+    })
 
-    var handleUsersLinks = function () {
-    
-        var panel = $('.users-links-panel');
-    
-        $('.icon-users-links', panel).click(function () {
-            panel.addClass('icon-users-links-panel-open');
-            $('.users-links').show();
-            $('.icon-users-links-close').show();
-        });
+    $('.icon-users-links-close', panel).click(function () {
+      panel.removeClass('icon-users-links-panel-open')
+      $('.users-links').hide()
+      $('.icon-users-links-close').hide()
+    })
 
-        $('.icon-users-links-close', panel).click(function () {
-            panel.removeClass('icon-users-links-panel-open');
-            $('.users-links').hide();
-            $('.icon-users-links-close').hide();
-        });
+    // $('body:not(.page-header-fixed) .icon-users-links-panel-open')
+  }
+  handleUsersLinks()
 
-        // $('body:not(.page-header-fixed) .icon-users-links-panel-open');
+  var handleSearch = function () {
+    /// set up handling the search-modal-trigger's click event
+    $('.search-modal-trigger-btn').click(
+      function () {
+        $('#search-modal').modal('show')
+        // console.log('helloOOOh World!');
+      }
+    )
+  }
+  handleSearch()
 
-    };
-    handleUsersLinks();
+  var handleCartInit = function () {
+    $('.product-quantity #product-quantity').TouchSpin({
+      buttondown_class: 'btn quantity-down',
+      buttonup_class: 'btn quantity-up'
+    });
+    $('.quantity-down').html("<i class='fa fa-angle-down'></i>")
+    $('.quantity-up').html("<i class='fa fa-angle-up'></i>")
+  }
+  // handleCartInit()
 
-    var handleSearch = function() {    
-
-        /// set up handling the search-modal-trigger's click event
-        $('.search-modal-trigger-btn').click(function() {
-            $('#search-modal').modal('show');
-            //console.log('helloOOOh World!');
-        });
-
-        /// 
-        
-
-    };
-    handleSearch();
-
-    var handleCartInit = function () {
-        $(".product-quantity #product-quantity").TouchSpin({
-            buttondown_class: "btn quantity-down",
-            buttonup_class: "btn quantity-up"
-        });
-        $(".quantity-down").html("<i class='fa fa-angle-down'></i>");
-        $(".quantity-up").html("<i class='fa fa-angle-up'></i>");
-    };
-
-    /* var getOptionVals = function (options, jquery) {
-        var result = {};
+  /*
+    var getOptionVals = function (options, jquery) {
+        var result = {}
         for (var i in options) {
-            result[i] = jquery('#' + options[i]).val();
+            result[i] = jquery('#' + options[i]).val()
         }
-        return result;
-    }; */
+        return result
+    }
+  */
 
-    //var cartForStore = function () {
-    var handleCart = {
+  // var cartForStore = function () {
+  var handleCart = {
         // utility 
         getOptionVals: function (options, jquery) {
             var result = {};
@@ -220,54 +215,56 @@ jQuery(function ($) {
                 }
             }
         }
-    };
-    window.Laravel.handleCart = handleCart;
-       // return cartForStore;
-    //};
-    /* jQuery.fn.extend({
+  }
+  window.Laravel.handleCart = handleCart
+  // return cartForStore;
+  // };
+  /* 
+    jQuery.fn.extend({
         cartForStore: handleCart()
-    }); */
+    }); 
+  */
 
-    var myInit = function ($) {
-        Layout.init();
-        Layout.initOWL();
-        Layout.initImageZoom();
-        Layout.initTouchspin();
-        Layout.initFixHeaderWithPreHeader();
-        Layout.initNavScrolling();
-        Layout.initUniform();
-        Layout.initSliderRange();
-        $.scrolltotop.init2(window.Laravel.upPngPath);
-      };
-    myInit($);  
+  var myInit = function ($) {
+    Layout.init()
+    Layout.initOWL()
+    Layout.initImageZoom()
+    Layout.initTouchspin()
+    Layout.initFixHeaderWithPreHeader()
+    Layout.initNavScrolling()
+    Layout.initUniform()
+    Layout.initSliderRange()
+    $.scrolltotop.init2(window.Laravel.upPngPath)
+  }
+  myInit($)
 
   var checkTimeOut = function ($) {
-    var alertTimeout = window.Laravel.page.alert.getTimeout();
-    // console.log("Heloo from checkTimeOut()! timeout = " + alertTimeout);  
+    var alertTimeout = window.Laravel.page.alert.getTimeout()
+    // console.log("Heloo from checkTimeOut()! timeout = " + alertTimeout) 
     if (alertTimeout !== 0) {
-      var jMe = $('#masterPageAlert');
-      jMe.show(400, function() {
-        setTimeout(function() {
-            jMe.hide();
-        }, alertTimeout);
-      });
+      var jMe = $('#masterPageAlert')
+      jMe.show(400, function () {
+        setTimeout(function () {
+          jMe.hide()
+        }, alertTimeout)
+      })
     }
-  };
-  //checkTimeOut($);
+  }
+  // checkTimeOut($);
 
-  $('.addToCart').on('click', function(e) {
-      handleCart.addToCart($(this));
-    });
-  $('.orderNow').on('click', function(e) {
-    handleCart.addToCart($(this));
-    });
+  $('.addToCart').on('click', function (e) {
+    handleCart.addToCart($(this))
+  })
+  $('.orderNow').on('click', function (e) {
+    handleCart.addToCart($(this))
+  })
   $('.delFromCart').on('click', function (e) {
-      handleCart.delFromCart($(this));
-      //console.log('in .delFromCart');
-  });
-  //$('.del-goods').on('click', function (e) {
-      //handleCart.delFromCart($(this));
+    handleCart.delFromCart($(this))
+    // console.log('in .delFromCart');
+  })
+  // $('.del-goods').on('click', function (e) {
+  //    handleCart.delFromCart($(this));
   //    console.log('in .del-goods');
-  //});
+  // });
 
 });
