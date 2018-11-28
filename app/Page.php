@@ -487,29 +487,31 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         return 'url';
     }
 
-    public function getUrlFragment(string $baseUrl)
+    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
         // {$tmp[0]}/section/{section}/category/{category}/product/{product}
         // $surl = $this->catalog->getFullUrl($baseUrl);
         //return $baseUrl . '/page/' . $this->url;
-        return 'pages/';
+        return $fullUrl ? url('pages/') : 'pages/';
     }
 
     public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         return self::makeContentArray(
             $this->article, $this->description, 
-            $this->getFullUrl($baseUrl), $this->name, 
+            $this->getFullUrl($baseUrl, $fullUrl), $this->name, 
             $useTitle ? $this->title : $this->image->alt, 
             Image::getImageArray($this->image), 
             Image::getArraysFor($this->images), 
             self::getBreadcrumbs(
                 self::genBreadcrumb(
-                    $this->name, $this->getFullUrl($baseUrl)
+                    $this->name, 
+                    $this->getFullUrl($baseUrl, $fullUrl)
                 ),
-                self::genBreadcrumb('Home', '/')
+                self::genBreadcrumb('Home', $fullUrl ? url('/') : '/')
             ), 
             $this->getVisibility()
         );
@@ -517,32 +519,37 @@ class Page extends Model implements TransformableContainer, ContainerAPI
 
     public function toFull(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         return $this->toContentArray(
-            $baseUrl, $version, $useTitle, $withTrashed
+            $baseUrl, $version, $useTitle, $withTrashed,
+            $fullUrl
         );
     }
 
     public function toMini(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         $i = Image::getImageArray($this->image);
         return makeMini(
             $i['img'], $this->name, 
-            $this->getFullUrl($baseUrl),
+            $this->getFullUrl($baseUrl, $fullUrl),
             '', $this->id, ''
         );
     }
 
     public function toSidebar(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         $i = Image::getImageArray($this->image);
         return self::makeSidebar(
-            $this->getFullUrl($baseUrl), $i['img'], 
+            $this->getFullUrl($baseUrl, $fullUrl), 
+            $i['img'], 
             $useTitle ? $this->title : $i['alt'],
             '', $this->id
         );
@@ -550,7 +557,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
 
     public function toContentArrayPlus(
         array $img = null, array $otherImages = null,
-        array $links = null
+        array $links = null, bool $fullUrl = false
     ) {
         if (!Functions::testVar($img)) {
             $i = $this->image;
@@ -558,7 +565,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
             $i = $img;
         }
         if (!Functions::testVar($links)) {
-            $b = self::genBreadcrumb('Home', '/');
+            $b = self::genBreadcrumb('Home', $fullUrl ? url('/') : '/');
         } else {
             $b = $links;
         }
@@ -569,10 +576,14 @@ class Page extends Model implements TransformableContainer, ContainerAPI
             $o = $otherImages;
         }
         return self::makeContentArray(
-            $this->article, $this->description, $this->getFullUrl($baseUrl),
+            $this->article, $this->description, 
+            $this->getFullUrl($baseUrl, $fullUrl),
             $this->name, $this->title, $i, $o, 
             self::getBreadcrumbs(
-                self::genBreadcrumb($this->name, $this->getFullUrl($baseUrl)),
+                self::genBreadcrumb(
+                    $this->name, 
+                    $this->getFullUrl($baseUrl, $fullUrl)
+                ),
                 $b
             ), 
             $this->getVisibility()
@@ -583,11 +594,14 @@ class Page extends Model implements TransformableContainer, ContainerAPI
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
-        int $pageNum, int $numItemsPerPage = 4, 
-        string $pagingFor = '', int $viewNumber = 0, 
-        string $listUrl = '#'
+        bool $fullUrl = false, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $pagingFor = '', 
+        int $viewNumber = 0, string $listUrl = '#'
     ) {
-        return $this->toContentArray($baseUrl);
+        return $this->toContentArray(
+            $baseUrl, $version, $useTitle, $withTrashed,
+            $fullUrl
+        );
     }
 
     static public function makeContentArray(
@@ -644,7 +658,8 @@ class Page extends Model implements TransformableContainer, ContainerAPI
     }
 
     static public function getOrderedByPageGroupings(
-        string $dir = 'asc', $transform = null, bool $useTitle = true
+        string $dir = 'asc', $transform = null, 
+        bool $useTitle = true, bool $fullUrl = false
     ) {
         $pages = [];
         $tpg = PageGroup::orderBy('order', $dir)->get();
@@ -655,7 +670,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
                     if (Functions::testVar($page)) {
                         $pages[] = self::doTransform(
                             $page, $transform, 'store', $useTitle, 1, 
-                            true, null
+                            true, $fullUrl, null
                         );
                     }
                 }
@@ -666,7 +681,8 @@ class Page extends Model implements TransformableContainer, ContainerAPI
 
     static public function getAllPages(
         bool $asArrays = true, string $dir = 'asc',
-        bool $usePageGroupings = true, string $path = '',
+        bool $usePageGroupings = true, string $path = '', 
+        bool $fullUrl = false,
         string $pagingFor = '', int $viewNumber = 0, 
         int $pageNum = 0, int $numShown = 4
     ) {
@@ -686,7 +702,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         /// UPDATE: DONE (on PageGroup) AND DONE (as PageGrouping)
         if ($usePageGroupings) {
             $pages = self::getOrderedByPageGroupings(
-                $dir, $asArrays, true
+                $dir, $asArrays, true, $fullUrl
             );
             return self::getPaginatedItemsArray(
                 $pages, $pageNum, $numShown, 

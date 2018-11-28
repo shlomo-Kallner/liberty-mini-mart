@@ -31,6 +31,24 @@ export default {
       };
     }
   },
+  getArticleData: function (article, headerCss = null, articleCss = null, useSepRows = false) {
+    return {
+      initHeader: article.header,
+      initSubheading: article.subheading,
+      initArticle: article.article,
+      initHeaderCss: headerCss,
+      initArticleCss: articleCss,
+      initImage: article.img,
+      initUseSepparateRow: useSepRows
+    }
+  },
+  getFigureData: function (figure) {
+    return {
+      initImage: figure.img,
+      initAlt: figure.alt,
+      initCaption: figure.cap
+    }
+  },
   testData: function (data) {
     return data !== undefined && data !== null;
   },

@@ -45,135 +45,143 @@
         //dd($sidebar2);
     @endphp
 
-    <div class="row margin-bottom-40">
-        @component('lib.themewagon.sidebar')
-            @slot('menu')
-                {!! serialize($sidebar2) !!}
-            @endslot
-            @slot('sidebarClasses')
-                {!! 'col-md-3 col-sm-5' !!}
-            @endslot
-        @endcomponent
+    @if (false)
 
-        <div class="col-md-9 col-sm-7">
-            @if (true)
-                @component('lib.themewagon.article')
-                    @foreach ($article2 as $key => $item)
-                        @slot($key)
-                            {!! $item !!}
-                        @endslot
-                    @endforeach
-                @endcomponent
-            @else
-                <h1>{{ $article2['header'] }}</h1>
-                <h2>{{ $article2['subheading'] }}</h2>
-            @endif
+        <div id="cms-app"></div>
 
-            @section('cms-content')
+    @else
 
-                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapsableSectionsPanel" aria-expanded="false" aria-controls="collapsableSectionsPanel">
-                    Display Sections
-                </button>
-                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapsableUsersPanel" aria-expanded="false" aria-controls="collapsableUsersPanel">
-                    Display Users
-                </button>
-                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapsablePagesPanel" aria-expanded="false" aria-controls="collapsablePagesPanel">
-                    Display Pages
-                </button>
-
-                <hr>
-
-                <div class="collapse" id="collapsableSectionsPanel">
-
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a class="btn btn-primary pull-left" href="{{ url('admin/section/create') }}" role="button">
-                                Create a New Section
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            
-                            @component('cms.sections')
-                                @slot('sections')
-                                    {!! serialize($sections2) !!}
-                                @endslot
-                                @if (Functions::testVar($sections_paginator2))
-                                    @slot('paginator')
-                                        {!! serialize($sections_paginator2) !!}
-                                    @endslot
-                                @endif
-                            @endcomponent
-                                
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="collapse" id="collapsableUsersPanel">
-                    
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a class="btn btn-primary" href="{{ url('admin/user/create') }}" role="button">Create a New User</a>
-                        </div>
-                    </div>
-                            
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            
-                            @component('cms.users')
-                                @slot('users')
-                                    {!! serialize($users2) !!}
-                                @endslot
-                                @if (Functions::testVar($users_paginator2))
-                                    @slot('paginator')
-                                        {!! serialize($users_paginator2) !!}
-                                    @endslot
-                                @endif
-                            @endcomponent
-
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="collapse" id="collapsablePagesPanel">
-                    
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <a class="btn btn-primary" href="{{ url('admin/page/create') }}" role="button">Create a New Page</a>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            
-                            @component('cms.pages')
-                                @slot('pages')
-                                    {!! serialize($pages2) !!}
-                                @endslot
-                                @if (Functions::testVar($pages_paginator2))
-                                    @slot('paginator')
-                                        {!! serialize($pages_paginator2) !!}
-                                    @endslot
-                                @endif
-                            @endcomponent
-
-                        </div>
-                    </div>
-                    
-                </div>
-                
-                <div id="cms-app"></div>
-
-            @show
+        <div class="row margin-bottom-40">
             
+            @component('lib.themewagon.sidebar')
+                @slot('menu')
+                    {!! serialize($sidebar2) !!}
+                @endslot
+                @slot('sidebarClasses')
+                    {!! 'col-md-3 col-sm-5' !!}
+                @endslot
+            @endcomponent
+
+            <div class="col-md-9 col-sm-7">
+                @if (true)
+                    @component('lib.themewagon.article')
+                        @foreach ($article2 as $key => $item)
+                            @slot($key)
+                                {!! $item !!}
+                            @endslot
+                        @endforeach
+                    @endcomponent
+                @else
+                    <h1>{{ $article2['header'] }}</h1>
+                    <h2>{{ $article2['subheading'] }}</h2>
+                @endif
+
+                @section('cms-content')
+
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapsableSectionsPanel" aria-expanded="false" aria-controls="collapsableSectionsPanel">
+                        Display Sections
+                    </button>
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapsableUsersPanel" aria-expanded="false" aria-controls="collapsableUsersPanel">
+                        Display Users
+                    </button>
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapsablePagesPanel" aria-expanded="false" aria-controls="collapsablePagesPanel">
+                        Display Pages
+                    </button>
+
+                    <hr>
+
+                    <div class="collapse" id="collapsableSectionsPanel">
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <a class="btn btn-primary pull-left" href="{{ url('admin/section/create') }}" role="button">
+                                    Create a New Section
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                
+                                @component('cms.sections')
+                                    @slot('sections')
+                                        {!! serialize($sections2) !!}
+                                    @endslot
+                                    @if (Functions::testVar($sections_paginator2))
+                                        @slot('paginator')
+                                            {!! serialize($sections_paginator2) !!}
+                                        @endslot
+                                    @endif
+                                @endcomponent
+                                    
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="collapse" id="collapsableUsersPanel">
+                        
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <a class="btn btn-primary" href="{{ url('admin/user/create') }}" role="button">Create a New User</a>
+                            </div>
+                        </div>
+                                
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                
+                                @component('cms.users')
+                                    @slot('users')
+                                        {!! serialize($users2) !!}
+                                    @endslot
+                                    @if (Functions::testVar($users_paginator2))
+                                        @slot('paginator')
+                                            {!! serialize($users_paginator2) !!}
+                                        @endslot
+                                    @endif
+                                @endcomponent
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="collapse" id="collapsablePagesPanel">
+                        
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <a class="btn btn-primary" href="{{ url('admin/page/create') }}" role="button">Create a New Page</a>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                
+                                @component('cms.pages')
+                                    @slot('pages')
+                                        {!! serialize($pages2) !!}
+                                    @endslot
+                                    @if (Functions::testVar($pages_paginator2))
+                                        @slot('paginator')
+                                            {!! serialize($pages_paginator2) !!}
+                                        @endslot
+                                    @endif
+                                @endcomponent
+
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                @show
+                
+            </div>
+        
         </div>
     
-    </div>
+    @endif
 
+    
     
 @endsection
 

@@ -19,21 +19,22 @@ interface TransformableContainer
 
     static public function getOrderByKey();
 
-    public function getUrlFragment(string $baseUrl);
+    public function getUrlFragment(string $baseUrl, bool $fullUrl = false);
 
-    public function getFullUrl(string $baseUrl);
+    public function getFullUrl(string $baseUrl, bool $fullUrl = false);
 
     public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
     );
 
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
-        int $pageNum, int $numItemsPerPage = 4, 
-        string $pagingFor = '', int $viewNumber = 0, 
-        string $listUrl = '#'
+        bool $fullUrl = false, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $pagingFor = '', 
+        int $viewNumber = 0, string $listUrl = '#'
     );
 
     /* public function toTableArray(
@@ -43,17 +44,20 @@ interface TransformableContainer
 
     public function toFull(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
     );
 
     public function toMini(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
     );
 
     public function toSidebar(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
     );
 }
 
@@ -90,10 +94,11 @@ trait ContainerTransforms
         ];
     }
 
-    public function getFullUrl(string $baseUrl)
+    public function getFullUrl(string $baseUrl, bool $fullUrl = false)
     {
         $surl = $this->getUrlFragment($baseUrl);
-        return $surl . $this->url;
+        $url = $surl . $this->url;
+        return $fullUrl ? url($url) : $url;
     }
     
     /** 
@@ -203,12 +208,14 @@ trait ContainerTransforms
     static public function getAllWithTransform(
         $transform = null, string $dir = 'asc', 
         bool $withTrashed = true, string $baseUrl = 'store', 
-        bool $useTitle = true, int $version = 1
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1
     ) {
         $tmp = self::getOrdered($dir, $withTrashed);
         return self::getFor(
             $tmp, $baseUrl, $transform,
-            $useTitle, $version, $withTrashed
+            $useTitle, $version, $withTrashed, 
+            $fullUrl
         );
     }
 
@@ -461,7 +468,7 @@ trait ContainerTransforms
             ->get();
         $tmp1 = self::getFor(
             $tmp, $baseUrl, $transform,
-            $useTitle, $version, $withTrashed
+            $useTitle, $version, $withTrashed, $fullUrl
         );
         return self::getPaginatedItemsArray(
             $tmp1, $pageNum, $numShown, 
@@ -473,29 +480,30 @@ trait ContainerTransforms
     static public function doTransform(
         $item, $transform = null, string $baseUrl = 'store',
         bool $useTitle = true, int $version = 1, 
-        bool $withTrashed = true, $default = null
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = null
     ) {
         if ($item instanceof self) {
             if (is_string($transform) && !empty($transform)) {
                 switch ($transform) {
                 case 'mini':
-                    return $item->toMini($baseUrl, $version, $useTitle, $withTrashed);
+                    return $item->toMini($baseUrl, $version, $useTitle, $withTrashed, $fullUrl);
                 case 'full':
-                    return $item->toFull($baseUrl, $version, $useTitle, $withTrashed);
+                    return $item->toFull($baseUrl, $version, $useTitle, $withTrashed, $fullUrl);
                 case 'sidebar':
-                    return $item->toSidebar($baseUrl, $version, $useTitle, $withTrashed);
+                    return $item->toSidebar($baseUrl, $version, $useTitle, $withTrashed, $fullUrl);
                 case 'content':
-                    return $item->toContentArray($baseUrl, $version, $useTitle, $withTrashed);
+                    return $item->toContentArray($baseUrl, $version, $useTitle, $withTrashed, $fullUrl);
                 case 'name':
                     return $item->toNameListing();
                 case 'fragment':
-                    return $item->toUrlFragrment($baseUrl);
+                    return $item->toUrlFragrment($baseUrl, $fullUrl);
                 }
             } elseif (is_callable($transform)) {
-                return $transform($item, $baseUrl, $version, $useTitle, $withTrashed);
+                return $transform($item, $baseUrl, $version, $useTitle, $withTrashed, $fullUrl);
             } elseif (is_bool($transform) && $transform) {
                 /// allows $transform be a renamed $asArray..
-                return $item->toContentArray($baseUrl, $version, $useTitle, $withTrashed);
+                return $item->toContentArray($baseUrl, $version, $useTitle, $withTrashed, $fullUrl);
             } else {
                 return $item;
             }
@@ -507,7 +515,8 @@ trait ContainerTransforms
     static public function getFor(
         $args, string $baseUrl = 'store', $transform = null, 
         bool $useTitle = true, int $version = 1, 
-        bool $withTrashed = true, $default = []
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = []
     ) {
         if ((is_array($args) || $args instanceof Collection) 
             && count($args) > 0
@@ -522,7 +531,7 @@ trait ContainerTransforms
                     if (Functions::testVar(
                         $tmp = self::doTransform(
                             $item, $transform, $baseUrl, $useTitle,
-                            $version, $withTrashed, null
+                            $version, $withTrashed, $fullUrl, null
                         )
                     )
                     ) {
@@ -549,7 +558,7 @@ trait ContainerTransforms
         string $listUrl = '', string $baseUrl = 'store', 
         string $dir = 'asc', int $viewNumber = 0, 
         bool $withTrashed = true, bool $useTitle = true, 
-        int $version = 1, $default = []
+        bool $fullUrl = false, int $version = 1, $default = []
     ) {
         $cTmp = count($args);
         if ($cTmp <= $numShown) {
@@ -568,7 +577,7 @@ trait ContainerTransforms
         }
         $tmp = self::getFor(
             $argTmp, $baseUrl, $transform, $useTitle, $version,
-            $withTrashed, $default
+            $withTrashed, $fullUrl, $default
         );
         if (Functions::testVar($tmp)) {
             return self::getPaginatedItemsArray(
@@ -587,7 +596,7 @@ trait ContainerTransforms
         string $listUrl = '', string $baseUrl = 'store', 
         string $dir = 'asc', int $viewNumber = 0, 
         bool $withTrashed = true, bool $useTitle = true, 
-        int $version = 1, $default = []
+        bool $fullUrl = false, int $version = 1, $default = []
     ) {
         if (is_array($args) || $args instanceof Collection) {
             $cTmp = count($args);
@@ -613,8 +622,8 @@ trait ContainerTransforms
                     if ($transform) {
                         if ($res = $item->toContentArrayWithPagination(
                             $baseUrl, $version, $useTitle, $withTrashed,
-                            $pageNum, $numShown, $pagingFor, $viewNumber, 
-                            $listUrl
+                            $fullUrl, $pageNum, $numShown, $pagingFor, 
+                            $viewNumber, $listUrl
                         )
                         ) {
                             $tmp[] = $res;
@@ -638,20 +647,21 @@ trait ContainerTransforms
     static public function getContentArrays(
         $arrays, string $baseUrl = 'store', $default = [],
         int $version = 1, bool $useTitle = true, 
-        bool $withTrashed = true
+        bool $withTrashed = true, bool $fullUrl = false
     ) {
         return self::getFor(
             $arrays, $baseUrl, 
             TransformableContainer::TO_CONTENT_ARRAY_TRANSFORM,
-            $useTitle, $version, $withTrashed, $default
+            $useTitle, $version, $withTrashed, $fullUrl, $default
         );
     }
 
-    public function toUrlFragrment(string $baseUrl)
+    public function toUrlFragrment(string $baseUrl, bool $fullUrl = false)
     {
+        $url = $this->getUrlFragment($baseUrl);
         return [
             'name' => $this->name,
-            'url' => $this->getUrlFragment($baseUrl), 
+            'url' =>  $fullUrl ? url($url) : $url, 
         ];
     }
 

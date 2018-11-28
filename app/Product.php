@@ -124,7 +124,8 @@ class Product extends Model implements TransformableContainer, ContainerAPI
     static public function getRandomSample(
         int $numProducts, bool $toArray = false, 
         string $baseUrl = 'store', 
-        bool $useTitle = true, int $version = 1
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, bool $withTrashed = true
     ) {
         $numTotal = self::count();
         $res = [];
@@ -137,7 +138,10 @@ class Product extends Model implements TransformableContainer, ContainerAPI
                         && Functions::testVar($t = self::getFromId($smp, false))
                     ) {
                         $res[$smp] = $toArray 
-                            ? $t->toContentArray($baseUrl, $version, $useTitle) 
+                            ? $t->toContentArray(
+                                $baseUrl, $version, $useTitle,
+                                $withTrashed, $fullUrl
+                            ) 
                             : $t;
                         $bol = false;
                     }
@@ -149,7 +153,10 @@ class Product extends Model implements TransformableContainer, ContainerAPI
             foreach ($rng as $idx) {
                 if (Functions::testVar($t = self::getFromId($idx, false))) {
                     $res[] = $toArray 
-                        ? $t->toContentArray($baseUrl, $version, $useTitle) 
+                        ? $t->toContentArray(
+                            $baseUrl, $version, $useTitle,
+                            $withTrashed, $fullUrl
+                        ) 
                         : $t;
                 }
             }
@@ -191,11 +198,15 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         string $baseUrl = 'store', string $sizeClass = 'col-md-12',
         string $owlClass = 'owl-carousel5', 
         string $productClass = 'sale-product', 
-        bool $useTitle = true, int $version = 1
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, bool $withTrashed = true
     ) {
         $products = [];
         foreach (self::getRandomSample($numProducts) as $np) {
-            $products[] = $np->toMini($baseUrl, $version, $useTitle);
+            $products[] = $np->toMini(
+                $baseUrl, $version, $useTitle, $withTrashed,
+                $fullUrl
+            );
         }
         return self::genProductGallery(
             $name, $products, $baseUrl, $sizeClass, $owlClass, $productClass
@@ -204,51 +215,58 @@ class Product extends Model implements TransformableContainer, ContainerAPI
 
     static public function getBestsellers(
         int $numProducts = 3, string $baseUrl = 'store', 
-        bool $useTitle = true, int $version = 1
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, bool $withTrashed = true
     ) {
         $bestsellers = [];
         foreach (self::getRandomSample($numProducts) as $bs) {
-            $bestsellers[] = $bs->toSidebar($baseUrl, $version, $useTitle);
+            $bestsellers[] = $bs->toSidebar(
+                $baseUrl, $version, $useTitle,
+                $withTrashed, $fullUrl
+            );
         }
         return $bestsellers;
     }
 
     static public function getProductsFor(
         $args, string $baseUrl = 'store', $transform = null, 
-        bool $useTitle = true, int $version = 1, 
-        bool $withTrashed = true, $default = []
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, bool $withTrashed = true, 
+        $default = []
     ) {
         return self::getFor(
             $args, $baseUrl, $transform, $useTitle,
-            $version, $withTrashed, $default
+            $version, $withTrashed, $fullUrl, $default
         );
     }
 
     static public function getProductsForCategory(
         $category_id, $transform, string $baseUrl = 'store', 
-        bool $useTitle = true, int $version = 1, 
+        bool $useTitle = true, bool $fullUrl = false, int $version = 1, 
         bool $withTrashed = true, $default = []
     ) {
         $products = self::where('category_id', $category_id)->get();
         return self::getFor(
             $products, $baseUrl, $transform, $useTitle, $version, 
-            $withTrashed, $default
+            $withTrashed, $fullUrl, $default
         );
     }
 
-    public function getUrlFragment(string $baseUrl)
+    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
-        $surl = $this->category->getFullUrl($baseUrl);
-        return $surl . '/product/';
+        $surl = $this->category->getFullUrl($baseUrl, false);
+        $url = $surl . '/product/';
+        return $fullUrl ? url($url) : $url;
     }
 
     public function toSidebar(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         $img = $this->image->toImageArray();
         return self::makeSidebar(
-            $this->getFullUrl($baseUrl), $img['img'], 
+            $this->getFullUrl($baseUrl, $fullUrl), $img['img'], 
             $useTitle ? $this->title : $img['alt'],
             Functions::testVar($this->sale) || $this->sale != $this->price 
                 ? $this->sale 
@@ -258,12 +276,13 @@ class Product extends Model implements TransformableContainer, ContainerAPI
 
     public function toMini(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         $img = $this->image->toImageArray();
         return self::makeMini(
             $img['img'], $useTitle ? $this->title : $img['alt'], 
-            $this->getFullUrl($baseUrl),
+            $this->getFullUrl($baseUrl, $fullUrl),
             Functions::testVar($this->sale) || $this->sale != $this->price
                 ? $this->sale : $this->price, 
             $this->id, $this->sticker
@@ -272,7 +291,8 @@ class Product extends Model implements TransformableContainer, ContainerAPI
 
     public function toFull(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         $payload = $this->getPayload(); // wishlist item?
         $image = $this->image->toImageArray();
@@ -297,8 +317,8 @@ class Product extends Model implements TransformableContainer, ContainerAPI
             'productAdditionalInfo' => Functions::getPropKey($payload, 'additionalInfo', []), // a wishList Item!
             'productSticker' => $this->sticker,
             'productID' => $this->id,
-            'productURL' => $this->getFullUrl($baseUrl),
-            'productApiUrl' => $this->getFullUrl('api/' . $baseUrl),
+            'productURL' => $this->getFullUrl($baseUrl, $fullUrl),
+            'productApiUrl' => $this->getFullUrl('api/' . $baseUrl, $fullUrl),
         ];
     }
 
@@ -333,10 +353,11 @@ class Product extends Model implements TransformableContainer, ContainerAPI
 
     public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
-        $url = $this->getFullUrl($baseUrl);
-        $api = $this->getFullUrl('api/' . $baseUrl);
+        $url = $this->getFullUrl($baseUrl, $fullUrl);
+        $api = $this->getFullUrl('api/' . $baseUrl, $fullUrl);
         return self::makeContentArray(
             $this->name, $url, $useTitle ? $this->title : $this->image->alt,
             $this->image, $this->article, $this->price,
@@ -355,9 +376,9 @@ class Product extends Model implements TransformableContainer, ContainerAPI
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
-        int $pageNum, int $numItemsPerPage = 4, 
-        string $pagingFor = '', int $viewNumber = 0, 
-        string $listUrl = '#'
+        bool $fullUrl = false, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $pagingFor = '', 
+        int $viewNumber = 0, string $listUrl = '#'
     ) {
         return $this->toContentArray($baseUrl);
     }

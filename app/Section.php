@@ -26,17 +26,18 @@ class Section extends Model implements TransformableContainer, ContainerAPI
      */
     protected $dates = ['deleted_at'];
 
-    public function getUrlFragment(string $baseUrl)
+    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
         // {$tmp[0]}/section/{section}/category/{category}/product/{product}
         // $surl = $this->catalog->getFullUrl($baseUrl);
-        return $baseUrl . '/section/';
+        $url = $baseUrl . '/section/';
+        return $fullUrl ? url($url) : $url;
     }
 
     static public function getSection(
         $section, $transform = null, bool $withTrashed = false,
         string $baseUrl = 'store', bool $useTitle = true, 
-        int $version = 1, $default = null
+        bool $fullUrl = false, int $version = 1, $default = null
     ) {
         if (Functions::testVar($section)) {
             if (is_string($section)) {
@@ -50,7 +51,7 @@ class Section extends Model implements TransformableContainer, ContainerAPI
                 return self::doTransform(
                     $tmp, $transform, $baseUrl,
                     $useTitle, $version, 
-                    $withTrashed, $default
+                    $withTrashed, $fullUrl, $default
                 );
             }
         }
@@ -68,8 +69,8 @@ class Section extends Model implements TransformableContainer, ContainerAPI
     public function getCategories(
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
-        bool $useTitle = true, int $version = 1, 
-        $default = []
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = []
     ) {
         $tmp = $withTrashed 
             ? $this->categories()->withTrashed()
@@ -77,7 +78,7 @@ class Section extends Model implements TransformableContainer, ContainerAPI
             : $this->categories()->orderBy('name', $dir)->get();
         return Categorie::getFor(
             $tmp, $baseUrl, $transform, $useTitle,
-            $version, $withTrashed, $default
+            $version, $withTrashed, $fullUrl, $default
         );
     }
 
@@ -103,17 +104,19 @@ class Section extends Model implements TransformableContainer, ContainerAPI
 
     public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         return self::makeContentArray(
-            $this->name, $this->getFullUrl($baseUrl), $this->image,
-            $useTitle ? $this->title : $this->image->alt, $this->article, 
-            $this->description,
+            $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
+            $this->image, 
+            $useTitle ? $this->title : $this->image->alt, 
+            $this->article, $this->description,
             //SectionImage::getAllImages($this->id),
             Image::getArraysFor($this->otherImages),
             $this->getCategories(
                 true, $withTrashed, 'asc', $baseUrl,
-                $useTitle, $version, []
+                $useTitle, $fullUrl, $version, []
             ), 
             [
                 'created' => $this->created_at,
@@ -128,20 +131,24 @@ class Section extends Model implements TransformableContainer, ContainerAPI
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
-        int $pageNum, int $numItemsPerPage = 4, 
-        string $pagingFor = '', int $viewNumber = 0, 
-        string $listUrl = '#'
+        bool $fullUrl = false, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $pagingFor = '', 
+        int $viewNumber = 0, string $listUrl = '#'
     ) {
-        return $this->toContentArray($baseUrl);
+        return $this->toContentArray(
+            $baseUrl, $version, $useTitle, $withTrashed, 
+            $fullUrl
+        );
     }
 
     public function toSidebar(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         $img = $this->image->toImageArray();
         return self::makeSidebar(
-            $this->getFullUrl($baseUrl), $img['img'], 
+            $this->getFullUrl($baseUrl, $fullUrl), $img['img'], 
             $useTitle ? $this->title : $img['alt'],
             '', $this->id
         ); 
@@ -149,22 +156,25 @@ class Section extends Model implements TransformableContainer, ContainerAPI
 
     public function toMini(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         $img = $this->image->toImageArray();
         return self::makeMini(
             $img['img'], $useTitle ? $this->title : $img['alt'], 
-            $this->getFullUrl($baseUrl), '', $this->id, 
+            $this->getFullUrl($baseUrl, $fullUrl), '', $this->id, 
             $this->sticker??''
         );
     }
 
     public function toFull(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
     ) {
         return $this->toContentArray(
-            $baseUrl, $version, $useTitle, $withTrashed
+            $baseUrl, $version, $useTitle, $withTrashed,
+            $fullUrl
         );
     } 
     
@@ -176,11 +186,12 @@ class Section extends Model implements TransformableContainer, ContainerAPI
     static public function getAllModels(
         $transform = null, string $dir = 'asc', 
         bool $withTrashed = true, string $baseUrl = 'store', 
-        bool $useTitle = true, int $version = 1
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1
     ) {
         return self::getAllWithTransform(
             $transform, $dir, $withTrashed, $baseUrl, 
-            $useTitle, $version
+            $useTitle, $fullUrl, $version
         );
     }
 
