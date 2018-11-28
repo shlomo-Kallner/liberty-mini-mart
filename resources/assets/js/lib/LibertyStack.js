@@ -1,13 +1,11 @@
+import { isArray } from "util";
+
 // let _ = require('lodash');
 
 export default class Stack {
   // private data: Array<any>;
-  constructor (data) {
-    this.data = data;
-  }
-
-  push (item) {
-    this.data = window._.concat(this.data, item);
+  constructor (data = []) {
+    this.data = Array.isArray(data) ? data : [];
   }
 
   at (idx, def = null) {
@@ -26,15 +24,22 @@ export default class Stack {
   }
 
   size () {
-    return window._.size(this.data);
+    return this.data.length;
+  }
+
+  empty () {
+    return this.data.length === 0
+  }
+
+  push (item) {
+    this.data.push(item);
   }
 
   pop () {
-    let [res] = window._.pullAt(this.data, window._.size(this.data));
-    return res;
+    return this.data.pop();
   }
 
   top () {
-    return this.data[window._.size(this.data)];
+    return this.data[this.data.length - 1];
   }
 }
