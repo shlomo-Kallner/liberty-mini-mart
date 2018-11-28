@@ -81,15 +81,9 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
 
     public function getUrlFragment(string $baseUrl)
     {
+        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
         $surl = $this->section->getFullUrl($baseUrl);
         return $surl . '/category/';
-    }
-
-    public function getFullUrl(string $baseUrl)
-    {
-        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
-        $surl = $this->getUrlFragment($baseUrl);
-        return $surl . $this->url;
     }
 
     public function toSidebar(

@@ -15,8 +15,13 @@ interface TransformableContainer
     const TO_SIDEBAR_TRANSFORM = 'sidebar';
     const TO_CONTENT_ARRAY_TRANSFORM = 'content';
     const TO_NAME_LIST_TRANSFORM = 'name';
+    const TO_URL_FRAGMENT_TRANSFORM = 'fragment';
 
     static public function getOrderByKey();
+
+    public function getUrlFragment(string $baseUrl);
+
+    public function getFullUrl(string $baseUrl);
 
     public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
@@ -83,6 +88,12 @@ trait ContainerTransforms
             'price' => $price,
             'sticker' => $sticker,
         ];
+    }
+
+    public function getFullUrl(string $baseUrl)
+    {
+        $surl = $this->getUrlFragment($baseUrl);
+        return $surl . $this->url;
     }
     
     /** 
@@ -477,6 +488,8 @@ trait ContainerTransforms
                     return $item->toContentArray($baseUrl, $version, $useTitle, $withTrashed);
                 case 'name':
                     return $item->toNameListing();
+                case 'fragment':
+                    return $item->toUrlFragrment($baseUrl);
                 }
             } elseif (is_callable($transform)) {
                 return $transform($item, $baseUrl, $version, $useTitle, $withTrashed);
@@ -632,6 +645,14 @@ trait ContainerTransforms
             TransformableContainer::TO_CONTENT_ARRAY_TRANSFORM,
             $useTitle, $version, $withTrashed, $default
         );
+    }
+
+    public function toUrlFragrment(string $baseUrl)
+    {
+        return [
+            'name' => $this->name,
+            'url' => $this->getUrlFragment($baseUrl), 
+        ];
     }
 
     public function toNameListing()

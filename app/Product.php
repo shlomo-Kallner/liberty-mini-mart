@@ -242,12 +242,6 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         return $surl . '/product/';
     }
 
-    public function getFullUrl(string $baseUrl)
-    {
-        $surl = $this->getUrlFragment($baseUrl);
-        return $surl . $this->url;
-    }
-
     public function toSidebar(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true

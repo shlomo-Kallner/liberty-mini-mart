@@ -33,12 +33,6 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         return $baseUrl . '/section/';
     }
 
-    public function getFullUrl(string $baseUrl)
-    {
-        $surl = $this->getUrlFragment($baseUrl);
-        return $surl . $this->url;
-    }
-
     static public function getSection(
         $section, $transform = null, bool $withTrashed = false,
         string $baseUrl = 'store', bool $useTitle = true, 

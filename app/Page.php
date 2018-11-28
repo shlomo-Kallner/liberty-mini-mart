@@ -487,12 +487,12 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         return 'url';
     }
 
-    public function getFullUrl(string $baseUrl = 'store')
+    public function getUrlFragment(string $baseUrl)
     {
         // {$tmp[0]}/section/{section}/category/{category}/product/{product}
         // $surl = $this->catalog->getFullUrl($baseUrl);
         //return $baseUrl . '/page/' . $this->url;
-        return 'pages/' . $this->url;
+        return 'pages/';
     }
 
     public function toContentArray(
@@ -569,10 +569,10 @@ class Page extends Model implements TransformableContainer, ContainerAPI
             $o = $otherImages;
         }
         return self::makeContentArray(
-            $this->article, $this->description, $this->getFullUrl(),
+            $this->article, $this->description, $this->getFullUrl($baseUrl),
             $this->name, $this->title, $i, $o, 
             self::getBreadcrumbs(
-                self::genBreadcrumb($this->name, $this->getFullUrl()),
+                self::genBreadcrumb($this->name, $this->getFullUrl($baseUrl)),
                 $b
             ), 
             $this->getVisibility()
