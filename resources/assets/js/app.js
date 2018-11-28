@@ -5,6 +5,7 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 // import { LaravelAlert } from './lib/LaravelAlert'
+require('babel-polyfill');
 window.Laravel.LaravelAlert = require('./lib/LaravelAlert').default;
 
 // import { Pagination } from 'vue-pagination-2'
