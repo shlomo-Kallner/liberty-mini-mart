@@ -9,18 +9,18 @@ export default class Stack {
   }
 
   at (idx, def = null) {
-    if (typeof idx !== 'number') {
-      return def;
+    if (typeof idx === 'number') {
+      let i = window._.floor(idx);
+      let s = window._.size(this.data);
+      if (i >= 0 && i < s) {
+        return this.data[i]
+      } else if (i < 0 && (-i) <= s) {
+        return this.data[ s + i ]
+      }
+    } else if (typeof idx === 'symbol') {
+      return this.data[idx]
     }
-    let i = window._.floor(idx);
-    let s = window._.size(this.data);
-    if (i >= 0 && i < s) {
-      return this.data[i];
-    } else if (i < 0 && (-i) <= s) {
-      return this.data[ s + i ];
-    } else {
-      return def;
-    }
+    return def
   }
 
   size () {
