@@ -22,62 +22,8 @@ Route::get('/', 'PageController@home');
 
 Route::prefix('test')->group(
     function () {
-        Route::get(
-            '/', function () {
-                return view('welcome');
-            }
-        );
-        Route::get(
-            'url', function (Request $request) {
-                $num = 44;
-                $n = Functions::int2url_encode($num);
-                $k = Functions::url2int_decode($n);
-                $j = pack('V', $num);
-                $l = bin2hex($j);
-                $array = [
-                    'num' => $num, 
-                    'url_encoded' => $n, 
-                    'url_decode' => $k, 
-                    'packed' => $j,
-                    'bin2hed' => $l,
-                ];
-                if (!$request->ajax()) {
-                    dd($array);
-                } else {
-                    return $array;
-                }
-            }
-        );
-        Route::get(
-            'dump', function (Request $request) {
-                $dump = true;
-                $tmp = [
-                    'user' => User::getUserArray($request),
-                    'session' => $request->session()->all(),
-                ];
-                if ($dump) {
-                    dd($tmp);
-                } else {
-                    return $tmp;
-                }
-            }
-        );
-        Route::get(
-            'info', function () {
-                phpinfo();
-                return '';
-            }
-        );
-        Route::get(
-            'template', function () {
-                return view('master_themewagon');
-            }
-        );
-
-        Route::get(
-            'cms', 'CmsController@index'
-        );
-
+        Route::get('cms', 'CmsController@index');
+        Route::get('{method?}', 'TestController@index');
     }
 );
 

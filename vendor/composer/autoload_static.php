@@ -382,6 +382,13 @@ class ComposerStaticInitc8f191e383c8b428bdb2d9ef6beb446c
     );
 
     public static $prefixesPsr0 = array (
+        'W' => 
+        array (
+            'Webpatser\\Uuid' => 
+            array (
+                0 => __DIR__ . '/..' . '/webpatser/laravel-uuid/src',
+            ),
+        ),
         'P' => 
         array (
             'Prophecy\\' => 
@@ -469,6 +476,13 @@ class ComposerStaticInitc8f191e383c8b428bdb2d9ef6beb446c
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\UserGuard' => __DIR__ . '/../..' . '/app/Http/Middleware/UserGuard.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Http\\Requests\\CreateArticleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CreateArticleRequest.php',
+        'App\\Http\\Requests\\CreateCategorieRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CreateCategorieRequest.php',
+        'App\\Http\\Requests\\CreatePageGroupRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CreatePageGroupRequest.php',
+        'App\\Http\\Requests\\CreatePageRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CreatePageRequest.php',
+        'App\\Http\\Requests\\CreateProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CreateProductRequest.php',
+        'App\\Http\\Requests\\CreateSectionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CreateSectionRequest.php',
+        'App\\Http\\Requests\\CreateUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CreateUserRequest.php',
         'App\\Http\\Requests\\ProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProductRequest.php',
         'App\\Http\\Requests\\RegisterRequest' => __DIR__ . '/../..' . '/app/Http/Requests/RegisterRequest.php',
         'App\\Http\\Requests\\SigninRequest' => __DIR__ . '/../..' . '/app/Http/Requests/SigninRequest.php',
@@ -4667,6 +4681,8 @@ class ComposerStaticInitc8f191e383c8b428bdb2d9ef6beb446c
         'UserRolesTableSeeder' => __DIR__ . '/../..' . '/database/seeds/UserRolesTableSeeder.php',
         'UserTableSeeder' => __DIR__ . '/../..' . '/database/seeds/UserTableSeeder.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
+        'Webpatser\\Uuid\\Uuid' => __DIR__ . '/..' . '/webpatser/laravel-uuid/src/Webpatser/Uuid/Uuid.php',
+        'Webpatser\\Uuid\\UuidServiceProvider' => __DIR__ . '/..' . '/webpatser/laravel-uuid/src/Webpatser/Uuid/UuidServiceProvider.php',
         'Whoops\\Exception\\ErrorException' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/ErrorException.php',
         'Whoops\\Exception\\Formatter' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/Formatter.php',
         'Whoops\\Exception\\Frame' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/Frame.php',

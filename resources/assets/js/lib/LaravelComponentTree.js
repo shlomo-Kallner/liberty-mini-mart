@@ -58,6 +58,14 @@ export class ComponentTree {
     return this.parent
   }
 
+  value (val = null) {
+    var res = this.value
+    if (val !== null || val !== undefined) {
+      this.value = val
+    }
+    return res
+  }
+
   at (index) {
     if (typeof index === 'number' || typeof index === 'symbol') {
       return this.children[index]

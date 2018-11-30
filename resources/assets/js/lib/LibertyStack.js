@@ -1,17 +1,17 @@
-import { isArray } from "util";
+// import { isArray } from "util"
 
 // let _ = require('lodash');
 
 export default class Stack {
   // private data: Array<any>;
   constructor (data = []) {
-    this.data = Array.isArray(data) ? data : [];
+    this.data = Array.isArray(data) ? data : []
   }
 
   at (idx, def = null) {
     if (typeof idx === 'number') {
-      let i = window._.floor(idx);
-      let s = window._.size(this.data);
+      let i = window._.floor(idx)
+      let s = window._.size(this.data)
       if (i >= 0 && i < s) {
         return this.data[i]
       } else if (i < 0 && (-i) <= s) {
@@ -23,8 +23,12 @@ export default class Stack {
     return def
   }
 
+  data () {
+    return this.data
+  }
+
   size () {
-    return this.data.length;
+    return this.data.length
   }
 
   empty () {
@@ -32,14 +36,14 @@ export default class Stack {
   }
 
   push (item) {
-    this.data.push(item);
+    this.data.push(item)
   }
 
   pop () {
-    return this.data.pop();
+    return this.data.pop()
   }
 
   top () {
-    return this.data[this.data.length - 1];
+    return this.data[this.data.length - 1]
   }
 }

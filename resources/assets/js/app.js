@@ -14,6 +14,8 @@ window.Laravel.LaravelAlert = require('./lib/LaravelAlert').default;
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.VueRouter = require('vue-router')
+window.Vue.use(window.VueRouter)
 window.url = require('url');
 window.myUtils = require('./utils').default;
 // window.Vue.component('pagination', Pagination);
