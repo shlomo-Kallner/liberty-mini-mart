@@ -463,6 +463,7 @@ class ComposerStaticInitc8f191e383c8b428bdb2d9ef6beb446c
         'App\\Http\\Controllers\\SearchResultController' => __DIR__ . '/../..' . '/app/Http/Controllers/SearchResultController.php',
         'App\\Http\\Controllers\\SectionController' => __DIR__ . '/../..' . '/app/Http/Controllers/SectionController.php',
         'App\\Http\\Controllers\\ShopController' => __DIR__ . '/../..' . '/app/Http/Controllers/ShopController.php',
+        'App\\Http\\Controllers\\TestController' => __DIR__ . '/../..' . '/app/Http/Controllers/TestController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Http\\Controllers\\WishlistController' => __DIR__ . '/../..' . '/app/Http/Controllers/WishlistController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',

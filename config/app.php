@@ -158,6 +158,7 @@ return [
          */
         Darryldecode\Cart\CartServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+        Webpatser\Uuid\UuidServiceProvider::class,
 
     ],
     /*

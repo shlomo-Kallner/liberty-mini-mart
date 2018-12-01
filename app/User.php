@@ -15,6 +15,7 @@ use App\Utilities\Permits\Basic;
 use App\UserImage;
 use App\Image;
 use Darryldecode\Cart\Helpers\Helpers;
+use Webpatser\Uuid\Uuid;
 
 class User extends Model implements ContainerAPI
 {
@@ -217,10 +218,25 @@ class User extends Model implements ContainerAPI
         return 50;
     }
 
-    public function toContentArray() 
+    static public function getAllFromUUID (string $uuid, bool $withTrashed = false)
+    {
+        return $withTrashed 
+            ? self::withTrashed()->where('uuid', $uuid)->get()
+            : self::where('uuid', $uuid)->get();
+    }
+
+    static public function getFromUUID (string $uuid, bool $withTrashed = false)
+    {
+        return $withTrashed 
+            ? self::withTrashed()->where('uuid', $uuid)->first()
+            : self::where('uuid', $uuid)->first();
+    }
+
+    public function toContentArray () 
     {
         return [
-            'id' => $this->id,
+            //'id' => $this->id,
+            'uuid' => $this->uuid,
             'name' => $this->name,
             'email' => $this->email,
             'img' => $this->image->toImageArray(),
@@ -322,6 +338,7 @@ class User extends Model implements ContainerAPI
             $tmp->password = Hash::make($password);
             $tmp->image_id = $tImg;
             $tmp->plan_id = $plan;
+            $tmp->uuid = Uuid::generate(5, '/users/' . $email, Uuid::NS_URL);
             if ($setRememberToken) {
                 $tmp->remember_token = self::genRememberToken();
             } else {
@@ -374,7 +391,7 @@ class User extends Model implements ContainerAPI
     static public function genRememberToken()
     {
         $bl = true;
-        while ($bl){
+        while ($bl) {
             $trt = str_random(100);
             if (self::rememberToken($trt, false)) {
                 $bl = false;
@@ -388,7 +405,7 @@ class User extends Model implements ContainerAPI
         if (Functions::testVar($args)) {
             $didSave = false;
             if (Functions::isPropKeyIn($args, 'name') 
-            && is_string($args['name'])
+                && is_string($args['name'])
             ) {
                 $this->name = $args['name'];
             }
@@ -409,20 +426,20 @@ class User extends Model implements ContainerAPI
             }
             if (Functions::isPropKeyIn($args, 'rememberToken')) {
                 if ((is_bool($args['rememberToken'])
-                && $args['rememberToken']) 
-                || (is_string($args['rememberToken'])
-                && $args['rememberToken'] === 'reset')
+                    && $args['rememberToken']) 
+                    || (is_string($args['rememberToken'])
+                    && $args['rememberToken'] === 'reset')
                 ) {
                     $this->remember_token = self::genRememberToken();
                 } elseif (is_string($args['rememberToken'])
-                && $args['rememberToken'] === 'unset'
+                    && $args['rememberToken'] === 'unset'
                 ) {
                     $this->remember_token = '';
                 } 
             } 
             if (Functions::isPropKeyIn($args, 'img')) {
                 if (is_array($args['img']) 
-                && Helpers::isMultiArray($args['img'], true)
+                    && Helpers::isMultiArray($args['img'], true)
                 ) {
                     foreach ($args['img'] as $img) {
                         // update otherImages...

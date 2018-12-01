@@ -30,6 +30,7 @@ return array(
     'App\\Http\\Controllers\\SearchResultController' => $baseDir . '/app/Http/Controllers/SearchResultController.php',
     'App\\Http\\Controllers\\SectionController' => $baseDir . '/app/Http/Controllers/SectionController.php',
     'App\\Http\\Controllers\\ShopController' => $baseDir . '/app/Http/Controllers/ShopController.php',
+    'App\\Http\\Controllers\\TestController' => $baseDir . '/app/Http/Controllers/TestController.php',
     'App\\Http\\Controllers\\UserController' => $baseDir . '/app/Http/Controllers/UserController.php',
     'App\\Http\\Controllers\\WishlistController' => $baseDir . '/app/Http/Controllers/WishlistController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',

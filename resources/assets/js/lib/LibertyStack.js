@@ -2,7 +2,7 @@
 
 // let _ = require('lodash');
 
-export default class Stack {
+export class Stack {
   // private data: Array<any>;
   constructor (data = []) {
     this.data = Array.isArray(data) ? data : []
