@@ -1,28 +1,23 @@
 <template>
     <div class="row padding-top-5">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <ol class="breadcrumb pull-left">
-                <li :class="{active: breadcrumbs.length === 0}">
-                    <router-link to="/"></router-link>
-                </li>
-                <li v-for="(item, index) in breadcrumbs" 
-                    :key="index"
-                    :class="{active: current === item.name}"
-                >
-                    <router-link :to="item.path">
-                        {{this.getPreText}} {{item.name}} {{this.getPostText}}
-                    </router-link>
-                </li>
-            </ol>
+            <router-link v-for="(item, index) in tabbuttons" 
+                v-bind:key="index"
+                :class="['btn btn-primary', { active: current === item.name }]" 
+                :type="button"
+                :to="item.path"
+            >
+                {{this.getPreText}} {{item.name}} {{this.getPostText}}
+            </router-link>
         </div>
     </div>
 </template>
 
 <script>
     export default {
-        name: 'boot-breadcrumbs-component',
+        name: 'boot-tabs-component',
         props: {
-            crumbs: Array,
+            tabs: Array,
             current: String,
             preText: {
                 type: [String, Function],
@@ -35,12 +30,7 @@
         },
         data: function () {
             return {
-                breadcrumbs: crumbs
-            }
-        },
-        watch: {
-            crumbs: function (crumb) {
-                this.breadcrumbs = crumb
+                tabbuttons: tabs
             }
         },
         computed: {
@@ -49,6 +39,11 @@
             },
             getPostText: function () {
                 return this.getText(this.postText)
+            }
+        },
+        watch: {
+            tabs: function (crumb) {
+                this.tabbuttons = crumb
             }
         },
         methods: {
@@ -67,14 +62,6 @@
                             return '<span style="'+ target +'">'+ str +'</span>'
                         }
                     }
-                }
-            },
-            page: function (val, index) {
-                this.current = val.name
-                if (index > 1) {
-                    this.$router.push()
-                } else {
-                    this.$router.replace()
                 }
             }
         }

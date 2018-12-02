@@ -13,7 +13,7 @@ window.Vue.component(
 );
 window.Laravel.page.admin = {}
 
-var setAdmin = true ? true : window.jQuery('#cms-app').length > 0 
+var setAdmin = true // ? true : window.jQuery('#cms-app').length > 0 
 
 if (setAdmin) {
   window.Laravel.page.admin.router = require('./routes')
@@ -23,16 +23,17 @@ if (setAdmin) {
       el: '#cms-app',
       router: window.Laravel.page.admin.router,
       store: window.Laravel.page.admin.store,
-      template: '<admin-panel-component v-bind="initData"></admin-panel-component>',
+      template: '<admin-panel-component v-bind="thisdata"></admin-panel-component>',
       data: {
         initData: JSON.parse(window.Laravel.admin)
       },
       computed: {
-        data: function () {
+        thisdata: function () {
           return {
             initPages: this.initData.pages,
             initSections: this.initData.sections,
-            initUsers: this.initData.users
+            initUsers: this.initData.users,
+            initArticle: window.myUtils.getArticleData(this.initData.article, 'col-md-12', 'col-md-12')
           }
         }
       }

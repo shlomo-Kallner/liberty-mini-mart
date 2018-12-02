@@ -14,14 +14,14 @@
         For now not using CDN, but when doing so will use the minified version...
         not minified version here for fallback..
     --}}
-    @if (Functions::testVar($usingCDNs2))
+    @if (Functions::testVar($usingCDNs2) && false)
         @if (Functions::testVar($usingMinified2))
             <script src="https://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/bundled/html4+html5/jquery.history.min.js"></script> 
         @else
             <script src="https://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/bundled/html4+html5/jquery.history.js"></script>
         @endif
-    @else
-        <script src="{{ asset('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
+    @elseif (false)
+        <script src="{{ mix('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
     @endif
 
     {{-- 
@@ -38,9 +38,9 @@
                     <script src="{{ $script['cdn-url'] }}"></script>
                 @endif
             @elseif (Functions::testVar($usingMix2) && Functions::testVar($script['mix-path']))
-                <script src="{{ asset($script['mix-path']) }}"></script>
+                <script src="{{ mix($script['mix-path']) }}"></script>
             @elseif (Functions::testVar($script['local-path']))
-                <script src="{{ asset($script['local-path']) }}"></script>
+                <script src="{{ mix($script['local-path']) }}"></script>
             @endif
         @endforeach
     @endif

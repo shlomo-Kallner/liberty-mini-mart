@@ -185,9 +185,6 @@
     @if ($testing)
         <div id="cms-app"></div>
     @endif
-
-    
-    
 @endsection
 
 @section('js-preloaded')
@@ -198,6 +195,10 @@
 @endsection
 
 @section('js-extra')
-    <script src="{{ asset('js/admin.js') }}" type="text/javascript"></script>
     @parent
+    @php
+        // dd(asset('js/admin.js'), asset(mix('js/admin.js')));
+    @endphp
+    <script src="{{ asset(mix('js/admin.js')) }}" type="text/javascript"></script>
 @endsection
+

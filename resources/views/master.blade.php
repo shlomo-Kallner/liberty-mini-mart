@@ -225,10 +225,6 @@
                 
         @show
 
-        @if (false)
-        <br><br><br>
-        @endif
-        
         <main>
             <div class="container">
 
@@ -237,10 +233,6 @@
 
             </div>  
         </main>
-
-        @if (false)
-        <br><br><br>
-        @endif
 
         <footer>
             @section('footer-content')
@@ -268,7 +260,7 @@
         @endcomponent
 
         {{-- from Laravel.. Vue.js is now ENABLED! --}}
-        <script src="{{ asset('js/app.js') }}" type="text/javascript"></script>
+        <script src="{{ asset(mix('js/app.js')) }}" type="text/javascript"></script>
         
         {{-- 
             this stuff is ours.. so it should come last.. 

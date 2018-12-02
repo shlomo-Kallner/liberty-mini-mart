@@ -1,24 +1,26 @@
-<?php
-// put your code here
-//dd($navbar, $preheader, $cart);
-use \App\Utilities\Functions\Functions;
-use \App\Page;
-use \App\Cart;
-
-if (!Functions::testVar($navbar??'')) {
-    $navbar = Page::getNavBar(false);
-}
-
-if (!Functions::testVar($preheader??'')) {
-    $preheader = Page::getPreHeader(false);
-}
-
-if (!Functions::testVar($cart??'')) {
-    $cart = Cart::getCurrentCart();
-}
-?>
 
 @extends('master')
+
+@php
+    // put your code here
+    //dd($navbar, $preheader, $cart);
+    use \App\Utilities\Functions\Functions;
+    use \App\Page;
+    use \App\Cart;
+
+    if (!Functions::testVar($navbar??'')) {
+        $navbar = Page::getNavBar(false);
+    }
+
+    if (!Functions::testVar($preheader??'')) {
+        $preheader = Page::getPreHeader(false);
+    }
+
+    if (!Functions::testVar($cart??'')) {
+        $cart = Cart::getCurrentCart();
+    }
+    
+@endphp
 
 @include('lib.themewagon.fonts')
 @include('lib.bootstrapious.fonts')
@@ -101,7 +103,7 @@ if (!Functions::testVar($cart??'')) {
 @include('lib.themewagon.js')
 {{-- END SECTION:  JS Content From Metronic Shop UI --}}
 {{-- BEGIN SECTION:  JS Content From UNIVERSAL --}}
-@include('lib.bootstrapious.js')
+{{-- _include('lib.bootstrapious.js') --}}
 {{-- END SECTION:  JS Content From UNIVERSAL --}}
 
 

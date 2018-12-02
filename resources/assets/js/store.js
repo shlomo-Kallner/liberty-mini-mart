@@ -1,7 +1,7 @@
 
 import Vuex from 'vuex'
 import { Stack } from './lib/LibertyStack.js'
-import { ComponentTree } from "./lib/LaravelComponentTree.js"
+import { ComponentTree } from './lib/LaravelComponentTree.js'
 
 export default new Vuex.Store({
   state: {

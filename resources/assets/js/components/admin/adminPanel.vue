@@ -2,6 +2,8 @@
     <div class="row margin-bottom-40">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <boot-breadcrumbs v-bind="breadcrumbs"></boot-breadcrumbs>
+            <boot-article v-bind="initArticle"></boot-article>
+            <boot-tabs :tabs="tabs" :current="currentTab"></boot-tabs>
             <div class="row padding-top-5">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <keep-alive>
@@ -15,19 +17,24 @@
 
 <script>
     import { Stack } from '../../lib/LibertyStack.js'
-    import { ComponentTree } from "../../lib/LaravelComponentTree.js"
+    import { ComponentTree } from '../../lib/LaravelComponentTree.js'
     import { mapState } from 'vuex'
-    import BootBreadcrumbs from "../bootBreadcrumbs.vue"
+    import BootBreadcrumbs from '../bootBreadcrumbs.vue'
+    import BootTabs from '../bootTabs.vue'
+    import BootArticle from '../bootArticle.vue'
     export default {
         name: 'admin-panel-component',
         props: {
             initPages: Object,
             initSections: Object,
-            initUsers: Object
+            initUsers: Object,
+            initArticle: Object
         },
 
         components: {
-            BootBreadcrumbs
+            BootBreadcrumbs,
+            BootTabs,
+            BootArticle
         },
         data: function () {
             return {
@@ -51,7 +58,7 @@
                             }
                         }
                     ],
-                currentTab: this.tabs[0],
+                currentTab: this.tabs[0].name,
             };
         },
         watch: {
