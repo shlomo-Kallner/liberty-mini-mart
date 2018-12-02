@@ -51,34 +51,35 @@
         <!--        Common "standard" viewport meta..-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        @section('header-metas')
-            <meta name="csrf-token" content="{{ csrf_token() }}">
-            <script>
-                window.Laravel = { 
-                    csrfToken: '{{ csrf_token() }}',
-                    upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}",
-                    alert: '@json($alert2)',
-                    nut: '{{ $nut2 }}',
-                    page: {},
-                    baseUrl: '{{ $baseUrl }}',
-                    thisUrl: '{{ request()->url() }}',
-                    cart: '@json($cart2)',
-                    pagination: '@json($pagination2)',
-                    setAlert: function (data) {
-                        this.alert = data;
-                    }
-                };
-            </script> 
-            <meta content="Metronic Shop UI description" name="description">
-            <meta content="Metronic Shop UI keywords" name="keywords">
-            <meta content="Shlomo Kallner" name="author">
+        
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <script>
+            window.Laravel = { 
+                csrfToken: '{{ csrf_token() }}',
+                upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}",
+                alert: '@json($alert2)',
+                nut: '{{ $nut2 }}',
+                page: {},
+                baseUrl: '{{ $baseUrl }}',
+                thisUrl: '{{ request()->url() }}',
+                cart: '@json($cart2)',
+                pagination: '@json($pagination2)',
+                setAlert: function (data) {
+                    this.alert = data;
+                }
+            };
+        </script> 
+        <meta content="Metronic Shop UI description" name="description">
+        <meta content="Metronic Shop UI keywords" name="keywords">
+        <meta content="Shlomo Kallner" name="author">
 
-            <meta property="og:site_name" content="{{ $siteName2 }}">
-            <meta property="og:title" content="-CUSTOMER VALUE-">
-            <meta property="og:description" content="-CUSTOMER VALUE-">
-            <meta property="og:type" content="website">
-            <meta property="og:image" content="-CUSTOMER VALUE-"><!-- link to image for socio -->
-            <meta property="og:url" content="{{ url('') }}">
+        <meta property="og:site_name" content="{{ $siteName2 }}">
+        <meta property="og:title" content="-CUSTOMER VALUE-">
+        <meta property="og:description" content="-CUSTOMER VALUE-">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="-CUSTOMER VALUE-"><!-- link to image for socio -->
+        <meta property="og:url" content="{{ url('') }}">
+        @section('header-metas')
         @show
 
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">

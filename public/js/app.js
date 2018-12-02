@@ -32986,7 +32986,7 @@ window.Laravel.LaravelAlert = __webpack_require__(411).default;
 __webpack_require__(418);
 
 window.Vue = __webpack_require__(438);
-window.VueRouter = __webpack_require__(441);
+window.VueRouter = __webpack_require__(441).default;
 window.Vue.use(window.VueRouter);
 window.url = __webpack_require__(442);
 window.myUtils = __webpack_require__(448).default;
@@ -56756,11 +56756,23 @@ if (false) {
 
 
 window.Vue.component('admin-panel-component', __webpack_require__(462));
+window.Laravel.page.admin = {};
 
-if (window.jQuery('#cms-app').length > 0) {
+var Foo = { template: '<div>Hello World!</div>' };
+
+var routes = [{ path: 'users/:id', component: Foo, props: function props() {} }, { path: 'pages/:id', component: Foo, props: function props() {} }, { path: 'sections/:id', component: Foo, props: function props() {} }];
+
+if (window.jQuery('#cms-app').length > 0 || true) {
+  window.Laravel.page.admin.router = new window.VueRouter({
+    routes: routes
+  });
   window.Laravel.page.admin.app = new window.Vue({
     el: '#cms-app',
-    template: '<admin-panel-component></admin-panel-component>'
+    router: window.Laravel.page.admin.router,
+    template: '<admin-panel-component v-bind="initData"></admin-panel-component>',
+    data: {
+      initData: JSON.parse(window.Laravel.admin)
+    }
   });
 }
 
@@ -56819,6 +56831,7 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lib_LibertyStack_js__ = __webpack_require__(177);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_LaravelComponentTree_js__ = __webpack_require__(464);
+//
 //
 //
 //
@@ -57144,7 +57157,13 @@ var render = function() {
               [
                 _c(
                   "keep-alive",
-                  [_c(_vm.currentTab.value().component, { tag: "component" })],
+                  [
+                    false
+                      ? _c(_vm.currentTab.value().component, {
+                          tag: "component"
+                        })
+                      : _c("router-view")
+                  ],
                   1
                 )
               ],

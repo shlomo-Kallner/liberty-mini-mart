@@ -14,7 +14,7 @@ window.Laravel.LaravelAlert = require('./lib/LaravelAlert').default;
 require('./bootstrap');
 
 window.Vue = require('vue');
-window.VueRouter = require('vue-router')
+window.VueRouter = require('vue-router').default
 window.Vue.use(window.VueRouter)
 window.url = require('url');
 window.myUtils = require('./utils').default;

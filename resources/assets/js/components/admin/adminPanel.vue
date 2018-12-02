@@ -30,7 +30,8 @@
             <div class="row padding-top-5">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <keep-alive>
-                        <component :is="currentTab.value().component"></component>
+                        <component v-if="false" :is="currentTab.value().component"></component>
+                        <router-view v-else></router-view>
                     </keep-alive>
                 </div>
             </div>

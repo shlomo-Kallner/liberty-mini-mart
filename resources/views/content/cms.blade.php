@@ -21,6 +21,7 @@
         $plans2 = Functions::getContent($page['plans']['items']??[],[]);
         $plans_paginator2 = Functions::getContent($page['plans']['pagination']??[],[]);
         
+        //dd($page);
 
         //dd($sidebar2);
         //dd($page2);
@@ -188,4 +189,11 @@
 @section('js-extra')
     <script src="{{ asset('js/admin.js') }}" type="text/javascript"></script>
     @parent
+@endsection
+
+@section('header-metas')
+    @parent
+    <script>
+        window.Laravel.admin = '@json($page)';
+    </script>
 @endsection

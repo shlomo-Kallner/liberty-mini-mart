@@ -19,7 +19,7 @@
     @forelse ($users2 as $user)
 
         @php
-            $uid = Functions::int2url_encode($user['id']);
+            $uid = false ? Functions::int2url_encode($user['uuid']) : $user['uuid'];
             $panelId1 = 'headingSectionPanel-of-User-' . $uid;
             $panelId2 = 'collapseSectionPanel-of-User-' . $uid;
             $panelId3 = 'sectionContentCollapsedDiv-of-User-' . $uid;
@@ -53,7 +53,9 @@
                                 
                         <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
                             <div class="row">
-                                <h4>{!! 'NAME: ' . $user['name'] . '<hr>Email: ' . $user['email'] !!}</h4>
+                                <h4>{!! 'NAME: ' . $user['name'] !!}</h4>
+                                <hr>
+                                <h4>{!! 'Email: ' . $user['email'] !!}</h4>
                             </div>
                                     
                             <div class="row">
