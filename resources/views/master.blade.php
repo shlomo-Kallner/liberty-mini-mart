@@ -2,12 +2,11 @@
 
     // put any special code here..
     use \App\Utilities\Functions\Functions;
+    use \Illuminate\Contracts\Support\Htmlable;
     $title2 =  Functions::getBladedString($title ?? '');// . '-- dummy Title -- for testing Master Page 2';
     $siteName2 = Functions::getBladedString($site['name']?? App\Http\Controllers\MainController::$data['site']['name']);
-    $scripts = Functions::getContent($site['scripts']??'');
-    $usingCDNs = Functions::getBladedString($site['usingCDNs']??'');
-    $usingMix = Functions::getBladedString($site['usingMix']??'');
     $nut2 = Functions::getContent($site['nut']??'');
+    $usingCDNs = Functions::getBladedString($site['usingCDNs']??'');
     $alert2 =  Functions::getContent($alert??'');
     $baseUrl = url('');
     $cart2 = Functions::getContent($cart??'');
@@ -50,25 +49,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <!--        Common "standard" viewport meta..-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <script>
-            window.Laravel = { 
-                csrfToken: '{{ csrf_token() }}',
-                upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}",
-                alert: '@json($alert2)',
-                nut: '{{ $nut2 }}',
-                page: {},
-                baseUrl: '{{ $baseUrl }}',
-                thisUrl: '{{ request()->url() }}',
-                cart: '@json($cart2)',
-                pagination: '@json($pagination2)',
-                setAlert: function (data) {
-                    this.alert = data;
-                }
-            };
-        </script> 
         <meta content="Metronic Shop UI description" name="description">
         <meta content="Metronic Shop UI keywords" name="keywords">
         <meta content="Shlomo Kallner" name="author">
@@ -81,6 +61,8 @@
         <meta property="og:url" content="{{ url('') }}">
         @section('header-metas')
         @show
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        
 
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 
@@ -146,7 +128,6 @@
                 html5shiv script tag in the head tag...
             --}}
             @include('inc.js.compatibility')
-
             {{-- <== 'inc.js.compatibility' is from 
                         bootstrap and others...
                         its all in its own file in case
@@ -154,7 +135,19 @@
                         p.s. its just some IE Conditionals
                         and a Blade comment..
             --}}
-
+            <script>
+                window.Laravel = { 
+                    csrfToken: '{{ csrf_token() }}',
+                    upPngPath : "{{ url('lib/themewagon/metronicShopUI/theme/assets/corporate/img/up.png') }}",
+                    alert: '@json($alert2)',
+                    nut: '{{ $nut2 }}',
+                    page: {},
+                    baseUrl: '{{ $baseUrl }}',
+                    thisUrl: '{{ request()->url() }}',
+                    cart: '@json($cart2)',
+                    pagination: '@json($pagination2)'
+                };
+            </script> 
             @section('js-preloaded')
                 {{-- Not using Font Awesome v5! --}}
                 {{-- Include('inc.js.preloaded') --}}{{--  <-- This file is pure HTML.. --}}
@@ -260,36 +253,19 @@
         @section('js-defered')
         @show
 
-        {{-- 
-            For now not using CDN, but when doing so will use the minified version...
-            not minified version here for fallback..
-        --}}
-        @if (Functions::testVar($usingCDNs))
-            @if (true)
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/bundled/html4+html5/jquery.history.min.js"></script> 
-            @else
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/bundled/html4+html5/jquery.history.js"></script>
-            @endif
-        @else
-            <script src="{{ asset('lib/history.js/scripts/bundled/html4+html5/jquery.history.js') }}"></script>
-        @endif
-
-        {{-- 
-            a method for tracking used scripts and including them! 
-            (from within LARAVEL!)
-        --}}
-        {{-- A WISHLIST ITEM!!! --}}
-        @if (Functions::testVar($scripts))
-            @foreach ($scripts as $script)
-                @if (Functions::testVar($usingCDNs) && Functions::testVar($script['cdn-url']))
-                    <script src="{{ $script['cdn-url'] }}"></script>
-                @elseif (Functions::testVar($usingMix) && Functions::testVar($script['mix-path']))
-                    <script src="{{ asset($script['mix-path']) }}"></script>
-                @elseif (Functions::testVar($script['local-path']))
-                    <script src="{{ asset($script['local-path']) }}"></script>
-                @endif
+        @component('inc.js.loader')
+            @foreach ($site as $key => $val)
+                @slot($key)
+                    @if ($val instanceof Htmlable) 
+                        {!! $val->toHtml() !!}
+                    @elseif (is_array($val) || is_object($val))
+                        {!! serialize($val) !!}
+                    @else
+                        {!! $val !!}
+                    @endif
+                @endslot
             @endforeach
-        @endif
+        @endcomponent
 
         {{-- from Laravel.. Vue.js is now ENABLED! --}}
         <script src="{{ asset('js/app.js') }}" type="text/javascript"></script>

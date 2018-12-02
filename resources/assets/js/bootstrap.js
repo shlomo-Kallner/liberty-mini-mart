@@ -14,7 +14,7 @@ try {
         window.jQuery === undefined || 
         $ === undefined || 
         jQuery === undefined) {
-    //alert('hello from vue-bootstrap!!');
+    // alert('hello from vue-bootstrap!!');
     window.$ = window.jQuery = require('jquery');
   }
   if (window.$ === undefined && $ !== undefined) {

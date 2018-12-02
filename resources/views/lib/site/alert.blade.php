@@ -47,7 +47,7 @@
 
         </div>
         <script>
-            window.Laravel.setAlert('@json($js_data)');
+            window.Laravel.alert = '@json($js_data)';
         </script>
     </div>
 </div>

@@ -4,7 +4,7 @@
     @parent
 
     @php
-        //$testing = true;
+        $testing = true;
         use \App\Utilities\Functions\Functions,
             \App\Page;
 
@@ -182,18 +182,22 @@
     
     @endif
 
+    @if ($testing)
+        <div id="cms-app"></div>
+    @endif
+
     
     
+@endsection
+
+@section('js-preloaded')
+    @parent
+    <script>
+        window.Laravel.admin = '@json($page)';
+    </script>
 @endsection
 
 @section('js-extra')
     <script src="{{ asset('js/admin.js') }}" type="text/javascript"></script>
     @parent
-@endsection
-
-@section('header-metas')
-    @parent
-    <script>
-        window.Laravel.admin = '@json($page)';
-    </script>
 @endsection
