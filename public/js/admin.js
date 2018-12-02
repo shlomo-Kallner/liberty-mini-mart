@@ -2746,7 +2746,7 @@ return Promise$1;
 "use strict";
 /* unused harmony export Store */
 /* unused harmony export install */
-/* unused harmony export mapState */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return mapState; });
 /* unused harmony export mapMutations */
 /* unused harmony export mapGetters */
 /* unused harmony export mapActions */
@@ -6370,10 +6370,17 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lib_LibertyStack_js__ = __webpack_require__(211);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_LaravelComponentTree_js__ = __webpack_require__(470);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bootBreadcrumbs_vue__ = __webpack_require__(471);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bootBreadcrumbs_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__bootBreadcrumbs_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(486);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_LibertyStack_js__ = __webpack_require__(211);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_LaravelComponentTree_js__ = __webpack_require__(470);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vuex__ = __webpack_require__(466);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bootBreadcrumbs_vue__ = __webpack_require__(471);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bootBreadcrumbs_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__bootBreadcrumbs_vue__);
+
+
+var _this = this;
+
 //
 //
 //
@@ -6389,6 +6396,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
 
 
 
@@ -6402,7 +6410,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     components: {
-        BootBreadcrumbs: __WEBPACK_IMPORTED_MODULE_2__bootBreadcrumbs_vue___default.a
+        BootBreadcrumbs: __WEBPACK_IMPORTED_MODULE_4__bootBreadcrumbs_vue___default.a
     },
     data: function data() {
         return {
@@ -6422,14 +6430,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     template: ''
                 }
             }],
-            currentTab: this.tabs[0],
-            breadcrumbStack: new __WEBPACK_IMPORTED_MODULE_0__lib_LibertyStack_js__["a" /* Stack */]([])
+            currentTab: this.tabs[0]
         };
     },
     watch: {
         $route: function $route(route) {}
     },
-    computed: {},
+    computed: __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default.a({}, __WEBPACK_IMPORTED_MODULE_3_vuex__["b" /* mapState */]({
+        breadcrumbs: function breadcrumbs(state) {
+            return {
+                crumbs: state.breadcrumbs.data(),
+                current: _this.$route.path
+            };
+        }
+    })),
     methods: {}
 });
 
@@ -6440,7 +6454,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 "use strict";
 /* unused harmony export TreeWalkIterator */
-/* unused harmony export ComponentTree */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ComponentTree; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(76);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_symbol_iterator__ = __webpack_require__(89);
@@ -6849,7 +6863,10 @@ var render = function() {
       "div",
       { staticClass: "col-xs-12 col-sm-12 col-md-12 col-lg-12" },
       [
-        _c("boot-breadcrumbs"),
+        _c(
+          "boot-breadcrumbs",
+          _vm._b({}, "boot-breadcrumbs", _vm.breadcrumbs, false)
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "row padding-top-5" }, [
           _c(
@@ -6882,13 +6899,86 @@ if (false) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(466);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_LibertyStack_js__ = __webpack_require__(211);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_LaravelComponentTree_js__ = __webpack_require__(470);
+
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = (new __WEBPACK_IMPORTED_MODULE_0_vuex__["a" /* default */].Store({
-    state: {},
-    mutations: {}
+  state: {
+    breadcrumbs: new __WEBPACK_IMPORTED_MODULE_1__lib_LibertyStack_js__["a" /* Stack */]([]),
+    components: new __WEBPACK_IMPORTED_MODULE_2__lib_LaravelComponentTree_js__["a" /* ComponentTree */](null)
+  },
+  mutations: {
+    pushCrumb: function pushCrumb(state, crumb) {
+      state.breadcrumbs.push(crumb);
+    },
+    popCrumb: function popCrumb(state, crumb) {
+      if (state.breadcrumbs.top() === crumb) {
+        state.breadcrumbs.pop();
+      }
+    }
+  }
 }));
+
+/***/ }),
+
+/***/ 486:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _assign = __webpack_require__(487);
+
+var _assign2 = _interopRequireDefault(_assign);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _assign2.default || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+/***/ }),
+
+/***/ 487:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(488), __esModule: true };
+
+/***/ }),
+
+/***/ 488:
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(489);
+module.exports = __webpack_require__(21).Object.assign;
+
+
+/***/ }),
+
+/***/ 489:
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.3.1 Object.assign(target, source)
+var $export = __webpack_require__(45);
+
+$export($export.S + $export.F, 'Object', { assign: __webpack_require__(490) });
+
 
 /***/ }),
 
@@ -6901,6 +6991,48 @@ var floor = Math.floor;
 module.exports = function (it) {
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
+
+
+/***/ }),
+
+/***/ 490:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// 19.1.2.1 Object.assign(target, source, ...)
+var getKeys = __webpack_require__(53);
+var gOPS = __webpack_require__(84);
+var pIE = __webpack_require__(60);
+var toObject = __webpack_require__(121);
+var IObject = __webpack_require__(115);
+var $assign = Object.assign;
+
+// should work with symbols and should have deterministic property order (V8 bug)
+module.exports = !$assign || __webpack_require__(39)(function () {
+  var A = {};
+  var B = {};
+  // eslint-disable-next-line no-undef
+  var S = Symbol();
+  var K = 'abcdefghijklmnopqrst';
+  A[S] = 7;
+  K.split('').forEach(function (k) { B[k] = k; });
+  return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
+}) ? function assign(target, source) { // eslint-disable-line no-unused-vars
+  var T = toObject(target);
+  var aLen = arguments.length;
+  var index = 1;
+  var getSymbols = gOPS.f;
+  var isEnum = pIE.f;
+  while (aLen > index) {
+    var S = IObject(arguments[index++]);
+    var keys = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S);
+    var length = keys.length;
+    var j = 0;
+    var key;
+    while (length > j) if (isEnum.call(S, key = keys[j++])) T[key] = S[key];
+  } return T;
+} : $assign;
 
 
 /***/ }),

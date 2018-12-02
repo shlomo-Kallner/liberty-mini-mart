@@ -1,7 +1,7 @@
 <template>
     <div class="row margin-bottom-40">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <boot-breadcrumbs></boot-breadcrumbs>
+            <boot-breadcrumbs v-bind="breadcrumbs"></boot-breadcrumbs>
             <div class="row padding-top-5">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <keep-alive>
@@ -14,9 +14,10 @@
 </template>
 
 <script>
-    import { Stack } from '../../lib/LibertyStack.js';
-    import { ComponentTree } from "../../lib/LaravelComponentTree.js";
-    import BootBreadcrumbs from "../bootBreadcrumbs.vue";
+    import { Stack } from '../../lib/LibertyStack.js'
+    import { ComponentTree } from "../../lib/LaravelComponentTree.js"
+    import { mapState } from 'vuex'
+    import BootBreadcrumbs from "../bootBreadcrumbs.vue"
     export default {
         name: 'admin-panel-component',
         props: {
@@ -51,7 +52,6 @@
                         }
                     ],
                 currentTab: this.tabs[0],
-                breadcrumbStack: new Stack([]),
             };
         },
         watch: {
@@ -59,7 +59,16 @@
 
             }
         },
-        computed: {},
+        computed: {
+            ...mapState({
+                breadcrumbs: state => {
+                    return {
+                        crumbs: state.breadcrumbs.data(),
+                        current: this.$route.path
+                    }
+                }
+            })
+        },
         methods: {
 
         }
