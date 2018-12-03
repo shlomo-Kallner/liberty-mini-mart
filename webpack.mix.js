@@ -19,7 +19,9 @@ mix.js([
     .js([
         'resources/assets/js/admin.js',
         'resources/assets/js/routes.js',
-        'resources/assets/js/store.js'
+        'resources/assets/js/store.js',
+        'resources/assets/js/utils.js',
+        'resources/assets/js/bootstrap.js'
     ], 'public/js/admin.js')
    .sass('resources/assets/sass/app.scss', 'public/css');
 

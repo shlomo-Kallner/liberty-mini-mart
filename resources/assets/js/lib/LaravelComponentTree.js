@@ -98,4 +98,44 @@ export class ComponentTree {
       window._.concat(this.children, new ComponentTree(value, children, this))
     }
   }
+  findSubTree (tree) {
+    if (tree instanceof ComponentTree) {
+      if (tree !== this) {
+        var res = null
+        for (var i in this.children) {
+          var tmp = i.findSubTree(tree)
+          if (tmp === tree) {
+            res = tmp
+            break
+          }
+        }
+        return res
+      } else {
+        return this
+      }
+    } else {
+      return undefined
+    }
+  }
+
+  findSubTreeWithValue (value, comp = null) {
+    if (value !== undefined && value !== null) {
+      if (this.value() === value || (typeof comp === 'function' &&
+      comp(this.value, value))) {
+        return this
+      } else {
+        var res = null
+        for (var i in this.children) {
+          var tmp = i.findSubTreeWithValue(value, comp)
+          if (tmp !== undefined && tmp !== null) {
+            res = tmp
+            break
+          }
+        }
+        return res
+      }
+    } else {
+      return undefined
+    }
+  }
 }

@@ -408,6 +408,9 @@
     @if (Functions::testVar($paginator3))
         @if (false)
             <div id="masterPagination"></div>
+            <script>
+                window.Laravel.pagination = '@json($paginator3)'
+            </script>
         @else
             @component('lib.themewagon.paginator')
                 @foreach ($paginator3 as $key => $val)

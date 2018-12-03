@@ -8,7 +8,7 @@ use App\User,
     App\PageGroup,
     App\PageGrouping,
     App\Page;
-use Ramsey\Uuid\Uuid;
+use Webpatser\Uuid\Uuid;
 
 class TestController extends MainController
 {
@@ -61,13 +61,14 @@ class TestController extends MainController
         $k = Functions::url2int_decode($n);
         $j = pack('V', $num);
         $l = bin2hex($j);
-        Uuid
+        $u = Uuid::generate(5,'test', Uuid::NS_URL);
         $array = [
             'num' => $num, 
             'url_encoded' => $n, 
             'url_decode' => $k, 
             'packed' => $j,
             'bin2hed' => $l,
+            'uuid' => $u,
         ];
         if (!$request->ajax()) {
             dd($array);

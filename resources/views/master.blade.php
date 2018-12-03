@@ -259,8 +259,9 @@
             @endforeach
         @endcomponent
 
-        {{-- from Laravel.. Vue.js is now ENABLED! --}}
-        <script src="{{ asset(mix('js/app.js')) }}" type="text/javascript"></script>
+        @section('js-main')
+            
+        @show
         
         {{-- 
             this stuff is ours.. so it should come last.. 

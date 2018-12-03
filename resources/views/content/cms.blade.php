@@ -1,4 +1,4 @@
-@extends('content.template')
+@extends('content.base')
 
 @section('main-content')
     @parent
@@ -194,7 +194,7 @@
     </script>
 @endsection
 
-@section('js-extra')
+@section('js-main')
     @parent
     @php
         // dd(asset('js/admin.js'), asset(mix('js/admin.js')));

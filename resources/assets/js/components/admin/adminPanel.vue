@@ -18,10 +18,11 @@
 <script>
     import { Stack } from '../../lib/LibertyStack.js'
     import { ComponentTree } from '../../lib/LaravelComponentTree.js'
-    import { mapState } from 'vuex'
+    import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
     import BootBreadcrumbs from '../bootBreadcrumbs.vue'
     import BootTabs from '../bootTabs.vue'
     import BootArticle from '../bootArticle.vue'
+    
     export default {
         name: 'admin-panel-component',
         props: {
@@ -37,28 +38,41 @@
             BootArticle
         },
         data: function () {
-            return {
-                tabs: [
-                        {
-                            name: 'Sections',
-                            component: {
-                                template: ''
-                            }
-                        },
-                        {
-                            name: 'Users',
-                            component: {
-                                template: ''
-                            }
-                        },
-                        {
-                            name: 'Pages',
-                            component: {
-                                template: ''
-                            }
+            var tabs = [
+                {
+                    value: {
+                        name: 'Sections',
+                        path: 'store/sections',
+                        component: {
+                            template: ''
                         }
-                    ],
-                currentTab: this.tabs[0].name,
+                    },
+                    children: []
+                },
+                {
+                    value: {
+                        name: 'Users',
+                        path: 'users',
+                        component: {
+                            template: ''
+                        }
+                    },
+                    children: []
+                },
+                {
+                    value: {
+                        name: 'Pages',
+                        path: 'pages',
+                        component: {
+                            template: ''
+                        }
+                    },
+                    children: []
+                }
+            ]
+            this.$store.commit('setComponents', tabs)
+            return {
+                currentTab: this.tabs[0].value.name,
             };
         },
         watch: {
@@ -73,6 +87,12 @@
                         crumbs: state.breadcrumbs.data(),
                         current: this.$route.path
                     }
+                },
+                tabs: state => {
+                    var i = state.getters.findComponent(this.currentTab, (tv, ct) => {
+                        return ct === tv.name
+                    })
+                    return 
                 }
             })
         },
