@@ -32961,6 +32961,12 @@ exports.default = function () {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray__ = __webpack_require__(506);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof__);
+
+
 // import url from 'url';
 /* harmony default export */ __webpack_exports__["default"] = ({
   genUrl: function genUrl(urlObj, pageNum, viewNum, pagingFor) {
@@ -33103,6 +33109,40 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       end: last,
       index: pageNum
     };
+  },
+  JsonParseOrRetObj: function JsonParseOrRetObj(data) {
+    var def = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var err = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+    if (typeof data === 'string') {
+      var res = def;
+      try {
+        res = JSON.parse(data);
+      } catch (error) {
+        var te = error;
+        try {
+          res = window.Json5.parse(data);
+        } catch (error) {
+          if (typeof err === 'function') {
+            err([te, error]);
+          } else {
+            throw new Error(te.message + error.message);
+          }
+        }
+      }
+      return res;
+    } else if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
+      return data;
+    } else {
+      return def;
+    }
+  },
+  outputErrorsToConsole: function outputErrorsToConsole(error) {
+    var _error = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray___default.a(error, 2),
+        e1 = _error[0],
+        e2 = _error[1];
+
+    console.log(e1.toString() + e2.toString());
   }
 });
 
@@ -54882,6 +54922,165 @@ JSON5.stringify = function (obj, replacer, space) {
         return getReplacedValueOrUndefined(topLevelHolder, '', true);
     }
     return internalStringify(topLevelHolder, '', true);
+};
+
+
+/***/ }),
+/* 505 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// getting tag from 19.1.3.6 Object.prototype.toString()
+var cof = __webpack_require__(131);
+var TAG = __webpack_require__(52)('toStringTag');
+// ES3 wrong here
+var ARG = cof(function () { return arguments; }()) == 'Arguments';
+
+// fallback for IE11 Script Access Denied error
+var tryGet = function (it, key) {
+  try {
+    return it[key];
+  } catch (e) { /* empty */ }
+};
+
+module.exports = function (it) {
+  var O, T, B;
+  return it === undefined ? 'Undefined' : it === null ? 'Null'
+    // @@toStringTag case
+    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
+    // builtinTag case
+    : ARG ? cof(O)
+    // ES3 arguments fallback
+    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+};
+
+
+/***/ }),
+/* 506 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _isIterable2 = __webpack_require__(507);
+
+var _isIterable3 = _interopRequireDefault(_isIterable2);
+
+var _getIterator2 = __webpack_require__(510);
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = (0, _getIterator3.default)(arr), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if ((0, _isIterable3.default)(Object(arr))) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
+
+/***/ }),
+/* 507 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(508), __esModule: true };
+
+/***/ }),
+/* 508 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(193);
+__webpack_require__(182);
+module.exports = __webpack_require__(509);
+
+
+/***/ }),
+/* 509 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var classof = __webpack_require__(505);
+var ITERATOR = __webpack_require__(52)('iterator');
+var Iterators = __webpack_require__(88);
+module.exports = __webpack_require__(49).isIterable = function (it) {
+  var O = Object(it);
+  return O[ITERATOR] !== undefined
+    || '@@iterator' in O
+    // eslint-disable-next-line no-prototype-builtins
+    || Iterators.hasOwnProperty(classof(O));
+};
+
+
+/***/ }),
+/* 510 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(511), __esModule: true };
+
+/***/ }),
+/* 511 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(193);
+__webpack_require__(182);
+module.exports = __webpack_require__(512);
+
+
+/***/ }),
+/* 512 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject = __webpack_require__(64);
+var get = __webpack_require__(513);
+module.exports = __webpack_require__(49).getIterator = function (it) {
+  var iterFn = get(it);
+  if (typeof iterFn != 'function') throw TypeError(it + ' is not iterable!');
+  return anObject(iterFn.call(it));
+};
+
+
+/***/ }),
+/* 513 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var classof = __webpack_require__(505);
+var ITERATOR = __webpack_require__(52)('iterator');
+var Iterators = __webpack_require__(88);
+module.exports = __webpack_require__(49).getIteratorMethod = function (it) {
+  if (it != undefined) return it[ITERATOR]
+    || it['@@iterator']
+    || Iterators[classof(it)];
 };
 
 

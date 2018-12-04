@@ -16,46 +16,16 @@ window.Vue.component('admin-panel-component', AdminPanel);
 
 window.Laravel.page.admin = {}
 
-function JsonParseOrRetObj (data, def = {}, err = null) {
-  if (typeof data === 'string') {
-    var res = def;
-    try {
-      res = JSON.parse(data)
-    } catch (error) {
-      var te = error
-      try {
-        res = window.Json5.parse(data)
-      } catch (error) {
-        if (typeof err === 'function') {
-          err([te, error])
-        } else {
-          throw new Error(te.message + error.message)
-        }
-      }
-    }
-    return res
-  } else if (typeof data === 'object') {
-    return data
-  } else {
-    return def
-  }
-}
-
-function outputErrorsToConsole (error) {
-  var [e1, e2] = error
-  console.log(e1.toString() + e2.toString())
-}
-
 function genComponentData (data) {
   if (typeof data === 'string') {
-    var vals = JsonParseOrRetObj(data, {}, outputErrorsToConsole)
+    var vals = window.myUtils.JsonParseOrRetObj(data, {}, window.myUtils.outputErrorsToConsole)
   } else if (typeof data === 'object') {
     var vals = {}
     for (var i in data) {
       if (typeof i === 'object') {
         var tmp = {
-          items: JsonParseOrRetObj(i.items, [], outputErrorsToConsole),
-          pagination: JsonParseOrRetObj(i.pagination, [], outputErrorsToConsole)
+          items: window.myUtils.JsonParseOrRetObj(i.items, [], window.myUtils.outputErrorsToConsole),
+          pagination: window.myUtils.JsonParseOrRetObj(i.pagination, [], window.myUtils.outputErrorsToConsole)
         }
         vals[i] = tmp
       }
