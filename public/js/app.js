@@ -33146,6 +33146,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         e2 = _error[1];
 
     console.log(e1.toString() + e2.toString());
+  },
+  isScalar: function isScalar(data) {
+    if (typeof data === 'boolean' || typeof data === 'number' || typeof data === 'string' || typeof data === 'undefined' || (typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(data)) === 'symbol') {
+      return true;
+    } else if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(data)) === 'object' || Array.isArray(data) || typeof data === 'function') {
+      return false;
+    } else {
+      return false;
+    }
+  },
+  dumpData: function dumpData(data) {
+    for (var i in data) {
+      if (this.isScalar(i)) {
+        console.log(i + ' => ' + data[i]);
+      } else if ((typeof i === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(i)) === 'object') {
+        console.log(i + ' => [ ');
+        this.dumpData(data[i]);
+        console.log(']');
+      }
+    }
   }
 });
 

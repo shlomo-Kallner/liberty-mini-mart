@@ -191,13 +191,13 @@ jQuery(function ($) {
             handleCart.doAjax($, data, 'POST', callback);
         },
         isScalar: function (data) {
-            if (typeof data == 'boolean' 
-                || typeof data == 'number'
-                || typeof data == 'string'
-                || typeof data == 'undefined'
+            if (typeof data === 'boolean' 
+                || typeof data === 'number'
+                || typeof data === 'string'
+                || typeof data === 'undefined'
             ) {
                 return true;
-            } else if (typeof data == 'object') {
+            } else if (typeof data === 'object') {
                 return false;
             } else {
                 return false;
@@ -208,7 +208,7 @@ jQuery(function ($) {
             for (var i in data) {
                 if (handleCart.isScalar(i)) {
                     console.log( i + ' => ' + data[i]);
-                } else if (typeof i == 'object') {
+                } else if (typeof i === 'object') {
                     console.log( i + ' => [ ');
                     handleCart.dumpData(data[i]);
                     console.log(']');

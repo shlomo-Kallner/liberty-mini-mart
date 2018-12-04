@@ -166,5 +166,33 @@ export default {
   outputErrorsToConsole: function (error) {
     var [e1, e2] = error
     console.log(e1.toString() + e2.toString())
+  },
+  isScalar: function (data) {
+    if (typeof data === 'boolean' ||
+      typeof data === 'number' ||
+      typeof data === 'string' ||
+      typeof data === 'undefined' ||
+      typeof data === 'symbol'
+    ) {
+      return true
+    } else if (typeof data === 'object' ||
+      Array.isArray(data) ||
+      typeof data === 'function'
+    ) {
+      return false
+    } else {
+      return false
+    }
+  },
+  dumpData: function (data) {
+    for (var i in data) {
+      if (this.isScalar(i)) {
+        console.log( i + ' => ' + data[i])
+      } else if (typeof i === 'object') {
+        console.log( i + ' => [ ')
+        this.dumpData(data[i])
+        console.log(']')
+      }
+    }
   }
 }

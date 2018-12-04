@@ -1,6 +1,6 @@
 <?php
 
-//use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +16,12 @@
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
+
+Route::prefix('test')->group(
+    function () {
+        Route::get('{method?}', 'TestController@index');
+    }
+);
 
 Route::prefix('store')->group(
     function () {

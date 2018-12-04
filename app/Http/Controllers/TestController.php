@@ -39,7 +39,9 @@ class TestController extends MainController
                 break;
         
             case 'info':
-                phpinfo();
+                if (!$request->ajax()) {
+                    phpinfo();
+                }
                 return '';
                 break;
         
@@ -61,7 +63,7 @@ class TestController extends MainController
         $k = Functions::url2int_decode($n);
         $j = pack('V', $num);
         $l = bin2hex($j);
-        $u = Uuid::generate(5,'test', Uuid::NS_URL);
+        $u = Uuid::generate(5, 'test', Uuid::NS_URL);
         $array = [
             'num' => $num, 
             'url_encoded' => $n, 
@@ -79,7 +81,7 @@ class TestController extends MainController
 
     protected function doDump(Request $request) 
     {
-        $dump = true;
+        $dump = !$request->ajax();
         $tmp = [
             'user' => User::getUserArray($request),
             'session' => $request->session()->all(),
