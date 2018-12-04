@@ -70,7 +70,13 @@ export default {
       nut: nut
     }
   },
-  doAjax: function (data, type = 'POST', success = null, error = null) {
+  makeDataWithLaravel: function (info, url, redirect, action) {
+    return this.makeData(
+      info, url, window.Laravel.csrfToken,
+      redirect, action, window.Laravel.nut
+    )
+  },
+  doAjax: function (data, method = 'post', success = null, fail = null) {
     // handleCart.dumpData(data);
     window.axios(
       {
@@ -81,7 +87,7 @@ export default {
           'X-CSRF-TOKEN': data.token,
           'X-XSRF-TOKEN': data._token
         },
-        method: type,
+        method: method,
         data: data,
         withCredentials: true
       }
@@ -90,8 +96,8 @@ export default {
         success(response)
       }
     }).catch(reason => {
-      if (typeof error === 'function') {
-        error(reason)
+      if (typeof fail === 'function') {
+        fail(reason)
       }
     })
   },

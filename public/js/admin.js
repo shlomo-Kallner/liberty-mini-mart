@@ -33045,10 +33045,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       nut: nut
     };
   },
+  makeDataWithLaravel: function makeDataWithLaravel(info, url, redirect, action) {
+    return this.makeData(info, url, window.Laravel.csrfToken, redirect, action, window.Laravel.nut);
+  },
   doAjax: function doAjax(data) {
-    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'POST';
+    var method = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'post';
     var success = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-    var error = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+    var fail = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
     // handleCart.dumpData(data);
     window.axios({
@@ -33059,7 +33062,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         'X-CSRF-TOKEN': data.token,
         'X-XSRF-TOKEN': data._token
       },
-      method: type,
+      method: method,
       data: data,
       withCredentials: true
     }).then(function (response) {
@@ -33067,8 +33070,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         success(response);
       }
     }).catch(function (reason) {
-      if (typeof error === 'function') {
-        error(reason);
+      if (typeof fail === 'function') {
+        fail(reason);
       }
     });
   },
