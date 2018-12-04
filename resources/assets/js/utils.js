@@ -10,7 +10,7 @@ export default {
         viewNum: viewNum,
         pagingFor: pagingFor
       }
-    });
+    })
   },
   getPagingData: function (paging) {
     if (paging !== undefined && window._.size(paging) >= 5) {
@@ -20,7 +20,7 @@ export default {
         pagesPerView: paging.numPerView !== undefined ? paging.numPerView : 0,
         itemsPerPage: paging.numItemsPerPage !== undefined ? paging.numItemsPerPage : 0,
         totalItems: paging.totalItems !== undefined ? paging.totalItems : 0
-      };
+      }
     } else {
       return {
         numPages: 0,
@@ -28,7 +28,7 @@ export default {
         pagesPerView: 0,
         itemsPerPage: 0,
         totalItems: 0
-      };
+      }
     }
   },
   getArticleData: function (article, headerCss = null, articleCss = null, useSepRows = false) {
@@ -50,14 +50,14 @@ export default {
     }
   },
   testData: function (data) {
-    return data !== undefined && data !== null;
+    return data !== undefined && data !== null
   },
   doOnArray: function (data, func) {
-    var res = [];
+    var res = []
     for (var i in data) {
-      res = window._.concat(res, func(i));
+      res = window._.concat(res, func(i))
     }
-    return res;
+    return res
   },
   makeData: function (info, url, token, redirect, action, nut = '') {
     return {
@@ -68,17 +68,42 @@ export default {
       redirect: redirect,
       action: action,
       nut: nut
-    };
+    }
+  },
+  doAjax: function (data, type = 'POST', success = null, error = null) {
+    // handleCart.dumpData(data);
+    window.axios(
+      {
+        url: data.url,
+        dataType: 'json',
+        responseType: 'json',
+        headers: {
+          'X-CSRF-TOKEN': data.token,
+          'X-XSRF-TOKEN': data._token
+        },
+        method: type,
+        data: data,
+        withCredentials: true
+      }
+    ).then(response => {
+      if (typeof success === 'function') {
+        success(response)
+      }
+    }).catch(reason => {
+      if (typeof error === 'function') {
+        error(reason)
+      }
+    })
   },
   genNumSubRanges: function (numItems, itemsPerSubRange) {
-      var ni = window._.floor(numItems);
-      var ipsr = window._.floor(itemsPerSubRange);
-      if (ni <= ipsr) {
-          return 1;
-      } else {
-          var num = ni / ipsr;
-          return ni % ipsr > 0 ? num + 1 : num;
-      } 
+    var ni = window._.floor(numItems)
+    var ipsr = window._.floor(itemsPerSubRange)
+    if (ni <= ipsr) {
+      return 1
+    } else {
+      var num = ni / ipsr
+      return ni % ipsr > 0 ? num + 1 : num
+    }
   },
   getCurrentSubRange: function (currentItem, itemsPerSubRange) {
     return window._.floor(currentItem / itemsPerSubRange);

@@ -38,6 +38,7 @@ export class ComponentTree {
     this.parent = parent instanceof ComponentTree ? parent : null
     this.children = ComponentTree.checkChildrenArray(children)
       ? children : []
+    this.children.forEach(value => value.setParent(this))
   }
 
   static checkChildrenArray (children) {
@@ -58,6 +59,12 @@ export class ComponentTree {
     return this.parent
   }
 
+  setParent (parent) {
+    if (parent instanceof ComponentTree) {
+      this.parent = parent
+    }
+  }
+
   value (val = null) {
     var res = this.value
     if (val !== null || val !== undefined) {
@@ -75,7 +82,7 @@ export class ComponentTree {
   }
 
   hasChildren () {
-    return window._.size(this.children) > 0
+    return this.children.length > 0
   }
 
   [Symbol.iterator] () {
@@ -87,17 +94,19 @@ export class ComponentTree {
   }
 
   numChildren () {
-    return window._.size(this.children)
+    return this.children.length
   }
 
   push (tree) {
     if (tree instanceof ComponentTree) {
-      window._.concat(this.children, tree)
+      tree.setParent(this)
+      this.children.push(tree)
     } else if (typeof tree === 'object') {
       var {value, children} = tree
-      window._.concat(this.children, new ComponentTree(value, children, this))
+      this.children.push(new ComponentTree(value, children, this))
     }
   }
+
   findSubTree (tree) {
     if (tree instanceof ComponentTree) {
       if (tree !== this) {

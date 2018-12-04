@@ -13,11 +13,22 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
     export default {
         name: 'admin-comp-list-component',
         props: {
-            itemsArray: Array,
-            current: Object,
+            path: {
+                type: [Object, String],
+                default: ''
+            },
+            itemsArray: {
+                type: [Array],
+                default: []
+            },
+            current: {
+                type: Object,
+                default: null
+            },
             preText: {
                 type: [String, Function],
                 default: ''
@@ -25,6 +36,10 @@
             postText: {
                 type: [String, Function],
                 default: ''
+            },
+            extra: {
+                type: Object,
+                default: null
             }
         },
         data: () => {
@@ -32,7 +47,9 @@
                 items: itemsArray,
             }
         },
-        watch: {},
+        watch: {
+            // '$route': 
+        },
         computed: {
             getPreText: function () {
                 return this.getText(this.preText)
@@ -40,7 +57,17 @@
             getPostText: function () {
                 return this.getText(this.postText)
             },
-            current: () => this.$route.path
+            current: () => this.$route.path,
+            loadItems: () => {
+                var i = this.getComponentChildrenValues(
+                    typeof this.path === 'string' ? this.path : this.path.path, 
+                    (tv, path) => { return typeof tv === 'object' && tv.path === path }
+                )
+                if (i.length > 0) {
+                    this.items = i
+                }
+            },
+            ...mapGetters(['findComponent', 'getComponentChildrenValues'])
         },
         methods: {
             getText: function (val) {

@@ -3905,10 +3905,6 @@ process.umask = function() { return 0; };
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(82);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
-
 
 __webpack_require__(208);
 window._ = __webpack_require__(167);
@@ -3975,76 +3971,10 @@ window.Vue = __webpack_require__(436);
 window.url = __webpack_require__(439);
 
 window.myUtils = __webpack_require__(177).default;
+window.Json5 = __webpack_require__(504);
 
 // let uuidv3 = require('uuid/v3') // not using uuid/v3 in the end (it uses md5..)
 // let uuidv5 = require('uuid/v5')
-
-window.Vue.component('dismissable-alert', __webpack_require__(445));
-window.Vue.component('cart-component', __webpack_require__(448));
-window.Vue.component('boot-pagination', __webpack_require__(451));
-window.Vue.component('boot-carousel', __webpack_require__(454));
-
-window.Laravel.page.alert = new window.Laravel.LaravelAlert(window.Laravel.alert);
-
-window.Laravel.masterAlert = new window.Vue({
-  el: '#masterPageAlertContainer',
-  template: '<dismissable-alert v-bind:initAlert="alert"></dismissable-alert>',
-  data: {
-    alertData: window.Laravel.page.alert.getData()
-    // initAlert: new LaravelAlert(window.Laravel.alert)
-  },
-  created: function created() {
-    // `this` points to the vm instance
-    // console.log('alert is: ' + this.alert)
-  },
-  computed: {
-    alert: {
-      set: function set(data) {
-        if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
-          this.alertData = data;
-        } else if (typeof data === 'string') {
-          this.alertData = JSON.parse(data);
-        }
-      },
-      get: function get() {
-        return this.alertData;
-      }
-    }
-  }
-});
-
-window.Laravel.page.setAlert = function (data) {
-  window.Laravel.page.alert = new window.Laravel.LaravelAlert(data);
-  window.Laravel.masterAlert.alert = window.Laravel.page.alert.getData();
-};
-
-window.Laravel.masterCart = new window.Vue({
-  el: '#topCartComp',
-  template: '<cart-component v-bind:initCart="cart" v-bind:baseUrl="baseUrl"></cart-component>',
-  data: {
-    baseUrl: window.Laravel.baseUrl,
-    cartData: JSON.parse(window.Laravel.cart)
-  },
-  computed: {
-    cart: {
-      get: function get() {
-        return this.cartData;
-      },
-      set: function set(data) {
-        if (typeof data === 'string') {
-          this.cartData = JSON.parse(data);
-        } else if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
-          this.cartData = data;
-        }
-      }
-    }
-  }
-});
-
-window.Laravel.page.setCart = function (data) {
-  window.Laravel.page.cart = data;
-  window.Laravel.masterCart.cartData = data;
-};
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -33109,6 +33039,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       nut: nut
     };
   },
+  doAjax: function doAjax(data) {
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'POST';
+    var success = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var error = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+    // handleCart.dumpData(data);
+    window.axios({
+      url: data.url,
+      dataType: 'json',
+      responseType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': data.token,
+        'X-XSRF-TOKEN': data._token
+      },
+      method: type,
+      data: data,
+      withCredentials: true
+    }).then(function (response) {
+      if (typeof success === 'function') {
+        success(response);
+      }
+    }).catch(function (reason) {
+      if (typeof error === 'function') {
+        error(reason);
+      }
+    });
+  },
   genNumSubRanges: function genNumSubRanges(numItems, itemsPerSubRange) {
     var ni = window._.floor(numItems);
     var ipsr = window._.floor(itemsPerSubRange);
@@ -53963,9 +53920,9 @@ if (false) {
 "use strict";
 /* unused harmony export Store */
 /* unused harmony export install */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return mapState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return mapState; });
 /* unused harmony export mapMutations */
-/* unused harmony export mapGetters */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return mapGetters; });
 /* unused harmony export mapActions */
 /* unused harmony export createNamespacedHelpers */
 /**
@@ -57679,6 +57636,8 @@ var TreeWalkIterator = function () {
 
 var ComponentTree = function () {
   function ComponentTree(value) {
+    var _this = this;
+
     var children = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
     var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
@@ -57687,12 +57646,22 @@ var ComponentTree = function () {
     this.value = value;
     this.parent = parent instanceof ComponentTree ? parent : null;
     this.children = ComponentTree.checkChildrenArray(children) ? children : [];
+    this.children.forEach(function (value) {
+      return value.setParent(_this);
+    });
   }
 
   __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default.a(ComponentTree, [{
     key: 'parent',
     value: function parent() {
       return this.parent;
+    }
+  }, {
+    key: 'setParent',
+    value: function setParent(parent) {
+      if (parent instanceof ComponentTree) {
+        this.parent = parent;
+      }
     }
   }, {
     key: 'value',
@@ -57717,7 +57686,7 @@ var ComponentTree = function () {
   }, {
     key: 'hasChildren',
     value: function hasChildren() {
-      return window._.size(this.children) > 0;
+      return this.children.length > 0;
     }
   }, {
     key: __WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_symbol_iterator___default.a,
@@ -57732,18 +57701,19 @@ var ComponentTree = function () {
   }, {
     key: 'numChildren',
     value: function numChildren() {
-      return window._.size(this.children);
+      return this.children.length;
     }
   }, {
     key: 'push',
     value: function push(tree) {
       if (tree instanceof ComponentTree) {
-        window._.concat(this.children, tree);
+        tree.setParent(this);
+        this.children.push(tree);
       } else if ((typeof tree === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(tree)) === 'object') {
         var value = tree.value,
             children = tree.children;
 
-        window._.concat(this.children, new ComponentTree(value, children, this));
+        this.children.push(new ComponentTree(value, children, this));
       }
     }
   }, {
@@ -57827,28 +57797,53 @@ var Foo = { template: '<div>Hello World!</div>' };
 
 var routes = [{
   path: '/',
-  component: Foo,
-  props: function props() {}
+  component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
+  props: function props(route) {
+    path: route.path;
+  }
 }, {
   path: 'users',
   component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
-  props: function props() {},
-  children: [{ path: '', component: Foo, props: function props() {} }, { path: ':id', component: Foo, props: function props() {} }]
+  children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+      path: route.path;
+    } }, { path: ':id', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+      return { path: route.path, extra: { id: route.params.id } };
+    } }]
 }, {
   path: 'pages',
   component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
-  props: function props() {},
-  children: [{ path: '', component: Foo, props: function props() {} }, { path: ':id', component: Foo, props: function props() {} }]
+  children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+      path: route.path;
+    } }, { path: ':id', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+      return { path: route.path, extra: { id: route.params.id } };
+    } }]
 }, {
   path: 'store/sections',
   component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
-  children: [{ path: '', component: Foo, props: function props() {} }, { path: ':sid', component: Foo, props: function props() {} }]
+  children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+      path: route.path;
+    } }, { path: ':sid', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+      return { path: route.path, extra: { sid: route.params.sid } };
+    } }]
 }, {
   path: 'store/sections/:sid/category',
   component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
-  children: [{ path: '', component: Foo, props: function props() {} }, { path: ':cid', component: Foo, props: function props() {} }]
+  children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+      path: route.path;
+    } }, { path: ':cid', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+      return { path: route.path, extra: { sid: route.params.sid, cid: route.params.cid } };
+    } }]
 }, {
-  path: 'store/sections/:sid/category/:cid/product/:pid', component: Foo, props: function props() {}
+  path: 'store/sections/:sid/category/:cid/product',
+  component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
+  children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+      path: route.path;
+    } }, { path: ':pid',
+    component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
+    props: function props(route) {
+      return { path: route.path, extra: { sid: route.params.sid, cid: route.params.cid, pid: route.params.pid } };
+    }
+  }]
 }];
 
 /* harmony default export */ __webpack_exports__["default"] = (new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
@@ -57873,7 +57868,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = (new __WEBPACK_IMPORTED_MODULE_0_vuex__["a" /* default */].Store({
   state: {
     breadcrumbs: new __WEBPACK_IMPORTED_MODULE_1__lib_LibertyStack_js__["a" /* Stack */]([]),
-    components: new __WEBPACK_IMPORTED_MODULE_2__lib_LaravelComponentTree_js__["a" /* ComponentTree */](null)
+    components: new __WEBPACK_IMPORTED_MODULE_2__lib_LaravelComponentTree_js__["a" /* ComponentTree */]({
+      name: 'root',
+      path: '/'
+    }, [], null)
   },
   mutations: {
     pushCrumb: function pushCrumb(state, crumb) {
@@ -57930,6 +57928,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
         return res;
       };
+    },
+    getComponentChildrenValues: function getComponentChildrenValues(state, getters) {
+      return function (value) {
+        var comp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+        var t = getters.findComponent(value, comp);
+        var res = [];
+        for (var i in t) {
+          res.push(i.value());
+        }
+        return res;
+      };
     }
   }
 }));
@@ -57954,12 +57964,20 @@ module.exports = __webpack_require__(124);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_es6_promise_auto__ = __webpack_require__(468);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_es6_promise_auto___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_es6_promise_auto__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(457);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vue_router__ = __webpack_require__(459);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_admin_adminPanel_vue__ = __webpack_require__(470);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_admin_adminPanel_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__components_admin_adminPanel_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray__ = __webpack_require__(506);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_es6_promise_auto__ = __webpack_require__(468);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_es6_promise_auto___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_es6_promise_auto__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vuex__ = __webpack_require__(457);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_router__ = __webpack_require__(459);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_admin_adminPanel_vue__ = __webpack_require__(470);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_admin_adminPanel_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__components_admin_adminPanel_vue__);
+
+
+
+var _this = this;
 
 
 
@@ -57968,35 +57986,99 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 __webpack_require__(124);
 
-window.Vue.use(__WEBPACK_IMPORTED_MODULE_2_vue_router__["a" /* default */]);
+window.Vue.use(__WEBPACK_IMPORTED_MODULE_4_vue_router__["a" /* default */]);
 
-window.Vue.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
+window.Vue.use(__WEBPACK_IMPORTED_MODULE_3_vuex__["a" /* default */]);
 
-window.Vue.component('admin-panel-component', __WEBPACK_IMPORTED_MODULE_3__components_admin_adminPanel_vue___default.a);
+__webpack_require__(503);
+
+window.Vue.component('admin-panel-component', __WEBPACK_IMPORTED_MODULE_5__components_admin_adminPanel_vue___default.a);
 
 window.Laravel.page.admin = {};
 
-window.Laravel.page.admin.app = new window.Vue({
-  el: '#cms-app',
-  router: __webpack_require__(461),
-  store: __webpack_require__(462),
-  template: '<admin-panel-component v-bind="initData"></admin-panel-component>',
-  data: {
-    initData: this.genComponentData(window.Laravel.admin)
-  },
-  computed: {},
-  methods: {
-    genComponentData: function genComponentData(data) {
-      var vals = JSON.parse(data);
-      return {
-        initPages: vals.pages,
-        initSections: vals.sections,
-        initUsers: vals.users,
-        initArticle: window.myUtils.getArticleData(vals.article, 'col-md-12', 'col-md-12')
-      };
+function JsonParseOrRetObj(data) {
+  var def = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var err = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+  if (typeof data === 'string') {
+    var res = def;
+    try {
+      res = JSON.parse(data);
+    } catch (error) {
+      var te = error;
+      try {
+        res = window.Json5.parse(data);
+      } catch (error) {
+        if (typeof err === 'function') {
+          err([te, error]);
+        } else {
+          throw new Error(te.message + error.message);
+        }
+      }
+    }
+    return res;
+  } else if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
+    return data;
+  } else {
+    return def;
+  }
+}
+
+function outputErrorsToConsole(error) {
+  var _error = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray___default.a(error, 2),
+      e1 = _error[0],
+      e2 = _error[1];
+
+  console.log(e1.toString() + e2.toString());
+}
+
+function genComponentData(data) {
+  if (typeof data === 'string') {
+    var vals = JsonParseOrRetObj(data, {}, outputErrorsToConsole);
+  } else if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
+    var vals = {};
+    for (var i in data) {
+      if ((typeof i === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(i)) === 'object') {
+        var tmp = {
+          items: JsonParseOrRetObj(i.items, [], outputErrorsToConsole),
+          pagination: JsonParseOrRetObj(i.pagination, [], outputErrorsToConsole)
+        };
+        vals[i] = tmp;
+      }
     }
   }
-});
+  if (window._.size(vals) > 0) {
+    return {
+      initPages: vals.pages,
+      initSections: vals.sections,
+      initUsers: vals.users,
+      initArticle: window.myUtils.getArticleData(vals.article, 'col-md-12', 'col-md-12')
+    };
+  } else {
+    return {
+      initPages: {},
+      initSections: {},
+      initUsers: {},
+      initArticle: {}
+    };
+  }
+}
+var router = __webpack_require__(461).default;
+var store = __webpack_require__(462).default;
+window.Laravel.page.admin.app = new window.Vue({
+  router: router,
+  store: store,
+  template: '<admin-panel-component v-bind="componentData"></admin-panel-component>',
+  data: {
+    initData: window.Laravel.admin
+  },
+  computed: {
+    componentData: function componentData() {
+      return genComponentData(_this.initData);
+    }
+  },
+  methods: {}
+}).$mount('#cms-app');
 
 /***/ }),
 /* 468 */
@@ -59252,17 +59334,20 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(472);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_LibertyStack_js__ = __webpack_require__(458);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_LaravelComponentTree_js__ = __webpack_require__(460);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vuex__ = __webpack_require__(457);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bootBreadcrumbs_vue__ = __webpack_require__(477);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bootBreadcrumbs_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__bootBreadcrumbs_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__bootTabs_vue__ = __webpack_require__(480);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__bootTabs_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__bootTabs_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__bootArticle_vue__ = __webpack_require__(483);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__bootArticle_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__bootArticle_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__ = __webpack_require__(472);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_LibertyStack_js__ = __webpack_require__(458);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__lib_LaravelComponentTree_js__ = __webpack_require__(460);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vuex__ = __webpack_require__(457);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__bootBreadcrumbs_vue__ = __webpack_require__(477);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__bootBreadcrumbs_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__bootBreadcrumbs_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__bootTabs_vue__ = __webpack_require__(480);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__bootTabs_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__bootTabs_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__bootArticle_vue__ = __webpack_require__(483);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__bootArticle_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__bootArticle_vue__);
+
 
 
 var _this = this;
@@ -59292,58 +59377,42 @@ var _this = this;
 
 
 
+var Foo = { template: '<div>Hello World!</div>' };
+
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'admin-panel-component',
     props: {
-        initPages: Object,
-        initSections: Object,
-        initUsers: Object,
-        initArticle: Object
+        initPages: {
+            type: Object,
+            default: {}
+        },
+        initSections: {
+            type: Object,
+            default: {}
+        },
+        initUsers: {
+            type: Object,
+            default: {}
+        },
+        initArticle: {
+            type: Object,
+            default: {}
+        }
     },
-
     components: {
-        BootBreadcrumbs: __WEBPACK_IMPORTED_MODULE_4__bootBreadcrumbs_vue___default.a,
-        BootTabs: __WEBPACK_IMPORTED_MODULE_5__bootTabs_vue___default.a,
-        BootArticle: __WEBPACK_IMPORTED_MODULE_6__bootArticle_vue___default.a
+        BootBreadcrumbs: __WEBPACK_IMPORTED_MODULE_5__bootBreadcrumbs_vue___default.a,
+        BootTabs: __WEBPACK_IMPORTED_MODULE_6__bootTabs_vue___default.a,
+        BootArticle: __WEBPACK_IMPORTED_MODULE_7__bootArticle_vue___default.a
     },
     data: function data() {
-        var tabs = [{
-            value: {
-                name: 'Sections',
-                path: 'store/sections',
-                component: {
-                    template: ''
-                }
-            },
-            children: []
-        }, {
-            value: {
-                name: 'Users',
-                path: 'users',
-                component: {
-                    template: ''
-                }
-            },
-            children: []
-        }, {
-            value: {
-                name: 'Pages',
-                path: 'pages',
-                component: {
-                    template: ''
-                }
-            },
-            children: []
-        }];
-        this.$store.commit('setComponents', tabs);
-        return {
-            currentTab: this.tabs[0].value.name
-        };
+        return this.genTabs();
     },
     watch: {
-        $route: function $route(route) {}
+        $route: function $route(route) {
+            //
+        }
     },
-    computed: __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default.a({}, __WEBPACK_IMPORTED_MODULE_3_vuex__["b" /* mapState */]({
+    computed: __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default.a({}, __WEBPACK_IMPORTED_MODULE_4_vuex__["c" /* mapState */]({
         breadcrumbs: function breadcrumbs(state) {
             return {
                 crumbs: state.breadcrumbs.data(),
@@ -59351,13 +59420,71 @@ var _this = this;
             };
         },
         tabs: function tabs(state) {
-            var i = state.getters.findComponent(_this.currentTab, function (tv, ct) {
+            var i = state.getters.getComponentChildrenValues(_this.currentTab, function (tv, ct) {
                 return ct === tv.name;
             });
-            return;
+            return i.length > 0 ? i : [];
         }
     })),
-    methods: {}
+    methods: {
+        valToComponent: function valToComponent(data) {
+            if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
+                return __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default.a({
+                    path: data.url,
+                    component: Foo,
+                    paging: {}
+                }, data);
+            } else {
+                return null;
+            }
+        },
+        valToComponentArray: function valToComponentArray(data) {
+            if (Array.isArray(data)) {
+                var res = [];
+                for (var i in data) {
+                    if (i instanceof __WEBPACK_IMPORTED_MODULE_3__lib_LaravelComponentTree_js__["a" /* ComponentTree */]) {
+                        res.push(i);
+                    } else {
+                        res.push(new __WEBPACK_IMPORTED_MODULE_3__lib_LaravelComponentTree_js__["a" /* ComponentTree */](_this.valToComponent(i)));
+                    }
+                }
+                return res;
+            } else {
+                return [];
+            }
+        },
+        genTabs: function genTabs() {
+            var tabs = [{
+                value: {
+                    name: 'Sections',
+                    path: 'store/sections',
+                    component: Foo,
+                    paging: _this.initSections.pagination
+                },
+                children: _this.valToComponentArray(_this.initSections.items)
+            }, {
+                value: {
+                    name: 'Users',
+                    path: 'users',
+                    component: Foo,
+                    pagination: _this.initUsers.pagination
+                },
+                children: _this.valToComponentArray(_this.initUsers.items)
+            }, {
+                value: {
+                    name: 'Pages',
+                    path: 'pages',
+                    component: Foo,
+                    pagination: _this.initPages.pagination
+                },
+                children: _this.valToComponentArray(_this.initPages.items)
+            }];
+            _this.$store.commit('setComponents', tabs);
+            return {
+                currentTab: ''
+            };
+        }
+    }
 });
 
 /***/ }),
@@ -60134,7 +60261,11 @@ var render = function() {
         _vm._v(" "),
         _c("boot-article", _vm._b({}, "boot-article", _vm.initArticle, false)),
         _vm._v(" "),
-        _c("boot-tabs", { attrs: { tabs: _vm.tabs, current: _vm.currentTab } }),
+        false
+          ? _c("boot-tabs", {
+              attrs: { tabs: _vm.tabs, current: _vm.currentTab }
+            })
+          : _vm._e(),
         _vm._v(" "),
         _c("div", { staticClass: "row padding-top-5" }, [
           _c(
@@ -60214,6 +60345,10 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__ = __webpack_require__(472);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuex__ = __webpack_require__(457);
+
 
 
 var _this = this;
@@ -60233,11 +60368,22 @@ var _this = this;
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'admin-comp-list-component',
     props: {
-        itemsArray: Array,
-        current: Object,
+        path: {
+            type: [Object, String],
+            default: ''
+        },
+        itemsArray: {
+            type: [Array],
+            default: []
+        },
+        current: {
+            type: Object,
+            default: null
+        },
         preText: {
             type: [String, Function],
             default: ''
@@ -60245,6 +60391,10 @@ var _this = this;
         postText: {
             type: [String, Function],
             default: ''
+        },
+        extra: {
+            type: Object,
+            default: null
         }
     },
     data: function data() {
@@ -60252,8 +60402,10 @@ var _this = this;
             items: itemsArray
         };
     },
-    watch: {},
-    computed: {
+    watch: {
+        // '$route': 
+    },
+    computed: __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default.a({
         getPreText: function getPreText() {
             return this.getText(this.preText);
         },
@@ -60262,8 +60414,16 @@ var _this = this;
         },
         current: function current() {
             return _this.$route.path;
+        },
+        loadItems: function loadItems() {
+            var i = _this.getComponentChildrenValues(typeof _this.path === 'string' ? _this.path : _this.path.path, function (tv, path) {
+                return (typeof tv === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(tv)) === 'object' && tv.path === path;
+            });
+            if (i.length > 0) {
+                _this.items = i;
+            }
         }
-    },
+    }, __WEBPACK_IMPORTED_MODULE_2_vuex__["b" /* mapGetters */](['findComponent', 'getComponentChildrenValues'])),
     methods: {
         getText: function getText(val) {
             if (typeof val === 'string') {
@@ -60343,6 +60503,1028 @@ if (false) {
     require("vue-hot-reload-api")      .rerender("data-v-ffb0ca96", module.exports)
   }
 }
+
+/***/ }),
+/* 493 */,
+/* 494 */,
+/* 495 */,
+/* 496 */,
+/* 497 */,
+/* 498 */,
+/* 499 */,
+/* 500 */,
+/* 501 */,
+/* 502 */,
+/* 503 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
+
+
+window.Vue.component('dismissable-alert', __webpack_require__(445));
+window.Vue.component('cart-component', __webpack_require__(448));
+window.Vue.component('boot-pagination', __webpack_require__(451));
+window.Vue.component('boot-carousel', __webpack_require__(454));
+
+window.Laravel.page.alert = new window.Laravel.LaravelAlert(window.Laravel.alert);
+
+window.Laravel.masterAlert = new window.Vue({
+  el: '#masterPageAlertContainer',
+  template: '<dismissable-alert v-bind:initAlert="alert"></dismissable-alert>',
+  data: {
+    alertData: window.Laravel.page.alert.getData()
+    // initAlert: new LaravelAlert(window.Laravel.alert)
+  },
+  created: function created() {
+    // `this` points to the vm instance
+    // console.log('alert is: ' + this.alert)
+  },
+  computed: {
+    alert: {
+      set: function set(data) {
+        if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
+          this.alertData = data;
+        } else if (typeof data === 'string') {
+          this.alertData = JSON.parse(data);
+        }
+      },
+      get: function get() {
+        return this.alertData;
+      }
+    }
+  }
+});
+
+window.Laravel.page.setAlert = function (data) {
+  window.Laravel.page.alert = new window.Laravel.LaravelAlert(data);
+  window.Laravel.masterAlert.alert = window.Laravel.page.alert.getData();
+};
+
+window.Laravel.masterCart = new window.Vue({
+  el: '#topCartComp',
+  template: '<cart-component v-bind:initCart="cart" v-bind:baseUrl="baseUrl"></cart-component>',
+  data: {
+    baseUrl: window.Laravel.baseUrl,
+    cartData: JSON.parse(window.Laravel.cart)
+  },
+  computed: {
+    cart: {
+      get: function get() {
+        return this.cartData;
+      },
+      set: function set(data) {
+        if (typeof data === 'string') {
+          this.cartData = JSON.parse(data);
+        } else if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
+          this.cartData = data;
+        }
+      }
+    }
+  }
+});
+
+window.Laravel.page.setCart = function (data) {
+  window.Laravel.page.cart = data;
+  window.Laravel.masterCart.cartData = data;
+};
+
+/***/ }),
+/* 504 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// json5.js
+// Modern JSON. See README.md for details.
+//
+// This file is based directly off of Douglas Crockford's json_parse.js:
+// https://github.com/douglascrockford/JSON-js/blob/master/json_parse.js
+
+var JSON5 = ( true ? exports : {});
+
+JSON5.parse = (function () {
+    "use strict";
+
+// This is a function that can parse a JSON5 text, producing a JavaScript
+// data structure. It is a simple, recursive descent parser. It does not use
+// eval or regular expressions, so it can be used as a model for implementing
+// a JSON5 parser in other languages.
+
+// We are defining the function inside of another function to avoid creating
+// global variables.
+
+    var at,           // The index of the current character
+        lineNumber,   // The current line number
+        columnNumber, // The current column number
+        ch,           // The current character
+        escapee = {
+            "'":  "'",
+            '"':  '"',
+            '\\': '\\',
+            '/':  '/',
+            '\n': '',       // Replace escaped newlines in strings w/ empty string
+            b:    '\b',
+            f:    '\f',
+            n:    '\n',
+            r:    '\r',
+            t:    '\t'
+        },
+        ws = [
+            ' ',
+            '\t',
+            '\r',
+            '\n',
+            '\v',
+            '\f',
+            '\xA0',
+            '\uFEFF'
+        ],
+        text,
+
+        renderChar = function (chr) {
+            return chr === '' ? 'EOF' : "'" + chr + "'";
+        },
+
+        error = function (m) {
+
+// Call error when something is wrong.
+
+            var error = new SyntaxError();
+            // beginning of message suffix to agree with that provided by Gecko - see https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+            error.message = m + " at line " + lineNumber + " column " + columnNumber + " of the JSON5 data. Still to read: " + JSON.stringify(text.substring(at - 1, at + 19));
+            error.at = at;
+            // These two property names have been chosen to agree with the ones in Gecko, the only popular
+            // environment which seems to supply this info on JSON.parse
+            error.lineNumber = lineNumber;
+            error.columnNumber = columnNumber;
+            throw error;
+        },
+
+        next = function (c) {
+
+// If a c parameter is provided, verify that it matches the current character.
+
+            if (c && c !== ch) {
+                error("Expected " + renderChar(c) + " instead of " + renderChar(ch));
+            }
+
+// Get the next character. When there are no more characters,
+// return the empty string.
+
+            ch = text.charAt(at);
+            at++;
+            columnNumber++;
+            if (ch === '\n' || ch === '\r' && peek() !== '\n') {
+                lineNumber++;
+                columnNumber = 0;
+            }
+            return ch;
+        },
+
+        peek = function () {
+
+// Get the next character without consuming it or
+// assigning it to the ch varaible.
+
+            return text.charAt(at);
+        },
+
+        identifier = function () {
+
+// Parse an identifier. Normally, reserved words are disallowed here, but we
+// only use this for unquoted object keys, where reserved words are allowed,
+// so we don't check for those here. References:
+// - http://es5.github.com/#x7.6
+// - https://developer.mozilla.org/en/Core_JavaScript_1.5_Guide/Core_Language_Features#Variables
+// - http://docstore.mik.ua/orelly/webprog/jscript/ch02_07.htm
+// TODO Identifiers can have Unicode "letters" in them; add support for those.
+
+            var key = ch;
+
+            // Identifiers must start with a letter, _ or $.
+            if ((ch !== '_' && ch !== '$') &&
+                    (ch < 'a' || ch > 'z') &&
+                    (ch < 'A' || ch > 'Z')) {
+                error("Bad identifier as unquoted key");
+            }
+
+            // Subsequent characters can contain digits.
+            while (next() && (
+                    ch === '_' || ch === '$' ||
+                    (ch >= 'a' && ch <= 'z') ||
+                    (ch >= 'A' && ch <= 'Z') ||
+                    (ch >= '0' && ch <= '9'))) {
+                key += ch;
+            }
+
+            return key;
+        },
+
+        number = function () {
+
+// Parse a number value.
+
+            var number,
+                sign = '',
+                string = '',
+                base = 10;
+
+            if (ch === '-' || ch === '+') {
+                sign = ch;
+                next(ch);
+            }
+
+            // support for Infinity (could tweak to allow other words):
+            if (ch === 'I') {
+                number = word();
+                if (typeof number !== 'number' || isNaN(number)) {
+                    error('Unexpected word for number');
+                }
+                return (sign === '-') ? -number : number;
+            }
+
+            // support for NaN
+            if (ch === 'N' ) {
+              number = word();
+              if (!isNaN(number)) {
+                error('expected word to be NaN');
+              }
+              // ignore sign as -NaN also is NaN
+              return number;
+            }
+
+            if (ch === '0') {
+                string += ch;
+                next();
+                if (ch === 'x' || ch === 'X') {
+                    string += ch;
+                    next();
+                    base = 16;
+                } else if (ch >= '0' && ch <= '9') {
+                    error('Octal literal');
+                }
+            }
+
+            switch (base) {
+            case 10:
+                while (ch >= '0' && ch <= '9' ) {
+                    string += ch;
+                    next();
+                }
+                if (ch === '.') {
+                    string += '.';
+                    while (next() && ch >= '0' && ch <= '9') {
+                        string += ch;
+                    }
+                }
+                if (ch === 'e' || ch === 'E') {
+                    string += ch;
+                    next();
+                    if (ch === '-' || ch === '+') {
+                        string += ch;
+                        next();
+                    }
+                    while (ch >= '0' && ch <= '9') {
+                        string += ch;
+                        next();
+                    }
+                }
+                break;
+            case 16:
+                while (ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f') {
+                    string += ch;
+                    next();
+                }
+                break;
+            }
+
+            if(sign === '-') {
+                number = -string;
+            } else {
+                number = +string;
+            }
+
+            if (!isFinite(number)) {
+                error("Bad number");
+            } else {
+                return number;
+            }
+        },
+
+        string = function () {
+
+// Parse a string value.
+
+            var hex,
+                i,
+                string = '',
+                delim,      // double quote or single quote
+                uffff;
+
+// When parsing for string values, we must look for ' or " and \ characters.
+
+            if (ch === '"' || ch === "'") {
+                delim = ch;
+                while (next()) {
+                    if (ch === delim) {
+                        next();
+                        return string;
+                    } else if (ch === '\\') {
+                        next();
+                        if (ch === 'u') {
+                            uffff = 0;
+                            for (i = 0; i < 4; i += 1) {
+                                hex = parseInt(next(), 16);
+                                if (!isFinite(hex)) {
+                                    break;
+                                }
+                                uffff = uffff * 16 + hex;
+                            }
+                            string += String.fromCharCode(uffff);
+                        } else if (ch === '\r') {
+                            if (peek() === '\n') {
+                                next();
+                            }
+                        } else if (typeof escapee[ch] === 'string') {
+                            string += escapee[ch];
+                        } else {
+                            break;
+                        }
+                    } else if (ch === '\n') {
+                        // unescaped newlines are invalid; see:
+                        // https://github.com/aseemk/json5/issues/24
+                        // TODO this feels special-cased; are there other
+                        // invalid unescaped chars?
+                        break;
+                    } else {
+                        string += ch;
+                    }
+                }
+            }
+            error("Bad string");
+        },
+
+        inlineComment = function () {
+
+// Skip an inline comment, assuming this is one. The current character should
+// be the second / character in the // pair that begins this inline comment.
+// To finish the inline comment, we look for a newline or the end of the text.
+
+            if (ch !== '/') {
+                error("Not an inline comment");
+            }
+
+            do {
+                next();
+                if (ch === '\n' || ch === '\r') {
+                    next();
+                    return;
+                }
+            } while (ch);
+        },
+
+        blockComment = function () {
+
+// Skip a block comment, assuming this is one. The current character should be
+// the * character in the /* pair that begins this block comment.
+// To finish the block comment, we look for an ending */ pair of characters,
+// but we also watch for the end of text before the comment is terminated.
+
+            if (ch !== '*') {
+                error("Not a block comment");
+            }
+
+            do {
+                next();
+                while (ch === '*') {
+                    next('*');
+                    if (ch === '/') {
+                        next('/');
+                        return;
+                    }
+                }
+            } while (ch);
+
+            error("Unterminated block comment");
+        },
+
+        comment = function () {
+
+// Skip a comment, whether inline or block-level, assuming this is one.
+// Comments always begin with a / character.
+
+            if (ch !== '/') {
+                error("Not a comment");
+            }
+
+            next('/');
+
+            if (ch === '/') {
+                inlineComment();
+            } else if (ch === '*') {
+                blockComment();
+            } else {
+                error("Unrecognized comment");
+            }
+        },
+
+        white = function () {
+
+// Skip whitespace and comments.
+// Note that we're detecting comments by only a single / character.
+// This works since regular expressions are not valid JSON(5), but this will
+// break if there are other valid values that begin with a / character!
+
+            while (ch) {
+                if (ch === '/') {
+                    comment();
+                } else if (ws.indexOf(ch) >= 0) {
+                    next();
+                } else {
+                    return;
+                }
+            }
+        },
+
+        word = function () {
+
+// true, false, or null.
+
+            switch (ch) {
+            case 't':
+                next('t');
+                next('r');
+                next('u');
+                next('e');
+                return true;
+            case 'f':
+                next('f');
+                next('a');
+                next('l');
+                next('s');
+                next('e');
+                return false;
+            case 'n':
+                next('n');
+                next('u');
+                next('l');
+                next('l');
+                return null;
+            case 'I':
+                next('I');
+                next('n');
+                next('f');
+                next('i');
+                next('n');
+                next('i');
+                next('t');
+                next('y');
+                return Infinity;
+            case 'N':
+              next( 'N' );
+              next( 'a' );
+              next( 'N' );
+              return NaN;
+            }
+            error("Unexpected " + renderChar(ch));
+        },
+
+        value,  // Place holder for the value function.
+
+        array = function () {
+
+// Parse an array value.
+
+            var array = [];
+
+            if (ch === '[') {
+                next('[');
+                white();
+                while (ch) {
+                    if (ch === ']') {
+                        next(']');
+                        return array;   // Potentially empty array
+                    }
+                    // ES5 allows omitting elements in arrays, e.g. [,] and
+                    // [,null]. We don't allow this in JSON5.
+                    if (ch === ',') {
+                        error("Missing array element");
+                    } else {
+                        array.push(value());
+                    }
+                    white();
+                    // If there's no comma after this value, this needs to
+                    // be the end of the array.
+                    if (ch !== ',') {
+                        next(']');
+                        return array;
+                    }
+                    next(',');
+                    white();
+                }
+            }
+            error("Bad array");
+        },
+
+        object = function () {
+
+// Parse an object value.
+
+            var key,
+                object = {};
+
+            if (ch === '{') {
+                next('{');
+                white();
+                while (ch) {
+                    if (ch === '}') {
+                        next('}');
+                        return object;   // Potentially empty object
+                    }
+
+                    // Keys can be unquoted. If they are, they need to be
+                    // valid JS identifiers.
+                    if (ch === '"' || ch === "'") {
+                        key = string();
+                    } else {
+                        key = identifier();
+                    }
+
+                    white();
+                    next(':');
+                    object[key] = value();
+                    white();
+                    // If there's no comma after this pair, this needs to be
+                    // the end of the object.
+                    if (ch !== ',') {
+                        next('}');
+                        return object;
+                    }
+                    next(',');
+                    white();
+                }
+            }
+            error("Bad object");
+        };
+
+    value = function () {
+
+// Parse a JSON value. It could be an object, an array, a string, a number,
+// or a word.
+
+        white();
+        switch (ch) {
+        case '{':
+            return object();
+        case '[':
+            return array();
+        case '"':
+        case "'":
+            return string();
+        case '-':
+        case '+':
+        case '.':
+            return number();
+        default:
+            return ch >= '0' && ch <= '9' ? number() : word();
+        }
+    };
+
+// Return the json_parse function. It will have access to all of the above
+// functions and variables.
+
+    return function (source, reviver) {
+        var result;
+
+        text = String(source);
+        at = 0;
+        lineNumber = 1;
+        columnNumber = 1;
+        ch = ' ';
+        result = value();
+        white();
+        if (ch) {
+            error("Syntax error");
+        }
+
+// If there is a reviver function, we recursively walk the new structure,
+// passing each name/value pair to the reviver function for possible
+// transformation, starting with a temporary root object that holds the result
+// in an empty key. If there is not a reviver function, we simply return the
+// result.
+
+        return typeof reviver === 'function' ? (function walk(holder, key) {
+            var k, v, value = holder[key];
+            if (value && typeof value === 'object') {
+                for (k in value) {
+                    if (Object.prototype.hasOwnProperty.call(value, k)) {
+                        v = walk(value, k);
+                        if (v !== undefined) {
+                            value[k] = v;
+                        } else {
+                            delete value[k];
+                        }
+                    }
+                }
+            }
+            return reviver.call(holder, key, value);
+        }({'': result}, '')) : result;
+    };
+}());
+
+// JSON5 stringify will not quote keys where appropriate
+JSON5.stringify = function (obj, replacer, space) {
+    if (replacer && (typeof(replacer) !== "function" && !isArray(replacer))) {
+        throw new Error('Replacer must be a function or an array');
+    }
+    var getReplacedValueOrUndefined = function(holder, key, isTopLevel) {
+        var value = holder[key];
+
+        // Replace the value with its toJSON value first, if possible
+        if (value && value.toJSON && typeof value.toJSON === "function") {
+            value = value.toJSON();
+        }
+
+        // If the user-supplied replacer if a function, call it. If it's an array, check objects' string keys for
+        // presence in the array (removing the key/value pair from the resulting JSON if the key is missing).
+        if (typeof(replacer) === "function") {
+            return replacer.call(holder, key, value);
+        } else if(replacer) {
+            if (isTopLevel || isArray(holder) || replacer.indexOf(key) >= 0) {
+                return value;
+            } else {
+                return undefined;
+            }
+        } else {
+            return value;
+        }
+    };
+
+    function isWordChar(c) {
+        return (c >= 'a' && c <= 'z') ||
+            (c >= 'A' && c <= 'Z') ||
+            (c >= '0' && c <= '9') ||
+            c === '_' || c === '$';
+    }
+
+    function isWordStart(c) {
+        return (c >= 'a' && c <= 'z') ||
+            (c >= 'A' && c <= 'Z') ||
+            c === '_' || c === '$';
+    }
+
+    function isWord(key) {
+        if (typeof key !== 'string') {
+            return false;
+        }
+        if (!isWordStart(key[0])) {
+            return false;
+        }
+        var i = 1, length = key.length;
+        while (i < length) {
+            if (!isWordChar(key[i])) {
+                return false;
+            }
+            i++;
+        }
+        return true;
+    }
+
+    // export for use in tests
+    JSON5.isWord = isWord;
+
+    // polyfills
+    function isArray(obj) {
+        if (Array.isArray) {
+            return Array.isArray(obj);
+        } else {
+            return Object.prototype.toString.call(obj) === '[object Array]';
+        }
+    }
+
+    function isDate(obj) {
+        return Object.prototype.toString.call(obj) === '[object Date]';
+    }
+
+    var objStack = [];
+    function checkForCircular(obj) {
+        for (var i = 0; i < objStack.length; i++) {
+            if (objStack[i] === obj) {
+                throw new TypeError("Converting circular structure to JSON");
+            }
+        }
+    }
+
+    function makeIndent(str, num, noNewLine) {
+        if (!str) {
+            return "";
+        }
+        // indentation no more than 10 chars
+        if (str.length > 10) {
+            str = str.substring(0, 10);
+        }
+
+        var indent = noNewLine ? "" : "\n";
+        for (var i = 0; i < num; i++) {
+            indent += str;
+        }
+
+        return indent;
+    }
+
+    var indentStr;
+    if (space) {
+        if (typeof space === "string") {
+            indentStr = space;
+        } else if (typeof space === "number" && space >= 0) {
+            indentStr = makeIndent(" ", space, true);
+        } else {
+            // ignore space parameter
+        }
+    }
+
+    // Copied from Crokford's implementation of JSON
+    // See https://github.com/douglascrockford/JSON-js/blob/e39db4b7e6249f04a195e7dd0840e610cc9e941e/json2.js#L195
+    // Begin
+    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+        escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+        meta = { // table of character substitutions
+        '\b': '\\b',
+        '\t': '\\t',
+        '\n': '\\n',
+        '\f': '\\f',
+        '\r': '\\r',
+        '"' : '\\"',
+        '\\': '\\\\'
+    };
+    function escapeString(string) {
+
+// If the string contains no control characters, no quote characters, and no
+// backslash characters, then we can safely slap some quotes around it.
+// Otherwise we must also replace the offending characters with safe escape
+// sequences.
+        escapable.lastIndex = 0;
+        return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+            var c = meta[a];
+            return typeof c === 'string' ?
+                c :
+                '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+        }) + '"' : '"' + string + '"';
+    }
+    // End
+
+    function internalStringify(holder, key, isTopLevel) {
+        var buffer, res;
+
+        // Replace the value, if necessary
+        var obj_part = getReplacedValueOrUndefined(holder, key, isTopLevel);
+
+        if (obj_part && !isDate(obj_part)) {
+            // unbox objects
+            // don't unbox dates, since will turn it into number
+            obj_part = obj_part.valueOf();
+        }
+        switch(typeof obj_part) {
+            case "boolean":
+                return obj_part.toString();
+
+            case "number":
+                if (isNaN(obj_part) || !isFinite(obj_part)) {
+                    return "null";
+                }
+                return obj_part.toString();
+
+            case "string":
+                return escapeString(obj_part.toString());
+
+            case "object":
+                if (obj_part === null) {
+                    return "null";
+                } else if (isArray(obj_part)) {
+                    checkForCircular(obj_part);
+                    buffer = "[";
+                    objStack.push(obj_part);
+
+                    for (var i = 0; i < obj_part.length; i++) {
+                        res = internalStringify(obj_part, i, false);
+                        buffer += makeIndent(indentStr, objStack.length);
+                        if (res === null || typeof res === "undefined") {
+                            buffer += "null";
+                        } else {
+                            buffer += res;
+                        }
+                        if (i < obj_part.length-1) {
+                            buffer += ",";
+                        } else if (indentStr) {
+                            buffer += "\n";
+                        }
+                    }
+                    objStack.pop();
+                    if (obj_part.length) {
+                        buffer += makeIndent(indentStr, objStack.length, true)
+                    }
+                    buffer += "]";
+                } else {
+                    checkForCircular(obj_part);
+                    buffer = "{";
+                    var nonEmpty = false;
+                    objStack.push(obj_part);
+                    for (var prop in obj_part) {
+                        if (obj_part.hasOwnProperty(prop)) {
+                            var value = internalStringify(obj_part, prop, false);
+                            isTopLevel = false;
+                            if (typeof value !== "undefined" && value !== null) {
+                                buffer += makeIndent(indentStr, objStack.length);
+                                nonEmpty = true;
+                                key = isWord(prop) ? prop : escapeString(prop);
+                                buffer += key + ":" + (indentStr ? ' ' : '') + value + ",";
+                            }
+                        }
+                    }
+                    objStack.pop();
+                    if (nonEmpty) {
+                        buffer = buffer.substring(0, buffer.length-1) + makeIndent(indentStr, objStack.length) + "}";
+                    } else {
+                        buffer = '{}';
+                    }
+                }
+                return buffer;
+            default:
+                // functions and undefined should be ignored
+                return undefined;
+        }
+    }
+
+    // special case...when undefined is used inside of
+    // a compound object/array, return null.
+    // but when top-level, return undefined
+    var topLevelHolder = {"":obj};
+    if (obj === undefined) {
+        return getReplacedValueOrUndefined(topLevelHolder, '', true);
+    }
+    return internalStringify(topLevelHolder, '', true);
+};
+
+
+/***/ }),
+/* 505 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// getting tag from 19.1.3.6 Object.prototype.toString()
+var cof = __webpack_require__(131);
+var TAG = __webpack_require__(52)('toStringTag');
+// ES3 wrong here
+var ARG = cof(function () { return arguments; }()) == 'Arguments';
+
+// fallback for IE11 Script Access Denied error
+var tryGet = function (it, key) {
+  try {
+    return it[key];
+  } catch (e) { /* empty */ }
+};
+
+module.exports = function (it) {
+  var O, T, B;
+  return it === undefined ? 'Undefined' : it === null ? 'Null'
+    // @@toStringTag case
+    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
+    // builtinTag case
+    : ARG ? cof(O)
+    // ES3 arguments fallback
+    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+};
+
+
+/***/ }),
+/* 506 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _isIterable2 = __webpack_require__(507);
+
+var _isIterable3 = _interopRequireDefault(_isIterable2);
+
+var _getIterator2 = __webpack_require__(510);
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = (0, _getIterator3.default)(arr), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if ((0, _isIterable3.default)(Object(arr))) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
+
+/***/ }),
+/* 507 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(508), __esModule: true };
+
+/***/ }),
+/* 508 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(193);
+__webpack_require__(182);
+module.exports = __webpack_require__(509);
+
+
+/***/ }),
+/* 509 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var classof = __webpack_require__(505);
+var ITERATOR = __webpack_require__(52)('iterator');
+var Iterators = __webpack_require__(88);
+module.exports = __webpack_require__(49).isIterable = function (it) {
+  var O = Object(it);
+  return O[ITERATOR] !== undefined
+    || '@@iterator' in O
+    // eslint-disable-next-line no-prototype-builtins
+    || Iterators.hasOwnProperty(classof(O));
+};
+
+
+/***/ }),
+/* 510 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(511), __esModule: true };
+
+/***/ }),
+/* 511 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(193);
+__webpack_require__(182);
+module.exports = __webpack_require__(512);
+
+
+/***/ }),
+/* 512 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject = __webpack_require__(64);
+var get = __webpack_require__(513);
+module.exports = __webpack_require__(49).getIterator = function (it) {
+  var iterFn = get(it);
+  if (typeof iterFn != 'function') throw TypeError(it + ' is not iterable!');
+  return anObject(iterFn.call(it));
+};
+
+
+/***/ }),
+/* 513 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var classof = __webpack_require__(505);
+var ITERATOR = __webpack_require__(52)('iterator');
+var Iterators = __webpack_require__(88);
+module.exports = __webpack_require__(49).getIteratorMethod = function (it) {
+  if (it != undefined) return it[ITERATOR]
+    || it['@@iterator']
+    || Iterators[classof(it)];
+};
+
 
 /***/ })
 /******/ ]);

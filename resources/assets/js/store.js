@@ -6,7 +6,10 @@ import { ComponentTree } from './lib/LaravelComponentTree.js'
 export default new Vuex.Store({
   state: {
     breadcrumbs: new Stack([]),
-    components: new ComponentTree(null)
+    components: new ComponentTree({
+      name: 'root',
+      path: '/'
+    }, [], null)
   },
   mutations: {
     pushCrumb: function (state, crumb) {
@@ -52,6 +55,14 @@ export default new Vuex.Store({
           res = i
           break
         }
+      }
+      return res
+    },
+    getComponentChildrenValues: (state, getters) => (value, comp = null) => {
+      var t = getters.findComponent(value, comp)
+      var res = []
+      for (var i in t) {
+        res.push(i.value())
       }
       return res
     }

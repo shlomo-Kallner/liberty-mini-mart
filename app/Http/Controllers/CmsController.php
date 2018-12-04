@@ -41,7 +41,10 @@ class CmsController extends MainController
                 true, 1
             );
         } else {
-            $sections = [];
+            $sections = [
+                'items' => [],
+                'pagination' => [],
+            ];
         }
         //dd($sections);
         if (Functions::testVar($pv = Page::getPagingVars($request, 'usersPanel'))) {
