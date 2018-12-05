@@ -37,6 +37,7 @@
 
 <script>
     // import _ from 'lodash'
+    // import url from 'url'
     // const url = require('url');
     export default {
         name: 'bootPaginator',

@@ -1,13 +1,14 @@
 <template>
     <figure class="thumbnail">
         <img class="img-responsive" :src="img" :alt="alt">
-        <figcaption v-if="window._.size(cap) > 0">
+        <figcaption v-if="hasCap">
             <span v-html="cap"></span>
         </figcaption>
     </figure>
 </template>
 
 <script>
+    import _ from 'lodash'
     export default {
         name: 'boot-figure-component',
         props: {
@@ -22,7 +23,9 @@
                 cap: this.initCaption
             }
         },
-        computed: {},
+        computed: {
+            hasCap: () => _.size(this.cap) > 0
+        },
         methods: {}
     }
 </script>

@@ -10,7 +10,7 @@
                     v-bind:key="idx"
                     :data-target="'#' + cId" 
                     :data-slide-to="idx" 
-                    :class="{active: window._.indexOf(images, window._.first(images)) === idx}"
+                    :class="{active: _.indexOf(images, _.first(images)) === idx}"
                     >
                 </li>
             </ol>
@@ -19,7 +19,7 @@
             <div class="carousel-inner" role="listbox">
                 <div v-for="(item, idx) in images" 
                     v-bind:key="idx"
-                    :class="['item', {active: window._.indexOf(images, window._.first(images)) === idx}]"                        
+                    :class="['item', {active: _.indexOf(images, _.first(images)) === idx}]"                        
                     >
                     <img :src="item.img" :alt="item.alt">
                     <div class="carousel-caption" v-html="item.cap"></div>
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-    // import _ from 'lodash'
+    import _ from 'lodash'
     export default {
         name: 'boot-carousel-component',
         props: {
@@ -60,7 +60,7 @@
         },
         computed: {
             hasImages: function () {
-                return window._.size(this.images) > 0;
+                return _.size(this.images) > 0;
             }
         }
     }

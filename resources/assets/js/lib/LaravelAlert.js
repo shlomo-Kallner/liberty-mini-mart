@@ -58,31 +58,31 @@ export default class LaravelAlert {
     return this.data.timeout;
   }
 
-  hide() {
+  hide () {
     this.data.seen = false;
   }
 
-  show() {
+  show () {
     this.data.seen = true;
   }
 
-  isSeen() {
+  isSeen () {
     return this.data.seen;
   }
 
-  getClass() {
+  getClass () {
     return this.data.cssClasses;
   }
 
-  getTitle() {
+  getTitle () {
     return this.data.title;
   }
 
-  getAlertID() {
+  getAlertID () {
     return this.data.alertId;
   }
 
-  getContent() {
+  getContent () {
     return this.data.content;
   }
 }

@@ -32847,12 +32847,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_url__ = __webpack_require__(418);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_url___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_url__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_lodash__ = __webpack_require__(162);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_axios__ = __webpack_require__(387);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_json5__ = __webpack_require__(455);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_json5___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_json5__);
 
 
-// import url from 'url';
+
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   genUrl: function genUrl(urlObj, pageNum, viewNum, pagingFor) {
-    return window.url.format({
+    return __WEBPACK_IMPORTED_MODULE_2_url___default.a.format({
       protocol: urlObj.protocol,
       host: urlObj.host,
       pathname: urlObj.pathname,
@@ -32864,7 +32875,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     });
   },
   getPagingData: function getPagingData(paging) {
-    if (paging !== undefined && window._.size(paging) >= 5) {
+    if (paging !== undefined && __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.size(paging) >= 5) {
       return {
         numPages: paging.totalNumPages !== undefined ? paging.totalNumPages : 0,
         currentPage: paging.currentPage !== undefined ? paging.currentPage : 0,
@@ -32910,7 +32921,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   doOnArray: function doOnArray(data, func) {
     var res = [];
     for (var i in data) {
-      res = window._.concat(res, func(i));
+      res = __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.concat(res, func(data[i]));
     }
     return res;
   },
@@ -32936,7 +32947,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     var fail = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
     // handleCart.dumpData(data);
-    window.axios({
+    __WEBPACK_IMPORTED_MODULE_4_axios___default.a({
       url: data.url,
       dataType: 'json',
       responseType: 'json',
@@ -32958,8 +32969,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     });
   },
   genNumSubRanges: function genNumSubRanges(numItems, itemsPerSubRange) {
-    var ni = window._.floor(numItems);
-    var ipsr = window._.floor(itemsPerSubRange);
+    var ni = __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.floor(numItems);
+    var ipsr = __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.floor(itemsPerSubRange);
     if (ni <= ipsr) {
       return 1;
     } else {
@@ -32968,7 +32979,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     }
   },
   getCurrentSubRange: function getCurrentSubRange(currentItem, itemsPerSubRange) {
-    return window._.floor(currentItem / itemsPerSubRange);
+    return __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.floor(currentItem / itemsPerSubRange);
   },
   genFirstAndLastIndex: function genFirstAndLastIndex(numItems, pageNum, itemsPerPage) {
     var numPages = this.genNumSubRanges(numItems, itemsPerPage);
@@ -32981,7 +32992,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }
       pageNum = numPages - pageNum;
     }
-    var first = window._.max([0, pageNum * itemsPerPage]);
+    var first = __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.max([0, pageNum * itemsPerPage]);
     if (first > numItems) {
       first -= numItems;
     }
@@ -33007,7 +33018,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       } catch (error) {
         var te = error;
         try {
-          res = window.Json5.parse(data);
+          res = __WEBPACK_IMPORTED_MODULE_5_json5___default.a.parse(data);
         } catch (error) {
           if (typeof err === 'function') {
             err([te, error]);
@@ -33048,9 +33059,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       console.log(data);
     } else {
       for (var i in data) {
-        if (this.isScalar(i)) {
+        if (this.isScalar(data[i])) {
           console.log(i + ' => ' + data[i]);
-        } else if ((typeof i === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(i)) === 'object') {
+        } else if (__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(data[i]) === 'object') {
           console.log(i + ' => [ ');
           this.dumpData(data[i]);
           console.log(']');
@@ -54609,6 +54620,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 // import _ from 'lodash'
+// import url from 'url'
 // const url = require('url');
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'bootPaginator',
@@ -54816,6 +54828,8 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(162);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 //
 //
 //
@@ -54863,7 +54877,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
-// import _ from 'lodash'
+
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'boot-carousel-component',
     props: {
@@ -54878,7 +54892,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     computed: {
         hasImages: function hasImages() {
-            return window._.size(this.images) > 0;
+            return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.size(this.images) > 0;
         }
     }
 });
@@ -54908,10 +54922,7 @@ var render = function() {
                   key: idx,
                   class: {
                     active:
-                      _vm.window._.indexOf(
-                        _vm.images,
-                        _vm.window._.first(_vm.images)
-                      ) === idx
+                      _vm._.indexOf(_vm.images, _vm._.first(_vm.images)) === idx
                   },
                   attrs: { "data-target": "#" + _vm.cId, "data-slide-to": idx }
                 })
@@ -54930,10 +54941,8 @@ var render = function() {
                       "item",
                       {
                         active:
-                          _vm.window._.indexOf(
-                            _vm.images,
-                            _vm.window._.first(_vm.images)
-                          ) === idx
+                          _vm._.indexOf(_vm.images, _vm._.first(_vm.images)) ===
+                          idx
                       }
                     ]
                   },

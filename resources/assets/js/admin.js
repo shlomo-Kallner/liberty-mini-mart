@@ -12,26 +12,34 @@ window.Vue.use(Vuex)
 
 require('./bootVueComponents')
 
-window.Vue.component('admin-panel-component', AdminPanel);
+const router = require('./routes.js').default
+
+const Store = require('./store.js')
+
+window.Vue.component('admin-panel-component', AdminPanel)
 
 window.Laravel.page.admin = {}
 
-function genComponentData (data) {
+function genComponentData (data = null) {
   var vals = {}
   if (typeof data === 'string') {
-    vals = window.myUtils.JsonParseOrRetObj(data, {}, window.myUtils.outputErrorsToConsole)
+    vals = window.myUtils.JsonParseOrRetObj(data, {}, window.myUtils.dumpData)
   } else if (typeof data === 'object') {
     for (var i in data) {
-      if (typeof i === 'object') {
+      if (typeof data[i] === 'object') {
         var tmp = {
-          items: window.myUtils.JsonParseOrRetObj(i.items, [], window.myUtils.outputErrorsToConsole),
-          pagination: window.myUtils.JsonParseOrRetObj(i.pagination, [], window.myUtils.outputErrorsToConsole)
+          items: window.myUtils.JsonParseOrRetObj(data[i].items, [], window.myUtils.dumpData),
+          pagination: window.myUtils.JsonParseOrRetObj(data[i].pagination, [], window.myUtils.dumpData)
         }
         vals[i] = tmp
+      } else if (typeof data[i] === 'string') {
+        vals[i] = window.myUtils.JsonParseOrRetObj(data[i], {}, window.myUtils.dumpData)
       }
     }
   }
   if (window._.size(vals) > 0) {
+    return vals
+  } else if (false) {
     return {
       initPages: vals.pages,
       initSections: vals.sections,
@@ -41,23 +49,44 @@ function genComponentData (data) {
       )
     }
   } else {
-    return {
-      initPages: {},
-      initSections: {},
-      initUsers: {},
-      initArticle: {}
-    }
+    return {}
   }
 }
-const router = require('./routes.js').default
-const store = require('./store.js').default
+
+function genStoreData (data = null) {
+  if (data !== null || data !== undefined) {
+    if (Array.isArray(data)) {
+      var res = []
+      for (var i in data) {
+        res.push(
+          {
+            value: {
+              name: window._.capitalize(i),
+              path: i,
+              // component: Foo,
+              pagination: window.myUtils.getPagingFrom(data[i])
+            },
+            children: Store.valToComponentArray(window.myUtils.getItemsFrom(data[i]))
+          }
+        )
+      }
+    }
+  } else {
+    return []
+  }
+}
+
+const initData = genComponentData(window.Laravel.admin)
+
+const myStore = Store.makeStore(genStoreData(window._.omit(initData, ['article', 'header'])))
+
 window.Laravel.page.admin.app = new window.Vue(
   {
-    router,
-    store,
+    router: router,
+    store: myStore,
     template: '<admin-panel-component v-bind="componentData"></admin-panel-component>',
     data: {
-      initData: window.Laravel.admin
+      initData: initData
     },
     computed: {
       componentData: () => {

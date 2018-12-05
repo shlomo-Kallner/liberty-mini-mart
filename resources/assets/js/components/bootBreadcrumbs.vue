@@ -19,6 +19,13 @@
 </template>
 
 <script>
+    import Vue from 'vue'
+    import Vuex from 'vuex'
+    import VueRouter from 'vue-router'
+
+    Vue.use(VueRouter)
+    Vue.use(Vuex)
+
     export default {
         name: 'boot-breadcrumbs-component',
         props: {

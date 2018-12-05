@@ -1,7 +1,10 @@
-// import url from 'url';
+import url from 'url'
+import _ from 'lodash'
+import axios from 'axios'
+import json5 from 'json5'
 export default {
   genUrl: function (urlObj, pageNum, viewNum, pagingFor) {
-    return window.url.format({
+    return url.format({
       protocol: urlObj.protocol,
       host: urlObj.host,
       pathname: urlObj.pathname,
@@ -13,7 +16,7 @@ export default {
     })
   },
   getPagingData: function (paging) {
-    if (paging !== undefined && window._.size(paging) >= 5) {
+    if (paging !== undefined && _.size(paging) >= 5) {
       return {
         numPages: paging.totalNumPages !== undefined ? paging.totalNumPages : 0,
         currentPage: paging.currentPage !== undefined ? paging.currentPage : 0,
@@ -55,7 +58,7 @@ export default {
   doOnArray: function (data, func) {
     var res = []
     for (var i in data) {
-      res = window._.concat(res, func(i))
+      res = _.concat(res, func(data[i]))
     }
     return res
   },
@@ -78,7 +81,7 @@ export default {
   },
   doAjax: function (data, method = 'post', success = null, fail = null) {
     // handleCart.dumpData(data);
-    window.axios(
+    axios(
       {
         url: data.url,
         dataType: 'json',
@@ -102,8 +105,8 @@ export default {
     })
   },
   genNumSubRanges: function (numItems, itemsPerSubRange) {
-    var ni = window._.floor(numItems)
-    var ipsr = window._.floor(itemsPerSubRange)
+    var ni = _.floor(numItems)
+    var ipsr = _.floor(itemsPerSubRange)
     if (ni <= ipsr) {
       return 1
     } else {
@@ -112,7 +115,7 @@ export default {
     }
   },
   getCurrentSubRange: function (currentItem, itemsPerSubRange) {
-    return window._.floor(currentItem / itemsPerSubRange);
+    return _.floor(currentItem / itemsPerSubRange);
   },
   genFirstAndLastIndex: function (numItems, pageNum, itemsPerPage) {
     var numPages = this.genNumSubRanges(numItems, itemsPerPage);
@@ -125,7 +128,7 @@ export default {
       } 
       pageNum = numPages - pageNum;
     } 
-    var first = window._.max([0, pageNum * itemsPerPage]);
+    var first = _.max([0, pageNum * itemsPerPage]);
     if (first > numItems) {
       first -= numItems;
     }
@@ -147,7 +150,7 @@ export default {
       } catch (error) {
         var te = error
         try {
-          res = window.Json5.parse(data)
+          res = json5.parse(data)
         } catch (error) {
           if (typeof err === 'function') {
             err([te, error])
@@ -189,9 +192,9 @@ export default {
       console.log( data )
     } else {
       for (var i in data) {
-        if (this.isScalar(i)) {
+        if (this.isScalar(data[i])) {
           console.log( i + ' => ' + data[i])
-        } else if (typeof i === 'object') {
+        } else if (typeof data[i] === 'object') {
           console.log( i + ' => [ ')
           this.dumpData(data[i])
           console.log(']')
@@ -204,5 +207,5 @@ export default {
   },
   getItemsFrom: (data = null) => {
     return typeof data.items === 'object' ? data.items : {}
-  },
+  }
 }

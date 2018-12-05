@@ -1,9 +1,9 @@
 <template>
     <div>
         <router-view></router-view>
-        <div class="list-group" v-if="items.length > 0">
-            <router-link :class="['list-group-item', {active: current === item.path}]" 
-            v-for="(item, index) in items" :key="index"
+        <div class="list-group" v-if="hasItems">
+            <router-link v-for="(item, index) in itemsArray" :key="index"
+            :class="['list-group-item', {active: currentPath === item.path}]" 
             :to="item.path"
             >
                 {{this.getPreText}} {{item.name}} {{this.getPostText}}
@@ -13,6 +13,13 @@
 </template>
 
 <script>
+    import Vue from 'vue'
+    import Vuex from 'vuex'
+    import VueRouter from 'vue-router'
+
+    Vue.use(VueRouter)
+    Vue.use(Vuex)
+
     import { mapGetters } from 'vuex';
     export default {
         name: 'admin-comp-list-component',
@@ -21,13 +28,13 @@
                 type: [Object, String],
                 default: ''
             },
-            itemsArray: {
+            items: {
                 type: [Array],
-                default: []
+                default: () => {return []}
             },
             current: {
-                type: Object,
-                default: null
+                type: [Object, String],
+                default: ''
             },
             preText: {
                 type: [String, Function],
@@ -39,17 +46,15 @@
             },
             extra: {
                 type: Object,
-                default: null
+                default: () => null
             }
         },
-        data: () => {
+        data: function () {
             return {
-                items: itemsArray,
+                itemsArray: this.loadItems()
             }
         },
-        watch: {
-            // '$route': 
-        },
+        watch: {},
         computed: {
             getPreText: function () {
                 return this.getText(this.preText)
@@ -57,17 +62,11 @@
             getPostText: function () {
                 return this.getText(this.postText)
             },
-            current: () => this.$route.path,
-            loadItems: () => {
-                var i = this.getComponentChildrenValues(
-                    typeof this.path === 'string' ? this.path : this.path.path, 
-                    (tv, path) => { return typeof tv === 'object' && tv.path === path }
-                )
-                if (i.length > 0) {
-                    this.items = i
-                }
-            },
-            ...mapGetters(['findComponent', 'getComponentChildrenValues'])
+            hasItems: function () {return this.itemsArray.length > 0},
+            currentPath: function () {return this.$route.path},
+            getValues: function (value, comp = null) { 
+                return this.$store.getters.getComponentChildrenValues(value, comp)
+            }
         },
         methods: {
             getText: function (val) {
@@ -85,6 +84,17 @@
                             return '<span style="'+ target +'">'+ str +'</span>'
                         }
                     }
+                }
+            },
+            loadItems: function () {
+                var i = this.getValues(
+                    typeof this.path === 'string' ? this.path : this.path.path, 
+                    (tv, path) => { return typeof tv === 'object' && tv.path === path }
+                )
+                if (i.length > 0) {
+                    return i
+                } else {
+                    return this.items
                 }
             }
         }

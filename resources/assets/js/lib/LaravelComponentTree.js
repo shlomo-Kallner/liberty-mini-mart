@@ -44,7 +44,7 @@ export class ComponentTree {
   static checkChildrenArray (children) {
     if (Array.isArray(children)) {
       var bol = true
-      for (var i in children) {
+      for (var i of children) {
         if (!(i instanceof ComponentTree)) {
           bol = false
         }
@@ -111,7 +111,7 @@ export class ComponentTree {
     if (tree instanceof ComponentTree) {
       if (tree !== this) {
         var res = null
-        for (var i in this.children) {
+        for (var i of this.children) {
           var tmp = i.findSubTree(tree)
           if (tmp === tree) {
             res = tmp
@@ -134,7 +134,7 @@ export class ComponentTree {
         return this
       } else {
         var res = null
-        for (var i in this.children) {
+        for (var i of this.children) {
           var tmp = i.findSubTreeWithValue(value, comp)
           if (tmp !== undefined && tmp !== null) {
             res = tmp

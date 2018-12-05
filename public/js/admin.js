@@ -32847,12 +32847,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_slicedToArray__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_url__ = __webpack_require__(418);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_url___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_url__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_lodash__ = __webpack_require__(162);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_axios__ = __webpack_require__(387);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_json5__ = __webpack_require__(455);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_json5___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_json5__);
 
 
-// import url from 'url';
+
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   genUrl: function genUrl(urlObj, pageNum, viewNum, pagingFor) {
-    return window.url.format({
+    return __WEBPACK_IMPORTED_MODULE_2_url___default.a.format({
       protocol: urlObj.protocol,
       host: urlObj.host,
       pathname: urlObj.pathname,
@@ -32864,7 +32875,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     });
   },
   getPagingData: function getPagingData(paging) {
-    if (paging !== undefined && window._.size(paging) >= 5) {
+    if (paging !== undefined && __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.size(paging) >= 5) {
       return {
         numPages: paging.totalNumPages !== undefined ? paging.totalNumPages : 0,
         currentPage: paging.currentPage !== undefined ? paging.currentPage : 0,
@@ -32910,7 +32921,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   doOnArray: function doOnArray(data, func) {
     var res = [];
     for (var i in data) {
-      res = window._.concat(res, func(i));
+      res = __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.concat(res, func(data[i]));
     }
     return res;
   },
@@ -32936,7 +32947,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     var fail = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
     // handleCart.dumpData(data);
-    window.axios({
+    __WEBPACK_IMPORTED_MODULE_4_axios___default.a({
       url: data.url,
       dataType: 'json',
       responseType: 'json',
@@ -32958,8 +32969,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     });
   },
   genNumSubRanges: function genNumSubRanges(numItems, itemsPerSubRange) {
-    var ni = window._.floor(numItems);
-    var ipsr = window._.floor(itemsPerSubRange);
+    var ni = __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.floor(numItems);
+    var ipsr = __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.floor(itemsPerSubRange);
     if (ni <= ipsr) {
       return 1;
     } else {
@@ -32968,7 +32979,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     }
   },
   getCurrentSubRange: function getCurrentSubRange(currentItem, itemsPerSubRange) {
-    return window._.floor(currentItem / itemsPerSubRange);
+    return __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.floor(currentItem / itemsPerSubRange);
   },
   genFirstAndLastIndex: function genFirstAndLastIndex(numItems, pageNum, itemsPerPage) {
     var numPages = this.genNumSubRanges(numItems, itemsPerPage);
@@ -32981,7 +32992,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }
       pageNum = numPages - pageNum;
     }
-    var first = window._.max([0, pageNum * itemsPerPage]);
+    var first = __WEBPACK_IMPORTED_MODULE_3_lodash___default.a.max([0, pageNum * itemsPerPage]);
     if (first > numItems) {
       first -= numItems;
     }
@@ -33007,7 +33018,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       } catch (error) {
         var te = error;
         try {
-          res = window.Json5.parse(data);
+          res = __WEBPACK_IMPORTED_MODULE_5_json5___default.a.parse(data);
         } catch (error) {
           if (typeof err === 'function') {
             err([te, error]);
@@ -33048,9 +33059,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       console.log(data);
     } else {
       for (var i in data) {
-        if (this.isScalar(i)) {
+        if (this.isScalar(data[i])) {
           console.log(i + ' => ' + data[i]);
-        } else if ((typeof i === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(i)) === 'object') {
+        } else if (__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(data[i]) === 'object') {
           console.log(i + ' => [ ');
           this.dumpData(data[i]);
           console.log(']');
@@ -55553,6 +55564,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 // import _ from 'lodash'
+// import url from 'url'
 // const url = require('url');
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'bootPaginator',
@@ -55760,6 +55772,8 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(162);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 //
 //
 //
@@ -55807,7 +55821,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
-// import _ from 'lodash'
+
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'boot-carousel-component',
     props: {
@@ -55822,7 +55836,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     computed: {
         hasImages: function hasImages() {
-            return window._.size(this.images) > 0;
+            return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.size(this.images) > 0;
         }
     }
 });
@@ -55852,10 +55866,7 @@ var render = function() {
                   key: idx,
                   class: {
                     active:
-                      _vm.window._.indexOf(
-                        _vm.images,
-                        _vm.window._.first(_vm.images)
-                      ) === idx
+                      _vm._.indexOf(_vm.images, _vm._.first(_vm.images)) === idx
                   },
                   attrs: { "data-target": "#" + _vm.cId, "data-slide-to": idx }
                 })
@@ -55874,10 +55885,8 @@ var render = function() {
                       "item",
                       {
                         active:
-                          _vm.window._.indexOf(
-                            _vm.images,
-                            _vm.window._.first(_vm.images)
-                          ) === idx
+                          _vm._.indexOf(_vm.images, _vm._.first(_vm.images)) ===
+                          idx
                       }
                     ]
                   },
@@ -55977,7 +55986,7 @@ var Stack = function () {
 
     __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck___default.a(this, Stack);
 
-    this.data = Array.isArray(data) ? data : [];
+    this._data = Array.isArray(data) ? data : [];
   }
 
   __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_createClass___default.a(Stack, [{
@@ -55987,46 +55996,46 @@ var Stack = function () {
 
       if (typeof idx === 'number') {
         var i = window._.floor(idx);
-        var s = window._.size(this.data);
+        var s = window._.size(this._data);
         if (i >= 0 && i < s) {
-          return this.data[i];
+          return this._data[i];
         } else if (i < 0 && -i <= s) {
-          return this.data[s + i];
+          return this._data[s + i];
         }
       } else if ((typeof idx === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(idx)) === 'symbol') {
-        return this.data[idx];
+        return this._data[idx];
       }
       return def;
     }
   }, {
     key: 'data',
     value: function data() {
-      return this.data;
+      return this._data;
     }
   }, {
     key: 'size',
     value: function size() {
-      return this.data.length;
+      return this._data.length;
     }
   }, {
     key: 'empty',
     value: function empty() {
-      return this.data.length === 0;
+      return this._data.length === 0;
     }
   }, {
     key: 'push',
     value: function push(item) {
-      this.data.push(item);
+      this._data.push(item);
     }
   }, {
     key: 'pop',
     value: function pop() {
-      return this.data.pop();
+      return this._data.pop();
     }
   }, {
     key: 'top',
     value: function top() {
-      return this.data[this.data.length - 1];
+      return this._data[this._data.length - 1];
     }
   }]);
 
@@ -58699,15 +58708,18 @@ exports.default = _assign2.default || function (target) {
 "use strict";
 /* unused harmony export TreeWalkIterator */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ComponentTree; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_symbol_iterator__ = __webpack_require__(183);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_symbol_iterator___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_symbol_iterator__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__ = __webpack_require__(172);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass__ = __webpack_require__(173);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__LibertyStack__ = __webpack_require__(469);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_get_iterator__ = __webpack_require__(439);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_get_iterator___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_get_iterator__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_core_js_symbol_iterator__ = __webpack_require__(183);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_core_js_symbol_iterator___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_core_js_symbol_iterator__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck__ = __webpack_require__(172);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(173);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__LibertyStack__ = __webpack_require__(469);
+
 
 
 
@@ -58715,15 +58727,15 @@ exports.default = _assign2.default || function (target) {
 
 var TreeWalkIterator = function () {
   function TreeWalkIterator(tree) {
-    __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default.a(this, TreeWalkIterator);
+    __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck___default.a(this, TreeWalkIterator);
 
     this.root = tree;
     this.current = 0;
-    this.stack = new __WEBPACK_IMPORTED_MODULE_4__LibertyStack__["a" /* Stack */]([]);
+    this.stack = new __WEBPACK_IMPORTED_MODULE_5__LibertyStack__["a" /* Stack */]([]);
   }
 
-  __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default.a(TreeWalkIterator, [{
-    key: __WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_symbol_iterator___default.a,
+  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default.a(TreeWalkIterator, [{
+    key: __WEBPACK_IMPORTED_MODULE_2_babel_runtime_core_js_symbol_iterator___default.a,
     value: function value() {
       return this;
     }
@@ -58763,7 +58775,7 @@ var ComponentTree = function () {
     var children = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
     var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
-    __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default.a(this, ComponentTree);
+    __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck___default.a(this, ComponentTree);
 
     this.value = value;
     this.parent = parent instanceof ComponentTree ? parent : null;
@@ -58773,7 +58785,7 @@ var ComponentTree = function () {
     });
   }
 
-  __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default.a(ComponentTree, [{
+  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default.a(ComponentTree, [{
     key: 'parent',
     value: function parent() {
       return this.parent;
@@ -58799,7 +58811,7 @@ var ComponentTree = function () {
   }, {
     key: 'at',
     value: function at(index) {
-      if (typeof index === 'number' || (typeof index === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(index)) === 'symbol') {
+      if (typeof index === 'number' || (typeof index === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(index)) === 'symbol') {
         return this.children[index];
       } else {
         return undefined;
@@ -58811,7 +58823,7 @@ var ComponentTree = function () {
       return this.children.length > 0;
     }
   }, {
-    key: __WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_symbol_iterator___default.a,
+    key: __WEBPACK_IMPORTED_MODULE_2_babel_runtime_core_js_symbol_iterator___default.a,
     value: function value() {
       return new TreeWalkIterator(this);
     }
@@ -58831,7 +58843,7 @@ var ComponentTree = function () {
       if (tree instanceof ComponentTree) {
         tree.setParent(this);
         this.children.push(tree);
-      } else if ((typeof tree === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(tree)) === 'object') {
+      } else if ((typeof tree === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_typeof___default.a(tree)) === 'object') {
         var value = tree.value,
             children = tree.children;
 
@@ -58844,13 +58856,35 @@ var ComponentTree = function () {
       if (tree instanceof ComponentTree) {
         if (tree !== this) {
           var res = null;
-          for (var i in this.children) {
-            var tmp = i.findSubTree(tree);
-            if (tmp === tree) {
-              res = tmp;
-              break;
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_get_iterator___default.a(this.children), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var i = _step.value;
+
+              var tmp = i.findSubTree(tree);
+              if (tmp === tree) {
+                res = tmp;
+                break;
+              }
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
             }
           }
+
           return res;
         } else {
           return this;
@@ -58869,13 +58903,35 @@ var ComponentTree = function () {
           return this;
         } else {
           var res = null;
-          for (var i in this.children) {
-            var tmp = i.findSubTreeWithValue(value, comp);
-            if (tmp !== undefined && tmp !== null) {
-              res = tmp;
-              break;
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
+
+          try {
+            for (var _iterator2 = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_get_iterator___default.a(this.children), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var i = _step2.value;
+
+              var tmp = i.findSubTreeWithValue(value, comp);
+              if (tmp !== undefined && tmp !== null) {
+                res = tmp;
+                break;
+              }
+            }
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
             }
           }
+
           return res;
         }
       } else {
@@ -58887,11 +58943,33 @@ var ComponentTree = function () {
     value: function checkChildrenArray(children) {
       if (Array.isArray(children)) {
         var bol = true;
-        for (var i in children) {
-          if (!(i instanceof ComponentTree)) {
-            bol = false;
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
+
+        try {
+          for (var _iterator3 = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_get_iterator___default.a(children), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var i = _step3.value;
+
+            if (!(i instanceof ComponentTree)) {
+              bol = false;
+            }
+          }
+        } catch (err) {
+          _didIteratorError3 = true;
+          _iteratorError3 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+              _iterator3.return();
+            }
+          } finally {
+            if (_didIteratorError3) {
+              throw _iteratorError3;
+            }
           }
         }
+
         return bol;
       } else {
         return false;
@@ -58917,60 +58995,58 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 var Foo = { template: '<div>Hello World!</div>' };
 
-var routes = [{
-  path: '/',
-  component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
-  props: function props(route) {
-    path: route.path;
-  }
-}, {
-  path: 'users',
-  component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
-  children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
-      path: route.path;
-    } }, { path: ':id', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
-      return { path: route.path, extra: { id: route.params.id } };
-    } }]
-}, {
-  path: 'pages',
-  component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
-  children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
-      path: route.path;
-    } }, { path: ':id', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
-      return { path: route.path, extra: { id: route.params.id } };
-    } }]
-}, {
-  path: 'store/sections',
-  component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
-  children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
-      path: route.path;
-    } }, { path: ':sid', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
-      return { path: route.path, extra: { sid: route.params.sid } };
-    } }]
-}, {
-  path: 'store/sections/:sid/category',
-  component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
-  children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
-      path: route.path;
-    } }, { path: ':cid', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
-      return { path: route.path, extra: { sid: route.params.sid, cid: route.params.cid } };
-    } }]
-}, {
-  path: 'store/sections/:sid/category/:cid/product',
-  component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
-  children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
-      path: route.path;
-    } }, { path: ':pid',
+/* harmony default export */ __webpack_exports__["default"] = (new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
+  base: 'admin',
+  routes: [{
+    path: '/',
     component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
     props: function props(route) {
-      return { path: route.path, extra: { sid: route.params.sid, cid: route.params.cid, pid: route.params.pid } };
+      return { path: route.path };
     }
+  }, {
+    path: 'users',
+    component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
+    children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+        return { path: route.path };
+      } }, { path: ':id', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+        return { path: route.path, extra: { id: route.params.id } };
+      } }]
+  }, {
+    path: 'pages',
+    component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
+    children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+        return { path: route.path };
+      } }, { path: ':id', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+        return { path: route.path, extra: { id: route.params.id } };
+      } }]
+  }, { path: 'sections', redirect: 'store/sections' }, {
+    path: 'store/sections',
+    component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
+    children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+        return { path: route.path };
+      } }, { path: ':sid', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+        return { path: route.path, extra: { sid: route.params.sid } };
+      } }]
+  }, {
+    path: 'store/sections/:sid/category',
+    component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
+    children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+        return { path: route.path };
+      } }, { path: ':cid', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+        return { path: route.path, extra: { sid: route.params.sid, cid: route.params.cid } };
+      } }]
+  }, {
+    path: 'store/sections/:sid/category/:cid/product',
+    component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
+    children: [{ path: '', component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a, props: function props(route) {
+        return { path: route.path };
+      } }, { path: ':pid',
+      component: __WEBPACK_IMPORTED_MODULE_1__components_admin_adminCompList_vue___default.a,
+      props: function props(route) {
+        return { path: route.path, extra: { sid: route.params.sid, cid: route.params.cid, pid: route.params.pid } };
+      }
+    }]
   }]
-}];
-
-/* harmony default export */ __webpack_exports__["default"] = (new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
-  routes: routes,
-  base: 'admin'
 }));
 
 /***/ }),
@@ -58979,110 +59055,175 @@ var routes = [{
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(184);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_LibertyStack_js__ = __webpack_require__(469);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_LaravelComponentTree_js__ = __webpack_require__(472);
+/* harmony export (immutable) */ __webpack_exports__["valToComponent"] = valToComponent;
+/* harmony export (immutable) */ __webpack_exports__["valToComponentArray"] = valToComponentArray;
+/* harmony export (immutable) */ __webpack_exports__["makeStore"] = makeStore;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue__ = __webpack_require__(415);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuex__ = __webpack_require__(184);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vue_router__ = __webpack_require__(470);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__lib_LibertyStack_js__ = __webpack_require__(469);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__lib_LaravelComponentTree_js__ = __webpack_require__(472);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_lodash__ = __webpack_require__(162);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_lodash__);
 
 
-// import {Route} from 'vue-router'
 
 
 
-/* harmony default export */ __webpack_exports__["default"] = (new __WEBPACK_IMPORTED_MODULE_0_vuex__["a" /* default */].Store({
-  state: {
-    breadcrumbs: new __WEBPACK_IMPORTED_MODULE_1__lib_LibertyStack_js__["a" /* Stack */]([]),
-    components: new __WEBPACK_IMPORTED_MODULE_2__lib_LaravelComponentTree_js__["a" /* ComponentTree */]({
-      name: 'root',
-      path: '/'
-    }, [], null)
-  },
-  mutations: {
-    pushCrumb: function pushCrumb(state, crumb) {
-      state.breadcrumbs.push(crumb);
-    },
-    popCrumb: function popCrumb(state, crumb) {
-      if (state.breadcrumbs.top() === crumb) {
-        state.breadcrumbs.pop();
-      }
-    },
-    setCrumbs: function setCrumbs(state, payload) {
-      var r = payload.route;
-      var c = state.getters.findComponent(r.path, function (cv, p) {
-        return cv.value().path === p;
-      });
-      var arr = [];
-      while (c !== undefined && c !== null && c.parent() !== null) {
-        arr.push(c.value());
-        c = c.parent();
-      }
-      for (var i in arr) {
-        state.breadcrumbs.push(i);
-      }
-    },
-    setComponents: function setComponents(state, payload) {
-      if (Array.isArray(payload)) {
-        for (var i in payload) {
-          state.components.push(i);
-        }
-      }
-    },
-    pushComponent: function pushComponent(state, payload) {
-      var component = payload.component,
-          nt = payload.nt;
 
-      var tree = state.getters.findComponent(component);
-      if (tree !== null && tree !== undefined) {
-        tree.push(nt);
+
+
+
+
+__WEBPACK_IMPORTED_MODULE_1_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_3_vue_router__["a" /* default */]);
+__WEBPACK_IMPORTED_MODULE_1_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_2_vuex__["a" /* default */]);
+
+var Foo = { template: '<div>Hello World!</div>' };
+
+function valToComponent() {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  var defPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  var defComp = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Foo;
+  var defPaging = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+  if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
+    if (!__WEBPACK_IMPORTED_MODULE_6_lodash___default.a.has(data, 'path') && __WEBPACK_IMPORTED_MODULE_6_lodash___default.a.has(data, 'url')) {
+      data.path = data.url;
+    } else if (!__WEBPACK_IMPORTED_MODULE_6_lodash___default.a.has(data, 'path') && !__WEBPACK_IMPORTED_MODULE_6_lodash___default.a.has(data, 'url')) {
+      data.path = defPath;
+    }
+    if (!__WEBPACK_IMPORTED_MODULE_6_lodash___default.a.has(data, 'component')) {
+      data.component = defComp;
+    }
+    if (!__WEBPACK_IMPORTED_MODULE_6_lodash___default.a.has(data, 'pagination')) {
+      data.pagination = defPaging;
+    }
+    return data;
+  } else {
+    return {
+      path: defPath,
+      component: defComp,
+      pagination: defPaging
+    };
+  }
+}
+function valToComponentArray(data) {
+  if (Array.isArray(data)) {
+    var res = [];
+    for (var i in data) {
+      if (i instanceof __WEBPACK_IMPORTED_MODULE_5__lib_LaravelComponentTree_js__["a" /* ComponentTree */]) {
+        res.push(data[i]);
+      } else {
+        res.push(new __WEBPACK_IMPORTED_MODULE_5__lib_LaravelComponentTree_js__["a" /* ComponentTree */](valToComponent(data[i])));
       }
     }
-  },
-  getters: {
-    components: function components(state) {
-      var res = [];
-      for (var i in state.components.getChildren()) {
-        res.push(i.value());
-      }
-      return res;
-    },
-    findComponent: function findComponent(state) {
-      return function (value) {
-        var comp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    return res;
+  } else {
+    return [];
+  }
+}
 
-        return state.components.findSubTreeWithValue(value, comp);
-      };
+function makeStore(data) {
+  return new __WEBPACK_IMPORTED_MODULE_2_vuex__["a" /* default */].Store({
+    state: {
+      breadcrumbs: new __WEBPACK_IMPORTED_MODULE_4__lib_LibertyStack_js__["a" /* Stack */]([]),
+      components: new __WEBPACK_IMPORTED_MODULE_5__lib_LaravelComponentTree_js__["a" /* ComponentTree */]({
+        name: 'root',
+        path: '/'
+      }, valToComponentArray(data), null)
     },
-    findTab: function findTab(state) {
-      return function (value) {
-        var comp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-        var c = state.components.getChildren();
-        var res = null;
-        for (var i in c) {
-          if (i.value() === value || typeof comp === 'function' && comp(i.value(), value)) {
-            res = i;
-            break;
+    mutations: {
+      pushCrumb: function pushCrumb(state, crumb) {
+        state.breadcrumbs.push(crumb);
+      },
+      popCrumb: function popCrumb(state, crumb) {
+        if (state.breadcrumbs.top() === crumb) {
+          state.breadcrumbs.pop();
+        }
+      },
+      setCrumbs: function setCrumbs(state, payload) {
+        var r = payload.route;
+        var c = state.getters.findComponent(r.path, function (cv, p) {
+          return cv.value().path === p;
+        });
+        var arr = [];
+        while (c !== undefined && c !== null && c.parent() !== null) {
+          arr.push(c.value());
+          c = c.parent();
+        }
+        for (var i in arr) {
+          state.breadcrumbs.push(arr[i]);
+        }
+      },
+      setComponents: function setComponents(state, payload) {
+        if (Array.isArray(payload)) {
+          for (var i in payload) {
+            state.components.push(payload[i]);
           }
         }
-        return res;
-      };
-    },
-    getBreadcrumbs: function getBreadcrumbs(state) {
-      return state.breadcrumbs.data();
-    },
-    getComponentChildrenValues: function getComponentChildrenValues(state, getters) {
-      return function (value) {
-        var comp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      },
+      pushComponent: function pushComponent(state, payload) {
+        var component = payload.component,
+            nt = payload.nt;
 
-        var t = getters.findComponent(value, comp);
+        var tree = state.getters.findComponent(component);
+        if (tree !== null && tree !== undefined) {
+          tree.push(nt);
+        }
+      }
+    },
+    getters: {
+      components: function components(state) {
         var res = [];
-        for (var i in t) {
-          res.push(i.value());
+        var ch = state.components.getChildren();
+        for (var i in ch) {
+          res.push(ch[i].value());
         }
         return res;
-      };
+      },
+      findComponent: function findComponent(state) {
+        return function (value) {
+          var comp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+          return state.components.findSubTreeWithValue(value, comp);
+        };
+      },
+      findTab: function findTab(state) {
+        return function (value) {
+          var comp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+          var c = state.components.getChildren();
+          var res = null;
+          for (var i in c) {
+            if (c[i].value() === value || typeof comp === 'function' && comp(c[i].value(), value)) {
+              res = c[i];
+              break;
+            }
+          }
+          return res;
+        };
+      },
+      getBreadcrumbs: function getBreadcrumbs(state) {
+        return state.breadcrumbs.data();
+      },
+      getComponentChildrenValues: function getComponentChildrenValues(state, getters) {
+        return function (value) {
+          var comp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+          var t = getters.findComponent(value, comp);
+          var res = [];
+          for (var i in t) {
+            res.push(t[i].value());
+          }
+          return res;
+        };
+      }
     }
-  }
-}));
+  });
+}
 
 /***/ }),
 /* 475 */,
@@ -59129,26 +59270,36 @@ window.Vue.use(__WEBPACK_IMPORTED_MODULE_2_vuex__["a" /* default */]);
 
 __webpack_require__(456);
 
+var router = __webpack_require__(473).default;
+
+var Store = __webpack_require__(474);
+
 window.Vue.component('admin-panel-component', __WEBPACK_IMPORTED_MODULE_4__components_admin_adminPanel_vue___default.a);
 
 window.Laravel.page.admin = {};
 
-function genComponentData(data) {
+function genComponentData() {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
   var vals = {};
   if (typeof data === 'string') {
-    vals = window.myUtils.JsonParseOrRetObj(data, {}, window.myUtils.outputErrorsToConsole);
+    vals = window.myUtils.JsonParseOrRetObj(data, {}, window.myUtils.dumpData);
   } else if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
     for (var i in data) {
-      if ((typeof i === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(i)) === 'object') {
+      if (__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(data[i]) === 'object') {
         var tmp = {
-          items: window.myUtils.JsonParseOrRetObj(i.items, [], window.myUtils.outputErrorsToConsole),
-          pagination: window.myUtils.JsonParseOrRetObj(i.pagination, [], window.myUtils.outputErrorsToConsole)
+          items: window.myUtils.JsonParseOrRetObj(data[i].items, [], window.myUtils.dumpData),
+          pagination: window.myUtils.JsonParseOrRetObj(data[i].pagination, [], window.myUtils.dumpData)
         };
         vals[i] = tmp;
+      } else if (typeof data[i] === 'string') {
+        vals[i] = window.myUtils.JsonParseOrRetObj(data[i], {}, window.myUtils.dumpData);
       }
     }
   }
   if (window._.size(vals) > 0) {
+    return vals;
+  } else if (false) {
     return {
       initPages: vals.pages,
       initSections: vals.sections,
@@ -59156,22 +59307,43 @@ function genComponentData(data) {
       initArticle: window.myUtils.getArticleData(vals.article, 'col-md-12', 'col-md-12')
     };
   } else {
-    return {
-      initPages: {},
-      initSections: {},
-      initUsers: {},
-      initArticle: {}
-    };
+    return {};
   }
 }
-var router = __webpack_require__(473).default;
-var store = __webpack_require__(474).default;
+
+function genStoreData() {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+  if (data !== null || data !== undefined) {
+    if (Array.isArray(data)) {
+      var res = [];
+      for (var i in data) {
+        res.push({
+          value: {
+            name: window._.capitalize(i),
+            path: i,
+            // component: Foo,
+            pagination: window.myUtils.getPagingFrom(data[i])
+          },
+          children: Store.valToComponentArray(window.myUtils.getItemsFrom(data[i]))
+        });
+      }
+    }
+  } else {
+    return [];
+  }
+}
+
+var initData = genComponentData(window.Laravel.admin);
+
+var myStore = Store.makeStore(genStoreData(window._.omit(initData, ['article', 'header'])));
+
 window.Laravel.page.admin.app = new window.Vue({
   router: router,
-  store: store,
+  store: myStore,
   template: '<admin-panel-component v-bind="componentData"></admin-panel-component>',
   data: {
-    initData: window.Laravel.admin
+    initData: initData
   },
   computed: {
     componentData: function componentData() {
@@ -60435,20 +60607,20 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__ = __webpack_require__(471);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_LibertyStack_js__ = __webpack_require__(469);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__lib_LaravelComponentTree_js__ = __webpack_require__(472);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vuex__ = __webpack_require__(184);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__bootBreadcrumbs_vue__ = __webpack_require__(488);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__bootBreadcrumbs_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__bootBreadcrumbs_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__bootTabs_vue__ = __webpack_require__(491);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__bootTabs_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__bootTabs_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__bootArticle_vue__ = __webpack_require__(494);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__bootArticle_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__bootArticle_vue__);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(471);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue__ = __webpack_require__(415);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuex__ = __webpack_require__(184);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vue_router__ = __webpack_require__(470);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__lib_LibertyStack_js__ = __webpack_require__(469);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__lib_LaravelComponentTree_js__ = __webpack_require__(472);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__bootBreadcrumbs_vue__ = __webpack_require__(488);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__bootBreadcrumbs_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__bootBreadcrumbs_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__bootTabs_vue__ = __webpack_require__(491);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__bootTabs_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__bootTabs_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__bootArticle_vue__ = __webpack_require__(494);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__bootArticle_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8__bootArticle_vue__);
 
 
 var _this = this;
@@ -60475,119 +60647,67 @@ var _this = this;
 
 
 
+__WEBPACK_IMPORTED_MODULE_1_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_3_vue_router__["a" /* default */]);
+__WEBPACK_IMPORTED_MODULE_1_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_2_vuex__["a" /* default */]);
 
 
 
-var Foo = { template: '<div>Hello World!</div>' };
+
+
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'admin-panel-component',
     props: {
-        initPages: {
-            type: Object,
-            default: {}
-        },
-        initSections: {
-            type: Object,
-            default: {}
-        },
-        initUsers: {
-            type: Object,
-            default: {}
-        },
         initArticle: {
             type: Object,
-            default: {}
+            default: function _default() {
+                return {};
+            }
         }
     },
     components: {
-        BootBreadcrumbs: __WEBPACK_IMPORTED_MODULE_5__bootBreadcrumbs_vue___default.a,
-        BootTabs: __WEBPACK_IMPORTED_MODULE_6__bootTabs_vue___default.a,
-        BootArticle: __WEBPACK_IMPORTED_MODULE_7__bootArticle_vue___default.a
+        BootBreadcrumbs: __WEBPACK_IMPORTED_MODULE_6__bootBreadcrumbs_vue___default.a,
+        BootTabs: __WEBPACK_IMPORTED_MODULE_7__bootTabs_vue___default.a,
+        BootArticle: __WEBPACK_IMPORTED_MODULE_8__bootArticle_vue___default.a
     },
+    beforeRouteEnter: function beforeRouteEnter(to, from, next) {
+        store.commit('setCrumbs', { route: to });
+        next();
+    },
+    beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
+        this.$store.commit('setCrumbs', { route: to });
+        next();
+    },
+
     data: function data() {
-        return this.genTabs();
+        this.$router.push('/');
+        return {
+            currentTab: ''
+        };
     },
-    watch: {
-        '$route': function $route(to, from) {
-            this.$store.commit('setCrumbs', { to: to });
+    /* watch: {
+        '$route': function (to, from) {
+            this.$store.commit('setCrumbs', {route: to})
         }
-    },
-    computed: __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default.a({
+    }, */
+    computed: __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default.a({
         breadcrumbs: function breadcrumbs() {
             return {
-                crumbs: _this.getBreadcrumbs,
-                current: _this.$route.path
+                crumbs: this.getBreadcrumbs,
+                current: this.$route.path
             };
         }
-    }, __WEBPACK_IMPORTED_MODULE_4_vuex__["c" /* mapState */]({
-
+    }, __WEBPACK_IMPORTED_MODULE_2_vuex__["c" /* mapState */]({
         tabs: function tabs(state) {
             var i = state.getters.getComponentChildrenValues(_this.currentTab, function (tv, ct) {
                 return ct === tv.name;
             });
             return i.length > 0 ? i : [];
         }
-    }), __WEBPACK_IMPORTED_MODULE_4_vuex__["b" /* mapGetters */](['getBreadcrumbs'])),
-    methods: {
-        valToComponent: function valToComponent(data) {
-            if ((typeof data === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(data)) === 'object') {
-                return __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default.a({
-                    path: data.url,
-                    component: Foo,
-                    paging: {}
-                }, data);
-            } else {
-                return null;
-            }
-        },
-        valToComponentArray: function valToComponentArray(data) {
-            if (Array.isArray(data)) {
-                var res = [];
-                for (var i in data) {
-                    if (i instanceof __WEBPACK_IMPORTED_MODULE_3__lib_LaravelComponentTree_js__["a" /* ComponentTree */]) {
-                        res.push(i);
-                    } else {
-                        res.push(new __WEBPACK_IMPORTED_MODULE_3__lib_LaravelComponentTree_js__["a" /* ComponentTree */](_this.valToComponent(i)));
-                    }
-                }
-                return res;
-            } else {
-                return [];
-            }
-        },
-        genTabs: function genTabs() {
-            var tabs = [{
-                value: {
-                    name: 'Sections',
-                    path: 'store/sections',
-                    component: Foo,
-                    paging: window.myUtils.getPagingFrom(_this.initSections)
-                },
-                children: _this.valToComponentArray(window.myUtils.getItemsFrom(_this.initSections))
-            }, {
-                value: {
-                    name: 'Users',
-                    path: 'users',
-                    component: Foo,
-                    pagination: window.myUtils.getPagingFrom(_this.initUsers)
-                },
-                children: _this.valToComponentArray(window.myUtils.getItemsFrom(_this.initUsers))
-            }, {
-                value: {
-                    name: 'Pages',
-                    path: 'pages',
-                    component: Foo,
-                    pagination: window.myUtils.getPagingFrom(_this.initPages)
-                },
-                children: _this.valToComponentArray(window.myUtils.getItemsFrom(_this.initPages))
-            }];
-            _this.$store.commit('setComponents', tabs);
-            return {
-                currentTab: ''
-            };
-        }
-    }
+    }), __WEBPACK_IMPORTED_MODULE_2_vuex__["b" /* mapGetters */](['getBreadcrumbs'])),
+    methods: {}
 });
 
 /***/ }),
@@ -60710,6 +60830,10 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue__ = __webpack_require__(415);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuex__ = __webpack_require__(184);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vue_router__ = __webpack_require__(470);
 
 //
 //
@@ -60731,6 +60855,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
+
+
+
+
+__WEBPACK_IMPORTED_MODULE_1_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_3_vue_router__["a" /* default */]);
+__WEBPACK_IMPORTED_MODULE_1_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_2_vuex__["a" /* default */]);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'boot-breadcrumbs-component',
@@ -61078,8 +61209,12 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__bootFigure_vue__ = __webpack_require__(496);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__bootFigure_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__bootFigure_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(162);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__bootFigure_vue__ = __webpack_require__(496);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__bootFigure_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__bootFigure_vue__);
+var _this = this;
+
 //
 //
 //
@@ -61109,24 +61244,45 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'boot-article-component',
     props: {
-        initHeader: String,
-        initSubheading: String,
-        initArticle: String,
-        initHeaderCss: String,
-        initArticleCss: String,
-        initImage: Object,
+        initHeader: {
+            type: String,
+            default: ''
+        },
+        initSubheading: {
+            type: String,
+            default: ''
+        },
+        initArticle: {
+            type: String,
+            default: ''
+        },
+        initHeaderCss: {
+            type: String,
+            default: ''
+        },
+        initArticleCss: {
+            type: String,
+            default: ''
+        },
+        initImage: {
+            type: Object,
+            default: function _default() {
+                return {};
+            }
+        },
         initUseSepparateRow: {
             type: Boolean,
             default: false
         }
     },
     components: {
-        BootFigure: __WEBPACK_IMPORTED_MODULE_0__bootFigure_vue__["BootFigure"]
+        BootFigure: __WEBPACK_IMPORTED_MODULE_1__bootFigure_vue__["BootFigure"]
     },
     data: function data() {
         return {
@@ -61138,6 +61294,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             image: this.initImage,
             useSepparateRow: this.initUseSepparateRow
         };
+    },
+    computed: {
+        hasHeader: function hasHeader() {
+            return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.size(_this.header) > 0;
+        },
+        hasImage: function hasImage() {
+            return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.size(_this.image) > 0;
+        },
+        hasSubheading: function hasSubheading() {
+            return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.size(_this.subheading) > 0;
+        },
+        hasArticle: function hasArticle() {
+            return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.size(_this.article) > 0;
+        }
     }
 });
 
@@ -61194,6 +61364,10 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(162);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+var _this = this;
+
 //
 //
 //
@@ -61203,6 +61377,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'boot-figure-component',
@@ -61218,7 +61393,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             cap: this.initCaption
         };
     },
-    computed: {},
+    computed: {
+        hasCap: function hasCap() {
+            return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.size(_this.cap) > 0;
+        }
+    },
     methods: {}
 });
 
@@ -61236,7 +61415,7 @@ var render = function() {
       attrs: { src: _vm.img, alt: _vm.alt }
     }),
     _vm._v(" "),
-    _vm.window._.size(_vm.cap) > 0
+    _vm.hasCap
       ? _c("figcaption", [
           _c("span", { domProps: { innerHTML: _vm._s(_vm.cap) } })
         ])
@@ -61267,20 +61446,20 @@ var render = function() {
         "div",
         { class: _vm.headerCss },
         [
-          _vm.window._.size(_vm.header) > 0
+          _vm.hasHeader
             ? _c("h2", [
                 _c("span", { domProps: { innerHTML: _vm._s(_vm.header) } })
               ])
             : _vm._e(),
           _vm._v(" "),
-          _vm.window._.size(_vm.image) > 0
+          _vm.hasImage
             ? _c(
                 "boot-figure-component",
                 _vm._b({}, "boot-figure-component", _vm.image, false)
               )
             : _vm._e(),
           _vm._v(" "),
-          _vm.window._.size(_vm.subheading) > 0
+          _vm.hasSubheading
             ? _c("h4", [
                 _c("span", { domProps: { innerHTML: _vm._s(_vm.subheading) } })
               ])
@@ -61296,7 +61475,7 @@ var render = function() {
         : _vm._e()
     ]),
     _vm._v(" "),
-    _vm.window._.size(_vm.article) > 0 && _vm.useSepparateRow
+    _vm.hasArticle && _vm.useSepparateRow
       ? _c("div", { staticClass: "row" }, [
           _c("div", { class: _vm.articleCss }, [
             _c("span", { domProps: { innerHTML: _vm._s(_vm.article) } })
@@ -61331,10 +61510,12 @@ var render = function() {
         "div",
         { staticClass: "col-xs-12 col-sm-12 col-md-12 col-lg-12" },
         [
-          _c(
-            "boot-breadcrumbs",
-            _vm._b({}, "boot-breadcrumbs", _vm.breadcrumbs, false)
-          ),
+          _vm.breadcrumbs.crumbs.length > 0
+            ? _c(
+                "boot-breadcrumbs",
+                _vm._b({}, "boot-breadcrumbs", _vm.breadcrumbs, false)
+              )
+            : _vm._e(),
           _vm._v(" "),
           _c(
             "boot-article",
@@ -61426,13 +61607,10 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__ = __webpack_require__(471);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue__ = __webpack_require__(415);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuex__ = __webpack_require__(184);
-
-
-
-var _this = this;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vue_router__ = __webpack_require__(470);
 
 //
 //
@@ -61448,6 +61626,13 @@ var _this = this;
 //
 //
 //
+
+
+
+
+
+__WEBPACK_IMPORTED_MODULE_1_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_3_vue_router__["a" /* default */]);
+__WEBPACK_IMPORTED_MODULE_1_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_2_vuex__["a" /* default */]);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -61457,13 +61642,15 @@ var _this = this;
             type: [Object, String],
             default: ''
         },
-        itemsArray: {
+        items: {
             type: [Array],
-            default: []
+            default: function _default() {
+                return [];
+            }
         },
         current: {
-            type: Object,
-            default: null
+            type: [Object, String],
+            default: ''
         },
         preText: {
             type: [String, Function],
@@ -61475,36 +61662,36 @@ var _this = this;
         },
         extra: {
             type: Object,
-            default: null
+            default: function _default() {
+                return null;
+            }
         }
     },
     data: function data() {
         return {
-            items: itemsArray
+            itemsArray: this.loadItems()
         };
     },
-    watch: {
-        // '$route': 
-    },
-    computed: __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default.a({
+    watch: {},
+    computed: {
         getPreText: function getPreText() {
             return this.getText(this.preText);
         },
         getPostText: function getPostText() {
             return this.getText(this.postText);
         },
-        current: function current() {
-            return _this.$route.path;
+        hasItems: function hasItems() {
+            return this.itemsArray.length > 0;
         },
-        loadItems: function loadItems() {
-            var i = _this.getComponentChildrenValues(typeof _this.path === 'string' ? _this.path : _this.path.path, function (tv, path) {
-                return (typeof tv === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(tv)) === 'object' && tv.path === path;
-            });
-            if (i.length > 0) {
-                _this.items = i;
-            }
+        currentPath: function currentPath() {
+            return this.$route.path;
+        },
+        getValues: function getValues(value) {
+            var comp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+            return this.$store.getters.getComponentChildrenValues(value, comp);
         }
-    }, __WEBPACK_IMPORTED_MODULE_2_vuex__["b" /* mapGetters */](['findComponent', 'getComponentChildrenValues'])),
+    },
     methods: {
         getText: function getText(val) {
             if (typeof val === 'string') {
@@ -61524,6 +61711,16 @@ var _this = this;
                     }
                 }
             }
+        },
+        loadItems: function loadItems() {
+            var i = this.getValues(typeof this.path === 'string' ? this.path : this.path.path, function (tv, path) {
+                return (typeof tv === 'undefined' ? 'undefined' : __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default.a(tv)) === 'object' && tv.path === path;
+            });
+            if (i.length > 0) {
+                return i;
+            } else {
+                return this.items;
+            }
         }
     }
 });
@@ -61541,18 +61738,18 @@ var render = function() {
     [
       _c("router-view"),
       _vm._v(" "),
-      _vm.items.length > 0
+      _vm.hasItems
         ? _c(
             "div",
             { staticClass: "list-group" },
-            _vm._l(_vm.items, function(item, index) {
+            _vm._l(_vm.itemsArray, function(item, index) {
               return _c(
                 "router-link",
                 {
                   key: index,
                   class: [
                     "list-group-item",
-                    { active: _vm.current === item.path }
+                    { active: _vm.currentPath === item.path }
                   ],
                   attrs: { to: item.path }
                 },
