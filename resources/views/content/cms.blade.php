@@ -26,7 +26,7 @@
         //dd($sidebar2);
         //dd($page2);
         //dd($page['sections']);
-        //dd($sections2, $sections_paginator2);
+        // dd($sections2, $sections_paginator2);
         //dd($users2, $users_paginator2);
         //dd($pages2, $pages_paginator2);
         //dd($plans2, $plans_paginator2);
@@ -46,7 +46,7 @@
         //dd($sidebar2);
     @endphp
 
-    @if (false)
+    @if (true)
 
         <div id="cms-app"></div>
 
@@ -182,7 +182,7 @@
     
     @endif
 
-    @if ($testing)
+    @if ($testing && false)
         <div id="cms-app"></div>
     @endif
 @endsection

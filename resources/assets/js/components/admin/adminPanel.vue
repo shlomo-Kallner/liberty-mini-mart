@@ -1,5 +1,5 @@
 <template>
-    <div class="row margin-bottom-40">
+    <div id="cms-app" class="row margin-bottom-40">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <boot-breadcrumbs v-bind="breadcrumbs"></boot-breadcrumbs>
             <boot-article v-bind="initArticle"></boot-article>
@@ -54,18 +54,19 @@
             return this.genTabs()
         },
         watch: {
-            $route: function (route) {
-                //
+            '$route': function (to, from) {
+                this.$store.commit('setCrumbs', {to})
             }
         },
         computed: {
+            breadcrumbs: () => {
+                return {
+                    crumbs: this.getBreadcrumbs,
+                    current: this.$route.path
+                }
+            },
             ...mapState({
-                breadcrumbs: (state) => {
-                    return {
-                        crumbs: state.breadcrumbs.data(),
-                        current: this.$route.path
-                    }
-                },
+                
                 tabs: (state) => {
                     var i = state.getters.getComponentChildrenValues(
                         this.currentTab, (tv, ct) => {
@@ -73,7 +74,8 @@
                     })
                     return (i.length > 0) ? i : []
                 }
-            })
+            }),
+            ...mapGetters(['getBreadcrumbs'])
         },
         methods: {
             valToComponent: (data) => {
@@ -110,27 +112,27 @@
                             name: 'Sections',
                             path: 'store/sections',
                             component: Foo,
-                            paging: this.initSections.pagination
+                            paging: window.myUtils.getPagingFrom(this.initSections)
                         },
-                        children: this.valToComponentArray(this.initSections.items)
+                        children: this.valToComponentArray(window.myUtils.getItemsFrom(this.initSections))
                     },
                     {
                         value: {
                             name: 'Users',
                             path: 'users',
                             component: Foo,
-                            pagination: this.initUsers.pagination
+                            pagination: window.myUtils.getPagingFrom(this.initUsers)
                         },
-                        children: this.valToComponentArray(this.initUsers.items)
+                        children: this.valToComponentArray(window.myUtils.getItemsFrom(this.initUsers))
                     },
                     {
                         value: {
                             name: 'Pages',
                             path: 'pages',
                             component: Foo,
-                            pagination: this.initPages.pagination
+                            pagination: window.myUtils.getPagingFrom(this.initPages)
                         },
-                        children: this.valToComponentArray(this.initPages.items)
+                        children: this.valToComponentArray(window.myUtils.getItemsFrom(this.initPages))
                     }
                 ]
                 this.$store.commit('setComponents', tabs)

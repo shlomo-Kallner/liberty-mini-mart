@@ -16,6 +16,7 @@ interface TransformableContainer
     const TO_CONTENT_ARRAY_TRANSFORM = 'content';
     const TO_NAME_LIST_TRANSFORM = 'name';
     const TO_URL_FRAGMENT_TRANSFORM = 'fragment';
+    const TO_URL_LIST_TRANSFORM = 'url';
 
     static public function getOrderByKey();
 
@@ -454,11 +455,12 @@ trait ContainerTransforms
     }
 
     static public function getAllWithPagination(
-        bool $transform, int $pageNum, int $numShown = 4, 
+        $transform, int $pageNum, int $numShown = 4, 
         string $pagingFor = '', string $dir = 'asc', 
         bool $withTrashed = true, string $baseUrl = 'store', 
         string $listUrl = '', int $viewNumber = 0, 
-        bool $useTitle = true, int $version = 1
+        bool $fullUrl = false, bool $useTitle = true, 
+        int $version = 1
     ) {
         $pageIdx = self::genFirstAndLastItemsIdxes( 
             self::count(), $pageNum, $numShown
@@ -498,6 +500,8 @@ trait ContainerTransforms
                     return $item->toNameListing();
                 case 'fragment':
                     return $item->toUrlFragrment($baseUrl, $fullUrl);
+                case 'url':
+                return $item->toUrlListing($baseUrl, $fullUrl);
                 }
             } elseif (is_callable($transform)) {
                 return $transform($item, $baseUrl, $version, $useTitle, $withTrashed, $fullUrl);
@@ -654,6 +658,15 @@ trait ContainerTransforms
             TransformableContainer::TO_CONTENT_ARRAY_TRANSFORM,
             $useTitle, $version, $withTrashed, $fullUrl, $default
         );
+    }
+
+    public function toUrlListing(string $baseUrl, bool $fullUrl = false)
+    {
+        $url = $this->getFullUrl($baseUrl, false);
+        return [
+            'name' => $this->name,
+            'url' =>  $fullUrl ? url($url) : $url, 
+        ];
     }
 
     public function toUrlFragrment(string $baseUrl, bool $fullUrl = false)

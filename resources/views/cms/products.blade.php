@@ -28,7 +28,7 @@
 
             $productEditUrl = $base_url . $product['url'] . '/edit';
             $productDeleteUrl = $base_url . $product['url'] . '/delete';
-            
+            $img = $product['img'];
 
         @endphp
 
@@ -47,11 +47,11 @@
                         <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
                             @if (true)
                                 <div class="thumbnail">
-                                    <img src="{{ asset($product['img']['img']) }}" 
-                                        class="img-responsive" alt="{{$product['img']['alt']}}"
+                                    <img src="{{ asset($img['img']) }}" 
+                                        class="img-responsive" alt="{{$img['alt']}}"
                                     >
                                     <div class="caption">
-                                        {!! $product['img']['cap'] !!}
+                                        {!! $img['cap'] !!}
                                     </div>
                                 </div>
                             @else

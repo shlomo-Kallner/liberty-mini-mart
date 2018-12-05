@@ -17,10 +17,10 @@ window.Vue.component('admin-panel-component', AdminPanel);
 window.Laravel.page.admin = {}
 
 function genComponentData (data) {
+  var vals = {}
   if (typeof data === 'string') {
-    var vals = window.myUtils.JsonParseOrRetObj(data, {}, window.myUtils.outputErrorsToConsole)
+    vals = window.myUtils.JsonParseOrRetObj(data, {}, window.myUtils.outputErrorsToConsole)
   } else if (typeof data === 'object') {
-    var vals = {}
     for (var i in data) {
       if (typeof i === 'object') {
         var tmp = {

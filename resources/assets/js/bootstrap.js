@@ -11,27 +11,27 @@ window._ = require('lodash');
 try {
   // modified by shlomo.kalner@gmail.com to include this check for
   // jQuery having been previously loaded via script tag..
-  if (window.$ === undefined || 
-        window.jQuery === undefined || 
-        $ === undefined || 
+  if (window.$ === undefined ||
+        window.jQuery === undefined ||
+        $ === undefined ||
         jQuery === undefined) {
     // alert('hello from vue-bootstrap!!');
-    window.$ = window.jQuery = require('jquery');
+    window.$ = window.jQuery = require('jquery')
   }
   if (window.$ === undefined && $ !== undefined) {
-    window.$ = $;
+    window.$ = $
   } else if (window.$ !== undefined && $ === undefined) {
-    $ = window.$;
+    $ = window.$
   }
   if (window.jQuery === undefined && jQuery !== undefined) {
-    window.jQuery = jQuery;
+    window.jQuery = jQuery
   } else if (window.jQuery !== undefined && jQuery === undefined) {
-    jQuery = window.jQuery;  
+    jQuery = window.jQuery
   }
 
   // we are appearing to have some conflict between this and
   //  and our local import... so commenting this out..
-  // require('bootstrap-sass'); 
+  // require('bootstrap-sass')
 } catch (e) {}
 
 /**
@@ -40,11 +40,11 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = require('axios');
+window.axios = require('axios')
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 // an addition by Shlomo Kallner, to preload axios's default baseURL.
-window.axios.defaults.baseURL = window.Laravel.baseUrl; 
+window.axios.defaults.baseURL = window.Laravel.baseUrl
 
 /**
  * Next we will register the CSRF Token as a common header with Axios so that
@@ -52,12 +52,12 @@ window.axios.defaults.baseURL = window.Laravel.baseUrl;
  * a simple convenience so we don't have to attach every token manually.
  */
 
-let token = document.head.querySelector('meta[name="csrf-token"]');
+let token = document.head.querySelector('meta[name="csrf-token"]')
 
 if (token) {
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+  window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content
 } else {
-    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+  console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token')
 }
 
 window.Laravel.LaravelAlert = require('./lib/LaravelAlert').default
@@ -86,5 +86,3 @@ window.Json5 = require('json5')
 //     broadcaster: 'pusher',
 //     key: 'your-pusher-key'
 // });
-
-

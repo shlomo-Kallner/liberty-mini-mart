@@ -33,12 +33,15 @@ class CmsController extends MainController
         $sectDir = 'asc';
         $sectBaseUrl = 'store';
         $sectViewNum = 0;
-        if (false) {
+        $sectWithTrashed = true;
+        if (true) {
             $sections = Section::getAllWithPagination(
-                true, $sectPageNum, $sectNumShown, 
-                $sectPagingFor, $sectDir, true, $sectBaseUrl, 
+                Section::TO_CONTENT_ARRAY_TRANSFORM, 
+                $sectPageNum, $sectNumShown, 
+                $sectPagingFor, $sectDir, 
+                $sectWithTrashed, $sectBaseUrl,
                 $request->path(), $sectViewNum, 
-                true, 1
+                false, true, 1
             );
         } else {
             $sections = [

@@ -115,7 +115,8 @@ class Section extends Model implements TransformableContainer, ContainerAPI
             //SectionImage::getAllImages($this->id),
             Image::getArraysFor($this->otherImages),
             $this->getCategories(
-                true, $withTrashed, 'asc', $baseUrl,
+                Categorie::TO_URL_LIST_TRANSFORM, 
+                $withTrashed, 'asc', $baseUrl,
                 $useTitle, $fullUrl, $version, []
             ), 
             [

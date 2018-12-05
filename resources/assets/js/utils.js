@@ -139,7 +139,7 @@ export default {
       index: pageNum
     };
   },
-  JsonParseOrRetObj: function (data, def = {}, err = null) {
+  JsonParseOrRetObj: function (data = null, def = {}, err = null) {
     if (typeof data === 'string') {
       var res = def;
       try {
@@ -167,7 +167,7 @@ export default {
     var [e1, e2] = error
     console.log(e1.toString() + e2.toString())
   },
-  isScalar: function (data) {
+  isScalar: function (data = null) {
     if (typeof data === 'boolean' ||
       typeof data === 'number' ||
       typeof data === 'string' ||
@@ -184,15 +184,25 @@ export default {
       return false
     }
   },
-  dumpData: function (data) {
-    for (var i in data) {
-      if (this.isScalar(i)) {
-        console.log( i + ' => ' + data[i])
-      } else if (typeof i === 'object') {
-        console.log( i + ' => [ ')
-        this.dumpData(data[i])
-        console.log(']')
+  dumpData: function (data = null) {
+    if (this.isScalar(data)) {
+      console.log( data )
+    } else {
+      for (var i in data) {
+        if (this.isScalar(i)) {
+          console.log( i + ' => ' + data[i])
+        } else if (typeof i === 'object') {
+          console.log( i + ' => [ ')
+          this.dumpData(data[i])
+          console.log(']')
+        }
       }
     }
-  }
+  },
+  getPagingFrom: (data = null) => {
+    return typeof data.pagination === 'object' ? data.pagination : {}
+  },
+  getItemsFrom: (data = null) => {
+    return typeof data.items === 'object' ? data.items : {}
+  },
 }

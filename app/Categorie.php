@@ -198,7 +198,8 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
             $useTitle ? $this->title : $this->image->alt,
             $this->image, $this->article, $this->description,
             $this->getProducts(
-                true, $withTrashed, 'asc', $baseUrl, $useTitle,
+                Product::TO_URL_LIST_TRANSFORM, 
+                $withTrashed, 'asc', $baseUrl, $useTitle,
                 $fullUrl, $version, []
             ),
             Image::getArraysFor($this->otherImages),

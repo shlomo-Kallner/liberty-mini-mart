@@ -32,6 +32,7 @@
             $sectionEditUrl = 'admin/section/' . $section['url'] . '/edit';
             $sectionDeleteUrl = 'admin/section/' . $section['url'];
             $newCategoryCreateUrl = 'admin/section/' . $section['url'] . '/category/create';
+            $img = $section['img'];
         
             //$sectionPanelID = '';
         @endphp
@@ -49,7 +50,7 @@
                     <div class="row">
                         
                         <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 thumbnail">
-                            <img src="{{ asset($section['img']) }}" class="img-responsive" alt="{{$section['imgAlt']}}">
+                            <img src="{{ asset($img['img']) }}" class="img-responsive" alt="{{$img['alt']}}">
                         </div>
                                 
                         <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
@@ -72,7 +73,9 @@
                                     </div>
                                     
                                     <div class="btn-group pull-right">
-                                        <button type="button" class="btn btn-default">{{ !$section['visible'] ? 'Show' : 'Hide' }}</button>
+                                        @if (Functions::testVar($section['visible']??null))
+                                            <button type="button" class="btn btn-default">{{ !$section['visible'] ? 'Show' : 'Hide' }}</button>
+                                        @endif
                                         <button type="button" class="btn btn-default">Move Up</button>
                                         <button type="button" class="btn btn-default">Move Down</button>
                                     </div>

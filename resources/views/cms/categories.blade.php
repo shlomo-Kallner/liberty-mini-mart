@@ -32,6 +32,7 @@
                 'create' => 'admin/section/' . $section_url2 . '/category/' . $category['url'] . '/product/create',
                 //'show' => 'store/section/' . $section_url2 . '/category/' . $category['url'] ,
             ];
+            $img = $category['img'];
         @endphp
 
         <div class="panel panel-default">
@@ -49,7 +50,7 @@
                     <div class="row">
 
                         <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 thumbnail">
-                            <img src="{{ asset($category['img']) }}" class="img-responsive" alt="{{$category['imgAlt']}}">
+                            <img src="{{ asset($img['img']) }}" class="img-responsive" alt="{{$img['alt']}}">
                         </div>
                         
                         <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">

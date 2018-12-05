@@ -1,5 +1,6 @@
 
 import Vuex from 'vuex'
+// import {Route} from 'vue-router'
 import { Stack } from './lib/LibertyStack.js'
 import { ComponentTree } from './lib/LaravelComponentTree.js'
 
@@ -18,6 +19,18 @@ export default new Vuex.Store({
     popCrumb: function (state, crumb) {
       if (state.breadcrumbs.top() === crumb) {
         state.breadcrumbs.pop()
+      }
+    },
+    setCrumbs: function (state, payload) {
+      var r = payload.route
+      var c = state.getters.findComponent(r.path, (cv, p) => cv.value().path === p)
+      var arr = []
+      while (c !== undefined && c !== null && c.parent() !== null) {
+        arr.push(c.value())
+        c = c.parent()
+      }
+      for (var i in arr) {
+        state.breadcrumbs.push(i)
       }
     },
     setComponents: function (state, payload) {
@@ -58,6 +71,7 @@ export default new Vuex.Store({
       }
       return res
     },
+    getBreadcrumbs: (state) => state.breadcrumbs.data(),
     getComponentChildrenValues: (state, getters) => (value, comp = null) => {
       var t = getters.findComponent(value, comp)
       var res = []
