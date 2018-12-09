@@ -65,14 +65,10 @@ class User extends Model implements ContainerAPI
         }
     }
 
-    public function getRolesArray(Basic $permit = null, bool $p = false)
+    public function getRolesArray(bool $p = false)
     {
         $res = [];
-        if (Functions::testVar($permit)) {
-            $perm = $permit;
-        } else {
-            $perm = new Basic($this->id, $p);
-        }
+        $perm = new Basic($this->id, $p, 2);
         if ($perm->isAdmin()) {
             $res[] = 'admin';
         }
@@ -218,25 +214,43 @@ class User extends Model implements ContainerAPI
         return 50;
     }
 
-    static public function getAllFromUUID (string $uuid, bool $withTrashed = false)
+    static public function getAllFromUUID(string $uuid, bool $withTrashed = false)
     {
         return $withTrashed 
             ? self::withTrashed()->where('uuid', $uuid)->get()
             : self::where('uuid', $uuid)->get();
     }
 
-    static public function getFromUUID (string $uuid, bool $withTrashed = false)
+    static public function getFromUUID(string $uuid, bool $withTrashed = false)
     {
         return $withTrashed 
             ? self::withTrashed()->where('uuid', $uuid)->first()
             : self::where('uuid', $uuid)->first();
     }
 
-    public function toContentArray () 
+    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
+        $url = $baseUrl . '/user/';
+        return $fullUrl ? url($url) : $url;
+    }
+
+    public function getFullUrl(string $baseUrl, bool $fullUrl = false)
+    {
+        $surl = $this->getUrlFragment($baseUrl, false);
+        $url = $surl . $this->uuid;
+        return $fullUrl ? url($url) : $url;
+    }
+
+    public function toContentArray(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
+    ) {
         return [
-            //'id' => $this->id,
-            'uuid' => $this->uuid,
+            // 'id' => $this->id,
+            // 'uuid' => $this->uuid,
+            'id' => $this->uuid,
+            'url' => $this->getFullUrl($baseUrl, $fullUrl),
             'name' => $this->name,
             'email' => $this->email,
             'img' => $this->image->toImageArray(),
@@ -279,10 +293,13 @@ class User extends Model implements ContainerAPI
     static public function getUsers(
         int $pageNumber = 1, bool $toArray = true, 
         bool $forA = false, int $paginatorViewNum = 0,
-        string $paginatorBaseUrl = ''
+        string $paginatorBaseUrl = '', string $baseUrl = 'store',
+        bool $withTrashed = true, bool $fullUrl = false
     ) {
         $numPerPage = 3; //5;
-        $tmp = self::where('id', '>', self::getNumForVer())->get();
+        $tmp = $withTrashed 
+            ? self::withTrashed()->where('id', '>', self::getNumForVer())->get()
+            : self::where('id', '>', self::getNumForVer())->get();
         //dd($tmp);
         $res = [];
         if (Functions::testVar($tmp) && count($tmp) > 0) {
@@ -291,15 +308,14 @@ class User extends Model implements ContainerAPI
             $pn = $pageNumber > 0 && $pageNumber <= $numPages ? $pageNumber : 1;
             $tu = $tmp->forPage($pn, $numPerPage);
             foreach ($tu as $user) {
-                $p = false ? true : false;
-                //$perm = new Basic($user->id, $p);
-                //dd($perm);
-                // $perm->isAdmin() || $perm->isContentCreator() || $perm->isAuthUser() 
                 if (Functions::testVar($ur = $user->getRolesArray())
                     && count($ur) > 0
                 ) {
                     if ($toArray) {
-                        $tu = $user->toContentArray();
+                        $tu = $user->toContentArray(
+                            $baseUrl, 1, false, $withTrashed,
+                            $fullUrl
+                        );
                         if ($forA) {
                             $tu['roles'] = $ur;
                         }

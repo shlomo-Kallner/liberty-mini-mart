@@ -27,9 +27,9 @@ class Validator
 
     public static function instance(string $lang = 'en')
     {
-        if ( ! static::$factory) {
+        if (! static::$factory) {
             $loader = new FileLoader(
-                new Filesystem(),'/Translations'
+                new Filesystem(), '/Translations'
             );
 
             $translator = new Translator($loader, $lang);

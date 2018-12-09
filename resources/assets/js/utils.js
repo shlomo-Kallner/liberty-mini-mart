@@ -175,7 +175,8 @@ export default {
       typeof data === 'number' ||
       typeof data === 'string' ||
       typeof data === 'undefined' ||
-      typeof data === 'symbol'
+      typeof data === 'symbol' ||
+      data === null
     ) {
       return true
     } else if (typeof data === 'object' ||
@@ -185,6 +186,33 @@ export default {
       return false
     } else {
       return false
+    }
+  },
+  genIndent: function (indent = 2, indChar = ' ') {
+    var res = ''
+    for (var i = 0; i < indent; i++) {
+      res = res + indChar
+    }
+    return res
+  },
+  dataToString: function (data = null, indent = 2, indChar = ' ') {
+    if (this.isScalar(data)) {
+      return String(data) + '\n'
+    } else {
+      var res = '{\n'
+      for (var i in data) {
+        if (this.isScalar(data[i])) {
+          res = res + i + ' => ' + String(data[i]) + '\n'
+        } else if (typeof data[i] === 'object') {
+          // res = res + 
+          res = res + this.genIndent(indent, indChar) +
+          i + ' => [ ' + '\n' +
+          this.dataToString(data[i], indent + indent, indChar) + '\n'
+          res = res + ']\n'
+        }
+      }
+      res = res + '\n}'
+      return res
     }
   },
   dumpData: function (data = null) {

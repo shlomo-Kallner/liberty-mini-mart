@@ -2,18 +2,21 @@
 
 namespace App\Utilities\Permits;
 
-use App\Utilities\Functions\Functions;
+use App\Utilities\Functions\Functions,
+    Illuminate\Support\Collection;
+use PHPUnit\Framework\Constraint\IsTrue;
 
 class Basic extends Permits
 {
-    protected  $basics;
+    protected  $basics, $version;
     
     const BASIC_TYPE = ['_internal_:type' => 'BASIC'];
 
-    public function __construct(int $user_id = -1, bool $p = false)
+    public function __construct(int $user_id = -1, bool $p = false, int $version = 2)
     {
         parent::__construct($user_id, $p);
-        $this->basics = $this->getBasics();
+        $this->version = $version;
+        $this->basics = $this->getBasics($version);
     }
 
 
@@ -149,28 +152,68 @@ class Basic extends Permits
 
     // BASIC Private/Protected Testing method
 
-    private function getBasics()
+    private function getBasics(int $version)
     {
         $res = [];
-        if ($this->testIfInPerms(parent::ADMIN_ROLE, 1, self::BASIC_TYPE) 
-            || $this->testIfInPerms(parent::ADMIN_ROLE, 2, self::BASIC_TYPE) 
-            || $this->testIfInPerms(parent::ADMIN_ROLE, 3, self::BASIC_TYPE)
-        ) {
-            $res[] = parent::ADMIN_ROLE;
+        $p = [
+            parent::makeRLpair(parent::ADMIN_ROLE, parent::READ_LEVEL, self::BASIC_TYPE),
+            parent::makeRLpair(parent::ADMIN_ROLE, parent::WRITE_LEVEL, self::BASIC_TYPE),
+            parent::makeRLpair(parent::ADMIN_ROLE, parent::DELETE_LEVEL, self::BASIC_TYPE),
+
+            parent::makeRLpair(parent::CONTENT_ROLE, parent::READ_LEVEL, self::BASIC_TYPE),
+            parent::makeRLpair(parent::CONTENT_ROLE, parent::WRITE_LEVEL, self::BASIC_TYPE),
+            parent::makeRLpair(parent::CONTENT_ROLE, parent::DELETE_LEVEL, self::BASIC_TYPE),
+            
+            parent::makeRLpair(parent::AUTH_USER_ROLE, parent::READ_LEVEL, self::BASIC_TYPE),
+            
+            parent::makeRLpair(parent::GUEST_USER_ROLE, parent::READ_LEVEL, self::BASIC_TYPE),
+        ];
+        $t = $this->testIfInPerms($p, 1, null, 2);
+        $h_a = false;
+        $h_c = false;
+        $h_au = false;
+        $h_gu = false;
+        if ($t !== false && count($t) > 0) {
+            foreach ($t as $r) {
+                if ($r['role'] === parent::ADMIN_ROLE 
+                    && !$h_a
+                ) {
+                    $res[] = parent::ADMIN_ROLE;
+                    $h_a = true;
+                }
+                if ($r['role'] === parent::CONTENT_ROLE 
+                    && !$h_c
+                ) {
+                    $res[] = parent::CONTENT_ROLE;
+                    $h_c = true;
+                }
+                if ($r['role'] === parent::AUTH_USER_ROLE 
+                    && !$h_au
+                ) {
+                    $res[] = parent::AUTH_USER_ROLE;
+                    $h_au = true;
+                }
+                if ($r['role'] === parent::GUEST_USER_ROLE 
+                    && !$h_gu
+                ) {
+                    $res[] = parent::GUEST_USER_ROLE;
+                    $h_gu = true;
+                }
+                
+            }
         }
-        if ($this->testIfInPerms(parent::CONTENT_ROLE, 1, self::BASIC_TYPE) 
-            || $this->testIfInPerms(parent::CONTENT_ROLE, 2, self::BASIC_TYPE) 
-            || $this->testIfInPerms(parent::CONTENT_ROLE, 3, self::BASIC_TYPE)
-        ) {
-            $res[] = parent::CONTENT_ROLE;
+        if ($version === 1) {
+            return $res;
+        } elseif ($version === 2) {
+            return [
+                parent::ADMIN_ROLE => $h_a,
+                parent::CONTENT_ROLE => $h_c,
+                parent::AUTH_USER_ROLE => $h_au,
+                parent::GUEST_USER_ROLE => $h_gu,
+            ];
+        } else {
+            return [];
         }
-        if ($this->testIfInPerms(parent::AUTH_USER_ROLE, 1, self::BASIC_TYPE)) {
-            $res[] = parent::AUTH_USER_ROLE;
-        }
-        if ($this->testIfInPerms(parent::GUEST_USER_ROLE, 1, self::BASIC_TYPE)) {
-            $res[] = parent::GUEST_USER_ROLE;
-        }
-        return $res;
     }
 
 
@@ -178,28 +221,44 @@ class Basic extends Permits
 
     public function regen()
     {
-        $this->basics = $this->getBasics();
+        $this->basics = $this->getBasics($this->version);
     }
 
     public function isAdmin() 
     {
         //$user_id = self::getUserId($user);
-        return in_array(parent::ADMIN_ROLE, $this->basics, true);
+        if ($this->version === 1) {
+            return in_array(parent::ADMIN_ROLE, $this->basics, true);
+        } elseif ($this->version === 2) {
+            return $this->basics[parent::ADMIN_ROLE];
+        }
     }
 
     public function isContentCreator() 
     {
-        return in_array(parent::CONTENT_ROLE, $this->basics, true); 
+        if ($this->version === 1) {
+            return in_array(parent::CONTENT_ROLE, $this->basics, true); 
+        } elseif ($this->version === 2) {
+            return $this->basics[parent::CONTENT_ROLE];
+        }
     }
 
     public function isAuthUser()
     {
-        return in_array(parent::AUTH_USER_ROLE, $this->basics, true); 
+        if ($this->version === 1) {
+            return in_array(parent::AUTH_USER_ROLE, $this->basics, true); 
+        } elseif ($this->version === 2) {
+            return $this->basics[parent::AUTH_USER_ROLE];
+        }
     }
 
     public function isGuestUser()
     {
-        return in_array(parent::GUEST_USER_ROLE, $this->basics, true); 
+        if ($this->version === 1) {
+            return in_array(parent::GUEST_USER_ROLE, $this->basics, true); 
+        } elseif ($this->version === 2) {
+            return $this->basics[parent::GUEST_USER_ROLE];
+        }
     }
 
     public function makeFakes(int $num = 1, bool $regen = true, int $t = 0)

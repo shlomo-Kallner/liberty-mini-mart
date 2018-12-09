@@ -27,7 +27,7 @@
         //dd($page);
         //dd($page['sections']);
         // dd($sections2, $sections_paginator2);
-        //dd($users2, $users_paginator2);
+        dd($users2, $users_paginator2);
         //dd($pages2, $pages_paginator2);
         //dd($plans2, $plans_paginator2);
           

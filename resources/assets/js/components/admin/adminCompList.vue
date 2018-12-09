@@ -2,7 +2,7 @@
     <div>
         <router-view></router-view>
         <div class="list-group" v-if="hasItems">
-            <router-link v-for="(item, index) in itemsArray" :key="index"
+            <router-link v-for="(item, index) in getItems" :key="index"
             :class="['list-group-item', {active: currentPath === item.path}]" 
             :to="item.path"
             >
@@ -15,12 +15,14 @@
 <script>
     import Vue from 'vue'
     import Vuex from 'vuex'
+    import { mapGetters } from 'vuex';
     import VueRouter from 'vue-router'
+    import _ from 'lodash'
+    import myUtils from '../../utils.js'
 
     Vue.use(VueRouter)
     Vue.use(Vuex)
 
-    import { mapGetters } from 'vuex';
     export default {
         name: 'admin-comp-list-component',
         props: {
@@ -62,10 +64,10 @@
             getPostText: function () {
                 return this.getText(this.postText)
             },
-            hasItems: function () {return this.itemsArray.length > 0},
+            hasItems: function () {return this.getItems.length > 0},
             currentPath: function () {return this.$route.path},
-            getValues: function (value, comp = null) { 
-                return this.$store.getters.getComponentChildrenValues(value, comp)
+            getItems: function () {
+                return this.loadItems()
             }
         },
         methods: {
@@ -86,15 +88,35 @@
                     }
                 }
             },
+            getValues: function (value, comp = null) { 
+                return this.$store.getters.getComponentChildrenValues(value, comp)
+            },
             loadItems: function () {
                 var i = this.getValues(
                     typeof this.path === 'string' ? this.path : this.path.path, 
-                    (tv, path) => { return typeof tv === 'object' && tv.path === path }
+                    (tv, path) => { 
+                        // myUtils.dumpData(tv)
+                        // myUtils.dumpData(path)
+                        if(myUtils.testData(tv) && myUtils.testData(path)) {
+                            if (typeof tv === 'object') {
+                                return tv.path === path 
+                            } else if (typeof tv === 'string') {
+                                return tv === path
+                            } else {
+                                return false
+                            }
+                        } else {
+                            return false
+                        }
+                    }
                 )
-                if (i.length > 0) {
+                // myUtils.dumpData(i)
+                if (Array.isArray(i) && i.length > 0) {
                     return i
-                } else {
+                } else if (this.items.length > 0) {
                     return this.items
+                } else { 
+                    return []
                 }
             }
         }

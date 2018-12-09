@@ -57,7 +57,12 @@ class CmsController extends MainController
             $userPn = 0;
             $userVn = 0;
         }
-        $users = User::getUsers($userPn, true, true, $userVn, $request->path());
+        $userBaseUrl = '';
+
+        $users = User::getUsers(
+            $userPn, true, true, $userVn, $request->path(),
+            $userBaseUrl, true, false
+        );
         //dd($users); 
 
         $pagesDir = 'asc';

@@ -23,7 +23,8 @@ mix.js([
         'resources/assets/js/utils.js',
         'resources/assets/js/bootstrap.js'
     ], 'public/js/admin.js')
-   .sass('resources/assets/sass/app.scss', 'public/css');
+    .sourceMaps()
+    .sass('resources/assets/sass/app.scss', 'public/css');
 
 //mix.styles([],'public/css/.css');
 //mix.styles([],'public/css/support.css');

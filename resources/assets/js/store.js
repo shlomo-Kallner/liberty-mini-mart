@@ -6,6 +6,7 @@ import VueRouter from 'vue-router'
 import { Stack } from './lib/LibertyStack.js'
 import { ComponentTree } from './lib/LaravelComponentTree.js'
 import _ from 'lodash'
+import myUtils from './utils'
 
 Vue.use(VueRouter)
 Vue.use(Vuex)
@@ -34,8 +35,10 @@ export function valToComponent (data = null, defPath = '', defComp = Foo, defPag
     }
   }
 }
+
 export function valToComponentArray (data) {
-  if (Array.isArray(data)) {
+  // myUtils.dumpData(data)
+  if (data !== null && data !== undefined && Array.isArray(data)) {
     var res = []
     for (var i in data) {
       if (i instanceof ComponentTree) {
@@ -44,6 +47,7 @@ export function valToComponentArray (data) {
         res.push(new ComponentTree(valToComponent(data[i])))
       }
     }
+    // myUtils.dumpData(res)
     return res
   } else {
     return []
@@ -51,17 +55,18 @@ export function valToComponentArray (data) {
 }
 
 export function makeStore (data) {
+  var compInitVal = new ComponentTree(
+    {
+      name: 'root',
+      path: '/'
+    },
+    valToComponentArray(data),
+    null
+  )
   return new Vuex.Store({
     state: {
       breadcrumbs: new Stack([]),
-      components: new ComponentTree(
-        {
-          name: 'root',
-          path: '/'
-        },
-        valToComponentArray(data), 
-        null
-      )
+      components: compInitVal
     },
     mutations: {
       pushCrumb: function (state, crumb) {
@@ -85,7 +90,7 @@ export function makeStore (data) {
         }
       },
       setComponents: function (state, payload) {
-        if (Array.isArray(payload)) {
+        if (Array.isArray(payload) || typeof payload === 'object') {
           for (var i in payload) {
             state.components.push(payload[i])
           }
@@ -127,8 +132,10 @@ export function makeStore (data) {
       getComponentChildrenValues: (state, getters) => (value, comp = null) => {
         var t = getters.findComponent(value, comp)
         var res = []
-        for (var i in t) {
-          res.push(t[i].value())
+        if (t !== null & t !== undefined) {
+          for (var i of t.getChildren()) {
+            res.push(i.value())
+          }
         }
         return res
       }

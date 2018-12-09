@@ -29,7 +29,7 @@ class TestController extends MainController
              */
             return view('welcome');
         } else {
-            switch ($variable) {
+            switch ($method) {
             case 'url':
                 return $this->doUrl($request);
                 break;

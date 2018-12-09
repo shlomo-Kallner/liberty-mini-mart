@@ -3,6 +3,7 @@ import 'es6-promise/auto'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import AdminPanel from './components/admin/adminPanel.vue'
+import { sync } from 'vuex-router-sync'
 
 require('./bootstrap')
 
@@ -12,9 +13,9 @@ window.Vue.use(Vuex)
 
 require('./bootVueComponents')
 
-const router = require('./routes.js').default
+let router = require('./routes.js').default
 
-const Store = require('./store.js')
+let Store = require('./store.js')
 
 window.Vue.component('admin-panel-component', AdminPanel)
 
@@ -54,10 +55,12 @@ function genComponentData (data = null) {
 }
 
 function genStoreData (data = null) {
+  // console.log(window.myUtils.dataToString(data))
   if (data !== null || data !== undefined) {
-    if (Array.isArray(data)) {
+    if (typeof data === 'object' || Array.isArray(data)) {
       var res = []
       for (var i in data) {
+        console.log(window.myUtils.dataToString(i))
         res.push(
           {
             value: {
@@ -70,6 +73,8 @@ function genStoreData (data = null) {
           }
         )
       }
+      console.log(window.myUtils.dataToString(res))
+      return res
     }
   } else {
     return []
@@ -77,8 +82,11 @@ function genStoreData (data = null) {
 }
 
 const initData = genComponentData(window.Laravel.admin)
+// window.myUtils.dumpData(window.Laravel.admin)
+// window.myUtils.dumpData(window._.omit(initData, ['article', 'header']))
+let myStore = Store.makeStore(genStoreData(window._.omit(initData, ['article', 'header'])))
 
-const myStore = Store.makeStore(genStoreData(window._.omit(initData, ['article', 'header'])))
+const unsynch = sync(myStore, router)
 
 window.Laravel.page.admin.app = new window.Vue(
   {
@@ -90,7 +98,8 @@ window.Laravel.page.admin.app = new window.Vue(
     },
     computed: {
       componentData: () => {
-        return genComponentData(this.initData)
+        // return genComponentData(this.initData)
+        return this.initData
       }
     },
     methods: {}

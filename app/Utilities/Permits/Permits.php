@@ -9,6 +9,11 @@ use Illuminate\Support\Collection,
     // HTMLPurifier, DB,
     // Composer\Semver\Comparator,
     App\Utilities\Functions\Functions,
+    App\Utilities\Validator,
+    App\Rules\ScalarTypeRule,
+    App\Rules\NonEmptyRule,
+    App\Rules\RequiredTypeRule,
+    App\Rules\OptionalRule,
     App\UserRole;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,6 +26,8 @@ class Permits
 
     protected $user_id, $perms;
 
+    protected static $validate = null;
+
     const ADMIN_ROLE = 'admin';
     const CONTENT_ROLE = 'creator';
     const AUTH_USER_ROLE = 'user';
@@ -28,7 +35,7 @@ class Permits
 
     const READ_LEVEL = 1;
     const WRITE_LEVEL = 2; // also OVERWRITE, so ...
-    const UPDATE_LEVEL = 2;
+    const UPDATE_LEVEL = 2; // .. this is just an alias.
     const DELETE_LEVEL = 3;
 
     // permit retrieval zone..
@@ -40,17 +47,21 @@ class Permits
         if ($user_id > 0) {
             $tmp = UserRole::getForUser($user_id);
             if ($p) {
-                $this->perms = collect($this->p($tmp));
+                $this->perms = $this->p($tmp);
             } else {
                 $this->perms = $tmp;
             }
         } else {
-            $this->perms = collect([]);
+            $this->perms = [];
         }
-        
+        if (is_null(static::$validate)) {
+            static::$validate = [
+                'role' => [new RequiredTypeRule('role', 'string')],
+                'level' => [new RequiredTypeRule('level', 'int')],
+                'extra' => [new OptionalRule('extra', 'array')]
+            ];
+        }
     }
-
-    
 
     // permit Creation zone..
 
@@ -160,36 +171,6 @@ class Permits
         return [($tmp * 10) + $ran, $ran];
     }
 
-    private function p($arr) 
-    {
-        $res = [];
-        foreach ($arr as $t) {
-            // IMPLEMENT!!!
-            $pa = [
-                [self::ADMIN_ROLE, self::READ_LEVEL],
-                [self::ADMIN_ROLE, self::WRITE_LEVEL],
-                [self::ADMIN_ROLE, self::UPDATE_LEVEL],
-                [self::ADMIN_ROLE, self::DELETE_LEVEL],
-
-                [self::CONTENT_ROLE, self::READ_LEVEL],
-                [self::CONTENT_ROLE, self::WRITE_LEVEL],
-                [self::CONTENT_ROLE, self::UPDATE_LEVEL],
-                [self::CONTENT_ROLE, self::DELETE_LEVEL],
-
-                [self::AUTH_USER_ROLE, self::READ_LEVEL],
-
-                [self::GUEST_USER_ROLE, self::READ_LEVEL]
-            ];
-            foreach ($pa as $ps) {
-                if ($this->testPermHash($t, $ps[0], $ps[1])) {
-                    $res[] = $t;
-                    break;
-                }
-            }
-        }
-        return $res;
-    }
-
     // Special Getters..
 
     static protected function getExtras($permit)
@@ -224,7 +205,79 @@ class Permits
         }
     }
 
+    protected function _getAllRoles()
+    {
+        return [
+            self::ADMIN_ROLE, self::CONTENT_ROLE, 
+            self::AUTH_USER_ROLE, self::GUEST_USER_ROLE
+        ];
+    }
+
+    protected function _getAllLevels()
+    {
+        return [
+            self::READ_LEVEL, self::WRITE_LEVEL,
+            self::UPDATE_LEVEL, self::DELETE_LEVEL
+        ];
+    }
+
+    protected function _getAllRLPairs()
+    {
+        return [
+            ['role' => self::ADMIN_ROLE, 'level' => self::READ_LEVEL],
+            ['role' => self::ADMIN_ROLE, 'level' => self::WRITE_LEVEL],
+            ['role' => self::ADMIN_ROLE, 'level' => self::UPDATE_LEVEL],
+            ['role' => self::ADMIN_ROLE, 'level' => self::DELETE_LEVEL],
+
+            ['role' => self::CONTENT_ROLE, 'level' => self::READ_LEVEL],
+            ['role' => self::CONTENT_ROLE, 'level' => self::WRITE_LEVEL],
+            ['role' => self::CONTENT_ROLE, 'level' => self::UPDATE_LEVEL],
+            ['role' => self::CONTENT_ROLE, 'level' => self::DELETE_LEVEL],
+
+            ['role' => self::AUTH_USER_ROLE, 'level' => self::READ_LEVEL],
+
+            ['role' => self::GUEST_USER_ROLE, 'level' => self::READ_LEVEL]
+        ];
+    }
+
+    protected function makeRLpair(string $role, int $level, $extra = null)
+    {
+        return [
+            'role' => $role,
+            'level' => $level,
+            'extra' => $extra
+        ];
+    }
+
     // permission Testing methods..
+
+    protected function validate(array $role) 
+    {
+        $bol = true;
+        foreach (static::$validate as $key => $rule) {
+            foreach ($rule as $val) {
+                if (!$val->passes($key, Functions::getPropKey($role, $key))) {
+                    $bol = false;
+                }
+            }
+        }
+        return $bol;
+    }
+    
+    protected function p($permits)
+    {
+        $res = [];
+        if (is_array($permits) || $permits instanceof Collection) {
+            $ra = $this->_getAllRLPairs();
+            foreach ($permits as $permit) {
+                $t = $this->testPerms($permit, $ra);
+                if ($t !== false && is_array($t) && count($t) > 0) {
+                    $res[] = $permit;
+                }
+            }
+        }
+        return $res;
+    }
 
     protected function testPermHash(
         $permit, string $role, int $level = 1
@@ -237,6 +290,41 @@ class Permits
             $perm = self::translate2perm($role, $level, $prev);
             $plain = self::genPermStr($this->user_id, $perm[0]);
             return Hash::check($plain, $roleStr);
+        } else {
+            return false;
+        }
+    }
+
+    protected function testPerms($permit, array $roles) 
+    {
+        $extraStr = self::getExtras($permit);
+        $roleStr = self::getRole($permit);
+        if ($extraStr !== false && $roleStr !== false) {
+            $tmp = $extraStr[$roleStr] ?? -1;
+            $prev = is_string($tmp) ? strlen($tmp) : -1;
+            $res = [];
+            foreach ($roles as $role) {
+                if ($this->validate($role)) {
+                    $perm = self::translate2perm($role['role'], $role['level'], $prev);
+                    $plain = self::genPermStr($this->user_id, $perm[0]);
+                    if (Hash::check($plain, $roleStr)) {
+                        if (Functions::hasPropKeyIn($role, 'extra')) {
+                            $bol = true;
+                            foreach ($role['extra'] as $key => $val) {
+                                if (!self::testPermExtraHelper($extraStr, $key, $val)) {
+                                    $bol = false;
+                                }
+                            }
+                            if ($bol) {
+                                $res[] = $role;    
+                            }
+                        } else {
+                            $res[] = $role;
+                        }
+                    }
+                }
+            }
+            return $res;
         } else {
             return false;
         }
@@ -276,59 +364,74 @@ class Permits
     }
 
     protected function testIfInPerms(
-        $role, int $level = 1, array $extra = null
+        $role, int $level = 1, array $extra = null,
+        int $version = 1
     ) {
         $bol = [];
         $tmp = [];
         if (is_string($role) && $role !== '') {
             $t = [];
-            $t[] = $role;
+            $t['role'] = $role;
             if (!empty($level)) {
-                $t[] = $level;
+                $t['level'] = $level;
                 if (!empty($extra)) {
-                    $t[] = $extra;
+                    $t['extra'] = $extra;
                 }
                 $tmp[] = $t;
             } 
         } elseif (is_array($role) && !empty($role)) {
             foreach ($role as $arr) {
-                if ((count($arr) < 4 && count($arr) > 1) 
+                if ($this->validate($arr)) {
+                    $tmp[] = $arr;
+                } elseif ((count($arr) < 4 && count($arr) > 1) 
                     && (!empty($arr[0]) && is_string($arr[0]))
                     && (!empty($arr[1]) && is_int($arr[1]))
                 ) {
+                    $t = [
+                        'role' => $arr[0],
+                        'level' => $arr[1]
+                    ];
                     if (count($arr) == 3 
                         && (!empty($arr[2]) && is_array($arr[2]))
                     ) {
-                        $tmp[] = $arr;
-                    } elseif (count($arr) == 2) {
-                        $tmp[] = $arr;
-                    }
+                        $t['extra'] = $arr[2];
+                    } 
+                    $tmp[] = $t;
                 }
             }
         } 
         if (count($tmp) > 0 && count($this->perms) > 0) {
-            foreach ($tmp as $ro) {
-                $tBol = false;
-                foreach ($this->perms as $perm) {
-                    if ($this->testPermHash($perm, $ro[0], $ro[1])) {
-                        if (!empty($ro[2])) {
-                            if ($this->testPermExtra($perm, $ro[2])) {
+            if ($version === 1) {
+                foreach ($tmp as $ro) {
+                    $tBol = false;
+                    foreach ($this->perms as $perm) {
+                        if ($this->testPermHash($perm, $ro['role'], $ro['level'])) {
+                            if (Functions::hasPropKeyIn($ro, 'extra')) {
+                                if ($this->testPermExtra($perm, $ro['extra'])) {
+                                    $tBol = true;
+                                    break;
+                                }
+                            } else {
                                 $tBol = true;
                                 break;
                             }
-                        } else {
-                            $tBol = true;
-                            break;
-                        }
+                        } 
+                    }
+                    $bol[] = [$ro, $tBol];
+                }
+            } elseif ($version === 2) {
+                foreach ($this->perms as $perm) {
+                    $tr = $this->testPerms($perm, $tmp);
+                    if ($tr !== false && count($tr) > 0) {
+                        $bol = array_merge($bol, $tr);
                     } 
                 }
-                $bol[] = $tBol;
             }
         }
         if (count($bol) === 0) {
             return false;
         } elseif (count($bol) === 1) {
-            return $bol[0];
+            return $version === 1 ? $bol[0][1] : $bol;
         } else {
             return $bol;
         }
@@ -375,7 +478,4 @@ class Permits
             }
         }
     }
-
-    
-    
 }

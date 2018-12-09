@@ -34,11 +34,11 @@ export class TreeWalkIterator {
 
 export class ComponentTree {
   constructor (value, children = [], parent = null) {
-    this.value = value
-    this.parent = parent instanceof ComponentTree ? parent : null
-    this.children = ComponentTree.checkChildrenArray(children)
+    this._value = value
+    this._parent = parent instanceof ComponentTree ? parent : null
+    this._children = ComponentTree.checkChildrenArray(children)
       ? children : []
-    this.children.forEach(value => value.setParent(this))
+    this._children.forEach(value => value.setParent(this))
   }
 
   static checkChildrenArray (children) {
@@ -56,33 +56,33 @@ export class ComponentTree {
   }
 
   parent () {
-    return this.parent
+    return this._parent
   }
 
   setParent (parent) {
     if (parent instanceof ComponentTree) {
-      this.parent = parent
+      this._parent = parent
     }
   }
 
   value (val = null) {
-    var res = this.value
+    var res = this._value
     if (val !== null || val !== undefined) {
-      this.value = val
+      this._value = val
     }
     return res
   }
 
   at (index) {
     if (typeof index === 'number' || typeof index === 'symbol') {
-      return this.children[index]
+      return this._children[index]
     } else {
       return undefined
     }
   }
 
   hasChildren () {
-    return this.children.length > 0
+    return this._children.length > 0
   }
 
   [Symbol.iterator] () {
@@ -90,20 +90,20 @@ export class ComponentTree {
   }
 
   getChildren () {
-    return this.children
+    return this._children
   }
 
   numChildren () {
-    return this.children.length
+    return this._children.length
   }
 
   push (tree) {
     if (tree instanceof ComponentTree) {
       tree.setParent(this)
-      this.children.push(tree)
+      this._children.push(tree)
     } else if (typeof tree === 'object') {
       var {value, children} = tree
-      this.children.push(new ComponentTree(value, children, this))
+      this._children.push(new ComponentTree(value, children, this))
     }
   }
 
@@ -111,7 +111,7 @@ export class ComponentTree {
     if (tree instanceof ComponentTree) {
       if (tree !== this) {
         var res = null
-        for (var i of this.children) {
+        for (var i of this._children) {
           var tmp = i.findSubTree(tree)
           if (tmp === tree) {
             res = tmp
@@ -130,11 +130,11 @@ export class ComponentTree {
   findSubTreeWithValue (value, comp = null) {
     if (value !== undefined && value !== null) {
       if (this.value() === value || (typeof comp === 'function' &&
-      comp(this.value, value))) {
+      comp(this.value(), value))) {
         return this
       } else {
         var res = null
-        for (var i of this.children) {
+        for (var i of this._children) {
           var tmp = i.findSubTreeWithValue(value, comp)
           if (tmp !== undefined && tmp !== null) {
             res = tmp
