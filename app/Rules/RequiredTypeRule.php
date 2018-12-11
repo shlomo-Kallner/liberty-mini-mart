@@ -8,16 +8,14 @@ use App\Rules\ScalarTypeRule;
 
 class RequiredTypeRule extends ScalarTypeRule
 {
-    protected $name;
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct(string $varname, string $typename = '')
+    public function __construct(string $typename = '')
     {
         parent::__construct($typename);
-        $this->name = $varname;
     }
 
     /**
@@ -29,9 +27,8 @@ class RequiredTypeRule extends ScalarTypeRule
      */
     public function passes($attribute, $value)
     {
-        return Functions::isPropKeyIn($value, $this->name) 
-            && !empty($value) 
-            && parent::passes($attribute, $value);
+        // dd($value);
+        return !empty($value) && parent::passes($attribute, $value);
     }
 
     /**

@@ -8,16 +8,14 @@ use App\Rules\ScalarTypeRule;
 
 class OptionalRule extends ScalarTypeRule
 {
-    protected $name;
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct(string $varname, string $typename = '')
+    public function __construct(string $typename = '')
     {
         parent::__construct($typename);
-        $this->name = $varname;
     }
 
     /**
@@ -29,7 +27,7 @@ class OptionalRule extends ScalarTypeRule
      */
     public function passes($attribute, $value)
     {
-        if (Functions::isPropKeyIn($value, $this->name)) {
+        if (Functions::testVar($value)) {
             return parent::passes($attribute, $value);
         }
         return true;

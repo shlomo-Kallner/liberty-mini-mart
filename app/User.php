@@ -302,24 +302,27 @@ class User extends Model implements ContainerAPI
             : self::where('id', '>', self::getNumForVer())->get();
         //dd($tmp);
         $res = [];
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
+        if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
             $users = [];
             $numPages = Functions::genRowsPerPage(count($tmp), $numPerPage);
             $pn = $pageNumber > 0 && $pageNumber <= $numPages ? $pageNumber : 1;
             $tu = $tmp->forPage($pn, $numPerPage);
+            //dd($tmp, $tu);
             foreach ($tu as $user) {
+                // dd($user);
                 if (Functions::testVar($ur = $user->getRolesArray())
                     && count($ur) > 0
                 ) {
                     if ($toArray) {
-                        $tu = $user->toContentArray(
+                        $ua = $user->toContentArray(
                             $baseUrl, 1, false, $withTrashed,
                             $fullUrl
                         );
                         if ($forA) {
-                            $tu['roles'] = $ur;
+                            $ua['roles'] = $ur;
                         }
-                        $users[] = $tu;
+                        $users[] = $ua;
+                        // dd($ua, $ur);
                     } else {
                         if ($forA) {
                             $user->roles = $ur;
@@ -327,8 +330,9 @@ class User extends Model implements ContainerAPI
                         $users[] = $user;
                     }
                 }
-                //dd($perm);
+                // dd($ur);
             }
+            // dd($users);
             $res['items'] = $users;
             $res['pagination'] = Page::genPagingFor(
                 $pn, count($tmp), $numPerPage,

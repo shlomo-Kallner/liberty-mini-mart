@@ -4,7 +4,7 @@ namespace App\Utilities\Functions;
 
 use Illuminate\Support\Collection,
     Illuminate\Support\HtmlString,
-    HTMLPurifier, DB;
+    HTMLPurifier, DB, \Countable;
 use Composer\Semver\Comparator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -353,6 +353,21 @@ class Functions
             }
         }
         return $res;
+    }
+
+    static public function is_countable($value)
+    {
+        if (is_array($value) || $value instanceof Collection
+            || is_subclass_of($value, '\Countable')
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    static public function countHas($value)
+    {
+        return self::is_countable($value) && count($value) > 0;
     }
 
     static public function isPropKeyIn($data, $name) 

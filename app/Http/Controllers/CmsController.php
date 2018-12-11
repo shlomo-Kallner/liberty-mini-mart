@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController,
     App\Categorie,
     App\Article,
     App\Product;
+use HRTime\StopWatch, HRTime\Unit;
 
 class CmsController extends MainController 
 {
@@ -23,18 +24,20 @@ class CmsController extends MainController
 
     public function index(Request $request)
     {
+        $sw = new StopWatch;
+        //$sw->start();
         //dd($request->session());
         //dd($request->session()->getId());
         //$sections = Section::getAllWithPagination();
         //dd(Page::get()->count());
-        $sectNumShown = 4;
+        $sectNumShown = 3;
         $sectPageNum = 0;
         $sectPagingFor = 'sectionPanel';
         $sectDir = 'asc';
         $sectBaseUrl = 'store';
         $sectViewNum = 0;
         $sectWithTrashed = true;
-        if (true) {
+        if (false) {
             $sections = Section::getAllWithPagination(
                 Section::TO_CONTENT_ARRAY_TRANSFORM, 
                 $sectPageNum, $sectNumShown, 
@@ -49,22 +52,26 @@ class CmsController extends MainController
                 'pagination' => [],
             ];
         }
-        //dd($sections);
+        //$sw->stop();
+        //dd($sections, $sw->getLastElapsedTime(Unit::SECOND));
+        $sw->start();
         if (Functions::testVar($pv = Page::getPagingVars($request, 'usersPanel'))) {
             $userPn = $pv['pageNum'];
             $userVn = $pv['viewNum'];
         } else {
-            $userPn = 0;
+            $userPn = 1;
             $userVn = 0;
         }
         $userBaseUrl = '';
 
         $users = User::getUsers(
-            $userPn, true, true, $userVn, $request->path(),
+            $userPn, true, true, $userVn, $request->path(), 
             $userBaseUrl, true, false
         );
-        //dd($users); 
+        $sw->stop();
+        dd($users, $sw->getLastElapsedTime(Unit::SECOND)); 
 
+        $sw->start();
         $pagesDir = 'asc';
         if (Functions::testVar($pv = Page::getPagingVars($request, 'pagesPanel'))) {
             $pagesPn = $pv['pageNum'];;
@@ -73,7 +80,7 @@ class CmsController extends MainController
             $pagesPn = 0;
             $pagesVn = 0;
         }
-        $pagesNumShown = 4;
+        $pagesNumShown = 3;
         $usePageGroupings = true;
         $pages = Page::getAllPages(
             true, $pagesDir, $usePageGroupings, $request->path(),
@@ -83,6 +90,15 @@ class CmsController extends MainController
         $articles = []; // Article::getAll();
         $sidebar = self::getAdminSidebar();
         //dd($sidebar);
+        $sw->stop();
+        if (true) {
+            $num = 0;
+            foreach ($sections['items'] as $value) {
+                $num += count($value['categories']);
+            }
+            $ticks = $sw->getLastElapsedTime(Unit::SECOND);
+            dd($ticks, count($sections['items']), $num, count($users['items']), count($pages['items']));
+        }
         return self::getView(
             $request, 'content.cms', 'Admin Dashboard', 
             [

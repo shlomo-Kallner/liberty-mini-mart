@@ -56,9 +56,9 @@ class Permits
         }
         if (is_null(static::$validate)) {
             static::$validate = [
-                'role' => [new RequiredTypeRule('role', 'string')],
-                'level' => [new RequiredTypeRule('level', 'int')],
-                'extra' => [new OptionalRule('extra', 'array')]
+                'role' => [new RequiredTypeRule('string')],
+                'level' => [new RequiredTypeRule('int')],
+                'extra' => [new OptionalRule('array')]
             ];
         }
     }
@@ -254,13 +254,20 @@ class Permits
     protected function validate(array $role) 
     {
         $bol = true;
+        //dd($role, static::$validate);
+        $deb = [];
+        $tb = true;
         foreach (static::$validate as $key => $rule) {
             foreach ($rule as $val) {
                 if (!$val->passes($key, Functions::getPropKey($role, $key))) {
                     $bol = false;
                 }
+                if ($tb) {
+                    $deb[] = [$key, $val, $bol, Functions::getPropKey($role, $key)];
+                }
             }
         }
+        // dd($role, static::$validate, $deb);
         return $bol;
     }
     
@@ -369,6 +376,7 @@ class Permits
     ) {
         $bol = [];
         $tmp = [];
+        // dd($role);
         if (is_string($role) && $role !== '') {
             $t = [];
             $t['role'] = $role;
@@ -400,6 +408,7 @@ class Permits
                 }
             }
         } 
+        //dd($tmp, __METHOD__);
         if (count($tmp) > 0 && count($this->perms) > 0) {
             if ($version === 1) {
                 foreach ($tmp as $ro) {

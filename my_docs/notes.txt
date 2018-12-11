@@ -18,12 +18,13 @@ Content Management System
     app/../CmsController.php [partial]
 ]
 
-todo rewrite 
+[V] todo rewrite 
 [
     Section.php
     Category.php
     Product.php
-    {etc..}
+    Page.php
+    {etc..?}
 ]
 to transform results of querying the DB 
 into View-Usable results!

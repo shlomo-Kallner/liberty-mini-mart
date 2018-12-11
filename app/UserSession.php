@@ -118,22 +118,31 @@ class UserSession extends Model
 
     public function tryLock()
     {
-        if (!$this->isLocked()) {
-            return $this->lock();
+        if (false) {
+            if (!$this->isLocked()) {
+                return $this->lock();
+            }
+            return false;
         }
-        return false;
+        return true;
     }
 
     public function lock()
     {
-        $this->last_activity = self::LOCKED_ACTIVITY;
-        return $this->save();
+        if (false) {
+            $this->last_activity = self::LOCKED_ACTIVITY;
+            return $this->save();
+        }
+        return true;
     }
 
     public function unlock()
     {
-        $this->last_activity = self::UPDATED_ACTIVITY;
-        return $this->save();
+        if (false) {
+            $this->last_activity = self::UPDATED_ACTIVITY;
+            return $this->save();
+        }
+        return true;
     }
 
     public function isLocked()

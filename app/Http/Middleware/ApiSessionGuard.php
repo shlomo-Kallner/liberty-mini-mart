@@ -107,7 +107,6 @@ class ApiSessionGuard extends StartSession
                         //$us->unlock(); // the save() also 'unlock()'s 
                         // via the updateSession() method ..
                         $session->save();
-                    
                     }
                     catch (\Exception $e) {
                         throw new JsonException($request, 'dumping $session 6a', $session, $response, $us->unlock(), $e);
@@ -120,12 +119,13 @@ class ApiSessionGuard extends StartSession
                         throw new JsonException($request, 'dumping $session 6b', $session, $response, $us->unlock());
                     } 
                     */
+                    //$us->unlock();
                     return $response;
                 } 
             }
             // dd($us, $request, $us->unlock(), 'after if statement');
             // we had an ERROR!
-            if (true) {
+            if (false) {
                 try {
                     $this->sessionHandled = true;
                     $session = $this->getSession($request);
@@ -157,17 +157,19 @@ class ApiSessionGuard extends StartSession
                     //throw new JsonException($request, 'dumping $session 6b', $session, $response, $us->unlock());
                 }
                 if (true) {
+                    $us->unlock();
                     return $response;
                 }
             } 
             // throw new JsonException($request, 'after if statement', $us, $us->unlock());
-            /* return Functions::jsonRetOrDump(
-                $request, [
+            return Functions::jsonRetOrDump(
+                $request, __METHOD__, [
                     'us' => $us,
-                    'us_is_unlocked' => $us->unlock()
+                    'us_is_unlocked' => $us->unlock(),
+                    'us_payload' => $us->getPayload(),
                 ], 'after if statement'
-            ); */
-            $us->unlock();
+            );
+            //$us->unlock();
         }
         throw new TokenMismatchException;
     }
