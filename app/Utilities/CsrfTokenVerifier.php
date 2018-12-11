@@ -98,6 +98,13 @@ class CsrfTokenVerifier extends VerifyCsrfToken
         return $token ?: $default;
     }
 
+    /**
+     * Function do_match() - Test a pair of strings for match.
+     *
+     * @param string $key
+     * @param string $token
+     * @return bool
+     */
     static public function do_match(string $key, string $token)
     {
         if (Functions::testVar($key) && Functions::testVar($token)) {
@@ -107,6 +114,13 @@ class CsrfTokenVerifier extends VerifyCsrfToken
         }
     }
 
+    /**
+     * Function match2() - Test the CSRF token from the Request for match.
+     *
+     * @param Request $request
+     * @param string $token
+     * @return bool
+     */
     static public function match2(Request $request, string $token)
     {
         $key = self::getToken($request);
@@ -121,9 +135,17 @@ class CsrfTokenVerifier extends VerifyCsrfToken
         return $bol;
     }
 
+    /**
+     * Function match3() - Test the $nut for match.
+     *
+     * @param Request $request
+     * @param string $nut
+     * @return bool
+     */
     static public function match3(Request $request, string $nut)
     {
         $key = Functions::getVar($request->input('nut'), '');
+        $key = $key ?: Functions::getVar($request->input('_nut'), '');
         // dd($key, $nut);
         $bol = self::do_match($key, $nut);
         $tmp = [
@@ -135,6 +157,14 @@ class CsrfTokenVerifier extends VerifyCsrfToken
         return $bol;
     }
 
+    /**
+     * Function match4() - Test the Session ID for match
+     *                   (uses the request_s cookies).
+     *
+     * @param Request $request
+     * @param UserSession $us
+     * @return bool
+     */
     static public function match4(Request $request, UserSession $us)
     {
         /*
@@ -161,6 +191,14 @@ class CsrfTokenVerifier extends VerifyCsrfToken
         return $bol;
     }
 
+    /**
+     * Function match5 - Test the Session ID for match
+     *                 without using the request_s cookies.
+     *
+     * @param Request $request
+     * @param UserSession $us
+     * @return void
+     */
     static public function match5(Request $request, UserSession $us)
     {
         if ($request->hasSession()) {

@@ -32,10 +32,11 @@
                             <i :class="'fa' + this.currency"></i>
                             {{ item.priceSum }}
                         </em>
-                        <a href="javascript:;" class="del-goods text-center delFromCart"
+                        <a href="javascript:;" class="del-goods text-center"
                             :data-cart-item-id="item.id"
                             :data-cart-item-quantity="item.quantity" 
-                            :data-cart-api-url="item.api + '/delfromcart'">
+                            :data-cart-api-url="item.api + '/delfromcart'"
+                            @click="delFromACart(item.id, item.api + '/delfromcart', item.quantity)">
                             <i class="fa fa-times-circle"></i>
                         </a>
                     </li>
@@ -96,6 +97,26 @@
                 return this.totalItems == 0 || this.totalItems > 1 
                     ? 'items'
                     : 'item';
+            }
+        },
+        methods: {
+            delFromACart: function (id, api, quantity) {
+                var info = {
+                    id: id,
+                    numProducts: quantity
+                }
+                var url = api
+                var data = window.Laravel.handleCart.makeData(
+                    info, url, window.Laravel.csrfToken,
+                    '', 'delFromCart', window.Laravel.nut
+                )
+                var callback = function (result) {
+                    window.Laravel.page.setCart(result)
+                }
+                //
+                window.Laravel.handleCart.doAjax(
+                    window.jQuery, data, 'POST', callback
+                )
             }
         }
 

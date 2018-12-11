@@ -17,9 +17,11 @@ class DatabaseSessionHandler implements SessionHandlerInterface
      * @param  \App\UserSession  $us
      * @return void
      */
-    public function __construct(UserSession $us)
+    public function __construct(UserSession $us = null)
     {
-        $this->userSession = Functions::getVar($us, null);
+        $this->userSession = Functions::testVar($us)
+            ? Functions::getVar($us, null)
+            : UserSession::getFromId(request());
     }
 
     public function hasUserSession()
@@ -33,6 +35,9 @@ class DatabaseSessionHandler implements SessionHandlerInterface
     public function read($sessionId)
     {
         // throw new JsonException(request(), __METHOD__, $this->userSession);
+        if (!$this->hasUserSession()) {
+            $this->userSession = UserSession::getFromId(request());
+        }
         return $this->hasUserSession()
             ? $this->userSession->getPayload(false)
             : '';
@@ -43,6 +48,9 @@ class DatabaseSessionHandler implements SessionHandlerInterface
      */
     public function write($sessionId, $data)
     {
+        if (!$this->hasUserSession()) {
+            $this->userSession = UserSession::getFromId(request());
+        }
         if ($this->hasUserSession()) {
             /* updateSession(
                     string $session_id, $user, string $ip, string $userAgent,

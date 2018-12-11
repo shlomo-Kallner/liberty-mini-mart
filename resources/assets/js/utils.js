@@ -70,7 +70,8 @@ export default {
       _token: token,
       redirect: redirect,
       action: action,
-      nut: nut
+      nut: nut,
+      _nut: nut
     }
   },
   makeDataWithLaravel: function (info, url, redirect, action) {

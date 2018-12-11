@@ -116,9 +116,9 @@ class UserSession extends Model
             : base64_decode($this->payload);
     }
 
-    public function tryLock()
+    public function tryLock(bool $mutex = false)
     {
-        if (false) {
+        if ($mutex) {
             if (!$this->isLocked()) {
                 return $this->lock();
             }
@@ -127,18 +127,18 @@ class UserSession extends Model
         return true;
     }
 
-    public function lock()
+    public function lock(bool $mutex = false)
     {
-        if (false) {
+        if ($mutex) {
             $this->last_activity = self::LOCKED_ACTIVITY;
             return $this->save();
         }
         return true;
     }
 
-    public function unlock()
+    public function unlock(bool $mutex = false)
     {
-        if (false) {
+        if ($mutex) {
             $this->last_activity = self::UPDATED_ACTIVITY;
             return $this->save();
         }

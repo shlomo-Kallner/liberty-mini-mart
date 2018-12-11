@@ -126,22 +126,23 @@ jQuery(function ($) {
         );
     },
     makeData: function (info, url, token, redirect, action, nut = '') {
-        return {
-            /* data: function (name) {
-                if (handleCart.testData(this[name])) {
-                    return this[name];
-                } else {
-                    return null;
-                }
-            }, */
-            info: info,
-            url: url,
-            token: token,
-            _token: token,
-            redirect: redirect,
-            action: action,
-            nut: nut
-        };
+      return {
+        /* data: function (name) {
+            if (handleCart.testData(this[name])) {
+                return this[name];
+            } else {
+                return null;
+            }
+        }, */
+        info: info,
+        url: url,
+        token: token,
+        _token: token,
+        redirect: redirect,
+        action: action,
+        nut: nut,
+        _nut: nut
+      }
     },
     testData: function (val) {
         if (val === null || val === undefined || !val) {
