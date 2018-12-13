@@ -4,7 +4,6 @@
             <router-link v-for="(item, index) in tabbuttons" 
                 v-bind:key="index"
                 :class="['btn btn-primary', { active: current === item.name }]" 
-                :type="button"
                 :to="item.path"
             >
                 {{this.getPreText}} {{item.name}} {{this.getPostText}}

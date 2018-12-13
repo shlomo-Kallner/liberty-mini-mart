@@ -3,7 +3,9 @@
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <ol class="breadcrumb pull-left">
                 <li :class="{active: breadcrumbs.length === 0}">
-                    <router-link to="/"></router-link>
+                    <router-link to="/">
+                        {{this.getPreText}} {{origin}} {{this.getPostText}}
+                    </router-link>
                 </li>
                 <li v-for="(item, index) in breadcrumbs" 
                     :key="index"
@@ -38,6 +40,10 @@
             postText: {
                 type: [String, Function],
                 default: ''
+            },
+            origin: {
+                type: [String],
+                default: 'Admin Panel'
             }
         },
         data: function () {

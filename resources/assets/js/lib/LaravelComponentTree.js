@@ -130,7 +130,7 @@ export class ComponentTree {
   findSubTreeWithValue (value, comp = null) {
     if (value !== undefined && value !== null) {
       if (this.value() === value || (typeof comp === 'function' &&
-      comp(this.value(), value))) {
+        comp(this.value(), value))) {
         return this
       } else {
         var res = null

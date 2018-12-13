@@ -25,13 +25,16 @@ class CmsController extends MainController
     public function index(Request $request)
     {
         $sw = new StopWatch;
-        //$sw->start();
+        $debug = [false, 1];
+        if ($debug[0] && $debug[1] === 0) {
+            $sw->start();
+        }
         //dd($request->session());
         //dd($request->session()->getId());
         //$sections = Section::getAllWithPagination();
         //dd(Page::get()->count());
         $sectNumShown = 3;
-        $sectPageNum = 0;
+        $sectPageNum = 1;
         $sectPagingFor = 'sectionPanel';
         $sectDir = 'asc';
         $sectBaseUrl = 'store';
@@ -52,9 +55,14 @@ class CmsController extends MainController
                 'pagination' => [],
             ];
         }
-        //$sw->stop();
-        //dd($sections, $sw->getLastElapsedTime(Unit::SECOND));
-        $sw->start();
+        if ($debug[0]) {
+            if ($debug[1] === 0) {
+                $sw->stop();
+                dd($sections, $sw->getLastElapsedTime(Unit::SECOND));
+            } elseif ($debug[1] === 1) {
+                $sw->start();
+            }
+        }
         if (Functions::testVar($pv = Page::getPagingVars($request, 'usersPanel'))) {
             $userPn = $pv['pageNum'];
             $userVn = $pv['viewNum'];
@@ -68,30 +76,37 @@ class CmsController extends MainController
             $userPn, true, true, $userVn, $request->path(), 
             $userBaseUrl, true, false
         );
-        $sw->stop();
-        dd($users, $sw->getLastElapsedTime(Unit::SECOND)); 
-
-        $sw->start();
+        if ($debug[0]) {
+            if ($debug[1] === 1) {
+                $sw->stop();
+                dd($users, $sw->getLastElapsedTime(Unit::SECOND)); 
+            } elseif ($debug[1] === 2) {
+                $sw->start();
+            }
+        }
         $pagesDir = 'asc';
-        if (Functions::testVar($pv = Page::getPagingVars($request, 'pagesPanel'))) {
-            $pagesPn = $pv['pageNum'];;
+        $pagesPaging = 'pagesPanel';
+        if (Functions::testVar($pv = Page::getPagingVars($request, $pagesPaging))) {
+            $pagesPn = $pv['pageNum'];
             $pagesVn = $pv['viewNum'];
         } else {
-            $pagesPn = 0;
+            $pagesPn = 1;
             $pagesVn = 0;
         }
         $pagesNumShown = 3;
         $usePageGroupings = true;
         $pages = Page::getAllPages(
             true, $pagesDir, $usePageGroupings, $request->path(),
-            'pagesPanel', $pagesVn, $pagesPn, $pagesNumShown
+            $pagesPaging, $pagesVn, $pagesPn, $pagesNumShown
         );
         //dd($pages);
         $articles = []; // Article::getAll();
         $sidebar = self::getAdminSidebar();
         //dd($sidebar);
-        $sw->stop();
-        if (true) {
+        if ($debug[0]) {
+            if ($debug[1] === 2) {
+                $sw->stop();
+            }
             $num = 0;
             foreach ($sections['items'] as $value) {
                 $num += count($value['categories']);

@@ -23,7 +23,29 @@ class PageController extends MainController
      */
     public function index(Request $request) 
     {
+        
         $pages = Page::getAllWithPagination();
+        if ($request->ajax()) {
+            
+            $pagesDir = 'asc';
+            $pagesPaging = 'pagesPanel';
+            if (Functions::testVar($pv = Page::getPagingVars($request, $pagesPaging))) {
+                $pagesPn = $pv['pageNum'];
+                $pagesVn = $pv['viewNum'];
+                if (Functions::hasPropKeyIn($pv, 'limit')) {
+                    $pagesNumShown = $pv['limit'];
+                }
+            } else {
+                $pagesPn = 1;
+                $pagesVn = 0;
+                $pagesNumShown = 3;
+            }
+            $usePageGroupings = true;
+            $pages = Page::getAllPages(
+                true, $pagesDir, $usePageGroupings, $request->path(),
+                $pagesPaging, $pagesVn, $pagesPn, $pagesNumShown
+            );
+        }
     }
 
     /**

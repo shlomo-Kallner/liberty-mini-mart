@@ -60,7 +60,7 @@ function genStoreData (data = null) {
     if (typeof data === 'object' || Array.isArray(data)) {
       var res = []
       for (var i in data) {
-        console.log(window.myUtils.dataToString(i))
+        // console.log(window.myUtils.dataToString(i))
         res.push(
           {
             value: {
@@ -73,7 +73,7 @@ function genStoreData (data = null) {
           }
         )
       }
-      console.log(window.myUtils.dataToString(res))
+      // console.log(window.myUtils.dataToString(res))
       return res
     }
   } else {

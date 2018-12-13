@@ -15,8 +15,28 @@ export default {
       }
     })
   },
+  genPagingData: function (data, numPerPage, currentPage =  1,
+    numTotal = 0, numPerView = 0
+  ) {
+    if (_.size(data) > 0 && Array.isArray(data)) {
+      var numpages = numTotal <= 0
+        ? this.genNumSubRanges(_.size(data), numPerPage)
+        : this.genNumSubRanges(numTotal, numPerPage)
+      return this.getPagingData({
+        totalNumPages: numpages,
+        currentPage: currentPage,
+        numPerView: numPerView <= 0
+          ? this.genNumSubRanges(numpages, numPerPage)
+          : this.genNumSubRanges(numpages, numPerView),
+        numItemsPerPage: numPerPage,
+        totalItems: numTotal <= 0
+          ? _.size(data)
+          : numTotal
+      })
+    }
+  },
   getPagingData: function (paging) {
-    if (paging !== undefined && _.size(paging) >= 5) {
+    if (this.testData(paging) && _.size(paging) >= 5) {
       return {
         numPages: paging.totalNumPages !== undefined ? paging.totalNumPages : 0,
         currentPage: paging.currentPage !== undefined ? paging.currentPage : 0,
@@ -54,6 +74,9 @@ export default {
   },
   testData: function (data) {
     return data !== undefined && data !== null
+  },
+  testStr: function (str) {
+    return typeof str === 'string' && _.isString(str) && _.size(str) > 0 && str !== ''
   },
   doOnArray: function (data, func) {
     var res = []

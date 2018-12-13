@@ -684,7 +684,10 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         bool $usePageGroupings = true, string $path = '', 
         bool $fullUrl = false,
         string $pagingFor = '', int $viewNumber = 0, 
-        int $pageNum = 0, int $numShown = 4
+        int $pageNum = 0, int $numShown = 4,
+        string $baseUrl = '',
+        bool $useTitle = true,
+        bool $withTrashed = false
     ) {
         /* 
             $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
@@ -702,7 +705,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         /// UPDATE: DONE (on PageGroup) AND DONE (as PageGrouping)
         if ($usePageGroupings) {
             $pages = self::getOrderedByPageGroupings(
-                $dir, $asArrays, true, $fullUrl
+                $dir, $asArrays, $useTitle, $fullUrl
             );
             return self::getPaginatedItemsArray(
                 $pages, $pageNum, $numShown, 
@@ -711,8 +714,9 @@ class Page extends Model implements TransformableContainer, ContainerAPI
             );
         } else {
             return self::getAllWithPagination(
-                $asArrays, $pageNum, $numShown, $pagingFor, $dir, 
-                true, '', $path, $viewNumber, true, 1
+                $asArrays, $pageNum, $numShown, $pagingFor, 
+                $dir, $withTrashed, $baseUrl, $path, 
+                $viewNumber, $useTitle, 1
             );
         }
     }

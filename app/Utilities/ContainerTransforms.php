@@ -424,10 +424,14 @@ trait ContainerTransforms
     ) {
         if ($request->has('pageNum') && $request->has('pagingFor') && $request->has('viewNum')) {
             if ($pagingFor == $request->input('pagingFor')) {
-                return [
+                $res = [
                     'pageNum' => $request->input('pageNum'),
                     'viewNum' => $request->input('viewNum'),
                 ];
+                if ($request->has('limit')) {
+                    $res['limit'] = $request->input('limit');
+                }
+                return $res;
             }
         }
         return null;
@@ -436,9 +440,10 @@ trait ContainerTransforms
     static public function getPaginatedItemsArray(
         $args, int $pageNum, int $numShown = 4, 
         string $pagingFor = '', string $listUrl = '', 
-        int $viewNumber = 0 
+        int $viewNumber = 0, int $totalNum = 0 
     ) {
-        $num = count($args);
+        $num = $totalNum > 0 ? $totalNum : count($args);
+        $pageNum = $pageNum ?: 1;
         if (Functions::testVar($args) && $num > 0) {
             $tp = collect($args)->forPage($pageNum, $numShown);
             return [
@@ -462,8 +467,9 @@ trait ContainerTransforms
         bool $fullUrl = false, bool $useTitle = true, 
         int $version = 1
     ) {
+        $totalNum = self::count();
         $pageIdx = self::genFirstAndLastItemsIdxes( 
-            self::count(), $pageNum, $numShown
+            $totalNum, $pageNum, $numShown
         );
         $tmp = self::getOrderedBy($dir, $withTrashed)
             ->offset($pageIdx['begin'])->limit($numShown)
@@ -475,7 +481,7 @@ trait ContainerTransforms
         return self::getPaginatedItemsArray(
             $tmp1, $pageNum, $numShown, 
             $pagingFor, $listUrl, 
-            $viewNumber
+            $viewNumber, $totalNum
         );
     }
 

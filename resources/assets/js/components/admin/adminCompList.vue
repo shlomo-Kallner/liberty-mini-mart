@@ -8,6 +8,7 @@
             >
                 {{this.getPreText}} {{item.name}} {{this.getPostText}}
             </router-link>
+            <boot-paginator v-bind="paginator"></boot-paginator>
         </div>
     </div>
 </template>
@@ -19,6 +20,7 @@
     import VueRouter from 'vue-router'
     import _ from 'lodash'
     import myUtils from '../../utils.js'
+    import BootPaginator from '../bootPaginator.vue'
 
     Vue.use(VueRouter)
     Vue.use(Vuex)
@@ -49,11 +51,23 @@
             extra: {
                 type: Object,
                 default: () => null
+            },
+            numPerPage: {
+                type: Number,
+                default: 8
+            },
+            currentPage: {
+                type: Number,
+                default: 1
             }
+        },
+        components: {
+            BootPaginator
         },
         data: function () {
             return {
-                itemsArray: this.loadItems()
+                itemsArray: this.loadItems(this.path),
+                paginator: this.getPaging(this.items)
             }
         },
         watch: {},
@@ -68,6 +82,29 @@
             currentPath: function () {return this.$route.path},
             getItems: function () {
                 return this.loadItems()
+            },
+            getPaging: function () {
+                return this.loadPaging()
+            },
+            currentComp: function () {
+                return this.$store.getters.findComponent(
+                    myUtils.testStr(this.currentPath) ? this.currentPath : this.$store.route.path, 
+                    (tv, p) => { 
+                        // myUtils.dumpData(tv)
+                        // myUtils.dumpData(path)
+                        if(myUtils.testData(tv) && myUtils.testStr(p)) {
+                            if (typeof tv === 'object') {
+                                return tv.path === p
+                            } else if (typeof tv === 'string') {
+                                return tv === p
+                            } else {
+                                return false
+                            }
+                        } else {
+                            return false
+                        }
+                    }
+                )
             }
         },
         methods: {
@@ -91,9 +128,19 @@
             getValues: function (value, comp = null) { 
                 return this.$store.getters.getComponentChildrenValues(value, comp)
             },
-            loadItems: function () {
+            loadPaging: function (data = null) {
+                var p = th
+                if (myUtils.testData(p)) {
+                    return p.value().pagination
+                } else {
+                    return myUtils.genPagingData(null)
+                }
+            },
+            loadItems: function (path = '') {
+                var p = myUtils.testStr(path) ? path : ''
+                var tp = myUtils.testStr(this.path) ? this.path : this.path.path
                 var i = this.getValues(
-                    typeof this.path === 'string' ? this.path : this.path.path, 
+                    myUtils.testStr(p) ? p : tp, 
                     (tv, path) => { 
                         // myUtils.dumpData(tv)
                         // myUtils.dumpData(path)

@@ -79,7 +79,7 @@ export function makeStore (data) {
       },
       setCrumbs: function (state, payload) {
         var r = payload.route
-        var c = state.getters.findComponent(r.path, (cv, p) => cv.value().path === p)
+        var c = state.getters.findComponent(r.path, (cv, p) => cv.path === p)
         var arr = []
         while (c !== undefined && c !== null && c.parent() !== null) {
           arr.push(c.value())
