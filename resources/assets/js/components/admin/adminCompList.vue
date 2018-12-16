@@ -70,8 +70,10 @@
         },
         data: function () {
             return {
+                itemsAreLoaded: false,
                 itemsArray: this.loadItems(this.path),
-                paginator: this.getPaging(this.items)
+                pagingIsLoaded: false,
+                paginator: this.loadPaging(this.items)
             }
         },
         watch: {},
@@ -143,31 +145,24 @@
             loadItems: function (path = '') {
                 var p = myUtils.testStr(path) ? path : ''
                 var tp = myUtils.testStr(this.path) ? this.path : this.path.path
-                var i = this.getValues(
-                    myUtils.testStr(p) ? p : tp, 
-                    (tv, path) => { 
-                        // myUtils.dumpData(tv)
-                        // myUtils.dumpData(path)
-                        if(myUtils.testData(tv) && myUtils.testData(path)) {
-                            if (typeof tv === 'object') {
-                                return tv.path === path 
-                            } else if (typeof tv === 'string') {
-                                return tv === path
-                            } else {
-                                return false
-                            }
-                        } else {
-                            return false
+                if (Array.isArray(this.items) && this.items.length > 0) {
+                    this.itemsAreLoaded = true
+                    return this.items
+                } else {
+                    var c = this.currentComp
+                    var i = (typeof this.itemLoader === 'function') ? this.itemLoader(c) : []
+                    if (myUtils.testData(c) && Array.isArray(i) && i.length === 0) {
+                        for (var j of c.getChildren()) {
+                            i.push(j.value())
                         }
                     }
-                )
-                // myUtils.dumpData(i)
-                if (Array.isArray(i) && i.length > 0) {
-                    return i
-                } else if (this.items.length > 0) {
-                    return this.items
-                } else { 
-                    return []
+                    // myUtils.dumpData(i)
+                    if (Array.isArray(i) && i.length > 0) {
+                        this.itemsAreLoaded = true
+                        return i
+                    } else { 
+                        return []
+                    }
                 }
             }
         }
