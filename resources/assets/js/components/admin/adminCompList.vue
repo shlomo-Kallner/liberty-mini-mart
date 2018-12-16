@@ -33,7 +33,7 @@
                 default: ''
             },
             items: {
-                type: [Array],
+                type: [Array, Function],
                 default: () => {return []}
             },
             current: {
@@ -59,6 +59,10 @@
             currentPage: {
                 type: Number,
                 default: 1
+            },
+            itemLoader: {
+                type: Function,
+                default: (component) => []
             }
         },
         components: {
@@ -129,7 +133,7 @@
                 return this.$store.getters.getComponentChildrenValues(value, comp)
             },
             loadPaging: function (data = null) {
-                var p = th
+                var p = this.currentComp
                 if (myUtils.testData(p)) {
                     return p.value().pagination
                 } else {
