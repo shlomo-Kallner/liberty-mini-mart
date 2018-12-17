@@ -1,14 +1,17 @@
 <template>
-    <div id="cms-app" class="row margin-bottom-40">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <boot-breadcrumbs v-if="breadcrumbs.crumbs.length > 0" v-bind="breadcrumbs"></boot-breadcrumbs>
-            <boot-article v-bind="initArticle"></boot-article>
-            <boot-tabs v-if="false" :tabs="tabs" :current="currentTab"></boot-tabs>
-            <div class="row padding-top-5">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <keep-alive>
-                        <router-view></router-view>
-                    </keep-alive>
+    <div id="cms-app">
+        <div class="row margin-bottom-40">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <router-link :to="backPath"><i class="fa fa-arrow-left" aria-hidden="true"></i></router-link>
+                <boot-breadcrumbs v-if="breadcrumbs.crumbs.length > 0" v-bind="breadcrumbs"></boot-breadcrumbs>
+                <boot-article v-bind="initArticle"></boot-article>
+                <boot-tabs v-if="false" :tabs="tabs" :current="currentTab"></boot-tabs>
+                <div class="row padding-top-5">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <keep-alive>
+                            <router-view></router-view>
+                        </keep-alive>
+                    </div>
                 </div>
             </div>
         </div>
@@ -49,19 +52,16 @@
         },
         beforeRouteUpdate (to, from, next) {
             this.$store.commit('setCrumbs', {route: to})
+            this.backPath = from.path
             next()
         },
         data: function () {
             this.$router.push('/')
             return {
-                currentTab: ''
+                currentTab: '/',
+                backPath: ''
             }
         },
-        /* watch: {
-            '$route': function (to, from) {
-                this.$store.commit('setCrumbs', {route: to})
-            }
-        }, */
         computed: {
             breadcrumbs: function () {
                 return {
@@ -73,7 +73,7 @@
                 tabs: (state) => {
                     var i = state.getters.getComponentChildrenValues(
                         this.currentTab, (tv, ct) => {
-                        return ct === tv.name
+                        return ct === tv.path
                     })
                     return (i.length > 0) ? i : []
                 }

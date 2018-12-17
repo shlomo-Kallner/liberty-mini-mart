@@ -41,11 +41,92 @@ Route::prefix('store')->group(
 
 Route::middleware('adminguard')->prefix('admin')->group(
     function () {
+        Route::resource('article', 'ArticleController');
+        Route::get('article/{article}/delete', 'ArticleController@showDelete');
+
+        // 'user/' goes to 'index()' which returns 'all-users' of the site..
+        Route::resource(
+            'user', 'UserController', [
+                'parameters'=> [
+                    'user' => 'user',
+                ],
+                'except' => [
+                    'show'
+                ]
+            ]
+        );
+        Route::get('user/{user}/delete', 'UserController@showDelete');
+
+        // 'page/' goes to 'index()' which returns 'all-pages' of the site..
+        Route::resource(
+            'page', 'PageController', [
+                'parameters'=> [
+                    'page' => 'page',
+                ],
+                'except' => [
+                    'show'
+                ]
+            ]
+        );
+        Route::get('page/{page}/delete', 'PageController@showDelete');
+
+        
+        Route::resource(
+            'search', 'SearchResultController', [
+                'parameters'=> [
+                    'search' => 'search',
+                ],
+                'except' => [
+                    'create', 'edit', 'update'
+                ]
+            ]
+        );
+        Route::get('search/{search}/delete', 'SearchResultController@showDelete');
+        
         Route::prefix('store')->group(
             function () {
+                
+                // 'section/' goes to 'index()' which returns 'all-sections' of the store..
                 Route::get('section/list', 'SectionController@list');
+                Route::resource(
+                    'section', 'SectionController', [
+                        'parameters'=> [
+                            'section' => 'section',
+                        ]
+                    ]
+                );
+                // 'category/' goes to 'index()' which returns 'all-categories' of the section..
+                Route::get('category/create', 'CategorieController@create');
+                Route::post('category/create', 'CategorieController@store');
                 Route::get('section/{section}/category/list', 'CategorieController@list');
+                Route::resource(
+                    'section/{section}/category', 'CategorieController', [
+                        'parameters'=> [
+                            'section' => 'section',
+                            'categorie' => 'category',
+                        ]
+                    ]
+                );
+                // 'product/' goes to 'index()' which returns 'all-products' of the category..
+                Route::get('product/create', 'ProductController@create');
+                Route::post('product/create', 'ProductController@store');
                 Route::get('section/{section}/category/{category}/product/list', 'ProductController@list');
+                Route::resource(
+                    'section/{section}/category/{category}/product', 'ProductController', [
+                        'parameters'=> [
+                            'section' => 'section',
+                            'categorie' => 'category',
+                            'product' => 'product',
+                        ]
+                    ]
+                );
+                Route::get(
+                    'section/{section}/category/{category}/product/{product}/delete', 
+                    'ProductController@showDelete'
+                );
+                
+
+                
 
             }
         );

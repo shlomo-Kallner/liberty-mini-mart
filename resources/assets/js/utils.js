@@ -33,6 +33,8 @@ export default {
           ? _.size(data)
           : numTotal
       })
+    } else {
+      return null
     }
   },
   getPagingData: function (paging) {

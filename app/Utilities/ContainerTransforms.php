@@ -7,6 +7,7 @@ use Illuminate\Support\Collection,
     Illuminate\Http\Request;
 use App\Page,
     App\Image;
+use Illuminate\Contracts\Support\Arrayable;
 
 interface TransformableContainer
 {
@@ -433,6 +434,15 @@ trait ContainerTransforms
                 }
                 return $res;
             }
+        } elseif ($request->has('page')) {
+            $res = [
+                'pageNum' => $request->input('page'),
+                'viewNum' => 0,
+            ];
+            if ($request->has('limit')) {
+                $res['limit'] = $request->input('limit');
+            }
+            return $res;
         }
         return null;
     }
@@ -445,18 +455,32 @@ trait ContainerTransforms
         $num = $totalNum > 0 ? $totalNum : count($args);
         $pageNum = $pageNum ?: 1;
         if (Functions::testVar($args) && $num > 0) {
-            $tp = collect($args)->forPage($pageNum, $numShown);
-            return [
-                'items' => $tp->all(),
-                'pagination' => self::genPagingFor(
-                    $pageNum, $num, $numShown, 
-                    $pagingFor, $viewNumber, 
-                    $listUrl
-                ),
-            ];
-        } else {
-            return [];
+            if ($totalNum > 0) {
+                if (is_array($args)) {
+                    $items = $args;
+                } elseif ($args instanceof Collection) {
+                    $items = $args->all();
+                } elseif ($args instanceof Arrayable) {
+                    $items = $args->toArray();
+                } else {
+                    $items = [];
+                }
+            } else {
+                $tp = collect($args)->forPage($pageNum, $numShown);
+                $items = $tp->all();
+            }
+            if (count($items) > 0) {
+                return [
+                    'items' => $items,
+                    'pagination' => self::genPagingFor(
+                        $pageNum, $num, $numShown, 
+                        $pagingFor, $viewNumber, 
+                        $listUrl
+                    )
+                ];
+            }
         }
+        return [];
     }
 
     static public function getAllWithPagination(

@@ -44,11 +44,18 @@
             
 
         //dd($sidebar2);
+        $useVueEl = true;
     @endphp
 
-    @if (true)
+    @if ($useVueEl)
 
         <div id="cms-app"></div>
+    
+    @elseif (!$useVueEl)
+        
+        <div id="cms-app">
+            
+        </div>
 
     @else
 

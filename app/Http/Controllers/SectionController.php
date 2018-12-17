@@ -23,26 +23,43 @@ class SectionController extends MainController
      */
     public function index(Request $request)
     {
-        // get a listing of all sections... 
-        $title = 'All Our Sections';
-        $breadcumbs = Page::getBreadcrumbs(
-            Page::genBreadcrumb($title, 'store/section'),
-            [
-                Page::genBreadcrumb('Store', 'store'),
-            ]
-        );
-        $content = [
-            'items' => Section::getAllWithTransform(
-                Section::TO_MINI_TRANSFORM, 'asc', false, 'store',
-                true, 1
-            ),
-            'bestsellers' => Product::getBestsellers(),
-        ];
-        // optionally add pagination... 
-        return self::getView(
-            $request, 'content.items_list', $title, 
-            $content, false, $breadcumbs
-        );
+        if ($request->ajax()) {
+            $pageVars = Section::getPagingVars($request, '');
+            if (Functions::testVar($pageVars)) {
+                $content = Section::getAllWithPagination(
+                    Section::TO_CONTENT_ARRAY_TRANSFORM, 
+                );
+            } else {
+                $content = [
+                    'items' => Section::getAllWithTransform(
+                        Section::TO_MINI_TRANSFORM, 'asc', false, 'store',
+                        true, 1
+                    ),
+                ];
+            }
+            return $content;
+        } else {
+            // get a listing of all sections... 
+            $title = 'All Our Sections';
+            $breadcumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb($title, 'store/section'),
+                [
+                    Page::genBreadcrumb('Store', 'store'),
+                ]
+            );
+            $content = [
+                'items' => Section::getAllWithTransform(
+                    Section::TO_MINI_TRANSFORM, 'asc', false, 'store',
+                    true, 1
+                ),
+                'bestsellers' => Product::getBestsellers(),
+            ];
+            // optionally add pagination... 
+            return self::getView(
+                $request, 'content.items_list', $title, 
+                $content, false, $breadcumbs
+            );
+        }
     }
 
     /**

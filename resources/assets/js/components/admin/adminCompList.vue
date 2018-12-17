@@ -8,7 +8,7 @@
             >
                 {{this.getPreText}} {{item.name}} {{this.getPostText}}
             </router-link>
-            <boot-paginator v-bind="paginator"></boot-paginator>
+            <boot-paginator v-bind="getPaging"></boot-paginator>
         </div>
     </div>
 </template>
@@ -59,10 +59,6 @@
             currentPage: {
                 type: Number,
                 default: 1
-            },
-            itemLoader: {
-                type: Function,
-                default: (component) => []
             }
         },
         components: {
@@ -71,9 +67,9 @@
         data: function () {
             return {
                 itemsAreLoaded: false,
-                itemsArray: this.loadItems(this.path),
+                itemsArray: this.loadItems(),
                 pagingIsLoaded: false,
-                paginator: this.loadPaging(this.items)
+                paginator: this.loadPaging()
             }
         },
         watch: {},
@@ -84,13 +80,17 @@
             getPostText: function () {
                 return this.getText(this.postText)
             },
-            hasItems: function () {return this.getItems.length > 0},
-            currentPath: function () {return this.$route.path},
+            hasItems: function () {
+                return this.getItems.length > 0
+            },
+            currentPath: function () {
+                return myUtils.testStr(this.path) ? this.path : this.$route.path
+            },
             getItems: function () {
                 return this.loadItems()
             },
             getPaging: function () {
-                return this.loadPaging()
+                return this.loadPaging(this.getItems)
             },
             currentComp: function () {
                 return this.$store.getters.findComponent(
@@ -136,24 +136,27 @@
             },
             loadPaging: function (data = null) {
                 var p = this.currentComp
-                if (myUtils.testData(p)) {
+                if (myUtils.testData(p) && myUtils.testData(p.value().pagination)) {
                     return p.value().pagination
+                } else if (myUtils.testData(data)) {
+                    return myUtils.genPagingData(data)
                 } else {
                     return myUtils.genPagingData(null)
                 }
             },
-            loadItems: function (path = '') {
-                var p = myUtils.testStr(path) ? path : ''
-                var tp = myUtils.testStr(this.path) ? this.path : this.path.path
+            loadItems: function () {
                 if (Array.isArray(this.items) && this.items.length > 0) {
                     this.itemsAreLoaded = true
                     return this.items
                 } else {
                     var c = this.currentComp
-                    var i = (typeof this.itemLoader === 'function') ? this.itemLoader(c) : []
-                    if (myUtils.testData(c) && Array.isArray(i) && i.length === 0) {
+                    var i = []
+                    if (myUtils.testData(c)) {
                         for (var j of c.getChildren()) {
-                            i.push(j.value())
+                            var k = j.value()
+                            if (myUtils.testData(k)) {
+                                i.push(k)
+                            }
                         }
                     }
                     // myUtils.dumpData(i)

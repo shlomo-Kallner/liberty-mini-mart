@@ -90,6 +90,7 @@ const unsynch = sync(myStore, router)
 
 window.Laravel.page.admin.app = new window.Vue(
   {
+    el: '#cms-app',
     router: router,
     store: myStore,
     template: '<admin-panel-component v-bind="componentData"></admin-panel-component>',
@@ -104,4 +105,4 @@ window.Laravel.page.admin.app = new window.Vue(
     },
     methods: {}
   }
-).$mount('#cms-app')
+)
