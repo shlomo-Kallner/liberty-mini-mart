@@ -18,38 +18,61 @@ class SectionController extends MainController
 
     /**
      * Display a listing of the resource.
+     * 
+     * @param Request $request
      *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
+        $withTrashed = $request->is('*/admin/*');
+        $pageVars = Section::getPagingVars(
+            $request, 'sectionPanel', 8, 'asc'
+        );
         if ($request->ajax()) {
-            $pageVars = Section::getPagingVars($request, '');
+            $baseUrl = $withTrashed 
+                ? 'api/admin/store'
+                : 'api/store';
             if (Functions::testVar($pageVars)) {
                 $content = Section::getAllWithPagination(
                     Section::TO_CONTENT_ARRAY_TRANSFORM, 
+                    $pageVars['pageNum'], $pageVars['limit'],
+                    '', $pageVars['order'], $withTrashed,
+                    $baseUrl, $request->path(), 
+                    $pageVars['viewNum'], false, true, 1
                 );
             } else {
                 $content = [
                     'items' => Section::getAllWithTransform(
-                        Section::TO_MINI_TRANSFORM, 'asc', false, 'store',
-                        true, 1
+                        Section::TO_MINI_TRANSFORM, 'asc', 
+                        $withTrashed, $baseUrl, true, 1
                     ),
                 ];
             }
             return $content;
         } else {
             // get a listing of all sections... 
+            $baseUrl = $withTrashed 
+                ? 'admin/store'
+                : 'store';
             $title = 'All Our Sections';
-            $breadcumbs = Page::getBreadcrumbs(
-                Page::genBreadcrumb($title, 'store/section'),
-                [
-                    Page::genBreadcrumb('Store', 'store'),
+            $links = $withTrashed
+                ? [
+                    Page::genBreadcrumb('Home', '/'),
+                    Page::genBreadcrumb('Admin DashBoard', 'admin'),
+                    Page::genBreadcrumb('Store', $baseUrl),
                 ]
+                : [
+                    Page::genBreadcrumb('Home', '/'),
+                    Page::genBreadcrumb('Store', $baseUrl),
+                ];
+            $breadcumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb($title, $baseUrl .'/section'),
+                $links
             );
             $content = [
                 'items' => Section::getAllWithTransform(
-                    Section::TO_MINI_TRANSFORM, 'asc', false, 'store',
+                    Section::TO_MINI_TRANSFORM, 'asc', false, $baseUrl,
                     true, 1
                 ),
                 'bestsellers' => Product::getBestsellers(),

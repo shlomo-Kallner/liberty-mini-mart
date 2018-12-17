@@ -86,26 +86,49 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         string $name, string $url, $img,
         string $title, $article, string $description,
         array $otherImages = null,
-        array $cats = null, array $dates = [], int $id = 0
+        array $cats = null, array $dates = [], int $id = 0,
+        bool $useBaseMaker = true
     ) {
-        return [
-            'id' => $id,
-            'name' => $name,
-            'url' => $url,
-            'img' => Image::getImageArray($img),
-            'title' => $title,
-            'article' => Article::getArticle($article, true),
-            'description' => $description,
-            'otherImages' => $otherImages??[],
-            'categories' => $cats??[],
-            'dates' => $dates??[],
-        ];
+        if ($useBaseMaker) {
+            $content = self::makeBaseContentArray(
+                $name, $url, $img, $article, $title,
+                $id, $dates??[], $otherImages??[],
+                $cats??[]
+            );
+            $content['value']['description'] = $description;
+            return $content;
+        } else {
+            return [
+                'id' => $id,
+                'name' => $name,
+                'url' => $url,
+                'img' => Image::getImageArray($img),
+                'title' => $title,
+                'article' => Article::getArticle($article, true),
+                'description' => $description,
+                'otherImages' => $otherImages??[],
+                'categories' => $cats??[],
+                'dates' => $dates??[],
+            ];
+        }
     }
 
     public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false
+    ) {
+        return $this->toContentArrayPlus(
+            $baseUrl, $version, $useTitle, $withTrashed,
+            $fullUrl, true
+        );
+    }
+
+    public function toContentArrayPlus(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false, bool $useBaseMaker = true,
+        string $dir = 'asc'
     ) {
         return self::makeContentArray(
             $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
@@ -116,7 +139,7 @@ class Section extends Model implements TransformableContainer, ContainerAPI
             Image::getArraysFor($this->otherImages),
             $this->getCategories(
                 Categorie::TO_URL_LIST_TRANSFORM, 
-                $withTrashed, 'asc', $baseUrl,
+                $withTrashed, $dir, $baseUrl,
                 $useTitle, $fullUrl, $version, []
             ), 
             [
@@ -124,7 +147,7 @@ class Section extends Model implements TransformableContainer, ContainerAPI
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
             ],
-            $this->id
+            $this->id, $useBaseMaker
         );
     }
 

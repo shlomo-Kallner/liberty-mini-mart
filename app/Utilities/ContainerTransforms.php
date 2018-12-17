@@ -6,6 +6,7 @@ use App\Utilities\Functions\Functions;
 use Illuminate\Support\Collection,
     Illuminate\Http\Request;
 use App\Page,
+    App\Article,
     App\Image;
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -93,6 +94,28 @@ trait ContainerTransforms
             'url' => $url,
             'price' => $price,
             'sticker' => $sticker,
+        ];
+    }
+
+    static public function makeBaseContentArray(
+        string $name, string $url, $img, $article, 
+        string $title,  int $id = 0, array $dates = [], 
+        array $otherImages = null,
+        array $children = []
+    ) {
+        return [
+            'value' => [
+                'id' => $id,
+                'name' => $name,
+                'path' => $url,
+                'url' => $url,
+                'img' => Image::getImageArray($img),
+                'title' => $title,
+                'article' => Article::getArticle($article, true),
+                'otherImages' => $otherImages??[],
+                'dates' => $dates??[],
+                ],
+            'children' => $children
         ];
     }
 
@@ -421,7 +444,8 @@ trait ContainerTransforms
     }
 
     static public function getPagingVars(
-        Request $request, string $pagingFor
+        Request $request, string $pagingFor, int $limit = 4,
+        string $dir = 'asc'
     ) {
         if ($request->has('pageNum') && $request->has('pagingFor') && $request->has('viewNum')) {
             if ($pagingFor == $request->input('pagingFor')) {
@@ -431,6 +455,13 @@ trait ContainerTransforms
                 ];
                 if ($request->has('limit')) {
                     $res['limit'] = $request->input('limit');
+                } else {
+                    $res['limit'] = $limit;
+                }
+                if ($request->has('order')) {
+                    $res['order'] = $request->input('order');
+                } else {
+                    $res['order'] = $dir;
                 }
                 return $res;
             }
@@ -441,6 +472,13 @@ trait ContainerTransforms
             ];
             if ($request->has('limit')) {
                 $res['limit'] = $request->input('limit');
+            } else {
+                $res['limit'] = $limit;
+            }
+            if ($request->has('order')) {
+                $res['order'] = $request->input('order');
+            } else {
+                $res['order'] = $dir;
             }
             return $res;
         }
