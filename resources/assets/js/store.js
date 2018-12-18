@@ -13,7 +13,7 @@ Vue.use(Vuex)
 
 const Foo = { template: '<div>Hello World!</div>' }
 
-export function valToComponent (data = null, defPath = '', defComp = Foo, defPaging = {}) {
+export function valToComponent (data = null, defPath = '', defComp = Foo, defPaging = null) {
   if (typeof data === 'object') {
     if (!_.has(data, 'path') && _.has(data, 'url')) {
       data.path = data.url
@@ -24,7 +24,7 @@ export function valToComponent (data = null, defPath = '', defComp = Foo, defPag
       data.component = defComp
     }
     if (!_.has(data, 'pagination')) {
-      data.pagination = defPaging
+      data.pagination = myUtils.genPagingData(defPaging, 8)
     }
     return data
   } else {
@@ -41,8 +41,14 @@ export function valToComponentArray (data) {
   if (data !== null && data !== undefined && Array.isArray(data)) {
     var res = []
     for (var i in data) {
-      if (i instanceof ComponentTree) {
+      if (data[i] instanceof ComponentTree) {
         res.push(data[i])
+      } else if (_.has(data[i], 'value') && _.has(data[i], 'children')) {
+        var val = myUtils.getValueFrom(data[i], 'value')
+        var chd = myUtils.getValueFrom(data[i], 'children', [])
+        if (myUtils.testData(val)) {
+          res.push(new ComponentTree(val, chd))
+        }
       } else {
         res.push(new ComponentTree(valToComponent(data[i])))
       }

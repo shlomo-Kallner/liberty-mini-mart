@@ -2,6 +2,8 @@
 import 'es6-promise/auto'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
+import VueAtlas from 'vue-atlas'
+import 'vue-atlas/dist/vue-atlas.css'
 import AdminPanel from './components/admin/adminPanel.vue'
 import { sync } from 'vuex-router-sync'
 
@@ -10,6 +12,8 @@ require('./bootstrap')
 window.Vue.use(VueRouter)
 
 window.Vue.use(Vuex)
+
+window.Vue.use(VueAtlas, 'en')
 
 require('./bootVueComponents')
 
@@ -27,20 +31,20 @@ function genComponentData (data = null) {
     vals = window.myUtils.JsonParseOrRetObj(data, {}, window.myUtils.dumpData)
   } else if (typeof data === 'object') {
     for (var i in data) {
-      if (typeof data[i] === 'object') {
-        var tmp = {
-          items: window.myUtils.JsonParseOrRetObj(data[i].items, [], window.myUtils.dumpData),
-          pagination: window.myUtils.JsonParseOrRetObj(data[i].pagination, [], window.myUtils.dumpData)
-        }
-        vals[i] = tmp
-      } else if (typeof data[i] === 'string') {
-        vals[i] = window.myUtils.JsonParseOrRetObj(data[i], {}, window.myUtils.dumpData)
+      var tmp = {
+        items: window.myUtils.getItemsFrom(data[i]),
+        pagination: window.myUtils.getPagingFrom(data[i])
       }
+      window._.set(vals, i, tmp)
     }
   }
-  if (window._.size(vals) > 0) {
+  if (window.myUtils.testData(vals) && window._.size(vals) > 0) {
     return vals
-  } else if (false) {
+  } else if (window._.has(vals, 'pages') &&
+    window._.has(vals, 'sections') &&
+    window._.has(vals, 'users') &&
+    window._.has(vals, 'article')
+  ) {
     return {
       initPages: vals.pages,
       initSections: vals.sections,

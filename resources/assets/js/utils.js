@@ -18,7 +18,7 @@ export default {
   genPagingData: function (data, numPerPage, currentPage =  1,
     numTotal = 0, numPerView = 0
   ) {
-    if (_.size(data) > 0 && Array.isArray(data)) {
+    if (this.testData(data) && _.size(data) > 0 && Array.isArray(data)) {
       var numpages = numTotal <= 0
         ? this.genNumSubRanges(_.size(data), numPerPage)
         : this.genNumSubRanges(numTotal, numPerPage)
@@ -168,9 +168,9 @@ export default {
       index: pageNum
     };
   },
-  JsonParseOrRetObj: function (data = null, def = {}, err = null) {
+  JsonParseOrRetObj: function (data = null, def = null, err = null) {
     if (typeof data === 'string') {
-      var res = def;
+      var res = def
       try {
         res = JSON.parse(data)
       } catch (error) {
@@ -178,7 +178,7 @@ export default {
         try {
           res = json5.parse(data)
         } catch (error) {
-          if (typeof err === 'function') {
+          if (this.testData(err) && typeof err === 'function') {
             err([te, error])
           } else {
             throw new Error(te.message + error.message)
@@ -257,9 +257,56 @@ export default {
     }
   },
   getPagingFrom: (data = null) => {
-    return typeof data.pagination === 'object' ? data.pagination : {}
+    if (this.testData(data) && typeof data === 'object') {
+      if (_.has(data, 'pagination') &&
+        this.testData(data.pagination) &&
+        typeof data.pagination === 'object') {
+        return data.pagination
+      } else if (_.has(data, 'value')) {
+        if (typeof _.get(data, 'value') === 'function') {
+          return this.getPagingFrom(data.value())
+        } else if (typeof _.get(data, 'value') === 'object') {
+          return this.getPagingFrom(data.value)
+        }
+      }
+    } else if (this.testStr(data)) {
+      return this.getPagingFrom(this.JsonParseOrRetObj(data, null, _.noop))
+    }
+    return null
   },
   getItemsFrom: (data = null) => {
-    return typeof data.items === 'object' ? data.items : {}
+    if (this.testData(data) && typeof data === 'object') {
+      if (_.has(data, 'items') &&
+        this.testData(data.items) &&
+        typeof data.items === 'object' &&
+        Array.isArray(data.items)) {
+        return data.items
+      } else if (_.has(data, 'children')) {
+        if (typeof _.get(data, 'children') === 'function') {
+          return this.getItemsFrom(data.children())
+        } else if (typeof _.get(data, 'children') === 'object') {
+          return this.getItemsFrom(data.children)
+        }
+      } else if (Array.isArray(data)) {
+        return data
+      }
+    } else if (this.testStr(data)) {
+      return this.getItemsFrom(this.JsonParseOrRetObj(data, null, _.noop))
+    }
+    return null
+  },
+  getValueFrom: (data = null, field = '', def = null) => {
+    if (this.testData(data) && typeof data === 'object') {
+      if (_.has(data, field) && this.testData(_.get(data, field))) {
+        if (typeof _.get(data, field) === 'function') {
+          return _.invoke(data, field)
+        } else {
+          return _.get(data, field, def)
+        }
+      }
+    } else if (this.testStr(data)) {
+      return this.getValueFrom(this.JsonParseOrRetObj(data, null, _.noop), field, def)
+    }
+    return def
   }
 }

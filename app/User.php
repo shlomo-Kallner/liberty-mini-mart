@@ -65,18 +65,34 @@ class User extends Model implements ContainerAPI
         }
     }
 
-    public function getRolesArray(bool $p = false)
-    {
+    public function getRolesArray(
+        bool $useBaseMaker = false, bool $p = false
+    ) {
         $res = [];
         $perm = new Basic($this->id, $p, 2);
         if ($perm->isAdmin()) {
-            $res[] = 'admin';
+            $res[] = $useBaseMaker
+                ? [
+                    'value' => 'admin',
+                    'children' => null
+                ]
+                : 'admin';
         }
         if ($perm->isContentCreator()) {
-            $res[] = 'creator';
+            $res[] = $useBaseMaker
+                ? [
+                    'value' => 'creator',
+                    'children' => null
+                ]
+                : 'creator';
         }
         if ($perm->isAuthUser()) {
-            $res[] = 'user';
+            $res[] = $useBaseMaker 
+                ? [
+                    'value' => 'user',
+                    'children' => null
+                ]
+                : 'user';
         }
         return $res;
     }
@@ -244,26 +260,56 @@ class User extends Model implements ContainerAPI
     public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
-        bool $fullUrl = false
+        bool $fullUrl = false, bool $useBaseMaker = true
     ) {
-        return [
-            // 'id' => $this->id,
-            // 'uuid' => $this->uuid,
-            'id' => $this->uuid,
-            'url' => $this->getFullUrl($baseUrl, $fullUrl),
-            'name' => $this->name,
-            'email' => $this->email,
-            'img' => $this->image->toImageArray(),
-            'otherImages' => Image::getArraysFor($this->images),
-            'date' => [
-                'created' => $this->created_at,
-                'modified' => $this->updated_at,
-                'deleted' => $this->deleted_at
-            ],
-            'orders' => $this->orders??[],
-            'carts' => $this->carts??[],
-            'wishlist' => [],
-        ];
+        $url = $this->getFullUrl($baseUrl, $fullUrl);
+        if ($useBaseMaker) {
+            return [
+                'value' => [
+                    'id' => $this->uuid,
+                    'name' => $this->name,
+                    'path' => $url,
+                    'email' => $this->email,
+                    'url' => $url,
+                    'img' => $this->image->toImageArray(),
+                    'title' => $this->name,
+                    'article' => '',
+                    'otherImages' => Image::getArraysFor($this->images),
+                    'dates' => [
+                        'created' => $this->created_at,
+                        'modified' => $this->updated_at,
+                        'deleted' => $this->deleted_at
+                        ],
+                    ],
+                'children' => [
+                    'orders' => $this->orders??[],
+                    'carts' => $this->carts??[],
+                    'wishlist' => [],   
+                ]
+            ];
+        } else {
+            return [
+                // 'id' => $this->id,
+                // 'uuid' => $this->uuid,
+                'id' => $this->uuid,
+                'url' => $url,
+                'name' => $this->name,
+                'path' => $url,
+                'email' => $this->email,
+                'img' => $this->image->toImageArray(),
+                'otherImages' => Image::getArraysFor($this->images),
+                'title' => $this->name,
+                'article' => '',
+                'date' => [
+                    'created' => $this->created_at,
+                    'modified' => $this->updated_at,
+                    'deleted' => $this->deleted_at
+                ],
+                'orders' => $this->orders??[],
+                'carts' => $this->carts??[],
+                'wishlist' => [],
+            ];
+        }
     }
 
     public function orders()
@@ -293,10 +339,11 @@ class User extends Model implements ContainerAPI
     static public function getUsers(
         int $pageNumber = 1, bool $toArray = true, 
         bool $forA = false, int $paginatorViewNum = 0,
-        string $paginatorBaseUrl = '', string $baseUrl = 'store',
-        bool $withTrashed = true, bool $fullUrl = false
+        string $paginatorBaseUrl = '', string $baseUrl = 'user',
+        bool $withTrashed = true, bool $fullUrl = false, 
+        bool $useBaseMaker = true, int $numPerPage = 3
     ) {
-        $numPerPage = 3; //5;
+        //$numPerPage = 3; // 5;
         $tmp = $withTrashed 
             ? self::withTrashed()->where('id', '>', self::getNumForVer())->get()
             : self::where('id', '>', self::getNumForVer())->get();
@@ -310,16 +357,20 @@ class User extends Model implements ContainerAPI
             //dd($tmp, $tu);
             foreach ($tu as $user) {
                 // dd($user);
-                if (Functions::testVar($ur = $user->getRolesArray())
+                if (Functions::testVar($ur = $user->getRolesArray($useBaseMaker))
                     && count($ur) > 0
                 ) {
                     if ($toArray) {
                         $ua = $user->toContentArray(
                             $baseUrl, 1, false, $withTrashed,
-                            $fullUrl
+                            $fullUrl, $useBaseMaker
                         );
                         if ($forA) {
-                            $ua['roles'] = $ur;
+                            if ($useBaseMaker) {
+                                $ua['children']['roles'] = $ur;
+                            } else {
+                                $ua['roles'] = $ur;
+                            }
                         }
                         $users[] = $ua;
                         // dd($ua, $ur);

@@ -9,7 +9,8 @@
                 <div class="row padding-top-5">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <keep-alive>
-                            <router-view></router-view>
+                            <va-loading v-if="isLoading" size="lg" color="blue"></va-loading>
+                            <router-view v-else></router-view>
                         </keep-alive>
                     </div>
                 </div>
@@ -20,11 +21,13 @@
 
 <script>
     import Vue from 'vue'
+    import VueAtlas from 'vue-atlas'
     import Vuex from 'vuex'
     import VueRouter from 'vue-router'
-
+    
     Vue.use(VueRouter)
     Vue.use(Vuex)
+    vue.use(VueAtlas, 'en')
 
     import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
     import { Stack } from '../../lib/LibertyStack.js'
@@ -59,7 +62,8 @@
             this.$router.push('/')
             return {
                 currentTab: '/',
-                backPath: ''
+                backPath: '',
+                isLoading: true
             }
         },
         computed: {

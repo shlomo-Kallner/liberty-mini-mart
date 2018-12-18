@@ -71,11 +71,17 @@ class CmsController extends MainController
             $userVn = 0;
         }
         $userBaseUrl = '';
-
-        $users = User::getUsers(
-            $userPn, true, true, $userVn, $request->path(), 
-            $userBaseUrl, true, false
-        );
+        if (false) {    
+            $users = User::getUsers(
+                $userPn, true, true, $userVn, $request->path(), 
+                $userBaseUrl, true, false
+            );
+        } else {
+            $users = [
+                'items' => [],
+                'pagination' => [],
+            ];
+        }
         if ($debug[0]) {
             if ($debug[1] === 1) {
                 $sw->stop();
@@ -95,10 +101,17 @@ class CmsController extends MainController
         }
         $pagesNumShown = 3;
         $usePageGroupings = true;
-        $pages = Page::getAllPages(
-            true, $pagesDir, $usePageGroupings, $request->path(),
-            $pagesPaging, $pagesVn, $pagesPn, $pagesNumShown
-        );
+        if (false) {  
+            $pages = Page::getAllPages(
+                true, $pagesDir, $usePageGroupings, $request->path(),
+                $pagesPaging, $pagesVn, $pagesPn, $pagesNumShown
+            );
+        } else {
+            $pages = [
+                'items' => [],
+                'pagination' => [],
+            ];
+        }
         //dd($pages);
         $articles = []; // Article::getAll();
         $sidebar = self::getAdminSidebar();

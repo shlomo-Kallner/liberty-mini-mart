@@ -1,4 +1,5 @@
 import {Stack} from './LibertyStack'
+import _ from 'lodash'
 export class TreeWalkIterator {
   constructor (tree) {
     this.root = tree
@@ -39,6 +40,10 @@ export class ComponentTree {
     this._children = ComponentTree.checkChildrenArray(children)
       ? children : []
     this._children.forEach(value => value.setParent(this))
+    Object.defineProperty(this, 'length', {
+      get () { return this._children.length },
+      set (x) { _.noop(x) }
+    })
   }
 
   static checkChildrenArray (children) {
@@ -93,6 +98,10 @@ export class ComponentTree {
     return this._children
   }
 
+  children () {
+    return this._children
+  }
+
   numChildren () {
     return this._children.length
   }
@@ -100,10 +109,12 @@ export class ComponentTree {
   push (tree) {
     if (tree instanceof ComponentTree) {
       tree.setParent(this)
-      this._children.push(tree)
+      return this._children.push(tree)
     } else if (typeof tree === 'object') {
       var {value, children} = tree
-      this._children.push(new ComponentTree(value, children, this))
+      if (value !== null || value !== undefined) {
+        return this._children.push(new ComponentTree(value, children, this))
+      }
     }
   }
 
