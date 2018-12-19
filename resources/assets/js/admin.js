@@ -68,8 +68,8 @@ function genStoreData (data = null) {
         res.push(
           {
             value: {
-              name: window._.capitalize(i),
-              path: i,
+              name: window.myUtils.getValueFrom(data[i], 'name', window._.capitalize(i)),
+              path: window.myUtils.getValueFrom(data[i], 'path', i),
               // component: Foo,
               pagination: window.myUtils.getPagingFrom(data[i])
             },

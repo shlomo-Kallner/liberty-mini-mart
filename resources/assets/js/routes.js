@@ -9,6 +9,7 @@ export function genRoutes (basePath = '') {
     {
       base: basePath,
       routes: [
+        // Our Routes:
         {
           path: '/',
           component: AdminCompList,
@@ -91,7 +92,6 @@ export function genRoutes (basePath = '') {
             }
           ]
         },
-        {path: 'sections', redirect: 'store/sections'},
         {
           path: 'store/sections',
           component: AdminCompList,
@@ -149,7 +149,11 @@ export function genRoutes (basePath = '') {
               }
             }
           ]
-        }
+        },
+        // Our Redirects:
+        {path: 'api/*', redirect: to => { return to.params.pathMatch }},
+        {path: 'admin/*', redirect: to => { return to.params.pathMatch }},
+        {path: 'sections/*', redirect: to => { return 'store/sections/' + to.params.pathMatch }}
       ]
     }
   )

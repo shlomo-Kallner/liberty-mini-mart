@@ -257,7 +257,7 @@ export default {
       }
     }
   },
-  getPagingFrom: (data = null) => {
+  getPagingFrom: (data = null, def = null) => {
     if (this.testData(data) && typeof data === 'object') {
       if (_.has(data, 'pagination') &&
         this.testData(data.pagination) &&
@@ -265,17 +265,17 @@ export default {
         return data.pagination
       } else if (_.has(data, 'value')) {
         if (typeof _.get(data, 'value') === 'function') {
-          return this.getPagingFrom(data.value())
+          return this.getPagingFrom(data.value(), def)
         } else if (typeof _.get(data, 'value') === 'object') {
-          return this.getPagingFrom(data.value)
+          return this.getPagingFrom(data.value, def)
         }
       }
     } else if (this.testStr(data)) {
-      return this.getPagingFrom(this.JsonParseOrRetObj(data, null, _.noop))
+      return this.getPagingFrom(this.JsonParseOrRetObj(data, null, _.noop), def)
     }
-    return null
+    return def
   },
-  getItemsFrom: (data = null) => {
+  getItemsFrom: (data = null, def = null) => {
     if (this.testData(data) && typeof data === 'object') {
       if (_.has(data, 'items') &&
         this.testData(data.items) &&
@@ -284,17 +284,17 @@ export default {
         return data.items
       } else if (_.has(data, 'children')) {
         if (typeof _.get(data, 'children') === 'function') {
-          return this.getItemsFrom(data.children())
+          return this.getItemsFrom(data.children(), def)
         } else if (typeof _.get(data, 'children') === 'object') {
-          return this.getItemsFrom(data.children)
+          return this.getItemsFrom(data.children, def)
         }
       } else if (Array.isArray(data)) {
         return data
       }
     } else if (this.testStr(data)) {
-      return this.getItemsFrom(this.JsonParseOrRetObj(data, null, _.noop))
+      return this.getItemsFrom(this.JsonParseOrRetObj(data, null, _.noop), def)
     }
-    return null
+    return def
   },
   getValueFrom: (data = null, field = '', def = null) => {
     if (this.testData(data) && typeof data === 'object') {
