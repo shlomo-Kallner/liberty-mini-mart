@@ -1,4 +1,23 @@
 
+NEW (M/D/Y -> 12/19/2018):
+
+1# [
+    1# convert the User model to use the ContainerTransform trait.
+    2# convert ContainerTransform's getAll* transform methods to return 
+        ComponentTree Compatible results for ContentArrays..
+].
+
+2# [
+    0# create a ES2016 Iterator protocol using class for downloading assets.
+    1# convert the VueJS SPA to use a ES2016 Iterator protocol with downloading assets.
+    2# add a lib/themewagon/content-list style VueJS component.
+    3# make use of Vue-Atlas for modals...
+    4# construct and use {#this.2} to @continue@ the 
+        themewagon store theme for the Admin SPA!
+].
+
+
+OLD:
 
 Content Management System
 -> What does it require?

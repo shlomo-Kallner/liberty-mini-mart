@@ -105,7 +105,7 @@ export default {
       redirect, action, window.Laravel.nut
     )
   },
-  doAjax: function (data, method = 'post', success = null, fail = null) {
+  doAjax: function (data, method = 'post', success = null, fail = null, timeout = 3000) {
     // handleCart.dumpData(data);
     axios(
       {
@@ -118,7 +118,8 @@ export default {
         },
         method: method,
         data: data,
-        withCredentials: true
+        withCredentials: true,
+        timeout: timeout
       }
     ).then(response => {
       if (typeof success === 'function') {

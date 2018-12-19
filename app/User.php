@@ -244,10 +244,15 @@ class User extends Model implements ContainerAPI
             : self::where('uuid', $uuid)->first();
     }
 
-    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
         $url = $baseUrl . '/user/';
         return $fullUrl ? url($url) : $url;
+    }
+
+    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
+    {
+        return self::genUrlFragment($baseUrl, $fullUrl);
     }
 
     public function getFullUrl(string $baseUrl, bool $fullUrl = false)
@@ -291,6 +296,7 @@ class User extends Model implements ContainerAPI
                         'modified' => $this->updated_at,
                         'deleted' => $this->deleted_at
                         ],
+                    'hasChildren' => true
                     ],
                 'children' => [
                     'orders' => $this->orders??[],
@@ -368,7 +374,7 @@ class User extends Model implements ContainerAPI
             //dd($tmp, $tu);
             foreach ($tu as $user) {
                 // dd($user);
-                if (Functions::testVar($ur = $user->getRolesArray($useBaseMaker))
+                if (Functions::testVar($ur = $user->getRolesArray(false))
                     && count($ur) > 0
                 ) {
                     if ($toArray) {
@@ -378,7 +384,7 @@ class User extends Model implements ContainerAPI
                         );
                         if ($forA) {
                             if ($useBaseMaker) {
-                                $ua['children']['roles'] = $ur;
+                                $ua['value']['roles'] = $ur;
                             } else {
                                 $ua['roles'] = $ur;
                             }
@@ -395,12 +401,30 @@ class User extends Model implements ContainerAPI
                 // dd($ur);
             }
             // dd($users);
-            $res['items'] = $users;
-            $res['pagination'] = Page::genPagingFor(
+            $paginator = Page::genPagingFor(
                 $pn, count($tmp), $numPerPage,
                 'usersPanel', $paginatorViewNum, 
                 $paginatorBaseUrl
             );
+            if ($useBaseMaker) {
+                $url = self::genUrlFragment($baseUrl, $fullUrl);
+                $res['value'] = [
+                    'name' => 'Users',
+                    'path' => $url,
+                    'url' => $url,
+                    'img' => [], //Image::getImageArray($img),
+                    'title' => 'Users',
+                    'article' => [],
+                    'otherImages' => [],
+                    'dates' => [],
+                    'pagination' => $paginator,
+                    'hasChildren' => true
+                ];
+                $res['children'] = $users;
+            } else {
+                $res['pagination'] = $paginator;
+                $res['items'] = $users;
+            }
             //dd($users);
         } 
         return $res;

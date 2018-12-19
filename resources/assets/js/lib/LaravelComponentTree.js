@@ -1,5 +1,6 @@
 import {Stack} from './LibertyStack'
 import _ from 'lodash'
+
 export class TreeWalkIterator {
   constructor (tree) {
     this.root = tree

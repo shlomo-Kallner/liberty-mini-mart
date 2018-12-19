@@ -54,8 +54,8 @@ export function genRoutes (basePath = '') {
                       path: route.path, extra: {id: route.params.id, cid: route.params.cid}
                     }
                   }
-                },
-                {
+                }
+                /* {
                   path: 'roles/:rid',
                   component: AdminCompList,
                   props: (route) => {
@@ -63,7 +63,7 @@ export function genRoutes (basePath = '') {
                       path: route.path, extra: {id: route.params.id, rid: route.params.rid}
                     }
                   }
-                }
+                } */
                 /* {
                   path: 'wishlist'
                 } */
