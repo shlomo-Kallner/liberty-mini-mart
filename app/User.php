@@ -370,83 +370,90 @@ class User extends Model implements ContainerAPI
         if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
             $users = [];
             $numPages = Functions::genRowsPerPage(count($tmp), $numPerPage);
-            $pn = $pageNumber > 0 && $pageNumber <= $numPages ? $pageNumber : 1;
-            $tu = $tmp->forPage($pn, $numPerPage);
-            //dd($tmp, $tu);
-            foreach ($tu as $user) {
-                // dd($user);
-                if (Functions::testVar($ur = $user->getRolesArray(false))
-                    && count($ur) > 0
-                ) {
-                    if ($toArray) {
-                        $ua = $user->toContentArray(
-                            $baseUrl, 1, false, $withTrashed,
-                            $fullUrl, $useBaseMaker
-                        );
-                        if ($forA) {
-                            if ($useBaseMaker) {
-                                $ua['value']['roles'] = $ur;
-                            } else {
-                                $ua['roles'] = $ur;
+            if ($pageNumber >= 0 && $pageNumber <= $numPages) {
+                $pn = $pageNumber > 0 && $pageNumber <= $numPages ? $pageNumber : 1;
+                $tu = $tmp->forPage($pn, $numPerPage);
+                
+                //dd($tmp, $tu);
+                foreach ($tu as $user) {
+                    // dd($user);
+                    if (Functions::testVar($ur = $user->getRolesArray(false))
+                        && count($ur) > 0
+                    ) {
+                        if ($toArray) {
+                            $ua = $user->toContentArray(
+                                $baseUrl, 1, false, $withTrashed,
+                                $fullUrl, $useBaseMaker
+                            );
+                            if ($forA) {
+                                if ($useBaseMaker) {
+                                    $ua['value']['roles'] = $ur;
+                                } else {
+                                    $ua['roles'] = $ur;
+                                }
                             }
+                            $users[] = $ua;
+                            // dd($ua, $ur);
+                        } else {
+                            if ($forA) {
+                                $user->roles = $ur;
+                            }
+                            $users[] = $user;
                         }
-                        $users[] = $ua;
-                        // dd($ua, $ur);
-                    } else {
-                        if ($forA) {
-                            $user->roles = $ur;
-                        }
-                        $users[] = $user;
                     }
+                    // dd($ur);
                 }
-                // dd($ur);
-            }
-            // dd($users);
-            $paginator = Page::genPagingFor(
-                $pn, count($tmp), $numPerPage,
-                'usersPanel', $paginatorViewNum, 
-                $paginatorBaseUrl
-            );
-            if ($useBaseMaker) {
-                $url = self::genUrlFragment($baseUrl, $fullUrl);
-                $res['value'] = [
-                    'name' => 'Users',
-                    'path' => $url,
-                    'url' => $url,
-                    'img' => [], //Image::getImageArray($img),
-                    'title' => 'Users',
-                    'article' => [],
-                    'otherImages' => [],
-                    'dates' => [],
-                    'pagination' => $paginator,
-                    'hasChildren' => true
-                ];
-                $nPN = $pageNumber + 1;
-                if ($nPN > 0 && $nPN <= $numPages) {
-                    $res['value']['next'] = $url . '?' . http_build_query(
-                        $usePagingFor 
-                        ? [
-                            'viewNum' => $paginatorViewNum, 
-                            'pageNum'=> $nPN,
-                            'pagingFor' => 'usersPanel',
-                            'limit' => $numPerPage,
-                        ]
-                        : [
-                            'page' => $nPN,
-                            'limit' => $numPerPage,
-                        ]
-                    );
-                    $res['done'] = false;
+                // dd($users);
+                $paginator = Page::genPagingFor(
+                    $pn, count($tmp), $numPerPage,
+                    'usersPanel', $paginatorViewNum, 
+                    $paginatorBaseUrl
+                );
+                if ($useBaseMaker) {
+                    $url = self::genUrlFragment($baseUrl, $fullUrl);
+                    $res['value'] = [
+                        'name' => 'Users',
+                        'path' => $url,
+                        'url' => $url,
+                        'img' => [], //Image::getImageArray($img),
+                        'title' => 'Users',
+                        'article' => [],
+                        'otherImages' => [],
+                        'dates' => [],
+                        'pagination' => $paginator,
+                        'hasChildren' => true
+                    ];
+                    $nPN = $pageNumber + 1;
+                    if ($nPN > 0 && $nPN <= $numPages) {
+                        $res['value']['next'] = $url . '?' . http_build_query(
+                            $usePagingFor 
+                            ? [
+                                'viewNum' => $paginatorViewNum, 
+                                'pageNum'=> $nPN,
+                                'pagingFor' => 'usersPanel',
+                                'limit' => $numPerPage,
+                            ]
+                            : [
+                                'page' => $nPN,
+                                'limit' => $numPerPage,
+                            ]
+                        );
+                        $res['done'] = false;
+                    } 
+                    $res['children'] = $users;
                 } else {
-                    $res['done'] = true;
+                    $res['pagination'] = $paginator;
+                    $res['items'] = $users;
                 }
-                $res['children'] = $users;
-            } else {
-                $res['pagination'] = $paginator;
-                $res['items'] = $users;
+                //dd($users);
+            } elseif ($useBaseMaker) {
+                $res['done'] = true;
+                $res['value'] = null;
             }
-            //dd($users);
-        } 
+        } elseif ($useBaseMaker) {
+            $res['done'] = true;
+            $res['value'] = null;
+        }
         return $res;
     }
 
