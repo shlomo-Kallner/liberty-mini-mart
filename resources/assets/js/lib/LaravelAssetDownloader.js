@@ -26,9 +26,12 @@ class AssetDownloader {
       if (value instanceof ComponentTree && true) {
         var response
         var val = value.value()
-        var url = myUtils.getValueFrom(val, 'url', null)
+        var url = myUtils.getValueFrom(val, 'next', null)
         if (!myUtils.testStr(url)) {
           url = myUtils.getValueFrom(val, 'path', null)
+          if (!myUtils.testStr(url)) {
+            url = myUtils.getValueFrom(val, 'url', null)
+          }
         }
         if (myUtils.testStr(url)) {
           myUtils.doAjax(

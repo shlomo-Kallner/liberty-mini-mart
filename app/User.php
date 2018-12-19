@@ -358,7 +358,8 @@ class User extends Model implements ContainerAPI
         bool $forA = false, int $paginatorViewNum = 0,
         string $paginatorBaseUrl = '', string $baseUrl = 'user',
         bool $withTrashed = true, bool $fullUrl = false, 
-        bool $useBaseMaker = true, int $numPerPage = 3
+        bool $useBaseMaker = true, int $numPerPage = 3,
+        bool $usePagingFor = false
     ) {
         //$numPerPage = 3; // 5;
         $tmp = $withTrashed 
@@ -420,6 +421,24 @@ class User extends Model implements ContainerAPI
                     'pagination' => $paginator,
                     'hasChildren' => true
                 ];
+                if ($pageNumber > 0 && $pageNumber <= $numPages) {
+                    $res['value']['next'] = $url . '?' . http_build_query(
+                        $usePagingFor 
+                        ? [
+                            'viewNum' => $paginatorViewNum, 
+                            'pageNum'=> $pageNumber + 1,
+                            'pagingFor' => 'usersPanel',
+                            'limit' => $numPerPage,
+                        ]
+                        : [
+                            'page' => $pageNumber + 1,
+                            'limit' => $numPerPage,
+                        ]
+                    );
+                    $res['done'] = false;
+                } else {
+                    $res['done'] = true;
+                }
                 $res['children'] = $users;
             } else {
                 $res['pagination'] = $paginator;
