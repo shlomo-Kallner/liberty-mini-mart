@@ -1,5 +1,6 @@
 import {Stack} from './LibertyStack'
 import _ from 'lodash'
+import myUtils from '../utils'
 
 export class TreeWalkIterator {
   constructor (tree) {
@@ -112,7 +113,8 @@ export class ComponentTree {
       tree.setParent(this)
       return this._children.push(tree)
     } else if (typeof tree === 'object') {
-      var {value, children} = tree
+      var children = myUtils.getValueFrom(tree, 'children', null)
+      var value = myUtils.getValueFrom(tree, 'value', null)
       if (value !== null || value !== undefined) {
         return this._children.push(new ComponentTree(value, children, this))
       }
