@@ -57,7 +57,7 @@ class AssetDownloader {
           return {done: response.data.done, value: res}
         } else if (!myUtils.testStr(url)) {
           throw new Error(`value (${val}) does not have a path URL!`)
-        } else { 
+        } else {
           throw new Error('Error!' + myUtils.dataToString(response)) 
         }
       }

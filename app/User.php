@@ -421,17 +421,18 @@ class User extends Model implements ContainerAPI
                     'pagination' => $paginator,
                     'hasChildren' => true
                 ];
-                if ($pageNumber > 0 && $pageNumber <= $numPages) {
+                $nPN = $pageNumber + 1;
+                if ($nPN > 0 && $nPN <= $numPages) {
                     $res['value']['next'] = $url . '?' . http_build_query(
                         $usePagingFor 
                         ? [
                             'viewNum' => $paginatorViewNum, 
-                            'pageNum'=> $pageNumber + 1,
+                            'pageNum'=> $nPN,
                             'pagingFor' => 'usersPanel',
                             'limit' => $numPerPage,
                         ]
                         : [
-                            'page' => $pageNumber + 1,
+                            'page' => $nPN,
                             'limit' => $numPerPage,
                         ]
                     );
