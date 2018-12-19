@@ -17,7 +17,7 @@ window.Vue.use(VueAtlas, 'en')
 
 require('./bootVueComponents')
 
-let router = require('./routes.js').default
+let router = require('./routes.js').genRoutes(window.Laravel.thisUrl)
 
 let Store = require('./store.js')
 

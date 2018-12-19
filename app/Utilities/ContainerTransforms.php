@@ -32,13 +32,13 @@ interface TransformableContainer
         bool $fullUrl = false
     );
 
-    public function toContentArrayWithPagination(
+    /* public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
         bool $fullUrl = false, int $pageNum = 0, 
         int $numItemsPerPage = 4, string $pagingFor = '', 
         int $viewNumber = 0, string $listUrl = '#'
-    );
+    ); */
 
     /* public function toTableArray(
         string $baseUrl = 'store', int $version = 1, 
@@ -70,7 +70,7 @@ trait ContainerTransforms
 
     static public function makeSidebar(
         string $url, string $img, string $alt,
-        string $price = '', int $id = 0
+        string $price = ''
     ) {
         return [
             'url' => $url,
@@ -85,7 +85,7 @@ trait ContainerTransforms
 
     static public function makeMini(
         string $img, string $name, string $url,
-        $price, int $id = 0, string $sticker = ''
+        $price, $id = 0, string $sticker = ''
     ) {
         return [
             'img' => $img,
@@ -99,13 +99,12 @@ trait ContainerTransforms
 
     static public function makeBaseContentArray(
         string $name, string $url, $img, $article, 
-        string $title,  int $id = 0, array $dates = [], 
+        string $title, array $dates = [], 
         array $otherImages = null,
-        array $children = []
+        array $children = [], $hasChildren = null
     ) {
         return [
             'value' => [
-                'id' => $id,
                 'name' => $name,
                 'path' => $url,
                 'url' => $url,
@@ -114,8 +113,11 @@ trait ContainerTransforms
                 'article' => Article::getArticle($article, true),
                 'otherImages' => $otherImages??[],
                 'dates' => $dates??[],
+                'hasChildren' => is_null($hasChildren)
+                    ? Functions::countHas($children)
+                    : (is_bool($hasChildren) ? $hasChildren : false)
                 ],
-            'children' => $children
+            'children' => $children ?? []
         ];
     }
 

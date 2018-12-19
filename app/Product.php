@@ -270,7 +270,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
             $useTitle ? $this->title : $img['alt'],
             Functions::testVar($this->sale) || $this->sale != $this->price 
                 ? $this->sale 
-                : $this->price, $this->id
+                : $this->price
         ); 
     }
 
@@ -330,31 +330,61 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         string $description, array $otherImages = null,
         string $sticker = '', array $dates = null,
         int $id = 0, string $api = '', array $reviews = null,
-        $availablity = '', array $payload = null
+        $availablity = '', array $payload = null,
+        bool $useBaseMaker = true
     ) {
-        return [
-            'id' => $id,
-            'name' => $name,
-            'url' => $url,
-            'api' => $api,
-            'title' => $title,
-            'img' => Image::getImageArray($img),
-            'article' => Article::getArticle($article, true),
-            'price' => $price,
-            'sale' => $sale,
-            'sticker' => $sticker,
-            'description' => $description,
-            'otherImages' => $otherImages?? [],
-            'reviews' => $reviews ?? [],
-            'payload' => $payload ?? [],
-            'dates' => $dates ?? [],
-        ];
+        if ($useBaseMaker) {
+            $content = self::makeBaseContentArray(
+                $name, $url, $img, $article, 
+                $title, $dates, 
+                $otherImages,
+                null, false
+            );
+            $content['value']['description'] = $description;
+            $content['value']['api'] = $api;
+            $content['value']['id'] = $id;
+            $content['value']['price'] = $price;
+            $content['value']['sale'] = $sale;
+            $content['value']['sticker'] = $sticker;
+            $content['value']['reviews'] = $reviews ?? [];
+            $content['value']['payload'] = $payload ?? [];
+            return $content;
+        } else {
+            return [
+                'id' => $id,
+                'name' => $name,
+                'url' => $url,
+                'api' => $api,
+                'title' => $title,
+                'img' => Image::getImageArray($img),
+                'article' => Article::getArticle($article, true),
+                'price' => $price,
+                'sale' => $sale,
+                'sticker' => $sticker,
+                'description' => $description,
+                'otherImages' => $otherImages ?? [],
+                'reviews' => $reviews ?? [],
+                'payload' => $payload ?? [],
+                'dates' => $dates ?? [],
+            ];
+        }
     }
 
     public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false
+    ) {
+        return $this->toContentArrayPlus(
+            $baseUrl, $version, $useTitle, $withTrashed, 
+            $fullUrl, true
+        );
+    }
+
+    public function toContentArrayPlus(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false, bool $useBaseMaker = true
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
         $api = $this->getFullUrl('api/' . $baseUrl, $fullUrl);
@@ -368,7 +398,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
             ], $this->id, $api, ProductReview::getContentArrays($this->reviews),
-            $this->availablity, $this->getPayload()
+            $this->availablity, $this->getPayload(), $useBaseMaker
         );
     }
 

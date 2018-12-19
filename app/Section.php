@@ -92,10 +92,11 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         if ($useBaseMaker) {
             $content = self::makeBaseContentArray(
                 $name, $url, $img, $article, $title,
-                $id, $dates??[], $otherImages??[],
-                $cats??[]
+                $id, $dates, $otherImages,
+                $cats, !is_null($cats)
             );
             $content['value']['description'] = $description;
+            $content['value']['id'] = $id;
             return $content;
         } else {
             return [
@@ -173,8 +174,7 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         $img = $this->image->toImageArray();
         return self::makeSidebar(
             $this->getFullUrl($baseUrl, $fullUrl), $img['img'], 
-            $useTitle ? $this->title : $img['alt'],
-            '', $this->id
+            $useTitle ? $this->title : $img['alt'], ''
         ); 
     }
 

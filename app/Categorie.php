@@ -95,8 +95,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         $img = $this->image->toImageArray();
         return self::makeSidebar(
             $this->getFullUrl($baseUrl, $fullUrl), $img['img'],
-            $useTitle ? $this->title : $img['alt'],
-            '', $this->id
+            $useTitle ? $this->title : $img['alt'], ''
         );
     }
 
@@ -143,21 +142,32 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         string $name, string $url, string $title,
         $img, $article, string $description,
         array $products = null, array $otherImages = null,
-        string $sticker = '', array $dates = [], int $id = 0
+        string $sticker = '', array $dates = [], int $id = 0,
+        bool $useBaseMaker = true
     ) {
-        return [
-            'id' => $id,
-            'name' => $name,
-            'img' => Image::getImageArray($img),
-            'otherImages' => $otherImages??[],
-            'title' => $title,
-            'article' => Article::getArticle($article, true),
-            'url' => $url,
-            'sticker' => $sticker,
-            'description' => $description,
-            'products' => $products??[],
-            'dates' => $dates??[],
-        ];
+        if ($useBaseMaker) {
+            $content = self::makeBaseContentArray(
+                $name, $url, $img, $article, 
+                $title, $dates, 
+                $otherImages,
+                $products, !is_null($products)
+            );
+            return $content;
+        } else {
+            return [
+                'id' => $id,
+                'name' => $name,
+                'img' => Image::getImageArray($img),
+                'otherImages' => $otherImages??[],
+                'title' => $title,
+                'article' => Article::getArticle($article, true),
+                'url' => $url,
+                'sticker' => $sticker,
+                'description' => $description,
+                'products' => $products??[],
+                'dates' => $dates??[],
+            ];
+        }
     }
 
     static public function makeCmcContentArray(
@@ -171,7 +181,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
     public function toCmsContentArray(
         int $i = 0
     ) {
-
+        return null;
     }
 
     // TO BE IMPLEMENTED!!!
@@ -193,13 +203,25 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false
     ) {
+        return $this->toContentArrayPlus(
+            $baseUrl, $version, $useTitle, $withTrashed,
+            $fullUrl, true, 'asc'
+        );
+    }
+
+    public function toContentArrayPlus(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false, bool $useBaseMaker = true,
+        string $dir = 'asc'
+    ) {
         return self::makeContentArray(
             $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
             $useTitle ? $this->title : $this->image->alt,
             $this->image, $this->article, $this->description,
             $this->getProducts(
                 Product::TO_URL_LIST_TRANSFORM, 
-                $withTrashed, 'asc', $baseUrl, $useTitle,
+                $withTrashed, $dir, $baseUrl, $useTitle,
                 $fullUrl, $version, []
             ),
             Image::getArraysFor($this->otherImages),
@@ -207,7 +229,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
                 'created' => $this->created_at,
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
-            ], $this->id
+            ], $this->id, $useBaseMaker
         );
     }
 
