@@ -289,7 +289,7 @@ class User extends Model implements ContainerAPI
                     'url' => $url,
                     'img' => $this->image->toImageArray(),
                     'title' => $this->name,
-                    'article' => '',
+                    'article' => [],
                     'otherImages' => Image::getArraysFor($this->images),
                     'dates' => [
                         'created' => $this->created_at,
@@ -301,7 +301,7 @@ class User extends Model implements ContainerAPI
                 'children' => [
                     'orders' => $this->orders??[],
                     'carts' => $this->carts??[],
-                    'wishlist' => [],   
+                    // 'wishlist' => [],   
                 ]
             ];
         } else {
@@ -410,37 +410,13 @@ class User extends Model implements ContainerAPI
                     $paginatorBaseUrl
                 );
                 if ($useBaseMaker) {
-                    $url = self::genUrlFragment($baseUrl, $fullUrl);
-                    $res['value'] = [
-                        'name' => 'Users',
-                        'path' => $url,
-                        'url' => $url,
-                        'img' => [], //Image::getImageArray($img),
-                        'title' => 'Users',
-                        'article' => [],
-                        'otherImages' => [],
-                        'dates' => [],
-                        'pagination' => $paginator,
-                        'hasChildren' => true
-                    ];
-                    $nPN = $pageNumber + 1;
-                    if ($nPN > 0 && $nPN <= $numPages) {
-                        $res['value']['next'] = $url . '?' . http_build_query(
-                            $usePagingFor 
-                            ? [
-                                'viewNum' => $paginatorViewNum, 
-                                'pageNum'=> $nPN,
-                                'pagingFor' => 'usersPanel',
-                                'limit' => $numPerPage,
-                            ]
-                            : [
-                                'page' => $nPN,
-                                'limit' => $numPerPage,
-                            ]
-                        );
-                        $res['done'] = false;
-                    } 
-                    $res['children'] = $users;
+                    $img = []; //Image::getImageArray($img)
+                    $res = Page::makeBaseContentIterArray(
+                        'Users', self::genUrlFragment($baseUrl, $fullUrl),
+                        $img, [], 'Users', $pageNumber, $numPages, $numPerPage,
+                        $users, $paginator, [], [], true, $usePagingFor, 
+                        $paginatorViewNum, 'usersPanel'
+                    );
                 } else {
                     $res['pagination'] = $paginator;
                     $res['items'] = $users;

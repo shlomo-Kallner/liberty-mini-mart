@@ -13,6 +13,7 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 use App\Exceptions\JsonException;
+use Illuminate\Contracts\Support\Arrayable;
 
 
 class Functions
@@ -368,6 +369,18 @@ class Functions
     static public function countHas($value)
     {
         return self::is_countable($value) && count($value) > 0;
+    }
+
+    static public function arrayableToArray($arr)
+    {
+        if (self::testVar($arr)) {
+            if ($arr instanceof Arrayable) {
+                return $arr->toArray();
+            } elseif (is_array($arr)) {
+                return $arr;
+            }
+        }
+        return null;
     }
 
     static public function isPropKeyIn($data, $name) 

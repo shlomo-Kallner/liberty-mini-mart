@@ -338,7 +338,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
                 $name, $url, $img, $article, 
                 $title, $dates, 
                 $otherImages,
-                null, false
+                null, false, true
             );
             $content['value']['description'] = $description;
             $content['value']['api'] = $api;

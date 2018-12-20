@@ -143,14 +143,14 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         $img, $article, string $description,
         array $products = null, array $otherImages = null,
         string $sticker = '', array $dates = [], int $id = 0,
-        bool $useBaseMaker = true
+        bool $useBaseMaker = true, bool $done = true
     ) {
         if ($useBaseMaker) {
             $content = self::makeBaseContentArray(
                 $name, $url, $img, $article, 
                 $title, $dates, 
-                $otherImages,
-                $products, !is_null($products)
+                $otherImages, $products, 
+                !is_null($products), $done
             );
             return $content;
         } else {
@@ -213,7 +213,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false, bool $useBaseMaker = true,
-        string $dir = 'asc'
+        bool $done = true, string $dir = 'asc'
     ) {
         return self::makeContentArray(
             $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
@@ -229,7 +229,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
                 'created' => $this->created_at,
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
-            ], $this->id, $useBaseMaker
+            ], $this->id, $useBaseMaker, $done
         );
     }
 
@@ -258,7 +258,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
             // {$tmp[0]}/section/{section}/category/{category}/product/{product}
             $section_id = Section::getNamed($tmp[2])->id;
             return self::getNamed($tmp[4], $section_id)->id;
-        } elseif (count($tmp) == 1) {
+        } elseif (count($tmp) === 1) {
             return self::where('url', $url)
                 ->orderBy('section_id', 'asc')
                 ->get();
@@ -378,5 +378,4 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
     {
         return $this->belongsTo('App\Section', 'section_id');
     }
-    
 }

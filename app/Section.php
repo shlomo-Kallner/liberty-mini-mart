@@ -82,18 +82,55 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
+    public function getCategories(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = []
+    ) {
+        $tmp = $withTrashed 
+            ? $this->categories()->withTrashed()
+                ->orderBy('name', $dir)->get() 
+            : $this->categories()->orderBy('name', $dir)->get();
+        return Categorie::getFor(
+            $tmp, $baseUrl, $transform, $useTitle,
+            $version, $withTrashed, $fullUrl, $default
+        );
+    }
+
+    public function getCategoriesWithPagination(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = []
+    ) {
+        $tmp = $withTrashed 
+            ? $this->categories()->withTrashed()
+                ->orderBy('name', $dir)->get() 
+            : $this->categories()->orderBy('name', $dir)->get();
+        return Categorie::getForWithPagination(
+            $tmp, $transform, int $pageNum,
+            int $numShown = 4, string $pagingFor = '', 
+            string $listUrl = '', $baseUrl, 
+            $dir, int $viewNumber = 0, 
+            $withTrashed, $useTitle, 
+            $fullUrl, $version, $default, 
+            bool $useBaseMaker = true, bool $done = true
+        );
+    }
+
     static public function makeContentArray(
         string $name, string $url, $img,
         string $title, $article, string $description,
         array $otherImages = null,
         array $cats = null, array $dates = [], int $id = 0,
-        bool $useBaseMaker = true
+        bool $useBaseMaker = true, bool $done = true
     ) {
         if ($useBaseMaker) {
             $content = self::makeBaseContentArray(
                 $name, $url, $img, $article, $title,
                 $id, $dates, $otherImages,
-                $cats, !is_null($cats)
+                $cats, !is_null($cats), $done
             );
             $content['value']['description'] = $description;
             $content['value']['id'] = $id;
@@ -129,7 +166,7 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false, bool $useBaseMaker = true,
-        string $dir = 'asc'
+        bool $done = true, string $dir = 'asc'
     ) {
         return self::makeContentArray(
             $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
@@ -148,7 +185,7 @@ class Section extends Model implements TransformableContainer, ContainerAPI
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
             ],
-            $this->id, $useBaseMaker
+            $this->id, $useBaseMaker, $done
         );
     }
 
