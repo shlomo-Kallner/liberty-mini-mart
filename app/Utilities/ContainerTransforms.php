@@ -659,13 +659,9 @@ trait ContainerTransforms
         $default = [], bool $useBaseMaker = true,
         bool $done = true, string $dir = 'asc'
     ) {
-        if ((is_array($args) || $args instanceof Collection) 
-            && count($args) > 0
-        ) {
+        if (Functions::countHas($args)) {
             if (empty($transform)) {
-                return $args instanceof Collection 
-                    ? $args->all() 
-                    : $args;
+                return Functions::arrayableToArray($args, $args);
             } else {
                 $res = [];
                 foreach ($args as $item) {
@@ -703,7 +699,7 @@ trait ContainerTransforms
         string $dir = 'asc', int $viewNumber = 0, 
         bool $withTrashed = true, bool $useTitle = true, 
         bool $fullUrl = false, int $version = 1, $default = [], 
-        bool $useBaseMaker = true, bool $done = true
+        bool $useBaseMaker = true, bool $done = false
     ) {
         $cTmp = count($args);
         if ($cTmp <= $numShown) {
@@ -730,7 +726,7 @@ trait ContainerTransforms
                 $tmp, $pageNum, $numShown, 
                 $pagingFor, $listUrl, 
                 $viewNumber
-            );
+            );///
         } else {
             return $default;
         }

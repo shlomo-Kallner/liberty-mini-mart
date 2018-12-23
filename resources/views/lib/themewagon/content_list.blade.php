@@ -4,26 +4,25 @@
     use \App\Utilities\Functions\Functions;
     use \App\Page;
     use \Illuminate\Support\HtmlString;
-    use Illuminate\Contracts\Support\Htmlable;
 
     // The DATA for the SLOTS of THIS COMPONENT are gathered HERE!!!  
     // Note: they CAN be empty... 
 
-    $products2 = Functions::getUnBladedContent($products??'', []);
+    $items2 = Functions::getUnBladedContent($items??'', []);
     //dd($products, $products2);
     $currency2 = Functions::getBladedString($currency??'fa-usd','fa-usd');
     $sorting2 = Functions::getBladedContent($sorting??'', '');
     $pageNumber2 = 0; // intval(Functions::getBladedString($pageNumber??0,0));
     // our default.. is 12 products per page (the template had 9..)
-    $productsPerPage2 = intval(Functions::getBladedString($productsPerPage??12,12));
+    $itemsPerPage2 = intval(Functions::getBladedString($itemsPerPage??12,12));
 
     // NOTE: every product 'row' can hold up to 3 products! 
-    // $productsPerRow2 = getBladedContent($productsPerRow,3);
-    $productsPerRow2 = 3;
+    // $itemsPerRow2 = getBladedContent($itemsPerRow,3);
+    $itemsPerRow2 = 3;
 
     // Some Utility Functions for the component..
 
-    if(Functions::testVar($products2)){
+    if(Functions::testVar($items2)){
 
         // adding the 'extraOuterCss' slot & data to the array..
         // so that we can use 'product_gallery.blade.php' for this..
@@ -38,12 +37,12 @@
         */
 
         // Initializing the row Indices while we are at it..
-        $totalProducts = count($products2);
+        $totalItems = count($items2);
         $numPages = 0;
         // Functions::genRowsPerPage($totalProducts, $productsPerPage2);
         $rowIdxs = Functions::genPagesIndexes(
-            $productsPerPage2, $productsPerRow2, 
-            $totalProducts, $pageNumber2, $numPages
+            $itemsPerPage2, $itemsPerRow2, 
+            $totalItems, $pageNumber2, $numPages
         );
         $currentPage = $pageNumber2 > -1 ? $pageNumber2 : 0;
         // if $productsPerPage is set then 
@@ -54,9 +53,9 @@
         if (false) {
             dd(
                 [
-                    'productsPerPage' => $productsPerPage2, 
-                    'productsPerRow' => $productsPerRow2, 
-                    'totalProducts' => $totalProducts, 
+                    'itemsPerPage' => $itemsPerPage2, 
+                    'itemsPerRow' => $itemsPerRow2, 
+                    'totalItems' => $totalItems, 
                     'pageNumber' => $pageNumber2, 
                     'numPages' => $numPages, 
                     'rowIdxs' => $rowIdxs,
@@ -77,7 +76,7 @@
             $lastItem = $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1];
             $ranges = Functions::genRange(0, $numPages - 1, 1);
             $paginator = [
-                'totalItems' => $totalProducts,
+                'totalItems' => $totalItems,
                 'numRanges' => $numPages,
                 'ranges' => $ranges,
                 'currentRange' => [
@@ -93,23 +92,23 @@
             $paginator2 = Page::genPagination(
                 $pageNumber2 > -1 ? $pageNumber2 : 0, 
                 $firstItem, $lastItem,
-                $totalProducts, $ranges, $numPagesPerPagingView ,
+                $totalItems, $ranges, $numPagesPerPagingView ,
                 '', $viewNumber, $baseUrl
             );
             $paginator3 = Page::genPagination2(
-                $pageNumber2, $productsPerPage2, $totalProducts, 
+                $pageNumber2, $itemsPerPage2, $totalItems, 
                 $numPagesPerPagingView, $pagingFor, $viewNumber, 
                 $baseUrl
             );
         } else {
             $paginator3 = [];
         }
-        //dd("cont", $paginator, $currentPage, $products2);
+        //dd("cont", $paginator, $currentPage, $items2);
             
     } else {
         $paginator3 = [];
     }
-    //dd("cont", $paginator, $products2);
+    //dd("cont", $paginator, $items2);
 
     if (false) {
         $numPagesPerPagingView = 4;
@@ -120,13 +119,13 @@
             $paginator2 = Page::genPagination(
                 $pageNumber2 > -1 ? $pageNumber2 : 0, 
                 $firstItem, $lastItem,
-                $totalProducts, $ranges, $numPagesPerPagingView ,
+                $totalItems, $ranges, $numPagesPerPagingView ,
                 '', $viewNumber, $baseUrl
             );
         */ 
         $paginator3 = Page::genPagination2(
             $pageNumber2 > -1 ? $pageNumber2 : 0, 
-            $productsPerPage2, $totalProducts, 
+            $itemsPerPage2, $totalItems, 
             $numPagesPerPagingView, $pagingFor, 
             $viewNumber, $baseUrl
         );
@@ -185,7 +184,7 @@
     
 
     <!-- BEGIN PRODUCT LIST -->
-    @if(Functions::testVar($products2))
+    @if(Functions::testVar($items2))
         
         @foreach ($rowIdxs[$currentPage] as $row)
 
@@ -209,13 +208,13 @@
                             @endslot
 
                         --}}
-                        @if (!array_key_exists('extraOuterCss', $products2[$idx]) 
-                            || empty($products2[$idx]['extraOuterCss']))
+                        @if (!array_key_exists('extraOuterCss', $items2[$idx]) 
+                            || empty($items2[$idx]['extraOuterCss']))
                             @slot('extraOuterCss')
                                 {{ "col-md-4 col-sm-6 col-xs-12" }}
                             @endslot
                         @endif
-                        @foreach ($products2[$idx] as $key => $value)
+                        @foreach ($items2[$idx] as $key => $value)
                             @slot($key)
                                 {{ $value }}
                             @endslot
@@ -415,13 +414,7 @@
             @component('lib.themewagon.paginator')
                 @foreach ($paginator3 as $key => $val)
                     @slot($key)
-                        @if ($val instanceof Htmlable) 
-                            {!! $val->toHtml() !!}
-                        @elseif (is_array($val) || is_object($val))
-                            {!! serialize($val) !!}
-                        @else
-                            {!! $val !!}
-                        @endif
+                        {!! Functions::toBladableContent($val) !!}
                     @endslot
                 @endforeach
             @endcomponent

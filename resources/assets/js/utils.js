@@ -80,6 +80,35 @@ export default {
   testStr: function (str) {
     return typeof str === 'string' && _.isString(str) && _.size(str) > 0 && str !== ''
   },
+  compData: (v1, v2) => {
+    if (typeof v1 === typeof v2) {
+      if (typeof v1 === 'object') {
+        var bol = true
+        for (var i in v1) {
+          if (i in v2) {
+            if (!this.compData(v1[i], v2[i])) {
+              bol = false
+              break
+            }
+          }
+        }
+        if (bol) {
+          for (var i in v2) {
+            if (i in v1) {
+              if (!this.compData(v2[i], v1[i])) {
+                bol = false
+                break
+              }
+            }
+          }
+        }
+        return bol
+      } else if (this.isScalar(v1)) {
+        return v1 === v2
+      }
+    }
+    return false
+  },
   doOnArray: function (data, func) {
     var res = []
     for (var i in data) {

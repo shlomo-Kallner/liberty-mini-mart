@@ -20,7 +20,7 @@
     import VueRouter from 'vue-router'
     import _ from 'lodash'
     import myUtils from '../../utils.js'
-    import BootPaginator from '../bootPaginator.vue'
+    import BootPaginator from '../lib/bootPaginator.vue'
 
     Vue.use(VueRouter)
     Vue.use(Vuex)

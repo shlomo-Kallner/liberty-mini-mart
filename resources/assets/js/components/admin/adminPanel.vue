@@ -32,9 +32,9 @@
     import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
     import { Stack } from '../../lib/LibertyStack.js'
     import { ComponentTree } from '../../lib/LaravelComponentTree.js'
-    import BootBreadcrumbs from '../bootBreadcrumbs.vue'
-    import BootTabs from '../bootTabs.vue'
-    import BootArticle from '../bootArticle.vue'
+    import BootBreadcrumbs from '../lib/bootBreadcrumbs.vue'
+    import BootTabs from '../lib/bootTabs.vue'
+    import BootArticle from '../lib/bootArticle.vue'
     
     export default {
         name: 'admin-panel-component',

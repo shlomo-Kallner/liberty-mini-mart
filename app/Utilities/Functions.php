@@ -4,6 +4,7 @@ namespace App\Utilities\Functions;
 
 use Illuminate\Support\Collection,
     Illuminate\Support\HtmlString,
+    Illuminate\Contracts\Support\Htmlable,
     HTMLPurifier, DB, \Countable;
 use Composer\Semver\Comparator;
 use Illuminate\Http\Request;
@@ -103,6 +104,17 @@ class Functions
             return !empty($tmp) ? $tmp : $default ;
         } else {
             return $default;
+        }
+    }
+
+    static public function toBladableContent($val)
+    {
+        if ($val instanceof Htmlable) {
+            return $val->toHtml();
+        } elseif (is_array($val) || is_object($val)) { 
+            return serialize($val);
+        } else { 
+            return $val;
         }
     }
 
@@ -371,16 +383,18 @@ class Functions
         return self::is_countable($value) && count($value) > 0;
     }
 
-    static public function arrayableToArray($arr)
+    static public function arrayableToArray($arr, $def = null)
     {
         if (self::testVar($arr)) {
-            if ($arr instanceof Arrayable) {
+            if ($args instanceof Collection) {
+                return $args->all();
+            } elseif ($arr instanceof Arrayable) {
                 return $arr->toArray();
             } elseif (is_array($arr)) {
                 return $arr;
             }
         }
-        return null;
+        return $def;
     }
 
     static public function isPropKeyIn($data, $name) 

@@ -53,13 +53,13 @@
             @slot('sorting')
                 {!! $sorting2 !!}
             @endslot
-            @slot('products')
+            @slot('items')
                 {!! $items2 !!}
             @endslot
             @slot('pageNumber')
                 {{ $pageNumber2 }}
             @endslot
-            @slot('productsPerPage')
+            @slot('itemsPerPage')
                 {{ $itemsPerPage2 }}
             @endslot
             @slot('currency')

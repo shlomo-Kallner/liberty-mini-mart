@@ -4,8 +4,9 @@ import myUtils from '../utils'
 import {ComponentTree, TreeWalkIterator} from './LaravelComponentTree'
 
 class AssetDownloader {
-  constructor (tree, method = 'get', timeout = 3000) {
+  constructor (tree, comp = null, method = 'get', timeout = 3000) {
     this.tree = tree instanceof ComponentTree ? tree : null
+    this._comp = typeof comp === 'function' ? comp : myUtils.compData
     this.iter = !_.isNull(this.tree) ? new TreeWalkIterator(this.tree) : null
     this.method = myUtils.testStr(method) ? method : 'get'
     this.timeout = myUtils.testData(timeout) && _.isInteger(timeout) ? timeout : 3000
@@ -25,17 +26,16 @@ class AssetDownloader {
     } else {
       if (value instanceof ComponentTree && true) {
         var response
-        var val = value.value()
-        var url = myUtils.getValueFrom(val, 'next', null)
+        var url = myUtils.getValueFrom(value.value, 'next', null)
         if (!myUtils.testStr(url)) {
-          url = myUtils.getValueFrom(val, 'path', null)
+          url = myUtils.getValueFrom(value.value, 'path', null)
           if (!myUtils.testStr(url)) {
-            url = myUtils.getValueFrom(val, 'url', null)
+            url = myUtils.getValueFrom(value.value, 'url', null)
           }
         }
         if (myUtils.testStr(url)) {
           myUtils.doAjax(
-            myUtils.makeDataWithLaravel(val, url), this.method,
+            myUtils.makeDataWithLaravel(value.value, url), this.method,
             (res) => { response = res },
             (res) => { throw new Error('Error!' + myUtils.dataToString(res)) },
             this.timeout
@@ -47,7 +47,7 @@ class AssetDownloader {
           var res = undefined
           if (response.data.done !== false &&
             myUtils.testData(response.data.value)) {
-            value.value(response.data.value)
+            value.value = response.data.value
             if (_.has(response.data, 'children')) {
               for (var i of response.data.children) {
                 value.push(i)

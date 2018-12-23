@@ -42,10 +42,10 @@ export class ComponentTree {
     this._children = ComponentTree.checkChildrenArray(children)
       ? children : []
     this._children.forEach(value => value.setParent(this))
-    Object.defineProperty(this, 'length', {
+    /* Object.defineProperty(this, 'length', {
       get () { return this._children.length },
       set (x) { _.noop(x) }
-    })
+    }) */
   }
 
   static checkChildrenArray (children) {
@@ -62,7 +62,11 @@ export class ComponentTree {
     }
   }
 
-  parent () {
+  get length () {
+    return this._children.length;
+  }
+
+  get parent () {
     return this._parent
   }
 
@@ -72,12 +76,28 @@ export class ComponentTree {
     }
   }
 
-  value (val = null) {
-    var res = this._value
+  set value (val = null) {
     if (val !== null || val !== undefined) {
       this._value = val
     }
-    return res
+  }
+
+  get value () {
+    return this._value
+  }
+
+  get empty () {
+    return this._children.length === 0
+  }
+
+  get children () {
+    return this._children
+  }
+
+  set children (children) {
+    if (ComponentTree.checkChildrenArray(children)) {
+      this._children = children
+    }
   }
 
   at (index) {
@@ -93,14 +113,18 @@ export class ComponentTree {
   }
 
   [Symbol.iterator] () {
-    return new TreeWalkIterator(this)
+    // return new TreeWalkIterator(this)
+    return function* () {
+      yield this._value
+      if (!this.empty) {
+        for (var i of this._children) {
+          yield * i[Symbol.iterator]()
+        }
+      }
+    }
   }
 
   getChildren () {
-    return this._children
-  }
-
-  children () {
     return this._children
   }
 
@@ -115,7 +139,7 @@ export class ComponentTree {
     } else if (typeof tree === 'object') {
       var children = myUtils.getValueFrom(tree, 'children', null)
       var value = myUtils.getValueFrom(tree, 'value', null)
-      if (value !== null || value !== undefined) {
+      if (myUtils.testData(value)) {
         return this._children.push(new ComponentTree(value, children, this))
       }
     }
@@ -142,15 +166,16 @@ export class ComponentTree {
   }
 
   findSubTreeWithValue (value, comp = null) {
-    if (value !== undefined && value !== null) {
-      if (this.value() === value || (typeof comp === 'function' &&
-        comp(this.value(), value))) {
+    if (myUtils.testData(value)) {
+      if (myUtils.compData(this._value, value) ||
+        (typeof comp === 'function' &&
+          comp(this._value, value))) {
         return this
       } else {
         var res = null
         for (var i of this._children) {
           var tmp = i.findSubTreeWithValue(value, comp)
-          if (tmp !== undefined && tmp !== null) {
+          if (myUtils.testData(tmp)) {
             res = tmp
             break
           }

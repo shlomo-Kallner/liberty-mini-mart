@@ -1,8 +1,8 @@
 
-window.Vue.component('dismissable-alert', require('./components/dismissable-alert.vue'))
-window.Vue.component('cart-component', require('./components/cart.vue'))
-window.Vue.component('boot-pagination', require('./components/bootPaginator.vue'))
-window.Vue.component('boot-carousel', require('./components/bootCarousel.vue'))
+window.Vue.component('dismissable-alert', require('./components/lib/dismissable-alert.vue'))
+window.Vue.component('cart-component', require('./components/metronic/cart.vue'))
+window.Vue.component('boot-pagination', require('./components/lib/bootPaginator.vue'))
+window.Vue.component('boot-carousel', require('./components/lib/bootCarousel.vue'))
 
 window.Laravel.page.alert = new window.Laravel.LaravelAlert(window.Laravel.alert)
 

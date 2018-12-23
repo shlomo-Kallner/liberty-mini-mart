@@ -2,8 +2,9 @@
 import 'es6-promise/auto'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
-import VueAtlas from 'vue-atlas'
-import 'vue-atlas/dist/vue-atlas.css'
+// import VueAtlas from 'vue-atlas'
+// import 'vue-atlas/dist/vue-atlas.css'
+import * as uiv from 'uiv'
 import AdminPanel from './components/admin/adminPanel.vue'
 import { sync } from 'vuex-router-sync'
 
@@ -13,7 +14,8 @@ window.Vue.use(VueRouter)
 
 window.Vue.use(Vuex)
 
-window.Vue.use(VueAtlas, 'en')
+// window.Vue.use(VueAtlas, 'en')
+window.Vue.use(uiv, {prefix: 'uiv'})
 
 require('./bootVueComponents')
 

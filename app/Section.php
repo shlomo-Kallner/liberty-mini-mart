@@ -82,41 +82,29 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    public function getCategories(
-        $transform = null, bool $withTrashed = true, 
-        string $dir = 'asc', string $baseUrl = 'store',
-        bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = []
-    ) {
-        $tmp = $withTrashed 
-            ? $this->categories()->withTrashed()
-                ->orderBy('name', $dir)->get() 
-            : $this->categories()->orderBy('name', $dir)->get();
-        return Categorie::getFor(
-            $tmp, $baseUrl, $transform, $useTitle,
-            $version, $withTrashed, $fullUrl, $default
-        );
-    }
-
     public function getCategoriesWithPagination(
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
         bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = []
+        int $version = 1
     ) {
         $tmp = $withTrashed 
             ? $this->categories()->withTrashed()
                 ->orderBy('name', $dir)->get() 
             : $this->categories()->orderBy('name', $dir)->get();
-        return Categorie::getForWithPagination(
-            $tmp, $transform, int $pageNum,
-            int $numShown = 4, string $pagingFor = '', 
-            string $listUrl = '', $baseUrl, 
-            $dir, int $viewNumber = 0, 
-            $withTrashed, $useTitle, 
-            $fullUrl, $version, $default, 
-            bool $useBaseMaker = true, bool $done = true
-        );
+        $res = [];
+        if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
+            return Categorie::getForWithPagination(
+                $tmp, $transform, int $pageNum,
+                int $numShown = 4, string $pagingFor = '', 
+                string $listUrl = '', $baseUrl, 
+                $dir, int $viewNumber = 0, 
+                $withTrashed, $useTitle, 
+                $fullUrl, $version, $default, 
+                bool $useBaseMaker = true, bool $done = true
+            );
+        }
+        
     }
 
     static public function makeContentArray(
