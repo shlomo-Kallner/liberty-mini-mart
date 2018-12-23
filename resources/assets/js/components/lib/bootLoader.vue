@@ -18,11 +18,33 @@
     },
     data () {
       return {
-        ourProgress: 1,
-        tween: new Tween.Tween(this)
+        progress: 1,
+        tween: null
+      }
+    },
+    created: function () {
+      this.tween = new Tween.Tween(this.$data)
           .to({ourProgress: 100}, 10000)
           .repeat(Infinity)
-          .start()
+      if (this.loading) {
+        this.tween.start()
+      }
+    },
+    watch: {
+      progress: function () {
+        function animate(params) {
+          if (Tween.update()) {
+            requestAnimationFrame(a)
+          }
+        }
+
+      },
+      loading: function (newLoad, oldLoad) {
+        if (newLoad && !oldLoad) {
+          this.tween.start()
+        } else if (!newLoad && oldLoad) {
+          this.tween.stop()
+        }
       }
     },
     computed: {
