@@ -244,6 +244,24 @@ export default {
       return false
     }
   },
+  isEmpty: (data) => {
+    if ((typeof data === 'boolean' && data) ||
+      (typeof data === 'number' && data > 0) ||
+      (typeof data === 'bigint' && data > 0)
+    ) {
+      return false
+    } else if (typeof data === 'object' ||
+      typeof data === 'string' ||
+      Array.isArray(data)
+    ) {
+      return _.isEmpty(data)
+    } else {
+      return true
+    }
+  },
+  isFiniteOrConvertable: (data) => {
+    return _.isFinite(data) || _.isFinite(_.toFinite(data))
+  },
   genIndent: function (indent = 2, indChar = ' ') {
     var res = ''
     for (var i = 0; i < indent; i++) {

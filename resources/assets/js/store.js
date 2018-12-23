@@ -87,12 +87,12 @@ export function makeStore (data) {
         var r = payload.route
         var c = state.getters.findComponent(r.path, (cv, p) => cv.path === p)
         var arr = []
-        while (c !== undefined && c !== null && c.parent() !== null) {
-          arr.push(c.value())
-          c = c.parent()
+        while (myUtils.testData(c)) {
+          arr.push(c.value)
+          c = c.parent
         }
-        for (var i in arr) {
-          state.breadcrumbs.push(arr[i])
+        while (arr.length > 0) {
+          state.breadcrumbs.push(arr.pop())
         }
       },
       setComponents: function (state, payload) {
@@ -113,9 +113,9 @@ export function makeStore (data) {
     getters: {
       components: (state) => {
         var res = []
-        var ch = state.components.getChildren()
-        for (var i in ch) {
-          res.push(ch[i].value())
+        var ch = state.components.children
+        for (var i of ch) {
+          res.push(i.value)
         }
         return res
       },
@@ -123,24 +123,24 @@ export function makeStore (data) {
         return state.components.findSubTreeWithValue(value, comp)
       },
       findTab: state => (value, comp = null) => {
-        var c = state.components.getChildren()
+        var c = state.components.children
         var res = null
-        for (var i in c) {
-          if (c[i].value() === value || (typeof comp === 'function' &&
-          comp(c[i].value(), value))) {
-            res = c[i]
+        for (var i of c) {
+          if (i.value === value || (typeof comp === 'function' &&
+          comp(i.value, value))) {
+            res = i
             break
           }
         }
         return res
       },
-      getBreadcrumbs: (state) => state.breadcrumbs.data(),
+      getBreadcrumbs: (state) => state.breadcrumbs.data,
       getComponentChildrenValues: (state, getters) => (value, comp = null) => {
         var t = getters.findComponent(value, comp)
         var res = []
-        if (t !== null & t !== undefined) {
-          for (var i of t.getChildren()) {
-            res.push(i.value())
+        if (myUtils.testData(t)) {
+          for (var i of t.children) {
+            res.push(i.value)
           }
         }
         return res

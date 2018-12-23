@@ -1,15 +1,16 @@
 
 import _ from 'lodash'
 import myUtils from '../utils'
-import {ComponentTree, TreeWalkIterator} from './LaravelComponentTree'
+import { ComponentTree } from './LaravelComponentTree'
 
 class AssetDownloader {
-  constructor (tree, comp = null, method = 'get', timeout = 3000) {
+  constructor (tree, comp = null, method = 'get', timeout = 3000, modInPlace = true) {
     this.tree = tree instanceof ComponentTree ? tree : null
     this._comp = typeof comp === 'function' ? comp : myUtils.compData
-    this.iter = !_.isNull(this.tree) ? new TreeWalkIterator(this.tree) : null
+    this.iter = !_.isNull(this.tree) ? this.tree[Symbol.iterator]() : null
     this.method = myUtils.testStr(method) ? method : 'get'
     this.timeout = myUtils.testData(timeout) && _.isInteger(timeout) ? timeout : 3000
+    this.modInPlace = _.isBoolean(modInPlace) ? modInPlace : true
     if (myUtils.testData(this.tree)) {
       throw new Error('tree MUST NOT be Null or Undefined!')
     }
@@ -44,14 +45,19 @@ class AssetDownloader {
         if (myUtils.testData(response) && response.status === 200 &&
           response.statusText === 'OK'
         ) {
-          var res = undefined
+          var res
           if (response.data.done !== false &&
             myUtils.testData(response.data.value)) {
-            value.value = response.data.value
-            if (_.has(response.data, 'children')) {
-              for (var i of response.data.children) {
-                value.push(i)
+            var children = _.has(response.data, 'children') ?
+              response.data.children : null
+            if (this.modInPlace) {
+              value.value = response.data.value
+              if (!_.isNull(children)) {
+                value.children = children
               }
+              res = value
+            } else {
+              res = new ComponentTree(response.data.value, children)
             }
           }
           return {done: response.data.done, value: res}

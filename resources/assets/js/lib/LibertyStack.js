@@ -23,7 +23,7 @@ export class Stack {
     return def
   }
 
-  data () {
+  get data () {
     return this._data
   }
 
@@ -31,7 +31,11 @@ export class Stack {
     return this._data.length
   }
 
-  empty () {
+  get length () {
+    return this._data.length
+  }
+
+  get empty () {
     return this._data.length === 0
   }
 
@@ -43,7 +47,7 @@ export class Stack {
     return this._data.pop()
   }
 
-  top () {
+  get top () {
     return this._data[this._data.length - 1]
   }
 }

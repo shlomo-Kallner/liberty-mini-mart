@@ -97,6 +97,11 @@ export class ComponentTree {
   set children (children) {
     if (ComponentTree.checkChildrenArray(children)) {
       this._children = children
+    } else if (Array.isArray(children)) {
+      this._children = []
+      for (var i of children) {
+        this._children.push(i)
+      }
     }
   }
 

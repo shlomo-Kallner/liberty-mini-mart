@@ -5,7 +5,6 @@
                 <router-link :to="backPath"><i class="fa fa-arrow-left" aria-hidden="true"></i></router-link>
                 <boot-breadcrumbs v-if="breadcrumbs.crumbs.length > 0" v-bind="breadcrumbs"></boot-breadcrumbs>
                 <boot-article v-bind="initArticle"></boot-article>
-                <boot-tabs v-if="false" :tabs="tabs" :current="currentTab"></boot-tabs>
                 <div class="row padding-top-5">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <keep-alive>
@@ -21,13 +20,13 @@
 
 <script>
     import Vue from 'vue'
-    import VueAtlas from 'vue-atlas'
+    // import VueAtlas from 'vue-atlas'
     import Vuex from 'vuex'
     import VueRouter from 'vue-router'
     
     Vue.use(VueRouter)
     Vue.use(Vuex)
-    vue.use(VueAtlas, 'en')
+    // vue.use(VueAtlas, 'en')
 
     import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
     import { Stack } from '../../lib/LibertyStack.js'
