@@ -42,6 +42,7 @@
     "selectivizr": "^1.0.3",
     "uiv": "^0.28.0",
     "v2-table": "^3.0.3",
+    "velocity-animate": "^2.0.5",
     "vue": "^2.5.17",
     "vue-atlas": "^1.1.39",
     "vue-pagination-2": "^2.0.3",

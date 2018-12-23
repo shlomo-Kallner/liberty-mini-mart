@@ -7,6 +7,8 @@ import VueRouter from 'vue-router'
 import * as uiv from 'uiv'
 import AdminPanel from './components/admin/adminPanel.vue'
 import { sync } from 'vuex-router-sync'
+import Velocity from 'velocity-animate'
+import 'animate.css'
 
 require('./bootstrap')
 
@@ -18,6 +20,7 @@ window.Vue.use(Vuex)
 window.Vue.use(uiv, {prefix: 'uiv'})
 
 require('./bootVueComponents')
+window.Velocity = Velocity
 
 let router = require('./routes.js').genRoutes(window.Laravel.thisUrl)
 
