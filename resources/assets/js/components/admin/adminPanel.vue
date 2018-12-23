@@ -8,7 +8,8 @@
           <div class="row padding-top-5">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
               <keep-alive>
-                <router-view></router-view>
+                <boot-loader v-if="isLoading"></boot-loader>
+                <router-view v-else></router-view>
               </keep-alive>
             </div>
           </div>
@@ -33,6 +34,7 @@
     import BootBreadcrumbs from '../lib/bootBreadcrumbs.vue'
     import BootTabs from '../lib/bootTabs.vue'
     import BootArticle from '../lib/bootArticle.vue'
+    import BootLoader from '../lib/bootLoader.vue'
     
     export default {
         name: 'admin-panel-component',
@@ -45,7 +47,8 @@
         components: {
             BootBreadcrumbs,
             BootTabs,
-            BootArticle
+            BootArticle,
+            BootLoader
         },
         beforeRouteEnter (to, from, next) {
             store.commit('setCrumbs', {route: to})
