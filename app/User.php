@@ -262,6 +262,22 @@ class User extends Model implements ContainerAPI
         return $fullUrl ? url($url) : $url;
     }
 
+    static public function getOrderByKey()
+    {
+        return 'id';
+    }
+
+    public function toFull(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
+    ) {
+        return $this->toContentArray(
+            $baseUrl, $version, $useTitle, 
+            $withTrashed, $fullUrl
+        );
+    }
+
     public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
@@ -273,10 +289,26 @@ class User extends Model implements ContainerAPI
         );
     }
 
+    public function getPriceOrSale()
+    {
+        return '';
+    }
+
+    public function getPubId()
+    {
+        return $this->uuid;
+    }
+
+    public function getSticker()
+    {
+        return '';
+    }
+
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
-        bool $fullUrl = false, bool $useBaseMaker = true
+        bool $fullUrl = false, bool $useBaseMaker = true,
+        bool $done = true, string $dir = 'asc'
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
         if ($useBaseMaker) {
@@ -302,7 +334,8 @@ class User extends Model implements ContainerAPI
                     'orders' => $this->orders??[],
                     'carts' => $this->carts??[],
                     // 'wishlist' => [],   
-                ]
+                ],
+                'done' => $done
             ];
         } else {
             return [

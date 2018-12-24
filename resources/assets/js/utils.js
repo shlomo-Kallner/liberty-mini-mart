@@ -2,6 +2,8 @@ import url from 'url'
 import _ from 'lodash'
 import axios from 'axios'
 import json5 from 'json5'
+import * as Store from './store'
+
 export default {
   genUrl: function (urlObj, pageNum, viewNum, pagingFor) {
     return url.format({
@@ -72,6 +74,45 @@ export default {
       initImage: figure.img,
       initAlt: figure.alt,
       initCaption: figure.cap
+    }
+  },
+  genStoreData: function (data = null) {
+    // console.log(window.myUtils.dataToString(data))
+    if (this.testData(data) && !this.isEmpty(data)) {
+      if (typeof data === 'object' || Array.isArray(data)) {
+        var res = []
+        for (var i in data) {
+          // console.log(window.myUtils.dataToString(i))
+          if (this.hasValueIn(data[i], 'value') &&
+            this.hasValueIn(data[i], 'children')
+          ) {
+            res.push(
+              {
+                value: this.getValueFrom(data[i], 'value', null),
+                children: Store.valToComponentArray(this.getValueFrom(data[i], 'children', null))
+              }
+            )
+          } else {
+            res.push(
+              {
+                value: {
+                  name: this.getValueFrom(data[i], 'name', _.capitalize(i)),
+                  path: this.getValueFrom(data[i], 'path', i),
+                  // component: Foo,
+                  pagination: this.getPagingFrom(data[i])
+                },
+                children: Store.valToComponentArray(this.getItemsFrom(data[i]))
+              }
+            )
+          }
+        }
+        // console.log(window.myUtils.dataToString(res))
+        return res
+      } else if (this.testStr(data)) {
+        return this.genStoreData(this.JsonParseOrRetObj(data))
+      }
+    } else {
+      return []
     }
   },
   testData: function (data) {

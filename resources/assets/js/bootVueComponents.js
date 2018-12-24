@@ -51,7 +51,7 @@ window.Laravel.masterCart = new window.Vue(
     computed: {
       cart: {
         get: function () {
-          return this.cartData;
+          return this.cartData
         },
         set: function (data) {
           if (typeof data === 'string') {

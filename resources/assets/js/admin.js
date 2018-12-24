@@ -64,50 +64,12 @@ function genComponentData (data = null) {
   }
 }
 
-function genStoreData (data = null) {
-  // console.log(window.myUtils.dataToString(data))
-  if (window.myUtils.testData(data) && !window.myUtils.isEmpty(data)) {
-    if (typeof data === 'object' || Array.isArray(data)) {
-      var res = []
-      for (var i in data) {
-        // console.log(window.myUtils.dataToString(i))
-        if (window.myUtils.hasValueIn(data[i], 'value') &&
-          window.myUtils.hasValueIn(data[i], 'children')
-        ) {
-          res.push(
-            {
-              value: window.myUtils.getValueFrom(data[i], 'value', null),
-              children: Store.valToComponentArray(window.myUtils.getValueFrom(data[i], 'children', null))
-            }
-          )
-        } else {
-          res.push(
-            {
-              value: {
-                name: window.myUtils.getValueFrom(data[i], 'name', window._.capitalize(i)),
-                path: window.myUtils.getValueFrom(data[i], 'path', i),
-                // component: Foo,
-                pagination: window.myUtils.getPagingFrom(data[i])
-              },
-              children: Store.valToComponentArray(window.myUtils.getItemsFrom(data[i]))
-            }
-          )
-        }
-      }
-      // console.log(window.myUtils.dataToString(res))
-      return res
-    } else if (window.myUtils.testStr(data)) {
-      return genStoreData(window.myUtils.JsonParseOrRetObj(data))
-    }
-  } else {
-    return []
-  }
-}
-
 const initData = genComponentData(window.Laravel.admin)
 // window.myUtils.dumpData(window.Laravel.admin)
 // window.myUtils.dumpData(window._.omit(initData, ['article', 'header']))
-let myStore = Store.makeStore(genStoreData(window._.omit(initData, ['article', 'header'])))
+const includedData = window._.omit(initData, ['article', 'header'])
+const storeData = window.myUtils.genStoreData(includedData)
+let myStore = Store.makeStore(storeData)
 
 const unsynch = sync(myStore, router)
 

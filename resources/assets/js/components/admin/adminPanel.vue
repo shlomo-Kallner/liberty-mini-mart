@@ -47,7 +47,7 @@
         components: {
             BootBreadcrumbs,
             // BootTabs,
-            BootArticle,
+            // BootArticle,
             BootLoader
         },
         beforeRouteEnter (to, from, next) {

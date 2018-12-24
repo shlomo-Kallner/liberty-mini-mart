@@ -259,34 +259,21 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         return $fullUrl ? url($url) : $url;
     }
 
-    public function toSidebar(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false
-    ) {
-        $img = $this->image->toImageArray();
-        return self::makeSidebar(
-            $this->getFullUrl($baseUrl, $fullUrl), $img['img'], 
-            $useTitle ? $this->title : $img['alt'],
-            Functions::testVar($this->sale) || $this->sale != $this->price 
-                ? $this->sale 
-                : $this->price
-        ); 
+    public function getPriceOrSale()
+    {
+        return Functions::testVar($this->sale) || $this->sale != $this->price 
+        ? $this->sale 
+        : $this->price;
     }
 
-    public function toMini(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false
-    ) {
-        $img = $this->image->toImageArray();
-        return self::makeMini(
-            $img['img'], $useTitle ? $this->title : $img['alt'], 
-            $this->getFullUrl($baseUrl, $fullUrl),
-            Functions::testVar($this->sale) || $this->sale != $this->price
-                ? $this->sale : $this->price, 
-            $this->id, $this->sticker
-        ); 
+    public function getPubId()
+    {
+        return $this->id;
+    }
+
+    public function getSticker()
+    {
+        return $this->sticker;
     }
 
     public function toFull(

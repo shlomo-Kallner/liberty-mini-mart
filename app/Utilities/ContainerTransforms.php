@@ -23,8 +23,6 @@ interface TransformableContainer
 
     static public function getOrderByKey();
 
-    // static public function genUrlFragment(string $baseUrl, bool $fullUrl = false);
-
     public function getUrlFragment(string $baseUrl, bool $fullUrl = false);
 
     public function getFullUrl(string $baseUrl, bool $fullUrl = false);
@@ -95,6 +93,12 @@ interface TransformableContainer
         bool $useTitle = true, bool $withTrashed = true,
         bool $fullUrl = false
     );
+
+    public function getPriceOrSale();
+
+    public function getPubId();
+
+    public function getSticker();
 }
 
 trait ContainerTransforms
@@ -114,6 +118,19 @@ trait ContainerTransforms
         ];
     }
 
+    public function toSidebar(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
+    ) {
+        $img = $this->image->toImageArray();
+        return self::makeSidebar(
+            $this->getFullUrl($baseUrl, $fullUrl), $img['img'], 
+            $useTitle ? $this->title : $img['alt'], 
+            $this->getPriceOrSale()
+        ); 
+    }
+
     static public function makeMini(
         string $img, string $name, string $url,
         $price, $id = 0, string $sticker = ''
@@ -126,6 +143,20 @@ trait ContainerTransforms
             'price' => $price,
             'sticker' => $sticker,
         ];
+    }
+
+    public function toMini(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
+    ) {
+        $img = $this->image->toImageArray();
+        return self::makeMini(
+            $img['img'], $useTitle ? $this->title : $img['alt'], 
+            $this->getFullUrl($baseUrl, $fullUrl),
+            $this->getPriceOrSale(), 
+            $this->getPubId(), $this->getSticker()
+        ); 
     }
 
     static public function makeDefaultBaseContentIterArray(
@@ -200,11 +231,15 @@ trait ContainerTransforms
             $done = true;
             $next = '';
         }
-        return self::makeBaseContentArray(
+        $content = self::makeBaseContentArray(
             $name, $url, $img, $article, $title, $dates, 
             $otherImages, $children, $hasChildren, $done,
             $next
         );
+        if (Functions::testVar($paginator)) {
+            $content['value']['pagination'] = $paginator;
+        }
+        return $content;
     }
 
     public function getFullUrl(string $baseUrl, bool $fullUrl = false)
@@ -273,7 +308,7 @@ trait ContainerTransforms
             ? $itemsArray['pagination'] : null;
         return self::makeBaseContentIterArray(
             $name, $url, $img, $article, $title, 
-            $pageNumber, $paginator['totalNumPages'], 
+            $pageNumber, $paginator['totalNumPages'] ?? 0, 
             $numPerPage, $children, $paginator, $dates, 
             $otherImages, Functions::countHas($children),
             !empty($pagingFor), $numView, $pagingFor

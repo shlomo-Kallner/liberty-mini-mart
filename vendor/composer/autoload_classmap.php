@@ -106,6 +106,7 @@ return array(
     'App\\Utilities\\Functions\\Functions' => $baseDir . '/app/Utilities/Functions.php',
     'App\\Utilities\\IterationStack\\IterationFrame' => $baseDir . '/app/Utilities/IterationStack.php',
     'App\\Utilities\\IterationStack\\IterationStack' => $baseDir . '/app/Utilities/IterationStack.php',
+    'App\\Utilities\\LinkGenerator' => $baseDir . '/app/Utilities/LinkGenerator.php',
     'App\\Utilities\\Permits\\Basic' => $baseDir . '/app/Utilities/Permits/Basic.php',
     'App\\Utilities\\Permits\\Permits' => $baseDir . '/app/Utilities/Permits/Permits.php',
     'App\\Utilities\\TransformableContainer' => $baseDir . '/app/Utilities/ContainerTransforms.php',

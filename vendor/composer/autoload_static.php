@@ -539,6 +539,7 @@ class ComposerStaticInitc8f191e383c8b428bdb2d9ef6beb446c
         'App\\Utilities\\Functions\\Functions' => __DIR__ . '/../..' . '/app/Utilities/Functions.php',
         'App\\Utilities\\IterationStack\\IterationFrame' => __DIR__ . '/../..' . '/app/Utilities/IterationStack.php',
         'App\\Utilities\\IterationStack\\IterationStack' => __DIR__ . '/../..' . '/app/Utilities/IterationStack.php',
+        'App\\Utilities\\LinkGenerator' => __DIR__ . '/../..' . '/app/Utilities/LinkGenerator.php',
         'App\\Utilities\\Permits\\Basic' => __DIR__ . '/../..' . '/app/Utilities/Permits/Basic.php',
         'App\\Utilities\\Permits\\Permits' => __DIR__ . '/../..' . '/app/Utilities/Permits/Permits.php',
         'App\\Utilities\\TransformableContainer' => __DIR__ . '/../..' . '/app/Utilities/ContainerTransforms.php',
