@@ -24,7 +24,7 @@
         //dd($page);
 
         //dd($sidebar2);
-        dd($page);
+        //dd($page);
         //dd($page['sections']);
         // dd($sections2, $sections_paginator2);
         // dd($users2, $users_paginator2);
