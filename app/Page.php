@@ -504,8 +504,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
             $this->article, $this->description, 
             $this->getFullUrl($baseUrl, $fullUrl), $this->name, 
             $useTitle ? $this->title : $this->image->alt, 
-            Image::getImageArray($this->image), 
-            Image::getArraysFor($this->images), 
+            $this->image, Image::getArraysFor($this->images), 
             self::getBreadcrumbs(
                 self::genBreadcrumb(
                     $this->name, 
@@ -555,7 +554,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    public function toContentArrayPlus(
+    public function toContentArrayOther(
         array $img = null, array $otherImages = null,
         array $links = null, bool $fullUrl = false
     ) {
@@ -590,6 +589,35 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
+    public function toContentArrayPlus(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false, bool $useBaseMaker = true,
+        bool $done = true, string $dir = 'asc'
+    ) {
+        if ($useBaseMaker) {
+            $content = self::makeBaseContentArray(
+                $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
+                $this->image, $this->article, 
+                $useTitle ? $this->title : $this->image->alt, 
+                [
+                    'created' => $this->created_at,
+                    'modified' => $this->updated_at,
+                    'deleted' => $this->deleted_at
+                ], 
+                Image::getArraysFor($this->images),
+                null, false, true, ''
+            );
+            $content['value']['visible'] = $this->getVisibility();
+            return $content;
+        } else {
+            return $this->toContentArray(
+                $baseUrl, $version, $useTitle,
+                $withTrashed, $fullUrl
+            );
+        }
+    }
+
     // TO BE IMPLEMENTED!!!
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
@@ -613,16 +641,6 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         int $visible = 0
     ) {
         $i = Image::getImageArray($img);
-        /**
-         * 
-           [
-                'header' => $description,
-                'subheading' => $i['cap'],
-                'img' => $i['img'],
-                'imgAlt' => $i['alt'],
-                'article' => $article
-            ]
-         */
         $a = Article::getArticle($article, true);
         return [
             'title' => $title,

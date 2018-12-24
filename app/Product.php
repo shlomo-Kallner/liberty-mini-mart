@@ -402,6 +402,26 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
+    public function hasChildren(bool $withTrashed = true) 
+    {
+        return false;
+    }
+
+    public function numChildren(bool $withTrashed = true)
+    {
+        return 0;
+    }
+
+    public function getChildren(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = [], bool $useBaseMaker = true,
+        bool $done = true
+    ) {
+        return [];
+    }
+
     // TO BE IMPLEMENTED!!!
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 

@@ -278,7 +278,8 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
         bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = []
+        int $version = 1, $default = [], bool $useBaseMaker = true,
+        bool $done = true
     ) {
         $tmp = $withTrashed 
             ? $this->products()->withTrashed()
@@ -286,8 +287,35 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
             : $this->products()->orderBy('name', $dir)->get();
         return Product::getFor(
             $tmp, $baseUrl, $transform, $useTitle,
-            $version, $withTrashed, $fullUrl, $default
+            $version, $withTrashed, $fullUrl, $default,
+            $useBaseMaker, $done, $dir
         );
+    }
+
+    public function hasChildren(bool $withTrashed = true)
+    {
+        return true;
+    }
+
+    public function getChildren(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = [], bool $useBaseMaker = true,
+        bool $done = true
+    ) {
+        return $this->getProducts(
+            $transform, $withTrashed, $dir, $baseUrl,
+            $useTitle, $fullUrl, $version, $default,
+            $useBaseMaker, $done
+        );
+    }
+
+    public function numChildren(bool $withTrashed = true) 
+    {
+        return $withTrashed 
+            ? $this->products()->withTrashed()->count()
+            : $this->products()->count();
     }
 
     public function getProductsWithPagination(

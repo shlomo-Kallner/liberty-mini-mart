@@ -26,12 +26,17 @@ class Section extends Model implements TransformableContainer, ContainerAPI
      */
     protected $dates = ['deleted_at'];
 
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
+    {
+        $url = $baseUrl . '/section/';
+        return $fullUrl ? url($url) : $url;
+    }
+
     public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
         // {$tmp[0]}/section/{section}/category/{category}/product/{product}
         // $surl = $this->catalog->getFullUrl($baseUrl);
-        $url = $baseUrl . '/section/';
-        return $fullUrl ? url($url) : $url;
+        return self::genUrlFragment($baseUrl, $fullUrl);
     }
 
     static public function getSection(
@@ -70,7 +75,8 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
         bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = []
+        int $version = 1, $default = [], bool $useBaseMaker = true,
+        bool $done = true
     ) {
         $tmp = $withTrashed 
             ? $this->categories()->withTrashed()
@@ -78,7 +84,35 @@ class Section extends Model implements TransformableContainer, ContainerAPI
             : $this->categories()->orderBy('name', $dir)->get();
         return Categorie::getFor(
             $tmp, $baseUrl, $transform, $useTitle,
-            $version, $withTrashed, $fullUrl, $default
+            $version, $withTrashed, $fullUrl, $default, 
+            $useBaseMaker, $done, $dir
+        );
+    }
+
+    public function hasChildren(bool $withTrashed = true)
+    {
+        return true;
+    }
+
+    public function numChildren(bool $withTrashed = true)
+    {
+        return $withTrashed 
+            ? $this->categories()->withTrashed()->count()
+            : $this->categories()->count();
+    }
+
+    public function getChildren(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = [], bool $useBaseMaker = true,
+        bool $done = true
+    ) {
+        return $this->getCategories(
+            $transform, $withTrashed, $dir,
+            $baseUrl, $useTitle, $fullUrl, 
+            $version, $default, $useBaseMaker, 
+            $done
         );
     }
 

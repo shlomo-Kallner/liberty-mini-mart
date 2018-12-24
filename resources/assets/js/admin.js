@@ -33,9 +33,9 @@ window.Laravel.page.admin = {}
 
 function genComponentData (data = null) {
   var vals = {}
-  if (typeof data === 'string') {
+  if (window.myUtils.testStr(data)) {
     vals = window.myUtils.JsonParseOrRetObj(data, {}, window.myUtils.dumpData)
-  } else if (typeof data === 'object') {
+  } else if (typeof data === 'object' && !window.myUtils.isEmpty(data)) {
     for (var i in data) {
       var tmp = {
         items: window.myUtils.getItemsFrom(data[i]),
@@ -44,7 +44,7 @@ function genComponentData (data = null) {
       window._.set(vals, i, tmp)
     }
   }
-  if (window.myUtils.testData(vals) && window._.size(vals) > 0) {
+  if (window.myUtils.testData(vals) && !window.myUtils.isEmpty(vals)) {
     return vals
   } else if (window._.has(vals, 'pages') &&
     window._.has(vals, 'sections') &&
@@ -66,25 +66,38 @@ function genComponentData (data = null) {
 
 function genStoreData (data = null) {
   // console.log(window.myUtils.dataToString(data))
-  if (data !== null || data !== undefined) {
+  if (window.myUtils.testData(data) && !window.myUtils.isEmpty(data)) {
     if (typeof data === 'object' || Array.isArray(data)) {
       var res = []
       for (var i in data) {
         // console.log(window.myUtils.dataToString(i))
-        res.push(
-          {
-            value: {
-              name: window.myUtils.getValueFrom(data[i], 'name', window._.capitalize(i)),
-              path: window.myUtils.getValueFrom(data[i], 'path', i),
-              // component: Foo,
-              pagination: window.myUtils.getPagingFrom(data[i])
-            },
-            children: Store.valToComponentArray(window.myUtils.getItemsFrom(data[i]))
-          }
-        )
+        if (window.myUtils.hasValueIn(data[i], 'value') &&
+          window.myUtils.hasValueIn(data[i], 'children')
+        ) {
+          res.push(
+            {
+              value: window.myUtils.getValueFrom(data[i], 'value', null),
+              children: Store.valToComponentArray(window.myUtils.getValueFrom(data[i], 'children', null))
+            }
+          )
+        } else {
+          res.push(
+            {
+              value: {
+                name: window.myUtils.getValueFrom(data[i], 'name', window._.capitalize(i)),
+                path: window.myUtils.getValueFrom(data[i], 'path', i),
+                // component: Foo,
+                pagination: window.myUtils.getPagingFrom(data[i])
+              },
+              children: Store.valToComponentArray(window.myUtils.getItemsFrom(data[i]))
+            }
+          )
+        }
       }
       // console.log(window.myUtils.dataToString(res))
       return res
+    } else if (window.myUtils.testStr(data)) {
+      return genStoreData(window.myUtils.JsonParseOrRetObj(data))
     }
   } else {
     return []
@@ -103,7 +116,8 @@ window.Laravel.page.admin.app = new window.Vue(
     el: '#cms-app',
     router: router,
     store: myStore,
-    template: '<admin-panel-component v-bind="componentData"></admin-panel-component>',
+    template: '<admin-panel-component></admin-panel-component>',
+    /* template: '<admin-panel-component v-bind="componentData"></admin-panel-component>',
     data: {
       initData: initData
     },
@@ -112,7 +126,10 @@ window.Laravel.page.admin.app = new window.Vue(
         // return genComponentData(this.initData)
         return this.initData
       }
-    },
-    methods: {}
+    }, */
+    methods: {},
+    beforeDestroy: function () {
+      unsynch()
+    }
   }
 )

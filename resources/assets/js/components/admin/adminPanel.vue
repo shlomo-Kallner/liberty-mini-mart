@@ -4,7 +4,7 @@
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <router-link :to="backPath"><i class="fa fa-arrow-left" aria-hidden="true"></i></router-link>
           <boot-breadcrumbs v-if="breadcrumbs.crumbs.length > 0" v-bind="breadcrumbs"></boot-breadcrumbs>
-          <boot-article v-bind="initArticle"></boot-article>
+          <!-- <boot-article v-bind="initArticle"></boot-article> -->
           <div class="row padding-top-5">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
               <keep-alive>
@@ -32,21 +32,21 @@
     import { Stack } from '../../lib/LibertyStack.js'
     import { ComponentTree } from '../../lib/LaravelComponentTree.js'
     import BootBreadcrumbs from '../lib/bootBreadcrumbs.vue'
-    import BootTabs from '../lib/bootTabs.vue'
-    import BootArticle from '../lib/bootArticle.vue'
+    // import BootTabs from '../lib/bootTabs.vue'
+    // import BootArticle from '../lib/bootArticle.vue'
     import BootLoader from '../lib/bootLoader.vue'
     
     export default {
         name: 'admin-panel-component',
         props: {
-            initArticle: {
+           /*  initArticle: {
                 type: Object,
                 default: () => { return {} }
-            }
+            } */
         },
         components: {
             BootBreadcrumbs,
-            BootTabs,
+            // BootTabs,
             BootArticle,
             BootLoader
         },
@@ -62,7 +62,7 @@
         data: function () {
             this.$router.push('/')
             return {
-                currentTab: '/',
+                // currentTab: '/',
                 backPath: '',
                 isLoading: true
             }
@@ -75,13 +75,13 @@
                 }
             },
             ...mapState({
-                tabs: (state) => {
+                /* tabs: (state) => {
                     var i = state.getters.getComponentChildrenValues(
                         this.currentTab, (tv, ct) => {
                         return ct === tv.path
                     })
                     return (i.length > 0) ? i : []
-                }
+                } */
             }),
             ...mapGetters(['getBreadcrumbs'])
         },

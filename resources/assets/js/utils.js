@@ -246,8 +246,7 @@ export default {
   },
   isEmpty: (data) => {
     if ((typeof data === 'boolean' && data) ||
-      (typeof data === 'number' && data > 0) ||
-      (typeof data === 'bigint' && data > 0)
+      (typeof data === 'number' && data > 0)
     ) {
       return false
     } else if (typeof data === 'object' ||
@@ -356,5 +355,19 @@ export default {
       return this.getValueFrom(this.JsonParseOrRetObj(data, null, _.noop), field, def)
     }
     return def
+  },
+  hasValueIn: (data = null, field = '') => {
+    if (this.testData(data) && typeof data === 'object') {
+      if (_.has(data, field) && this.testData(_.get(data, field))) {
+        if (typeof _.get(data, field) === 'function') {
+          return this.testData(_.invoke(data, field))
+        } else {
+          return true
+        }
+      }
+    } else if (this.testStr(data)) {
+      return this.hasValueIn(this.JsonParseOrRetObj(data, null, _.noop), field)
+    }
+    return false
   }
 }
