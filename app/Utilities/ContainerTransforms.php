@@ -5,6 +5,7 @@ namespace App\Utilities;
 use App\Utilities\Functions\Functions;
 use Illuminate\Support\Collection,
     Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Page,
     App\Article,
     App\Image;
@@ -22,6 +23,10 @@ interface TransformableContainer
     const TO_URL_LIST_TRANSFORM = 'url';
 
     static public function getOrderByKey();
+
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false);
+
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false);
 
     public function getUrlFragment(string $baseUrl, bool $fullUrl = false);
 
@@ -51,7 +56,7 @@ interface TransformableContainer
         int $version = 1, $default = [], bool $useBaseMaker = true,
         bool $done = true
     );
-
+    
     public function getChildrenWithPagination(
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
@@ -59,7 +64,7 @@ interface TransformableContainer
         int $numItemsPerPage = 4, string $listUrl = '#', 
         string $pagingFor = '', int $viewNumber = 0, 
         bool $fullUrl = false, bool $useTitle = true,
-        int $version = 1, $default = []
+        int $version = 1, int $totalNum = 0, $default = []
     );
 
     public function toContentArrayWithPagination(
@@ -69,6 +74,11 @@ interface TransformableContainer
         int $numItemsPerPage = 4, string $pagingFor = '', 
         int $viewNumber = 0, string $listUrl = '#', 
         bool $useBaseMaker = true, bool $done = true
+    );
+
+    static public function getSelf(
+        $children = [], $paginator = null, 
+        string $pagingFor = ''
     );
 
     /* public function toTableArray(
@@ -176,6 +186,9 @@ trait ContainerTransforms
         $children = [], $hasChildren = null, 
         bool $done = true, string $next = ''
     ) {
+        $now = empty($dates) || !Functions::countHas($dates) 
+            ? Carbon::now() 
+            : null;
         $value = [
             'name' => $name,
             'path' => $url,
@@ -184,7 +197,11 @@ trait ContainerTransforms
             'title' => $title,
             'article' => Article::getArticle($article, true),
             'otherImages' => $otherImages??[],
-            'dates' => $dates??[],
+            'dates' => $dates ?? [
+                'created' => $now,
+                'updated' => $now,
+                'deleted' => null,
+            ],
             'hasChildren' => is_null($hasChildren)
                 ? Functions::countHas($children)
                 : (is_bool($hasChildren) ? $hasChildren : false),
@@ -242,6 +259,14 @@ trait ContainerTransforms
         return $content;
     }
 
+    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
+    {
+        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
+        $surl = $this->getParentUrl($baseUrl, false);
+        $url = self::genUrlFragment($surl, false);
+        return $fullUrl ? url($url) : $url;
+    }
+
     public function getFullUrl(string $baseUrl, bool $fullUrl = false)
     {
         $surl = $this->getUrlFragment($baseUrl);
@@ -282,7 +307,7 @@ trait ContainerTransforms
         }
     }
 
-    static public function getSelfWithPagination(
+    static public function makeSelfWithPagination(
         string $name, string $url, $img, $article, 
         string $title, int $pageNumber, 
         int $numPerPage = 4,  int $numView = 0, 

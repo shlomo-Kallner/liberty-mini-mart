@@ -17,7 +17,7 @@ export default {
       }
     })
   },
-  genPagingData: function (data, numPerPage, currentPage =  1,
+  genPagingData: function (data, numPerPage, currentPage = 1,
     numTotal = 0, numPerView = 0
   ) {
     if (this.testData(data) && _.size(data) > 0 && Array.isArray(data)) {
@@ -76,6 +76,38 @@ export default {
       initCaption: figure.cap
     }
   },
+  genComponentData: function (data = null) {
+    var vals = {}
+    if (this.testStr(data)) {
+      vals = this.JsonParseOrRetObj(data, {}, this.dumpData)
+    } else if (typeof data === 'object' && !this.isEmpty(data)) {
+      for (var i in data) {
+        var tmp = {
+          items: this.getItemsFrom(data[i]),
+          pagination: this.getPagingFrom(data[i])
+        }
+        _.set(vals, i, tmp)
+      }
+    }
+    if (this.testData(vals) && !this.isEmpty(vals)) {
+      return vals
+    } else if (_.has(vals, 'pages') &&
+      _.has(vals, 'sections') &&
+      _.has(vals, 'users') &&
+      _.has(vals, 'article')
+    ) {
+      return {
+        initPages: vals.pages,
+        initSections: vals.sections,
+        initUsers: vals.users,
+        initArticle: this.getArticleData(
+          vals.article, 'col-md-12', 'col-md-12'
+        )
+      }
+    } else {
+      return {}
+    }
+  },
   genStoreData: function (data = null) {
     // console.log(window.myUtils.dataToString(data))
     if (this.testData(data) && !this.isEmpty(data)) {
@@ -121,7 +153,7 @@ export default {
   testStr: function (str) {
     return typeof str === 'string' && _.isString(str) && _.size(str) > 0 && str !== ''
   },
-  compData: (v1, v2) => {
+  compData: function (v1, v2) {
     if (typeof v1 === typeof v2) {
       if (typeof v1 === 'object') {
         var bol = true
@@ -285,7 +317,7 @@ export default {
       return false
     }
   },
-  isEmpty: (data) => {
+  isEmpty: function (data) {
     if ((typeof data === 'boolean' && data) ||
       (typeof data === 'number' && data > 0)
     ) {
@@ -299,7 +331,7 @@ export default {
       return true
     }
   },
-  isFiniteOrConvertable: (data) => {
+  isFiniteOrConvertable: function (data) {
     return _.isFinite(data) || _.isFinite(_.toFinite(data))
   },
   genIndent: function (indent = 2, indChar = ' ') {
@@ -344,7 +376,7 @@ export default {
       }
     }
   },
-  getPagingFrom: (data = null, def = null) => {
+  getPagingFrom: function (data = null, def = null) {
     if (this.testData(data) && typeof data === 'object') {
       if (_.has(data, 'pagination') &&
         this.testData(data.pagination) &&
@@ -362,7 +394,7 @@ export default {
     }
     return def
   },
-  getItemsFrom: (data = null, def = null) => {
+  getItemsFrom: function (data = null, def = null) {
     if (this.testData(data) && typeof data === 'object') {
       if (_.has(data, 'items') &&
         this.testData(data.items) &&
@@ -383,7 +415,7 @@ export default {
     }
     return def
   },
-  getValueFrom: (data = null, field = '', def = null) => {
+  getValueFrom: function (data = null, field = '', def = null) {
     if (this.testData(data) && typeof data === 'object') {
       if (_.has(data, field) && this.testData(_.get(data, field))) {
         if (typeof _.get(data, field) === 'function') {
@@ -397,7 +429,7 @@ export default {
     }
     return def
   },
-  hasValueIn: (data = null, field = '') => {
+  hasValueIn: function (data = null, field = '') {
     if (this.testData(data) && typeof data === 'object') {
       if (_.has(data, field) && this.testData(_.get(data, field))) {
         if (typeof _.get(data, field) === 'function') {

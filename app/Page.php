@@ -163,12 +163,20 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         return 'url';
     }
 
-    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
         // {$tmp[0]}/section/{section}/category/{category}/product/{product}
         // $surl = $this->catalog->getFullUrl($baseUrl);
         //return $baseUrl . '/page/' . $this->url;
-        return $fullUrl ? url('pages/') : 'pages/';
+        $url = empty($baseUrl) || $baseUrl === 'store' 
+            ? 'pages/' 
+            : $baseUrl . '/pages/';
+        return $fullUrl ? url($url) : $url;
+    }
+
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
+    {
+        return '';
     }
 
     public function toContentArray(

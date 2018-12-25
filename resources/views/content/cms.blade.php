@@ -7,55 +7,47 @@
         $testing = true;
         use \App\Utilities\Functions\Functions,
             \App\Page;
-
-        $sidebar2 = Functions::getContent($sidebar??[],[]);
-        $article2 = Functions::getContent($page['article']??[],[]);
-        $sections2 = Functions::getContent($page['sections']['items']??[],[]);
-        $sections_paginator2 = Functions::getContent($page['sections']['pagination']??[],[]);
-        $users2 = Functions::getContent($page['users']['items']??[],[]);
-        $users_paginator2 = Functions::getContent($page['users']['pagination']??[],[]);
-        $pages2 = Functions::getContent($page['pages']['items']??[],[]);
-        $pages_paginator2 = Functions::getContent($page['pages']['pagination']??[],[]);
-
-        /// THESE TWO ARE WISHLIST ITEMS!!
-        $plans2 = Functions::getContent($page['plans']['items']??[],[]);
-        $plans_paginator2 = Functions::getContent($page['plans']['pagination']??[],[]);
         
-        //dd($page);
-
-        //dd($sidebar2);
-        //dd($page);
-        //dd($page['sections']);
-        // dd($sections2, $sections_paginator2);
-        // dd($users2, $users_paginator2);
-        //dd($pages2, $pages_paginator2);
-        //dd($plans2, $plans_paginator2);
-          
-           
-        
-
-        /// THIS IS A WISHLIST ITEM!!
-        if (Functions::testVar($plans2)) {
-            $sidebar2[] = Page::genURLMenuItem(
-                'admin/plan/create', 'Create a New Membership Plan', 'fa-lightbulb-o', 
-                '', '', 'fa-plus','button'
-            );  
-        }
-            
-
-        //dd($sidebar2);
         $useVueEl = true;
+        if (!$useVueEl) {
+            $sidebar2 = Functions::getContent($sidebar??[],[]);
+            $article2 = Functions::getContent($page['article']??[],[]);
+            $sections2 = Functions::getContent($page['sections']['items']??[],[]);
+            $sections_paginator2 = Functions::getContent($page['sections']['pagination']??[],[]);
+            $users2 = Functions::getContent($page['users']['items']??[],[]);
+            $users_paginator2 = Functions::getContent($page['users']['pagination']??[],[]);
+            $pages2 = Functions::getContent($page['pages']['items']??[],[]);
+            $pages_paginator2 = Functions::getContent($page['pages']['pagination']??[],[]);
+
+            /// THESE TWO ARE WISHLIST ITEMS!!
+            $plans2 = Functions::getContent($page['plans']['items']??[],[]);
+            $plans_paginator2 = Functions::getContent($page['plans']['pagination']??[],[]);
+
+            /// THIS IS A WISHLIST ITEM!!
+            if (Functions::testVar($plans2)) {
+                $sidebar2[] = Page::genURLMenuItem(
+                    'admin/plan/create', 'Create a New Membership Plan', 'fa-lightbulb-o', 
+                    '', '', 'fa-plus','button'
+                );  
+            }
+            
+            //dd($sidebar2);
+
+            //dd($sidebar2);
+            //dd($page);
+            //dd($page['sections']);
+            // dd($sections2, $sections_paginator2);
+            // dd($users2, $users_paginator2);
+            //dd($pages2, $pages_paginator2);
+            //dd($plans2, $plans_paginator2);
+        }
+        //dd($page);
+        
     @endphp
 
     @if ($useVueEl)
 
         <div id="cms-app"></div>
-    
-    @elseif (!$useVueEl)
-        
-        <div id="cms-app">
-
-        </div>
 
     @else
 
@@ -189,9 +181,6 @@
     
     @endif
 
-    @if ($testing && false)
-        <div id="cms-app"></div>
-    @endif
 @endsection
 
 @section('js-preloaded')

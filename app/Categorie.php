@@ -79,12 +79,15 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
-        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
-        $surl = $this->section->getFullUrl($baseUrl, false);
-        $url = $surl . '/category/';
+        $url = empty($baseUrl) ? 'category/' : $baseUrl . '/category/';
         return $fullUrl ? url($url) : $url;
+    }
+
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
+    {
+        return $this->section->getFullUrl($baseUrl, $fullUrl);
     }
 
     public function getPriceOrSale()
@@ -155,27 +158,14 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         }
     }
 
-    static public function makeCmcContentArray(
-        $item, string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false
-    ) {
-        return $item->toCmsContentArray();
-    }
-
-    public function toCmsContentArray(
-        int $i = 0
-    ) {
-        return null;
-    }
-
     // TO BE IMPLEMENTED!!!
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
         bool $fullUrl = false, int $pageNum = 0, 
         int $numItemsPerPage = 4, string $pagingFor = '', 
-        int $viewNumber = 0, string $listUrl = '#'
+        int $viewNumber = 0, string $listUrl = '#', 
+        bool $useBaseMaker = true, bool $done = true
     ) {
         return $this->toContentArray(
             $baseUrl, $version, $useTitle, $withTrashed,
@@ -207,7 +197,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
             $this->getProducts(
                 Product::TO_URL_LIST_TRANSFORM, 
                 $withTrashed, $dir, $baseUrl, $useTitle,
-                $fullUrl, $version, []
+                $fullUrl, $version, [], $useBaseMaker, false 
             ),
             Image::getArraysFor($this->otherImages),
             $this->sticker, [

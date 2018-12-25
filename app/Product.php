@@ -252,11 +252,15 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
-        $surl = $this->category->getFullUrl($baseUrl, false);
-        $url = $surl . '/product/';
+        $url = empty($baseUrl) ? 'product/' : $baseUrl . '/product/';
         return $fullUrl ? url($url) : $url;
+    }
+
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
+    {
+        return $this->category->getFullUrl($baseUrl, $fullUrl);
     }
 
     public function getPriceOrSale()
@@ -386,6 +390,20 @@ class Product extends Model implements TransformableContainer, ContainerAPI
                 'deleted' => $this->deleted_at,
             ], $this->id, $api, ProductReview::getContentArrays($this->reviews),
             $this->availablity, $this->getPayload(), $useBaseMaker
+        );
+    }
+
+    public function toContentArrayWithPagination(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $pagingFor = '', 
+        int $viewNumber = 0, string $listUrl = '#', 
+        bool $useBaseMaker = true, bool $done = true
+    ) {
+        return $this->toContentArrayPlus(
+            $baseUrl, $version, $useTitle, $withTrashed, 
+            $fullUrl, $useBaseMaker
         );
     }
 

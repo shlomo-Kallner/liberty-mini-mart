@@ -2,13 +2,15 @@
   <div id="cms-app">
     <div class="row margin-bottom-40">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <router-link :to="backPath"><i class="fa fa-arrow-left" aria-hidden="true"></i></router-link>
-          <boot-breadcrumbs v-if="breadcrumbs.crumbs.length > 0" v-bind="breadcrumbs"></boot-breadcrumbs>
+          <router-link :to="backPath">
+            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+          </router-link>
+          <boot-breadcrumbs v-bind="breadcrumbs"></boot-breadcrumbs>
           <!-- <boot-article v-bind="initArticle"></boot-article> -->
           <div class="row padding-top-5">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
               <keep-alive>
-                <boot-loader v-if="isLoading"></boot-loader>
+                <boot-loader v-if="isLoading" :loading="isLoading"></boot-loader>
                 <router-view v-else></router-view>
               </keep-alive>
             </div>

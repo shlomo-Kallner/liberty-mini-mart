@@ -39,13 +39,8 @@ export class ComponentTree {
   constructor (value, children = [], parent = null) {
     this._value = value
     this._parent = parent instanceof ComponentTree ? parent : null
-    this._children = ComponentTree.checkChildrenArray(children)
-      ? children : []
-    this._children.forEach(value => value.setParent(this))
-    /* Object.defineProperty(this, 'length', {
-      get () { return this._children.length },
-      set (x) { _.noop(x) }
-    }) */
+    this._children = ComponentTree.retrieveChildren(children, this)
+    // this._children.forEach(value => value.setParent(this))
   }
 
   static checkChildrenArray (children) {
@@ -59,6 +54,40 @@ export class ComponentTree {
       return bol
     } else {
       return false
+    }
+  }
+
+  static retrieveChildren (children, parent = null) {
+    var res = []
+    if (myUtils.testData(children)) {
+      if (Array.isArray(children)) {
+        for (var i of children) {
+          var c = ComponentTree.retrieveChild(i, parent)
+          if (myUtils.testData(c)) {
+            res.push(c)
+          }
+        }
+      }
+    }
+    return res
+  }
+
+  static retrieveChild (child, parent = null) {
+    if (myUtils.testData(child)) {
+      if (child instanceof ComponentTree) {
+        if (myUtils.testData(parent)) {
+          child.setParent(parent)
+        }
+        return child
+      } else if (typeof child === 'object') {
+        var children = myUtils.getValueFrom(child, 'children', null)
+        var value = myUtils.getValueFrom(child, 'value', null)
+        if (myUtils.testData(value)) {
+          return new ComponentTree(value, children, parent)
+        }
+      }
+    } else {
+      return null
     }
   }
 
@@ -95,14 +124,7 @@ export class ComponentTree {
   }
 
   set children (children) {
-    if (ComponentTree.checkChildrenArray(children)) {
-      this._children = children
-    } else if (Array.isArray(children)) {
-      this._children = []
-      for (var i of children) {
-        this._children.push(i)
-      }
-    }
+    this._children = ComponentTree.retrieveChildren(children, this)
   }
 
   at (index) {
@@ -138,16 +160,14 @@ export class ComponentTree {
   }
 
   push (tree) {
-    if (tree instanceof ComponentTree) {
-      tree.setParent(this)
-      return this._children.push(tree)
-    } else if (typeof tree === 'object') {
-      var children = myUtils.getValueFrom(tree, 'children', null)
-      var value = myUtils.getValueFrom(tree, 'value', null)
-      if (myUtils.testData(value)) {
-        return this._children.push(new ComponentTree(value, children, this))
-      }
+    var c = ComponentTree.retrieveChild(tree, this)
+    if (myUtils.testData(c)) {
+      return this._children.push(c)
     }
+  }
+
+  pop () {
+    return this._children.pop()
   }
 
   findSubTree (tree) {

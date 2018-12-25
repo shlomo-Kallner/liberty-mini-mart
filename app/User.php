@@ -246,7 +246,7 @@ class User extends Model implements ContainerAPI
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
-        $url = $baseUrl . '/user/';
+        $url = empty($baseUrl) ? 'user/' : $baseUrl . '/user/';
         return $fullUrl ? url($url) : $url;
     }
 
@@ -331,8 +331,8 @@ class User extends Model implements ContainerAPI
                     'hasChildren' => true
                     ],
                 'children' => [
-                    'orders' => $this->orders??[],
-                    'carts' => $this->carts??[],
+                    //'orders' => $this->orders??[],
+                    //'carts' => $this->carts??[],
                     // 'wishlist' => [],   
                 ],
                 'done' => $done

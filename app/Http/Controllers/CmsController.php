@@ -13,6 +13,7 @@ use App\Http\Controllers\UserController,
     App\Article,
     App\Product;
 use HRTime\StopWatch, HRTime\Unit;
+use Illuminate\Support\Carbon;
 
 class CmsController extends MainController 
 {
@@ -127,16 +128,17 @@ class CmsController extends MainController
             $ticks = $sw->getLastElapsedTime(Unit::SECOND);
             dd($ticks, count($sections['items']), $num, count($users['items']), count($pages['items']));
         }
-        return self::getView(
-            $request, 'content.cms', 'Admin Dashboard', 
-            [
-                'header' => 'Admin Dashboard',
-                'article' => Article::makeContentArray(
-                    '', 
-                    'Welcome to OUR DASHBOARD!',
-                    null,
-                    'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
-                ),
+        $admin_header = 'Admin Dashboard';
+        $admin_article = Article::makeContentArray(
+            '', 
+            'Welcome to OUR DASHBOARD!',
+            null,
+            'Here you can add, remove or edit Sections, Categories, Products and Other Content on this site!'
+        );
+        if (true) {
+            $content = [
+                'header' => $admin_header,
+                'article' => $admin_article,
                 'sections' => $sections,
                 'users'=> $users,
                 'pages'=> $pages,
@@ -146,9 +148,43 @@ class CmsController extends MainController
                         'pagination' => ''
                     ],
                 */
-            ], false, 
+            ];
+        } else {
+            $children = [
+                $sections, $users, $pages,
+            ];
+            $dates = [
+                'created' => Carbon::now(),
+                'updated' => Carbon::now(),
+                'deleted' => null,
+            ];
+            if (Functions::testVar($paging = Page::getPagingVars($request, '', 8))) {
+                $pagingPn = $paging['pageNum'];
+                $pagingVn = $paging['viewNum'];
+                $pagingLimit = $paging['limit'];
+            } else {
+                $pagingPn = 1;
+                $pagingVn = 0;
+                $pagingLimit = 8;
+            }
+            $paginator = Page::genPagination2(
+                $pagingPn, $pagingLimit, count($children), 4, '', 
+                $pagingVn, $request->path()
+            );
+            $content = Page::makeBaseContentIterArray(
+                $admin_header, $request->path(), $img, $admin_article, 
+                $admin_header, $pagingPn, $paginator['totalNumPages'], 
+                $pagingLimit, $children, 
+                $paginator, $dates, 
+                null, Functions::countHas($children),
+                false, 0, ''
+            );
+        }
+        return self::getView(
+            $request, 'content.cms', $admin_header, 
+            $content, false, 
             Page::getBreadcrumbs(
-                Page::genBreadcrumb('Admin DashBoard', $request->path()),
+                Page::genBreadcrumb($admin_header, $request->path()),
                 Page::genBreadcrumb('Home', '/')
             ), null,
             $sidebar

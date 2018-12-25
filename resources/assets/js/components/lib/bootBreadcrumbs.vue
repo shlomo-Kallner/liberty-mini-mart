@@ -1,6 +1,6 @@
 <template>
   <div class="row padding-top-5">
-    <div v-if="condition" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div v-if="hasCrumbs" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
       <ol v-if="version === 1" class="breadcrumb pull-left">
           <li :class="{active: crumbs.length === 0}">
               <router-link to="/">
@@ -69,17 +69,15 @@
     data: function () {
       return {}
     },
-    watch: {
-      crumbs: function (crumb) {
-        this.breadcrumbs = crumb
-      }
-    },
     computed: {
       getPreText: function () {
         return this.getText(this.preText)
       },
       getPostText: function () {
         return this.getText(this.postText)
+      },
+      hasCrumbs: function () {
+        return this.crumbs.length > 0
       }
     },
     methods: {
@@ -98,14 +96,6 @@
               return '<span style="'+ target +'">'+ str +'</span>'
             }
           }
-        }
-      },
-      page: function (val, index) {
-        this.current = val.name
-        if (index > 1) {
-          this.$router.push()
-        } else {
-          this.$router.replace()
         }
       }
     }

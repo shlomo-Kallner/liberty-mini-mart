@@ -31,44 +31,13 @@ window.Vue.component('admin-panel-component', AdminPanel)
 
 window.Laravel.page.admin = {}
 
-function genComponentData (data = null) {
-  var vals = {}
-  if (window.myUtils.testStr(data)) {
-    vals = window.myUtils.JsonParseOrRetObj(data, {}, window.myUtils.dumpData)
-  } else if (typeof data === 'object' && !window.myUtils.isEmpty(data)) {
-    for (var i in data) {
-      var tmp = {
-        items: window.myUtils.getItemsFrom(data[i]),
-        pagination: window.myUtils.getPagingFrom(data[i])
-      }
-      window._.set(vals, i, tmp)
-    }
-  }
-  if (window.myUtils.testData(vals) && !window.myUtils.isEmpty(vals)) {
-    return vals
-  } else if (window._.has(vals, 'pages') &&
-    window._.has(vals, 'sections') &&
-    window._.has(vals, 'users') &&
-    window._.has(vals, 'article')
-  ) {
-    return {
-      initPages: vals.pages,
-      initSections: vals.sections,
-      initUsers: vals.users,
-      initArticle: window.myUtils.getArticleData(
-        vals.article, 'col-md-12', 'col-md-12'
-      )
-    }
-  } else {
-    return {}
-  }
-}
-
-const initData = genComponentData(window.Laravel.admin)
 // window.myUtils.dumpData(window.Laravel.admin)
-// window.myUtils.dumpData(window._.omit(initData, ['article', 'header']))
+const initData = window.myUtils.genComponentData(window.Laravel.admin)
+// window.myUtils.dumpData(initData)
 const includedData = window._.omit(initData, ['article', 'header'])
+// window.myUtils.dumpData(includedData)
 const storeData = window.myUtils.genStoreData(includedData)
+// window.myUtils.dumpData(storeData)
 let myStore = Store.makeStore(storeData)
 
 const unsynch = sync(myStore, router)
@@ -79,17 +48,6 @@ window.Laravel.page.admin.app = new window.Vue(
     router: router,
     store: myStore,
     template: '<admin-panel-component></admin-panel-component>',
-    /* template: '<admin-panel-component v-bind="componentData"></admin-panel-component>',
-    data: {
-      initData: initData
-    },
-    computed: {
-      componentData: () => {
-        // return genComponentData(this.initData)
-        return this.initData
-      }
-    }, */
-    methods: {},
     beforeDestroy: function () {
       unsynch()
     }

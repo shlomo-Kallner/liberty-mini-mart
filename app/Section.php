@@ -28,15 +28,15 @@ class Section extends Model implements TransformableContainer, ContainerAPI
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
-        $url = $baseUrl . '/section/';
+        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
+        // $surl = $this->catalog->getFullUrl($baseUrl);
+        $url = empty($baseUrl) ? 'section/' : $baseUrl . '/section/';
         return $fullUrl ? url($url) : $url;
     }
 
-    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
     {
-        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
-        // $surl = $this->catalog->getFullUrl($baseUrl);
-        return self::genUrlFragment($baseUrl, $fullUrl);
+        return '';
     }
 
     static public function getSection(
@@ -116,11 +116,33 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    public function getCategoriesWithPagination(
+    public function getChildrenWithPagination(
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
-        bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1
+        bool $useBaseMaker = true, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $listUrl = '#', 
+        string $pagingFor = '', int $viewNumber = 0, 
+        bool $fullUrl = false, bool $useTitle = true,
+        int $version = 1, $default = []
+    ) {
+        return $this->getCategoriesWithPagination(
+            $transform, $pageNum,
+            $numItemsPerPage, $withTrashed, 
+            $dir, $baseUrl, $listUrl, $fullUrl, 
+            $viewNumber, $useBaseMaker, 
+            $default, $version, $useTitle,
+            $pagingFor, false
+        );
+    }
+
+    public function getCategoriesWithPagination(
+        $transform = null, int $pageNum = 1,
+        int $numShown = 4, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        string $listUrl = '', bool $fullUrl = false, 
+        int $viewNumber = 0, bool $useBaseMaker = true, 
+        $default = [], int $version = 1, bool $useTitle = true,
+        string $pagingFor = '', bool $done = false
     ) {
         $tmp = $withTrashed 
             ? $this->categories()->withTrashed()
@@ -129,16 +151,16 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         $res = [];
         if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
             return Categorie::getForWithPagination(
-                $tmp, $transform, int $pageNum,
-                int $numShown = 4, string $pagingFor = '', 
-                string $listUrl = '', $baseUrl, 
-                $dir, int $viewNumber = 0, 
+                $tmp, $transform, $pageNum,
+                $numShown, $pagingFor, 
+                $listUrl, $baseUrl, 
+                $dir, $viewNumber = 0, 
                 $withTrashed, $useTitle, 
                 $fullUrl, $version, $default, 
-                bool $useBaseMaker = true, bool $done = true
+                $useBaseMaker, $done
             );
         }
-        
+        return $default;
     }
 
     static public function makeContentArray(
@@ -195,7 +217,6 @@ class Section extends Model implements TransformableContainer, ContainerAPI
             $this->image, 
             $useTitle ? $this->title : $this->image->alt, 
             $this->article, $this->description,
-            //SectionImage::getAllImages($this->id),
             Image::getArraysFor($this->otherImages),
             $this->getCategories(
                 Categorie::TO_URL_LIST_TRANSFORM, 
@@ -211,18 +232,38 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    // TO BE IMPLEMENTED!!!
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
         bool $fullUrl = false, int $pageNum = 0, 
         int $numItemsPerPage = 4, string $pagingFor = '', 
-        int $viewNumber = 0, string $listUrl = '#'
+        int $viewNumber = 0, string $listUrl = '#', 
+        bool $useBaseMaker = true, bool $done = true
     ) {
-        return $this->toContentArray(
-            $baseUrl, $version, $useTitle, $withTrashed, 
-            $fullUrl
+        $cats = $this->getCategoriesWithPagination(
+            Categorie::TO_URL_LIST_TRANSFORM, 
+            $pageNum, $numItemsPerPage, $withTrashed, 
+            'asc', $baseUrl, $listUrl, $fullUrl, 
+            $viewNumber, $useBaseMaker, 
+            [], $version, $useTitle,
+            $pagingFor, false
         );
+        $content = self::makeContentArray(
+            $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
+            $this->image, 
+            $useTitle ? $this->title : $this->image->alt, 
+            $this->article, $this->description,
+            Image::getArraysFor($this->otherImages),
+            $cats['items'] ?? [], 
+            [
+                'created' => $this->created_at,
+                'updated' => $this->updated_at,
+                'deleted' => $this->deleted_at,
+            ],
+            $this->id, $useBaseMaker, $done
+        );
+        $content['value']['pagination'] = $cats['pagination'] ?? [];
+        return $content;
     }
 
     public function getPriceOrSale()
