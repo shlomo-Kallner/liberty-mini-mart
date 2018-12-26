@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+// WISHLIST ITEM!!
 class Catalog extends Model
 {
     use SoftDeletes;

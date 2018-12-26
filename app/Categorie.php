@@ -184,6 +184,16 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
+    public function getImageArray()
+    {
+        return $this->image->toImageArray();
+    }
+
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 

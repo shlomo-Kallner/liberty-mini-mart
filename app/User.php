@@ -255,6 +255,11 @@ class User extends Model implements ContainerAPI
         return self::genUrlFragment($baseUrl, $fullUrl);
     }
 
+    public function getUrl()
+    {
+        return $this->uuid;
+    }
+
     public function getFullUrl(string $baseUrl, bool $fullUrl = false)
     {
         $surl = $this->getUrlFragment($baseUrl, false);
@@ -302,6 +307,11 @@ class User extends Model implements ContainerAPI
     public function getSticker()
     {
         return '';
+    }
+
+    public function getImageArray()
+    {
+        return $this->image->toImageArray();
     }
 
     public function toContentArrayPlus(

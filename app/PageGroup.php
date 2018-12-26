@@ -4,12 +4,17 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model,
     Illuminate\Database\Eloquent\SoftDeletes,
-    App\Utilities\Functions\Functions;
+    App\Image,
+    App\Utilities\Functions\Functions,
+    App\Utilities\ContainerTransforms,
+    App\Utilities\TransformableContainer,
+    App\Utilities\ContainerAPI,
+    App\Utilities\ContainerID;
 
 
-class PageGroup extends Model
+class PageGroup extends Model implements TransformableContainer, ContainerAPI
 {
-    use SoftDeletes;
+    use SoftDeletes, ContainerTransforms, ContainerID;
     
     /**
      * The table associated with the model.

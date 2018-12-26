@@ -81,11 +81,6 @@ interface TransformableContainer
         string $pagingFor = ''
     );
 
-    /* public function toTableArray(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
-    ); */
-
     public function toFull(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
@@ -104,11 +99,20 @@ interface TransformableContainer
         bool $fullUrl = false
     );
 
+    public function getImageArray();
+
+    public function getUrl();
+
     public function getPriceOrSale();
 
     public function getPubId();
 
     public function getSticker();
+
+    /* public function toTableArray(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true
+    ); */
 }
 
 trait ContainerTransforms
@@ -133,7 +137,7 @@ trait ContainerTransforms
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false
     ) {
-        $img = $this->image->toImageArray();
+        $img = $this->getImageArray();
         return self::makeSidebar(
             $this->getFullUrl($baseUrl, $fullUrl), $img['img'], 
             $useTitle ? $this->title : $img['alt'], 
@@ -160,7 +164,7 @@ trait ContainerTransforms
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false
     ) {
-        $img = $this->image->toImageArray();
+        $img = $this->getImageArray();
         return self::makeMini(
             $img['img'], $useTitle ? $this->title : $img['alt'], 
             $this->getFullUrl($baseUrl, $fullUrl),
@@ -270,7 +274,7 @@ trait ContainerTransforms
     public function getFullUrl(string $baseUrl, bool $fullUrl = false)
     {
         $surl = $this->getUrlFragment($baseUrl);
-        $url = $surl . $this->url;
+        $url = $surl . $this->getUrl();
         return $fullUrl ? url($url) : $url;
     }
 
@@ -974,7 +978,7 @@ trait ContainerTransforms
     {
         $value = [
             'name' => $this->name,
-            'url' => $this->url, /// the identifying url fragment,
+            'url' => $this->getUrl(), /// the identifying url fragment,
                                  /// NOT the full URL!!!
         ];
         return $useBaseMaker

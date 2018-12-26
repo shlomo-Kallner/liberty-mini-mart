@@ -210,7 +210,7 @@ class Cart extends Model
         $cart = self::getFrom($request);
         //dd($request, $user, $cart, $content);
         if (!Functions::testVar($cart)) {
-            $cart1 = self::createNewFrom($request, $user, $content, false);
+            $cart1 = self::createNewFromData($request, $user, $content, false);
             if (Functions::testVar($cart1) && $cart1 instanceof self) {
                 return $cart1;
             }
@@ -391,7 +391,15 @@ class Cart extends Model
         return null;
     }
 
-    static public function createNewFrom(
+    static public function createNewFrom(array $array, bool $retObj = false)
+    {
+        return self::createNewFromData(
+            $array['data'], $array['user'] ?? null, 
+            $array['content'] ?? null, !$retObj
+        );
+    }
+
+    static public function createNewFromData(
         $data, $user = null, $content = null, bool $retId = true
     ) {
         if (is_array($data)) {
@@ -414,7 +422,7 @@ class Cart extends Model
         if (Functions::testVar($cart = self::getFrom($data))) {
             return $cart;
         } else {
-            return self::createNewFrom($data, null, null, false);
+            return self::createNewFromData($data, null, null, false);
         }
     }
 }

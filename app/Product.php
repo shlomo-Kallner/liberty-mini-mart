@@ -263,6 +263,16 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         return $this->category->getFullUrl($baseUrl, $fullUrl);
     }
 
+    public function getImageArray()
+    {
+        return $this->image->toImageArray();
+    }
+
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
     public function getPriceOrSale()
     {
         return Functions::testVar($this->sale) || $this->sale != $this->price 
