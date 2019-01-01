@@ -77,8 +77,9 @@ interface TransformableContainer
     );
 
     static public function getSelf(
-        $children = [], $paginator = null, 
-        string $pagingFor = ''
+        string $baseUrl = 'store', bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = ''
     );
 
     public function toFull(

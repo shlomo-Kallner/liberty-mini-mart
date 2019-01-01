@@ -244,6 +244,11 @@ class User extends Model implements ContainerAPI
             : self::where('uuid', $uuid)->first();
     }
 
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
+    {
+        return '';
+    }
+
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
     {
         $url = empty($baseUrl) ? 'user/' : $baseUrl . '/user/';
@@ -393,6 +398,42 @@ class User extends Model implements ContainerAPI
             'App\Image', 'App\UserImage',
             'user_id', 'id',
             'id', 'image_id'
+        );
+    }
+
+    
+
+    static public function getSelf(
+        string $baseUrl = 'store', bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = ''
+    ) {
+        $title = $name = 'Users';
+        $url = self::genUrlFragment($baseUrl, $fullUrl);
+        $article = [];
+        $img = [];
+        $pagingFor = $pagingFor ?: 'usersPanel';
+        return Page::makeBaseContentIterArray(
+            string $name, string $url, $img, $article, 
+            string $title, int $pageNumber, int $numPages, 
+            int $numPerPage, $children = [], 
+            $paginator = null, array $dates = [], 
+            array $otherImages = null, $hasChildren = null,
+            bool $usePagingFor = false, int $numView = 0, 
+            string $pagingFor = ''
+        )
+        Page::makeBaseContentArray(
+            string $name, string $url, $img, $article, 
+            string $title, array $dates = [], 
+            array $otherImages = null,
+            $children = [], $hasChildren = null, 
+            bool $done = true, string $next = ''
+        )
+        Page::makeBaseContentIterArray(
+            'Users', self::genUrlFragment($baseUrl, $fullUrl),
+            $img, [], 'Users', $pageNumber, $numPages, $numPerPage,
+            $users, $paginator, [], [], true, $usePagingFor, 
+            $paginatorViewNum, 'usersPanel'
         );
     }
 
