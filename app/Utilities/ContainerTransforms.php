@@ -141,7 +141,112 @@ trait ContainerTransforms
         return '';
     }
 
+    static public function getCount(bool $withTrashed = false)
+    {
+        return $withTrashed 
+        ? self::withTrashed()->count()
+        : self::count();
+    }
+
+    public function toUrlListing(
+        string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
+    ) {
+        $url = $this->getFullUrl($baseUrl, false);
+        $value = [
+            'name' => $this->name,
+            'url' =>  $fullUrl ? url($url) : $url, 
+        ];
+        return $useBaseMaker
+            ? self::makeDefaultBaseContentIterArray($value, null, false)
+            : $value;
+    }
+
+    public function toUrlFragrment(
+        string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
+    ) {
+        $url = $this->getUrlFragment($baseUrl);
+        $value = [
+            'name' => $this->name,
+            'url' =>  $fullUrl ? url($url) : $url, 
+        ];
+        return $useBaseMaker
+            ? self::makeDefaultBaseContentIterArray($value, null, false)
+            : $value;
+    }
+
+    public function toNameListing(bool $useBaseMaker = false)
+    {
+        $value = [
+            'name' => $this->name,
+            'url' => $this->getUrl(), /// the identifying url fragment,
+                                 /// NOT the full URL!!!
+        ];
+        return $useBaseMaker
+            ? self::makeDefaultBaseContentIterArray($value, null, false)
+            : $value;
+    }
+
+    public function toSidebar(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
+    ) {
+        $img = $this->getImageArray();
+        return self::makeSidebar(
+            $this->getFullUrl($baseUrl, $fullUrl), $img['img'], 
+            $useTitle ? $this->title : $img['alt'], 
+            $this->getPriceOrSale()
+        ); 
+    }
+
+    public function toMini(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
+    ) {
+        $img = $this->getImageArray();
+        return self::makeMini(
+            $img['img'], $useTitle ? $this->title : $img['alt'], 
+            $this->getFullUrl($baseUrl, $fullUrl),
+            $this->getPriceOrSale(), 
+            $this->getPubId(), $this->getSticker()
+        ); 
+    }
+
     /// end of defaults.. 
+
+    static public function getContentArrays(
+        $arrays, string $baseUrl = 'store', $default = [],
+        int $version = 1, bool $useTitle = true, 
+        bool $withTrashed = true, bool $fullUrl = false
+    ) {
+        return self::getFor(
+            $arrays, $baseUrl, 
+            TransformableContainer::TO_CONTENT_ARRAY_TRANSFORM,
+            $useTitle, $version, $withTrashed, $fullUrl, $default
+        );
+    }
+
+    static public function getNameListingOf($array, bool $useBaseMaker = false)
+    {
+        $res = [];
+        if (is_array($array) || $array instanceof Collection) {
+            foreach ($tmp as $item) {
+                if ($item instanceof self) {
+                    $res[] = $item->toNameListing($useBaseMaker);
+                }
+            }
+        }
+        return $res;
+    }
+
+    static public function getNameListing(
+        bool $withTrashed = false, string $dir = 'asc',
+        bool $useBaseMaker = false
+    ) {
+        $tmp = self::getOrdered($dir, $withTrashed);
+        return self::getNameListingOf($tmp, $useBaseMaker);
+    }
     
     static public function makeSidebar(
         string $url, string $img, string $alt,
@@ -158,19 +263,6 @@ trait ContainerTransforms
         ];
     }
 
-    public function toSidebar(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false
-    ) {
-        $img = $this->getImageArray();
-        return self::makeSidebar(
-            $this->getFullUrl($baseUrl, $fullUrl), $img['img'], 
-            $useTitle ? $this->title : $img['alt'], 
-            $this->getPriceOrSale()
-        ); 
-    }
-
     static public function makeMini(
         string $img, string $name, string $url,
         $price, $id = 0, string $sticker = ''
@@ -183,20 +275,6 @@ trait ContainerTransforms
             'price' => $price,
             'sticker' => $sticker,
         ];
-    }
-
-    public function toMini(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false
-    ) {
-        $img = $this->getImageArray();
-        return self::makeMini(
-            $img['img'], $useTitle ? $this->title : $img['alt'], 
-            $this->getFullUrl($baseUrl, $fullUrl),
-            $this->getPriceOrSale(), 
-            $this->getPubId(), $this->getSticker()
-        ); 
     }
 
     static public function makeDefaultBaseContentIterArray(
@@ -338,15 +416,13 @@ trait ContainerTransforms
     }
 
     static public function makeSelfWithPagination(
-        string $name, string $url, $img, $article, 
-        string $title, int $pageNumber, 
-        int $numPerPage = 4,  int $numView = 0, 
-        array $otherImages = null, array $dates = [], 
+        int $pageNumber, int $numPerPage = 4,  int $numView = 0, 
         string $baseUrl = 'store', string $listUrl = '', 
         bool $fullUrl = false,
         bool $withTrashed = true, bool $useBaseMaker = true,
-        $default = [], string $dir = 'asc', int $version = 1, 
-        string $pagingFor = '', bool $useTitle = true
+        $default = [], string $dir = 'asc', 
+        string $pagingFor = '', bool $useTitle = true, 
+        bool $done = false, int $version = 1
     ) {
         $itemsArray = self::getAllWithPagination(
             self::TO_URL_LIST_TRANSFORM, $pageNumber, $numPerPage, 
@@ -355,18 +431,25 @@ trait ContainerTransforms
             $listUrl, $numView, 
             $fullUrl, $useTitle, 
             $version, $default, $useBaseMaker,
-            false
+            $done
         );
         $children = Functions::countHas($itemsArray) 
             ? $itemsArray['items'] : null;
         $paginator = Functions::countHas($itemsArray) 
             ? $itemsArray['pagination'] : null;
-        return self::makeBaseContentIterArray(
-            $name, $url, $img, $article, $title, 
-            $pageNumber, $paginator['totalNumPages'] ?? 0, 
-            $numPerPage, $children, $paginator, $dates, 
-            $otherImages, Functions::countHas($children),
-            !empty($pagingFor), $numView, $pagingFor
+        /* 
+            return self::makeBaseContentIterArray(
+                $name, $url, $img, $article, $title, 
+                $pageNumber, $paginator['totalNumPages'] ?? 0, 
+                $numPerPage, $children, $paginator, $dates, 
+                $otherImages, Functions::countHas($children),
+                !empty($pagingFor), $numView, $pagingFor
+            ); 
+        */
+        return self::getSelf(
+            $baseUrl, $withTrashed,
+            $fullUrl, $children, 
+            $paginator, $pagingFor
         );
     }
 
@@ -766,7 +849,7 @@ trait ContainerTransforms
         int $version = 1, $default = [], bool $useBaseMaker = true,
         bool $done = true
     ) {
-        $totalNum = self::count();
+        $totalNum = self::getCount($withTrashed);
         $pageIdx = self::genFirstAndLastItemsIdxes( 
             $totalNum, $pageNum, $numShown
         );
@@ -960,77 +1043,6 @@ trait ContainerTransforms
             } 
         }
         return $default;
-    }
-
-    static public function getContentArrays(
-        $arrays, string $baseUrl = 'store', $default = [],
-        int $version = 1, bool $useTitle = true, 
-        bool $withTrashed = true, bool $fullUrl = false
-    ) {
-        return self::getFor(
-            $arrays, $baseUrl, 
-            TransformableContainer::TO_CONTENT_ARRAY_TRANSFORM,
-            $useTitle, $version, $withTrashed, $fullUrl, $default
-        );
-    }
-
-    public function toUrlListing(
-        string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
-    ) {
-        $url = $this->getFullUrl($baseUrl, false);
-        $value = [
-            'name' => $this->name,
-            'url' =>  $fullUrl ? url($url) : $url, 
-        ];
-        return $useBaseMaker
-            ? self::makeDefaultBaseContentIterArray($value, null, false)
-            : $value;
-    }
-
-    public function toUrlFragrment(
-        string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
-    ) {
-        $url = $this->getUrlFragment($baseUrl);
-        $value = [
-            'name' => $this->name,
-            'url' =>  $fullUrl ? url($url) : $url, 
-        ];
-        return $useBaseMaker
-            ? self::makeDefaultBaseContentIterArray($value, null, false)
-            : $value;
-    }
-
-    public function toNameListing(bool $useBaseMaker = false)
-    {
-        $value = [
-            'name' => $this->name,
-            'url' => $this->getUrl(), /// the identifying url fragment,
-                                 /// NOT the full URL!!!
-        ];
-        return $useBaseMaker
-            ? self::makeDefaultBaseContentIterArray($value, null, false)
-            : $value;
-    }
-
-    static public function getNameListingOf($array, bool $useBaseMaker = false)
-    {
-        $res = [];
-        if (is_array($array) || $array instanceof Collection) {
-            foreach ($tmp as $item) {
-                if ($item instanceof self) {
-                    $res[] = $item->toNameListing($useBaseMaker);
-                }
-            }
-        }
-        return $res;
-    }
-
-    static public function getNameListing(
-        bool $withTrashed = false, string $dir = 'asc',
-        bool $useBaseMaker = false
-    ) {
-        $tmp = self::getOrdered($dir, $withTrashed);
-        return self::getNameListingOf($tmp, $useBaseMaker);
     }
 
 }

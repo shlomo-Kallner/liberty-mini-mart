@@ -22,7 +22,7 @@ use Webpatser\Uuid\Uuid;
 class User extends Model implements TransformableContainer, ContainerAPI
 {
     use SoftDeletes, ContainerID, ContainerTransforms {
-        ContainerTransforms::getNamed as traitGetNamed;
+        ContainerTransforms::getNamed as private traitGetNamed;
     }
 
     /**
@@ -467,6 +467,13 @@ class User extends Model implements TransformableContainer, ContainerAPI
         return self::getOrderedBy(
             $dir, $withTrashed, $orderingBy
         )->where(self::getExtraWhereBy())->get();
+    }
+
+    static public function getCount(bool $withTrashed = false)
+    {
+        return $withTrashed 
+        ? self::withTrashed()->where(self::getExtraWhereBy())->count()
+        : self::where(self::getExtraWhereBy())->count();
     }
 
     static public function getUsers(
