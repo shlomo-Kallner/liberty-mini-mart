@@ -15,6 +15,7 @@ use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 use App\Exceptions\JsonException;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Carbon;
 
 
 class Functions
@@ -189,7 +190,9 @@ class Functions
         return $n[1];
     }
 
-    static public function testVersions(string $ver1, string $ver2, string $op = '==')
+    static public function testVersions(
+        string $ver1, string $ver2, string $op = '=='
+    )
     {
         $res = false;
         switch ($op) {
@@ -236,7 +239,7 @@ class Functions
      * 
      * @return array|null
      */
-    static public function dbModel2ViewModel(
+     static public function dbModel2ViewModel(
         array &$dbModel, bool $useTitle = false
     ) {
         /* 
@@ -277,7 +280,7 @@ class Functions
         }
         return $res;
     }
-
+ 
     static public function jsonRetOrDump(
         Request $request, $id = null, ...$data
     ) {
@@ -304,6 +307,24 @@ class Functions
             $tmp = $dumper->dump((new VarCloner)->cloneVar($data), true);
             return new Response($tmp);
         }
+    }
+
+    static public function genDatesArray(
+        $created_at, $updated_at, $deleted_at
+    ) {
+        return [
+            'created' => $created_at,
+            'modified' => $updated_at,
+            'deleted' => $deleted_at
+        ];
+    }
+
+    static public function genDefaultDates(bool $setUpdated = false) 
+    {
+        $now = Carbon::now();
+        return self::genDatesArray(
+            $now, $setUpdated ? $now : null, null
+        );
     }
 
     /**

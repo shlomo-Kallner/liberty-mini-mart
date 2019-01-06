@@ -118,6 +118,31 @@ interface TransformableContainer
 
 trait ContainerTransforms
 {
+    /// some trait defined defaults, 
+    ///  redefine in using class to override
+    ///  see PHP Language, Trait docs for details.
+    static public function getNamedByKey()
+    {
+        return 'name';
+    }
+
+    static public function getUrlByKey()
+    {
+        return 'url';
+    }
+
+    public function getPriceOrSale()
+    {
+        return '';
+    }
+
+    public function getSticker()
+    {
+        return '';
+    }
+
+    /// end of defaults.. 
+    
     static public function makeSidebar(
         string $url, string $img, string $alt,
         string $price = ''
@@ -344,32 +369,32 @@ trait ContainerTransforms
             !empty($pagingFor), $numView, $pagingFor
         );
     }
-    
+
     /** 
      * Method getNamed()
      * 
-     * @param string $name - the name or url to search for 
-     *                     (uses columns 'name' and 'url' respectively).
-     * @param mixed $withTrashed - pass 'true' to use soft deleted
-     *                           items or 'false' to not use them.
-     * @param mixed $orderingBy - May be a <value> or an array.
-     *                          If is a <value>:
-     *                          - it is added as comparing as 
-     *                          equal to refine the result while using 
-     *                          self::getOrderByKey() to get the 
-     *                          column key.
-     *                          If is an array:
-     *                          - it is either:
-     *                          --[a] an array of '[<Column>, <op>, <Value>]'
-     *                          arrays that where() accepts.
-     *                          --[b] an array of 'Key => Value' pairs
-     *                          (Key MUST be a string!), where Key is the
-     *                          Column key, to refine the results while 
-     *                          comparing for equality.
-     *                          --or [c] an array of 'Key => [Value, Op]'
-     *                          (Key MUST be a string!), where Key is the
-     *                          Column key, to refine the results while 
-     *                          comparing for Op or equality by default.
+     * @param string $name        - the name or url to search for 
+     *                            (uses columns 'name' and 'url' respectively).
+     * @param mixed  $withTrashed - pass 'true' to use soft deleted
+     *                            items or 'false' to not use them.
+     * @param mixed  $orderingBy  - May be a <value> or an array.
+     *                            If is a <value>:
+     *                            - it is added as comparing as 
+     *                            equal to refine the result while using 
+     *                            self::getOrderByKey() to get the 
+     *                            column key.
+     *                            If is an array:
+     *                            - it is either:
+     *                            --[a] an array of '[<Column>, <op>, <Value>]'
+     *                            arrays that where() accepts.
+     *                            --[b] an array of 'Key => Value' pairs
+     *                            (Key MUST be a string!), where Key is the
+     *                            Column key, to refine the results while 
+     *                            comparing for equality.
+     *                            --or [c] an array of 'Key => [Value, Op]'
+     *                            (Key MUST be a string!), where Key is the
+     *                            Column key, to refine the results while 
+     *                            comparing for Op or equality by default.
      * 
      * @return mixed|null
     */
@@ -378,10 +403,10 @@ trait ContainerTransforms
         $orderingBy = null
     ) {
         $where = [
-            ['url', '=', $name],
+            [self::getUrlByKey(), '=', $name],
         ];
         $orWhere = [
-            ['name', '=', $name],
+            [self::getNamedByKey(), '=', $name],
         ];
         if (!empty($orderingBy) && !is_array($orderingBy)) {
             $where[] = [self::getOrderByKey(), '=', $orderingBy];
@@ -404,12 +429,12 @@ trait ContainerTransforms
         }
         return $withTrashed 
             ? self::withTrashed()
-                ->where($where)
-                ->orWhere($orWhere)
-                ->first()
+            ->where($where)
+            ->orWhere($orWhere)
+            ->first()
             : self::where($where)
-                ->orWhere($orWhere)
-                ->first();
+            ->orWhere($orWhere)
+            ->first();
     }
 
     static public function getOrderedBy(

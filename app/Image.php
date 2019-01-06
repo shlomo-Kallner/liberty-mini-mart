@@ -176,10 +176,20 @@ class Image extends Model implements ContainerAPI
 
     public function toImageArray()
     {
-        $imgPath = Functions::testVar($this->path) ? $this->path . '/' : '';
+        return self::createImageArray(
+            $this->name, $this->alt,  $this->path, 
+            $this->caption, $this->id
+        );
+    }
+
+    static public function createImageArray(
+        string $name, string $alt = '', string $path = '',
+        string $caption = '', int $id = 0
+    ) {
+        $imgPath = Functions::testVar($path) ? $path . '/' : '';
         return self::makeImageArray(
-            $this->id, $imgPath . $this->name, 
-            $this->alt, $this->caption
+            $id, $imgPath . $name, 
+            $alt, $caption
         );
     }
 

@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Model,
     App\Utilities\Functions\Functions,
     App\Utilities\Permits\Permits,
     App\Utilities\ContainerID,
-    App\Utilities\ContainerAPI;
+    App\Utilities\ContainerAPI,
+    App\Utilities\ContainerTransforms,
+    App\Utilities\TransformableContainer;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Utilities\Permits\Basic;
 use App\UserImage;
@@ -17,9 +19,11 @@ use App\Image;
 use Darryldecode\Cart\Helpers\Helpers;
 use Webpatser\Uuid\Uuid;
 
-class User extends Model implements ContainerAPI
+class User extends Model implements TransformableContainer, ContainerAPI
 {
-    use SoftDeletes, ContainerID;
+    use SoftDeletes, ContainerID, ContainerTransforms {
+        ContainerTransforms::getNamed as traitGetNamed;
+    }
 
     /**
      * The attributes that should be mutated to dates.
@@ -272,10 +276,24 @@ class User extends Model implements ContainerAPI
         return $fullUrl ? url($url) : $url;
     }
 
+    /// some ContainerTransforms trait overides..
+
     static public function getOrderByKey()
     {
         return 'id';
     }
+
+    static public function getNamedByKey()
+    {
+        return 'email';
+    }
+
+    static public function getUrlByKey()
+    {
+        return 'uuid';
+    }
+
+    /// end of overides..
 
     public function toFull(
         string $baseUrl = 'store', int $version = 1, 
@@ -299,19 +317,9 @@ class User extends Model implements ContainerAPI
         );
     }
 
-    public function getPriceOrSale()
-    {
-        return '';
-    }
-
     public function getPubId()
     {
         return $this->uuid;
-    }
-
-    public function getSticker()
-    {
-        return '';
     }
 
     public function getImageArray()
@@ -401,8 +409,6 @@ class User extends Model implements ContainerAPI
         );
     }
 
-    
-
     static public function getSelf(
         string $baseUrl = 'store', bool $withTrashed = true,
         bool $fullUrl = false, $children = [], 
@@ -411,7 +417,10 @@ class User extends Model implements ContainerAPI
         $title = $name = 'Users';
         $url = self::genUrlFragment($baseUrl, $fullUrl);
         $article = [];
-        $img = [];
+        $img = Image::createImageArray(
+            'computer-1331579_640.png', 'Users Listing', 
+            'images/site', 'Users Listing'
+        );
         $pagingFor = $pagingFor ?: 'usersPanel';
         return Page::makeBaseContentIterArray(
             string $name, string $url, $img, $article, 
@@ -437,6 +446,29 @@ class User extends Model implements ContainerAPI
         );
     }
 
+    static public function getExtraWhereBy()
+    {
+        return ['id', '>', self::getNumForVer()];
+    }
+
+    static public function getNamed(
+        string $name, bool $withTrashed = false, 
+        $orderingBy = null
+    ) {
+        $orderingBy = Functions::arrayableToArray($orderingBy, []);
+        $orderingBy[] = self::getExtraWhereBy();
+        return self::traitGetNamed($name, $withTrashed, $orderingBy);
+    }
+
+    static public function getOrdered(
+        string $dir = 'asc', bool $withTrashed = true,
+        $orderingBy = null
+    ) {
+        return self::getOrderedBy(
+            $dir, $withTrashed, $orderingBy
+        )->where(self::getExtraWhereBy())->get();
+    }
+
     static public function getUsers(
         int $pageNumber = 1, bool $toArray = true, 
         bool $forA = false, int $paginatorViewNum = 0,
@@ -447,8 +479,8 @@ class User extends Model implements ContainerAPI
     ) {
         //$numPerPage = 3; // 5;
         $tmp = $withTrashed 
-            ? self::withTrashed()->where('id', '>', self::getNumForVer())->get()
-            : self::where('id', '>', self::getNumForVer())->get();
+            ? self::withTrashed()->where(self::getExtraWhereBy())->get()
+            : self::where(self::getExtraWhereBy())->get();
         //dd($tmp);
         $res = [];
         if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
