@@ -205,17 +205,6 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         }
     }
 
-    public function toContentArray(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false
-    ) {
-        return $this->toContentArrayPlus(
-            $baseUrl, $version, $useTitle, $withTrashed,
-            $fullUrl, true
-        );
-    }
-
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 

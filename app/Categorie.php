@@ -180,7 +180,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
     ) {
         return $this->toContentArrayPlus(
             $baseUrl, $version, $useTitle, $withTrashed,
-            $fullUrl, true, 'asc'
+            $fullUrl, true, true, 'asc'
         );
     }
 
@@ -194,6 +194,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         return $this->url;
     }
 
+    
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 

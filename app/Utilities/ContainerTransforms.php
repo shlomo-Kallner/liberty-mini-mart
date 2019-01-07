@@ -28,16 +28,6 @@ interface TransformableContainer
 
     public function getParentUrl(string $baseUrl, bool $fullUrl = false);
 
-    public function getUrlFragment(string $baseUrl, bool $fullUrl = false);
-
-    public function getFullUrl(string $baseUrl, bool $fullUrl = false);
-
-    public function toContentArray(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true,
-        bool $fullUrl = false
-    );
-
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
@@ -57,16 +47,6 @@ interface TransformableContainer
         bool $done = true
     );
     
-    public function getChildrenWithPagination(
-        $transform = null, bool $withTrashed = true, 
-        string $dir = 'asc', string $baseUrl = 'store',
-        bool $useBaseMaker = true, int $pageNum = 0, 
-        int $numItemsPerPage = 4, string $listUrl = '#', 
-        string $pagingFor = '', int $viewNumber = 0, 
-        bool $fullUrl = false, bool $useTitle = true,
-        int $version = 1, int $totalNum = 0, $default = []
-    );
-
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
@@ -82,6 +62,22 @@ interface TransformableContainer
         $paginator = null, string $pagingFor = ''
     );
 
+    /// all of these below have defaults defined in the Trait below.
+
+    public function getUrlFragment(string $baseUrl, bool $fullUrl = false);
+
+    public function getFullUrl(string $baseUrl, bool $fullUrl = false);
+
+    public function getChildrenWithPagination(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useBaseMaker = true, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $listUrl = '#', 
+        string $pagingFor = '', int $viewNumber = 0, 
+        bool $fullUrl = false, bool $useTitle = true,
+        int $version = 1, int $totalNum = 0, $default = []
+    );
+
     public function toFull(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
@@ -95,6 +91,12 @@ interface TransformableContainer
     );
 
     public function toSidebar(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
+    );
+
+    public function toContentArray(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
         bool $fullUrl = false
@@ -149,6 +151,15 @@ trait ContainerTransforms
     public function getUrl()
     {
         return $this->url;
+    }
+
+    public function getDatesArray()
+    {
+        return Functions::genDatesArray(
+            $this->created_at ?? null,
+            $this->updated_at ?? null,
+            $this->deleted_at ?? null
+        );
     }
 
     static public function getCount(bool $withTrashed = false)
@@ -221,6 +232,44 @@ trait ContainerTransforms
             $this->getPriceOrSale(), 
             $this->getPubId(), $this->getSticker()
         ); 
+    }
+
+    public function toFull(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
+    ) {
+        return $this->toContentArray(
+            $baseUrl, $version, 
+            $useTitle, $withTrashed,
+            $fullUrl
+        );
+    }
+
+    public function toContentArray(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false
+    ) {
+        return $this->toContentArrayPlus(
+            $baseUrl, $version, $useTitle, $withTrashed,
+            $fullUrl, true, true, 'asc'
+        );
+    }
+
+    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
+    {
+        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
+        $surl = $this->getParentUrl($baseUrl, false);
+        $url = self::genUrlFragment($surl, false);
+        return $fullUrl ? url($url) : $url;
+    }
+
+    public function getFullUrl(string $baseUrl, bool $fullUrl = false)
+    {
+        $surl = $this->getUrlFragment($baseUrl);
+        $url = $surl . $this->getUrl();
+        return $fullUrl ? url($url) : $url;
     }
 
     /// end of defaults.. 
@@ -375,21 +424,6 @@ trait ContainerTransforms
             $content['value']['pagination'] = $paginator;
         }
         return $content;
-    }
-
-    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
-    {
-        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
-        $surl = $this->getParentUrl($baseUrl, false);
-        $url = self::genUrlFragment($surl, false);
-        return $fullUrl ? url($url) : $url;
-    }
-
-    public function getFullUrl(string $baseUrl, bool $fullUrl = false)
-    {
-        $surl = $this->getUrlFragment($baseUrl);
-        $url = $surl . $this->getUrl();
-        return $fullUrl ? url($url) : $url;
     }
 
     static public function getIfDoneIterating($transform)

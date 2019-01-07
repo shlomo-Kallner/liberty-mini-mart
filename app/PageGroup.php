@@ -140,15 +140,85 @@ class PageGroup extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    static public function makeContentArray(
-        int $id, string $name, int $order, array $pages = null
+    ///
+
+    static public function getSelf(
+        string $baseUrl = 'store', bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = ''
     ) {
-        return [
-            'id' => $id,
-            'name' => $name,
-            'order' => $order,
-            'pages' => $pages
-        ];
+        $title = $name = 'Menu Content';
+        $article = [];
+        $img = Image::createImageArray(
+            'menu-3167859_1920.jpg', 'Menu Content Listing', 
+            'images/site', 'Menu Content Listing'
+        );
+        $pagingFor = $pagingFor ?: 'menusPanel';
+        return self::makeSelf(
+            $name, $title, $article,
+            $img, $baseUrl, $withTrashed,
+            $fullUrl, $children, $paginator,
+            $pagingFor, null
+        );
+    }
+
+    static public function getOrderByKey()
+    {
+        return 'order';
+    }
+
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
+    {
+        $url = empty($baseUrl)
+            ? 'menus/' 
+            : $baseUrl . '/menus/';
+        return $fullUrl ? url($url) : $url;
+    }
+
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
+    {
+        return $fullUrl ? url($baseUrl) : $baseUrl;
+    }
+
+    public function getImageArray()
+    {
+        return Image::createImageArray(
+            'app-menu-2155443_1280.png', 'Menu Listing', 'images/site',
+            'Menu Listing'
+        );
+    }
+
+    public function getUrl()
+    {
+        return $this->name;
+    }
+
+    static public function getUrlByKey()
+    {
+        return 'name';
+    }
+
+    static public function makeContentArray(
+        int $id, string $name, int $order, array $pages = null, 
+        bool $useBaseMaker = true, string $url = '', $img = null,
+        array $dates = null
+    ) {
+        if ($useBaseMaker) {
+            $content = self::makeBaseContentArray(
+                $name, $url, $img, null, $name, 
+                $dates, null, $pages, 
+                Functions::countHas($pages), true, ''
+            );
+            $content['value']['order'] = $order;
+        } else {
+            $content = [
+                'id' => $id,
+                'name' => $name,
+                'order' => $order,
+                'pages' => $pages
+            ];
+        }
+        return $content;
     }
 
     public function toContentArray(
@@ -173,23 +243,36 @@ class PageGroup extends Model implements TransformableContainer, ContainerAPI
         $p = PageGrouping::getGroup($this, $dir);
         $res = [];
         foreach ($p as $tp) {
-            $res[] = $tp->page->toContentArray();
+            $res[] = $tp->page->toContentArray(
+                $baseUrl, $version, $useTitle, 
+                $withTrashed, $fullUrl
+            );
         }
         return self::makeContentArray(
-            $this->id, $this->name, $this->order,
-            $res
+            $this->id, $this->name, 
+            $this->order, $res, $useBaseMaker, 
+            $this->getFullUrl($baseUrl, $fullUrl),
+            $this->getImageArray(), $this->getDatesArray()
         );
     }
 
     static public function getAllGroups(
-        bool $toArray = true, string $dir = 'asc'
+        bool $toArray = true, string $dir = 'asc',
+        string $baseUrl = '', bool $withTrashed = true, 
+        bool $fullUrl = false, bool $useBaseMaker = false, 
+        int $version = 1
     ) {
         $tmp = self::orderBy('order', $dir)->get();
-        if (Functions::testVar($tmp) && count($tmp) > 0) {
+        if (Functions::countHas($tmp)) {
             if ($toArray) {
                 $res = [];
                 foreach ($tmp as $g) {
-                    $res[] = $g->toContentArray($dir);
+                    $res[] = $g->toContentArrayPlus(
+                        $baseUrl, $version, 
+                        false, $withTrashed, 
+                        $fullUrl, $useBaseMaker,
+                        true, $dir
+                    );
                 }
                 return $res;
             } else {

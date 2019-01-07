@@ -378,14 +378,15 @@ class Product extends Model implements TransformableContainer, ContainerAPI
     ) {
         return $this->toContentArrayPlus(
             $baseUrl, $version, $useTitle, $withTrashed, 
-            $fullUrl, true
+            $fullUrl, true, true, 'asc'
         );
     }
 
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false, bool $useBaseMaker = true
+        bool $fullUrl = false, bool $useBaseMaker = true,
+        bool $done = true, string $dir = 'asc'
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
         $api = $this->getFullUrl('api/' . $baseUrl, $fullUrl);
