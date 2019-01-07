@@ -304,9 +304,29 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         int $numItemsPerPage = 4, string $listUrl = '#', 
         string $pagingFor = '', int $viewNumber = 0, 
         bool $fullUrl = false, bool $useTitle = true,
-        int $version = 1, $default = []
+        int $version = 1, int $totalNum = 0, $default = []
     ) {
         return null;
+    }
+
+    static public function getSelf(
+        string $baseUrl = 'store', bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = ''
+    ) {
+        $title = $name = 'Content Pages';
+        $article = [];
+        $img = Image::createImageArray(
+            'notebook-581128_640.jpg', 'Content Pages Listing', 
+            'images/site', 'Content Pages Listing'
+        );
+        $pagingFor = $pagingFor ?: 'pagesPanel';
+        return self::makeSelf(
+            $name, $title, $article,
+            $img, $baseUrl, $withTrashed,
+            $fullUrl, $children, $paginator,
+            $pagingFor, null
+        );
     }
 
     public function toContentArrayWithPagination(

@@ -141,6 +141,16 @@ trait ContainerTransforms
         return '';
     }
 
+    public function getImageArray()
+    {
+        return $this->image->toImageArray();
+    }
+
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
     static public function getCount(bool $withTrashed = false)
     {
         return $withTrashed 
@@ -415,14 +425,47 @@ trait ContainerTransforms
         }
     }
 
-    static public function makeSelfWithPagination(
+    static public function makeSelf(
+        string $name, string $title, $article = [],
+        $img = [], string $baseUrl = 'store', 
+        bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = '',
+        array $otherImages = null
+    ) {
+        $url = self::genUrlFragment($baseUrl, $fullUrl);
+        $usePagingFor = $pagingFor ? true : false;
+        $dates = Functions::genDefaultDates(true);
+        if (Functions::countHas($children) 
+            && Functions::countHas($paginator)
+        ) {
+            return self::makeBaseContentIterArray(
+                $name, $url, $img, $article, 
+                $title, $paginator['currentPage'], 
+                $paginator['totalNumPages'], 
+                $paginator['numItemsPerPage'], $children, 
+                $paginator, $dates, 
+                $otherImages, true, $usePagingFor, 
+                $paginator['viewNumber'] ?? 0, 
+                $pagingFor
+            );
+        } else {
+            return self::makeBaseContentArray(
+                $name, $url, $img, $article, 
+                $title, $dates, $otherImages, [], false, 
+                true, ''
+            );
+        }
+    }
+
+    static public function getSelfWithPagination(
         int $pageNumber, int $numPerPage = 4,  int $numView = 0, 
         string $baseUrl = 'store', string $listUrl = '', 
         bool $fullUrl = false,
         bool $withTrashed = true, bool $useBaseMaker = true,
         $default = [], string $dir = 'asc', 
         string $pagingFor = '', bool $useTitle = true, 
-        bool $done = false, int $version = 1
+        int $version = 1
     ) {
         $itemsArray = self::getAllWithPagination(
             self::TO_URL_LIST_TRANSFORM, $pageNumber, $numPerPage, 
@@ -431,7 +474,7 @@ trait ContainerTransforms
             $listUrl, $numView, 
             $fullUrl, $useTitle, 
             $version, $default, $useBaseMaker,
-            $done
+            false
         );
         $children = Functions::countHas($itemsArray) 
             ? $itemsArray['items'] : null;

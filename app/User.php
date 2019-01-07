@@ -269,13 +269,6 @@ class User extends Model implements TransformableContainer, ContainerAPI
         return $this->uuid;
     }
 
-    public function getFullUrl(string $baseUrl, bool $fullUrl = false)
-    {
-        $surl = $this->getUrlFragment($baseUrl, false);
-        $url = $surl . $this->uuid;
-        return $fullUrl ? url($url) : $url;
-    }
-
     /// some ContainerTransforms trait overides..
 
     static public function getOrderByKey()
@@ -322,11 +315,6 @@ class User extends Model implements TransformableContainer, ContainerAPI
         return $this->uuid;
     }
 
-    public function getImageArray()
-    {
-        return $this->image->toImageArray();
-    }
-
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
@@ -335,7 +323,7 @@ class User extends Model implements TransformableContainer, ContainerAPI
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
         if ($useBaseMaker) {
-            return [
+            $content = [
                 'value' => [
                     'id' => $this->uuid,
                     'name' => $this->name,
@@ -361,7 +349,7 @@ class User extends Model implements TransformableContainer, ContainerAPI
                 'done' => $done
             ];
         } else {
-            return [
+            $content = [
                 // 'id' => $this->id,
                 // 'uuid' => $this->uuid,
                 'id' => $this->uuid,
@@ -383,6 +371,17 @@ class User extends Model implements TransformableContainer, ContainerAPI
                 'wishlist' => [],
             ];
         }
+        if (in_array('admin', explode('/', $baseUrl))) {
+            $ur = $this->getRolesArray(false);
+            if (Functions::countHas($ur)) {
+                if ($useBaseMaker) {
+                    $content['value']['roles'] = $ur;
+                } else {
+                    $content['roles'] = $ur;
+                }
+            }
+        }
+        return $content;
     }
 
     public function orders()
@@ -415,34 +414,17 @@ class User extends Model implements TransformableContainer, ContainerAPI
         $paginator = null, string $pagingFor = ''
     ) {
         $title = $name = 'Users';
-        $url = self::genUrlFragment($baseUrl, $fullUrl);
         $article = [];
         $img = Image::createImageArray(
             'computer-1331579_640.png', 'Users Listing', 
             'images/site', 'Users Listing'
         );
         $pagingFor = $pagingFor ?: 'usersPanel';
-        return Page::makeBaseContentIterArray(
-            string $name, string $url, $img, $article, 
-            string $title, int $pageNumber, int $numPages, 
-            int $numPerPage, $children = [], 
-            $paginator = null, array $dates = [], 
-            array $otherImages = null, $hasChildren = null,
-            bool $usePagingFor = false, int $numView = 0, 
-            string $pagingFor = ''
-        )
-        Page::makeBaseContentArray(
-            string $name, string $url, $img, $article, 
-            string $title, array $dates = [], 
-            array $otherImages = null,
-            $children = [], $hasChildren = null, 
-            bool $done = true, string $next = ''
-        )
-        Page::makeBaseContentIterArray(
-            'Users', self::genUrlFragment($baseUrl, $fullUrl),
-            $img, [], 'Users', $pageNumber, $numPages, $numPerPage,
-            $users, $paginator, [], [], true, $usePagingFor, 
-            $paginatorViewNum, 'usersPanel'
+        return self::makeSelf(
+            $name, $title, $article,
+            $img, $baseUrl, $withTrashed,
+            $fullUrl, $children, $paginator,
+            $pagingFor, null
         );
     }
 
@@ -527,14 +509,14 @@ class User extends Model implements TransformableContainer, ContainerAPI
                     // dd($ur);
                 }
                 // dd($users);
-                $paginator = Page::genPagingFor(
+                $paginator = self::genPagingFor(
                     $pn, count($tmp), $numPerPage,
                     'usersPanel', $paginatorViewNum, 
                     $paginatorBaseUrl
                 );
                 if ($useBaseMaker) {
                     $img = []; //Image::getImageArray($img)
-                    $res = Page::makeBaseContentIterArray(
+                    $res = self::makeBaseContentIterArray(
                         'Users', self::genUrlFragment($baseUrl, $fullUrl),
                         $img, [], 'Users', $pageNumber, $numPages, $numPerPage,
                         $users, $paginator, [], [], true, $usePagingFor, 
