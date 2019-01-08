@@ -499,7 +499,8 @@ trait ContainerTransforms
     {
         return $transform === self::TO_FULL_TRANSFORM ||
             $transform === self::TO_CONTENT_ARRAY_TRANSFORM ||
-            $transform === self::TO_CONTENT_ARRAY_PLUS_TRANSFORM;
+            $transform === self::TO_CONTENT_ARRAY_PLUS_TRANSFORM ||
+            (is_bool($transform) && $transform);
     }
 
     public function getChildrenWithPagination(
@@ -666,14 +667,46 @@ trait ContainerTransforms
             ->first();
     }
 
+    static public function acceptableOrderingByKey($key)
+    {
+        return !empty($key) && is_string($key);
+    }
+
+    static public function getOrderedByFor(
+        $arg, string $dir = 'asc', 
+        bool $withTrashed = true,
+        $orderingBy = null
+    ) {
+        if (Functions::testVar($arg)) {
+            if (self::acceptableOrderingByKey($orderingBy)) {
+                $key = $orderingBy;
+            } elseif (is_callable($orderingBy)) {
+                $key = $orderingBy();
+                if (!self::acceptableOrderingByKey($key)) {
+                    $key = self::getOrderByKey();    
+                }
+            } else {
+                $key = self::getOrderByKey();
+            }
+            return $withTrashed 
+                ? $arg->withTrashed()
+                    ->orderBy($key, $dir)
+                : $arg->orderBy($key, $dir);
+        } 
+        return null;
+    }
+
     static public function getOrderedBy(
         string $dir = 'asc', bool $withTrashed = true,
         $orderingBy = null
     ) {
-        if (!empty($orderingBy) && is_string($orderingBy)) {
+        if (self::acceptableOrderingByKey($orderingBy)) {
             $key = $orderingBy;
         } elseif (is_callable($orderingBy)) {
             $key = $orderingBy();
+            if (!self::acceptableOrderingByKey($key)) {
+                $key = self::getOrderByKey();    
+            }
         } else {
             $key = self::getOrderByKey();
         }
@@ -690,6 +723,20 @@ trait ContainerTransforms
         return self::getOrderedBy(
             $dir, $withTrashed, $orderingBy
         )->get();
+    }
+
+    static public function getOrderedFor(
+        $arg, string $dir = 'asc', 
+        bool $withTrashed = true,
+        $orderingBy = null
+    ) {
+        if (Functions::testVar($arg)) {
+            return self::getOrderedByFor(
+                $arg, $dir, $withTrashed,
+                $orderingBy
+            )->get();
+        }
+        return null;
     }
 
     static public function getAll(

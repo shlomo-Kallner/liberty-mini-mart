@@ -174,48 +174,6 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         return $fullUrl ? url($url) : $url;
     }
 
-    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
-    {
-        return '';
-    }
-
-    public function toContentArray(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false
-    ) {
-        return $this->toContentArrayPlus(
-            $baseUrl, $version, $useTitle, $withTrashed, 
-            $fullUrl, true, true, 'asc'
-        );
-    }
-
-    public function toFull(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false
-    ) {
-        return $this->toContentArrayPlus(
-            $baseUrl, $version, $useTitle, $withTrashed,
-            $fullUrl, false, true, 'asc'
-        );
-    }
-
-    public function getPriceOrSale()
-    {
-        return '';
-    }
-
-    public function getPubId()
-    {
-        return $this->id;
-    }
-
-    public function getSticker()
-    {
-        return '';
-    }
-
     public function toContentArrayOther(
         array $img = null, array $otherImages = null,
         array $links = null, bool $fullUrl = false
@@ -277,11 +235,6 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    public function hasChildren(bool $withTrashed = true)
-    {
-        return false;
-    }
-
     public function numChildren(bool $withTrashed = true)
     {
         return 0;
@@ -294,19 +247,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         int $version = 1, $default = [], bool $useBaseMaker = true,
         bool $done = true
     ) {
-        return null;
-    }
-
-    public function getChildrenWithPagination(
-        $transform = null, bool $withTrashed = true, 
-        string $dir = 'asc', string $baseUrl = 'store',
-        bool $useBaseMaker = true, int $pageNum = 0, 
-        int $numItemsPerPage = 4, string $listUrl = '#', 
-        string $pagingFor = '', int $viewNumber = 0, 
-        bool $fullUrl = false, bool $useTitle = true,
-        int $version = 1, int $totalNum = 0, $default = []
-    ) {
-        return null;
+        return [];
     }
 
     static public function getSelf(
@@ -326,20 +267,6 @@ class Page extends Model implements TransformableContainer, ContainerAPI
             $img, $baseUrl, $withTrashed,
             $fullUrl, $children, $paginator,
             $pagingFor, null
-        );
-    }
-
-    public function toContentArrayWithPagination(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true,
-        bool $fullUrl = false, int $pageNum = 0, 
-        int $numItemsPerPage = 4, string $pagingFor = '', 
-        int $viewNumber = 0, string $listUrl = '#', 
-        bool $useBaseMaker = true, bool $done = true
-    ) {
-        return $this->toContentArray(
-            $baseUrl, $version, $useTitle, $withTrashed,
-            $fullUrl
         );
     }
 
@@ -400,19 +327,28 @@ class Page extends Model implements TransformableContainer, ContainerAPI
 
     static public function getOrderedByPageGroupings(
         string $dir = 'asc', $transform = null, 
-        bool $useTitle = true, bool $fullUrl = false
+        bool $useTitle = true, bool $fullUrl = false,
+        string $baseUrl = '', bool $withTrashed = true,
+        bool $useBaseMaker = true
     ) {
         $pages = [];
-        $tpg = PageGroup::orderBy('order', $dir)->get();
+        $tpg = PageGroup::getOrdered($dir, $withTrashed, 'order');
         if (Functions::testVar($tpg) && count($tpg) > 0) {
             foreach ($tpg as $group) {
-                $pg = $group->pages()->orderBy('order', $dir)->get();
+                $pg = $withTrashed
+                ? $group->pages()->withTrashed()
+                    ->orderBy('order', $dir)->get()
+                : $group->pages()->orderBy('order', $dir)->get();
                 foreach ($pg as $page) {
                     if (Functions::testVar($page)) {
-                        $pages[] = self::doTransform(
-                            $page, $transform, 'store', $useTitle, 1, 
-                            true, $fullUrl, null
+                        $p = self::doTransform(
+                            $page, $transform, $baseUrl, $useTitle, 1, 
+                            $withTrashed, $fullUrl, null, $useBaseMaker,
+                            self::getIfDoneIterating($transform), $dir
                         );
+                        if (Functions::testVar($p)) {
+                            $pages[] = $p;
+                        }
                     }
                 }
             }
@@ -428,7 +364,8 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         int $pageNum = 0, int $numShown = 4,
         string $baseUrl = '',
         bool $useTitle = true,
-        bool $withTrashed = false
+        bool $withTrashed = false,
+        bool $useBaseMaker = true
     ) {
         /* 
             $tmp = self::join('page_groups', 'pages.id', '=', 'page_groups.page')
@@ -446,7 +383,8 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         /// UPDATE: DONE (on PageGroup) AND DONE (as PageGrouping)
         if ($usePageGroupings) {
             $pages = self::getOrderedByPageGroupings(
-                $dir, $asArrays, $useTitle, $fullUrl
+                $dir, $asArrays, $useTitle, $fullUrl, $baseUrl,
+                $withTrashed, $useBaseMaker
             );
             return self::getPaginatedItemsArray(
                 $pages, $pageNum, $numShown, 
@@ -457,7 +395,8 @@ class Page extends Model implements TransformableContainer, ContainerAPI
             return self::getAllWithPagination(
                 $asArrays, $pageNum, $numShown, $pagingFor, 
                 $dir, $withTrashed, $baseUrl, $path, 
-                $viewNumber, $useTitle, 1
+                $viewNumber, $fullUrl, $useTitle, 1, [],
+                $useBaseMaker, self::getIfDoneIterating($asArrays)
             );
         }
     }
