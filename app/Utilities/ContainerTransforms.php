@@ -26,16 +26,12 @@ interface TransformableContainer
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false);
 
-    public function getParentUrl(string $baseUrl, bool $fullUrl = false);
-
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false, bool $useBaseMaker = true,
         bool $done = true, string $dir = 'asc'
     );
-
-    public function hasChildren(bool $withTrashed = true);
 
     public function numChildren(bool $withTrashed = true);
 
@@ -46,15 +42,6 @@ interface TransformableContainer
         int $version = 1, $default = [], bool $useBaseMaker = true,
         bool $done = true
     );
-    
-    public function toContentArrayWithPagination(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true,
-        bool $fullUrl = false, int $pageNum = 0, 
-        int $numItemsPerPage = 4, string $pagingFor = '', 
-        int $viewNumber = 0, string $listUrl = '#', 
-        bool $useBaseMaker = true, bool $done = true
-    );
 
     static public function getSelf(
         string $baseUrl = 'store', bool $withTrashed = true,
@@ -63,6 +50,10 @@ interface TransformableContainer
     );
 
     /// all of these below have defaults defined in the Trait below.
+
+    public function hasChildren(bool $withTrashed = true);
+
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false);
 
     public function getUrlFragment(string $baseUrl, bool $fullUrl = false);
 
@@ -101,8 +92,19 @@ interface TransformableContainer
         bool $useTitle = true, bool $withTrashed = true,
         bool $fullUrl = false
     );
+    
+    public function toContentArrayWithPagination(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $pagingFor = '', 
+        int $viewNumber = 0, string $listUrl = '#', 
+        bool $useBaseMaker = true, bool $done = true
+    );
 
     public function getImageArray();
+
+    public function getDatesArray();
 
     public function getUrl();
 
@@ -112,6 +114,9 @@ interface TransformableContainer
 
     public function getSticker();
 
+    /// this method (toTableArray) is deprecated!
+    /// table views will not make use of a special 
+    ///  data transform.
     /* public function toTableArray(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true
@@ -138,6 +143,11 @@ trait ContainerTransforms
         return '';
     }
 
+    public function getPubId()
+    {
+        return $this->id;
+    }
+
     public function getSticker()
     {
         return '';
@@ -146,6 +156,11 @@ trait ContainerTransforms
     public function getImageArray()
     {
         return $this->image->toImageArray();
+    }
+
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
+    {
+        return $fullUrl ? url($baseUrl) : $baseUrl;
     }
 
     public function getUrl()
@@ -234,6 +249,20 @@ trait ContainerTransforms
         ); 
     }
 
+    public function toContentArrayWithPagination(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $pagingFor = '', 
+        int $viewNumber = 0, string $listUrl = '#', 
+        bool $useBaseMaker = true, bool $done = true
+    ) {
+        return $this->toContentArrayPlus(
+            $baseUrl, $version, $useTitle, $withTrashed, 
+            $fullUrl, $useBaseMaker, $done, 'asc'
+        );
+    }
+
     public function toFull(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
@@ -255,6 +284,14 @@ trait ContainerTransforms
             $baseUrl, $version, $useTitle, $withTrashed,
             $fullUrl, true, true, 'asc'
         );
+    }
+
+    public function hasChildren(bool $withTrashed = true)
+    {
+        $num = $this->numChildren($withTrashed);
+        return is_int($num)
+        ? $num > 0
+        : Functions::countHas($num);
     }
 
     public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
@@ -332,6 +369,38 @@ trait ContainerTransforms
             'id' => $id,
             'url' => $url,
             'price' => $price,
+            'sticker' => $sticker,
+        ];
+    }
+
+    /**
+     * Function makeTableArray() - OBSOLETE and DEPRECATED method! 
+     *                        DO NOT USE!
+     * @deprecated any
+     *
+     * @param string $name
+     * @param string $url
+     * @param string $title
+     * @param [type] $img
+     * @param string $description
+     * @param string $sticker
+     * @param array $dates
+     * @param integer $id
+     * @return array
+     */
+    static public function makeTableArray(
+        string $name, string $url, string $title,
+        $img, string $description,
+        string $sticker = '', array $dates = [], int $id = 0
+    ) {
+        return [
+            'id' => $id,
+            'name' => $name,
+            'img' => Image::getImageArray($img),
+            'title' => $title,
+            'url' => $url,
+            'description' => $description,
+            'dates' => $dates??[],
             'sticker' => $sticker,
         ];
     }
@@ -1068,6 +1137,8 @@ trait ContainerTransforms
         }
     }
 
+    /// currently the only user of toContentArrayWithPagination()!
+    ///  otherwise a work in progress, UNIMPLEMENTED!!
     static public function getForWithRecursivePagination(
         $args, int $pageNum, bool $transform = true,
         int $numShown = 4, string $pagingFor = '', 
@@ -1076,12 +1147,10 @@ trait ContainerTransforms
         bool $withTrashed = true, bool $useTitle = true, 
         bool $fullUrl = false, int $version = 1, $default = []
     ) {
-        if (is_array($args) || $args instanceof Collection) {
+        if (Functions::countHas($args)) {
             $cTmp = count($args);
             if ($cTmp <= $numShown && $cTmp > 0) {
-                $argTmp = $args instanceof Collection 
-                    ? $args->all() 
-                    : $args;
+                $argTmp = Functions::arrayableToArray($args, []);
             } elseif ($cTmp > 0) {
                 $pageIdx = self::genFirstAndLastItemsIdxes( 
                     $cTmp, $pageNum, $numShown

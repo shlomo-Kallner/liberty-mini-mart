@@ -193,6 +193,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         return $res;
     }
 
+    /// wishlist item: to be modified to reflect REAL data..
     static public function getNewProducts(
         int $numProducts = 12, string $name = 'New Arrivals', 
         string $baseUrl = 'store', string $sizeClass = 'col-md-12',
@@ -213,6 +214,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
+    /// wishlist item: to be modified to reflect REAL data..
     static public function getBestsellers(
         int $numProducts = 3, string $baseUrl = 'store', 
         bool $useTitle = true, bool $fullUrl = false, 
@@ -263,26 +265,11 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         return $this->category->getFullUrl($baseUrl, $fullUrl);
     }
 
-    public function getImageArray()
-    {
-        return $this->image->toImageArray();
-    }
-
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
     public function getPriceOrSale()
     {
         return Functions::testVar($this->sale) || $this->sale != $this->price 
         ? $this->sale 
         : $this->price;
-    }
-
-    public function getPubId()
-    {
-        return $this->id;
     }
 
     public function getSticker()
@@ -339,7 +326,7 @@ class Product extends Model implements TransformableContainer, ContainerAPI
                 $name, $url, $img, $article, 
                 $title, $dates, 
                 $otherImages,
-                null, false, true
+                null, false, true, ''
             );
             $content['value']['description'] = $description;
             $content['value']['api'] = $api;
@@ -393,20 +380,6 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    public function toContentArrayWithPagination(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true,
-        bool $fullUrl = false, int $pageNum = 0, 
-        int $numItemsPerPage = 4, string $pagingFor = '', 
-        int $viewNumber = 0, string $listUrl = '#', 
-        bool $useBaseMaker = true, bool $done = true
-    ) {
-        return $this->toContentArrayPlus(
-            $baseUrl, $version, $useTitle, $withTrashed, 
-            $fullUrl, $useBaseMaker
-        );
-    }
-
     public function hasChildren(bool $withTrashed = true) 
     {
         return false;
@@ -427,23 +400,12 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         return [];
     }
 
-    // TO BE IMPLEMENTED!!!
-    public function toContentArrayWithPagination(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true,
-        bool $fullUrl = false, int $pageNum = 0, 
-        int $numItemsPerPage = 4, string $pagingFor = '', 
-        int $viewNumber = 0, string $listUrl = '#'
-    ) {
-        return $this->toContentArray($baseUrl);
-    }
-
     static public function getOrderByKey()
     {
         return 'category_id';
     }
 
-    ///
+    /// the Eloquent Relationship methods:
 
     public function article()
     {
@@ -488,4 +450,5 @@ class Product extends Model implements TransformableContainer, ContainerAPI
         return $this->belongsTo('App\Categorie', 'category_id');
     }
 
+    /// end of the Eloquent Relationship methods.
 }

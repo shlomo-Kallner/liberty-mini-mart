@@ -164,7 +164,7 @@ class PageGroup extends Model implements TransformableContainer, ContainerAPI
 
     static public function getOrderByKey()
     {
-        return 'order';
+        return 'id';
     }
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
@@ -173,11 +173,6 @@ class PageGroup extends Model implements TransformableContainer, ContainerAPI
             ? 'menus/' 
             : $baseUrl . '/menus/';
         return $fullUrl ? url($url) : $url;
-    }
-
-    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
-    {
-        return $fullUrl ? url($baseUrl) : $baseUrl;
     }
 
     public function getImageArray()
@@ -221,16 +216,28 @@ class PageGroup extends Model implements TransformableContainer, ContainerAPI
         return $content;
     }
 
-    public function toContentArray(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true,
-        bool $fullUrl = false
+    public function numChildren(bool $withTrashed = true)
+    {
+        return $withTrashed 
+        ? $this->pages()->withTrashed()->count()
+        : $this->pages()->count();
+    }
+
+    public function getChildren(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = [], bool $useBaseMaker = true,
+        bool $done = true
     ) {
-        return $this->toContentArrayPlus(
-            $baseUrl, $version, 
-            $useTitle, $withTrashed, 
-            $fullUrl, true,
-            true, 'asc'
+        $tmp = $withTrashed 
+        ? $this->pages()->withTrashed()
+            ->orderBy('url', $dir)->get()
+        : $this->pages()->orderBy('url', $dir)->get();
+        return Page::getFor(
+            $tmp, $baseUrl, $transform, $useTitle,
+            $version, $withTrashed, $fullUrl, $default, 
+            $useBaseMaker, $done, $dir
         );
     }
     
@@ -240,14 +247,11 @@ class PageGroup extends Model implements TransformableContainer, ContainerAPI
         bool $fullUrl = false, bool $useBaseMaker = true,
         bool $done = true, string $dir = 'asc'
     ) {
-        $p = PageGrouping::getGroup($this, $dir);
-        $res = [];
-        foreach ($p as $tp) {
-            $res[] = $tp->page->toContentArray(
-                $baseUrl, $version, $useTitle, 
-                $withTrashed, $fullUrl
-            );
-        }
+        $res = $this->getChildren(
+            self::TO_URL_LIST_TRANSFORM, $withTrashed,
+            $dir, $baseUrl, $useTitle, $fullUrl, $version,
+            [], $useBaseMaker, false
+        );
         return self::makeContentArray(
             $this->id, $this->name, 
             $this->order, $res, $useBaseMaker, 

@@ -41,7 +41,7 @@ Route::prefix('store')->group(
 
 Route::middleware('adminguard')->prefix('admin')->group(
     function () {
-        Route::resource('article', 'ArticleController');
+        Route::resource('articles', 'ArticleController');
         Route::get('article/{article}/delete', 'ArticleController@showDelete');
 
         // 'user/' goes to 'index()' which returns 'all-users' of the site..
@@ -58,18 +58,11 @@ Route::middleware('adminguard')->prefix('admin')->group(
         Route::get('user/{user}/delete', 'UserController@showDelete');
 
         // 'page/' goes to 'index()' which returns 'all-pages' of the site..
-        Route::resource(
-            'page', 'PageController', [
-                'parameters'=> [
-                    'page' => 'page',
-                ],
-                'except' => [
-                    'show'
-                ]
-            ]
-        );
-        Route::get('page/{page}/delete', 'PageController@showDelete');
+        Route::resource('pages', 'PageController');
+        Route::get('pages/{page}/delete', 'PageController@showDelete');
 
+        Route::resource('menus', 'PageGroupingController');
+        Route::get('menus/{menu}/delete', 'PageGroupingController@showDelete');
         
         Route::resource(
             'search', 'SearchResultController', [

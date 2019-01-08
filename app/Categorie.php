@@ -90,16 +90,6 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
         return $this->section->getFullUrl($baseUrl, $fullUrl);
     }
 
-    public function getPriceOrSale()
-    {
-        return '';
-    }
-
-    public function getPubId()
-    {
-        return $this->id;
-    }
-
     public function getSticker()
     {
         return $this->sticker;
@@ -108,22 +98,6 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
     static public function getOrderByKey()
     {
         return 'section_id';
-    }
-
-    static public function makeTableArray(
-        string $name, string $url, string $title,
-        $img, string $description,
-        string $sticker = '', array $dates = [], int $id = 0
-    ) {
-        return [
-            'id' => $id,
-            'name' => $name,
-            'img' => Image::getImageArray($img),
-            'title' => $title,
-            'url' => $url,
-            'description' => $description,
-            'dates' => $dates??[],
-        ];
     }
 
     static public function makeContentArray(
@@ -138,7 +112,7 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
                 $name, $url, $img, $article, 
                 $title, $dates, 
                 $otherImages, $products, 
-                !is_null($products), $done
+                Functions::countHas($products), $done
             );
             return $content;
         } else {
@@ -172,17 +146,6 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
             $fullUrl
         );
     }
-
-    public function getImageArray()
-    {
-        return $this->image->toImageArray();
-    }
-
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
     
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 
@@ -205,17 +168,6 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
             ], $this->id, $useBaseMaker, $done
-        );
-    }
-
-    public function toFull(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false
-    ) {
-        return $this->toContentArray(
-            $baseUrl, $version, $useTitle, $withTrashed,
-            $fullUrl
         );
     }
 
@@ -381,4 +333,6 @@ class Categorie extends Model implements TransformableContainer, ContainerAPI
     {
         return $this->belongsTo('App\Section', 'section_id');
     }
+
+    /// end of the Eloquent Relationship methods.
 }

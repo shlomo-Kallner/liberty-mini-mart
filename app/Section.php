@@ -34,21 +34,6 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         return $fullUrl ? url($url) : $url;
     }
 
-    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
-    {
-        return '';
-    }
-
-    public function getImageArray()
-    {
-        return $this->image->toImageArray();
-    }
-
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
     static public function getSection(
         $section, $transform = null, bool $withTrashed = false,
         string $baseUrl = 'store', bool $useTitle = true, 
@@ -184,7 +169,7 @@ class Section extends Model implements TransformableContainer, ContainerAPI
             $content = self::makeBaseContentArray(
                 $name, $url, $img, $article, $title,
                 $id, $dates, $otherImages,
-                $cats, !is_null($cats), $done
+                $cats, Functions::countHas($cats), $done
             );
             $content['value']['description'] = $description;
             $content['value']['id'] = $id;
@@ -220,7 +205,8 @@ class Section extends Model implements TransformableContainer, ContainerAPI
             $this->getCategories(
                 Categorie::TO_URL_LIST_TRANSFORM, 
                 $withTrashed, $dir, $baseUrl,
-                $useTitle, $fullUrl, $version, []
+                $useTitle, $fullUrl, $version, [],
+                $useBaseMaker, false
             ), 
             [
                 'created' => $this->created_at,
@@ -264,32 +250,6 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         $content['value']['pagination'] = $cats['pagination'] ?? [];
         return $content;
     }
-
-    public function getPriceOrSale()
-    {
-        return '';
-    }
-
-    public function getPubId()
-    {
-        return $this->id;
-    }
-
-    public function getSticker()
-    {
-        return $this->sticker ?? '';
-    }
-
-    public function toFull(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true, 
-        bool $fullUrl = false
-    ) {
-        return $this->toContentArray(
-            $baseUrl, $version, $useTitle, $withTrashed,
-            $fullUrl
-        );
-    } 
     
     static public function getOrderByKey()
     {
@@ -307,6 +267,8 @@ class Section extends Model implements TransformableContainer, ContainerAPI
             $useTitle, $fullUrl, $version
         );
     }
+
+    /// Eloquent methods..
 
     public function article()
     {
@@ -337,6 +299,8 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         );
         //return SectionImage::getAllImages($this->id);
     }
+
+    /// end of Eloquent methods.
 
     static public function createNew(
         string $name, string $url, string $title, $article,
