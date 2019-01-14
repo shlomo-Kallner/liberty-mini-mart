@@ -547,11 +547,6 @@ trait ContainerTransforms
         );
     }
 
-    static public function acceptableOrderingByKey($key)
-    {
-        return !empty($key) && is_string($key);
-    }
-
     static public function getOrderedByFor(
         $arg, string $dir = 'asc', 
         bool $withTrashed = true,

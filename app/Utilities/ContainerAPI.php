@@ -10,8 +10,6 @@ interface ContainerAPI
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false);
 
-    static public function getOrderByKey();
-
     /// all of these below have defaults defined in the Trait below.
     
     static public function getFromId(int $id, bool $withTrashed = true);
@@ -23,6 +21,8 @@ interface ContainerAPI
     static public function getIdFrom($item, bool $usePublic = true, $def = 0);
 
     static public function exists($item, bool $withTrashed = true);
+
+    static public function getOrderByKey();
 
     static public function getNamedByKey();
 
@@ -71,6 +71,16 @@ trait ContainerID
     static public function exists($item, bool $withTrashed = true)
     {
         return Functions::testVar(self::getFrom($item, $withTrashed));
+    }
+
+    static public function acceptableOrderingByKey($key)
+    {
+        return !empty($key) && is_string($key);
+    }
+
+    static public function getOrderByKey()
+    {
+        return 'id';
     }
 
     static public function getNamedByKey()
@@ -193,9 +203,13 @@ trait ContainerID
         $orWhere = [
             [self::getNamedByKey(), '=', $name],
         ];
-        if (Functions::testVar($extraWhereby) && !Functions::countHas($extraWhereby)) {
-            $where[] = [self::getOrderByKey(), '=', $extraWhereby];
-            $orWhere[] = [self::getOrderByKey(), '=', $extraWhereby];
+        $key = self::getOrderByKey();
+        if (Functions::testVar($extraWhereby) 
+            && !Functions::countHas($extraWhereby)
+            && self::acceptableOrderingByKey($key)
+        ) {
+            $where[] = [$key, '=', $extraWhereby];
+            $orWhere[] = [$key, '=', $extraWhereby];
         } else {
             $extraWhereby = self::getExtraWhereBy($orderingBy);
             if (Functions::countHas($extraWhereby)) {
