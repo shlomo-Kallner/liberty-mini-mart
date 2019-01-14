@@ -41,21 +41,94 @@ interface ContainerAPI
 
 trait ContainerID 
 {
-    /// some trait defined defaults, 
-    ///  redefine in using class to override
-    ///  see PHP Language, Trait docs for details.
-    static public function getFromId(int $id, bool $withTrashed = true)
+    /// some trait defined final-ed methods:
+
+    final static public function getFromId(int $id, bool $withTrashed = true)
     {
         return $withTrashed 
             ? self::withTrashed()->where('id', $id)->first()
             : self::where('id', $id)->first();
     }
 
-    static public function existsId(int $id, bool $withTrashed = true)
+    final static public function existsId(int $id, bool $withTrashed = true)
     {
         return Functions::testVar(self::getFromId($id, $withTrashed));
     }
 
+    // final-ed because it just uses getFor()..
+    final static public function exists($item, bool $withTrashed = true)
+    {
+        return Functions::testVar(self::getFrom($item, $withTrashed));
+    }
+
+    final static public function acceptableOrderingByKey($key)
+    {
+        return !empty($key) && is_string($key);
+    }
+
+    final public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
+    {
+        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
+        $surl = $this->getParentUrl($baseUrl, false);
+        $url = self::genUrlFragment($surl, false);
+        return $fullUrl ? url($url) : $url;
+    }
+
+    final public function getFullUrl(string $baseUrl, bool $fullUrl = false)
+    {
+        $surl = $this->getUrlFragment($baseUrl);
+        $url = $surl . $this->getUrl();
+        return $fullUrl ? url($url) : $url;
+    }
+
+    /**
+     * Function getExtraWhereBy() - retrieve the extra Where 
+     *                              Parameters from an Array 
+     *                              or some other Array-like Object.
+     *                            
+     * @param array|\Countable $whereBy - It is either [a] an array of 
+     *                                    '[<Column>, <op>, <Value>]'
+     *                                    arrays that where() accepts.
+     *                                  - [b] an array of 'Key => Value' pairs
+     *                                    (Key MUST be a string!), where Key is the
+     *                                    Column key, to refine the results while 
+     *                                    comparing for equality.
+     *                                  - or [c] an array of 'Key => [Value, Op]'
+     *                                    (Key MUST be a string!), where Key is the
+     *                                    Column key, to refine the results while 
+     *                                    comparing for Op or equality by default.
+     * @return array
+     */
+    final static public function getExtraWhereBy($whereBy = null)
+    {
+        $where = [];
+        if (Functions::testVar($whereBy) && Functions::countHas($whereBy)) {
+            foreach ($whereBy as $key => $value) {
+                if (Functions::countHas($value)) {
+                    if (count($value) == 2 
+                        && self::acceptableOrderingByKey($key)
+                    ) {
+                        $where[] = [$key, $value[1]??'=', $value[0]];
+                    } elseif (count($value) == 3 && is_int($key)) {
+                        $where[] = $value;
+                    }
+                } elseif (self::acceptableOrderingByKey($key)) {
+                    $where[] = [$key, '=', $value];
+                }
+            }
+        }
+        return $where;
+    }
+
+    // end of final-ed methods.
+
+
+    /// some trait defined defaults, 
+    ///  redefine in using class to override
+    ///  see PHP Language, Trait docs for details.
+
+    // this one is not final-ed because some Use-rs may have need to 
+    //  overide it with further ways of retrieval..
     static public function getFrom($item, bool $withTrashed = true)
     {
         if (Functions::testVar($item)) {
@@ -66,16 +139,6 @@ trait ContainerID
             }
         } 
         return null;
-    }
-
-    static public function exists($item, bool $withTrashed = true)
-    {
-        return Functions::testVar(self::getFrom($item, $withTrashed));
-    }
-
-    static public function acceptableOrderingByKey($key)
-    {
-        return !empty($key) && is_string($key);
     }
 
     static public function getOrderByKey()
@@ -122,58 +185,6 @@ trait ContainerID
     public function getUrl()
     {
         return $this->url;
-    }
-
-    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
-    {
-        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
-        $surl = $this->getParentUrl($baseUrl, false);
-        $url = self::genUrlFragment($surl, false);
-        return $fullUrl ? url($url) : $url;
-    }
-
-    public function getFullUrl(string $baseUrl, bool $fullUrl = false)
-    {
-        $surl = $this->getUrlFragment($baseUrl);
-        $url = $surl . $this->getUrl();
-        return $fullUrl ? url($url) : $url;
-    }
-
-    /**
-     * Function getExtraWhereBy() - retrieve the extra Where 
-     *                              Parameters from an Array 
-     *                              or some other Array-like Object.
-     *                            
-     * @param array|\Countable $whereBy - It is either [a] an array of 
-     *                                    '[<Column>, <op>, <Value>]'
-     *                                    arrays that where() accepts.
-     *                                  - [b] an array of 'Key => Value' pairs
-     *                                    (Key MUST be a string!), where Key is the
-     *                                    Column key, to refine the results while 
-     *                                    comparing for equality.
-     *                                  - or [c] an array of 'Key => [Value, Op]'
-     *                                    (Key MUST be a string!), where Key is the
-     *                                    Column key, to refine the results while 
-     *                                    comparing for Op or equality by default.
-     * @return array
-     */
-    static public function getExtraWhereBy($whereBy = null)
-    {
-        $where = [];
-        if (Functions::testVar($whereBy) && Functions::countHas($whereBy)) {
-            foreach ($whereBy as $key => $value) {
-                if (Functions::countHas($value)) {
-                    if (count($value) == 2 && is_string($key)) {
-                        $where[] = [$key, $value[1]??'=', $value[0]];
-                    } elseif (count($value) == 3 && is_int($key)) {
-                        $where[] = $value;
-                    }
-                } elseif (is_string($key)) {
-                    $where[] = [$key, '=', $value];
-                }
-            }
-        }
-        return $where;
     }
 
     /** 
