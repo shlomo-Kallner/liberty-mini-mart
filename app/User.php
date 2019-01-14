@@ -15,7 +15,9 @@ use Illuminate\Database\Eloquent\Model,
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Utilities\Permits\Basic;
 use App\UserImage;
-use App\Image;
+use App\Image, 
+    App\Order,
+    App\Cart;
 use Darryldecode\Cart\Helpers\Helpers;
 use Webpatser\Uuid\Uuid;
 
@@ -214,19 +216,10 @@ class User extends Model implements TransformableContainer, ContainerAPI
         }
         return self::validateUser($email, $password, $request);
     }
-
     
     static public function getUserId($user)
     {
-        $user_id = null;
-        if ($user instanceof self) {
-            $user_id = $user->id;
-        } elseif (is_array($user)) {
-            $user_id = $user['id'];
-        } elseif (is_int($user) && self::existsId($user)) {
-            $user_id = $user;
-        }
-        return $user_id;
+        return self::getIdFrom($user, false, 0);
     }
 
     static public function getNumForVer()
@@ -246,11 +239,6 @@ class User extends Model implements TransformableContainer, ContainerAPI
         return $withTrashed 
             ? self::withTrashed()->where('uuid', $uuid)->first()
             : self::where('uuid', $uuid)->first();
-    }
-
-    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
-    {
-        return '';
     }
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
@@ -286,22 +274,52 @@ class User extends Model implements TransformableContainer, ContainerAPI
         return 'uuid';
     }
 
-    /// end of overides..
-
-    public function toFull(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true,
-        bool $fullUrl = false
-    ) {
-        return $this->toContentArray(
-            $baseUrl, $version, $useTitle, 
-            $withTrashed, $fullUrl
-        );
-    }
-
     public function getPubId()
     {
         return $this->uuid;
+    }
+
+    /// end of overides..
+
+    
+
+    public function numChildren(bool $withTrashed = true)
+    {
+        return 2; // to do: add wishlist to this!
+    }
+
+    public function getChildren(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = [], bool $useBaseMaker = true,
+        bool $done = true
+    ) {
+        $url = $this->getFullUrl($baseUrl, $fullUrl);
+        $allOrders = $withTrashed
+        ? $this->orders()->withTrashed()
+            ->orderBy(Order::getOrderByKey(), $dir)->get()
+        : $this->orders()
+            ->orderBy(Order::getOrderByKey(), $dir)->get();
+        $orders = Order::getSelf(
+            $url, $withTrashed, $fullUrl, $allOrders, 
+            null, ''
+        );
+        $allCarts = $withTrashed
+        ? $this->carts()->withTrashed()
+            ->orderBy(Cart::getOrderByKey(), $dir)->get()
+        : $this->carts()
+            ->orderBy(Cart::getOrderByKey(), $dir)->get();
+        $carts = Cart::getSelf(
+            $url, $withTrashed, $fullUrl, $allCarts, 
+            null, ''
+        );
+        // $wishlist = [];   
+        return [
+            $orders, //'orders' => $this->orders ?? [],
+            $carts,//'carts' => $this->carts ?? [],
+            // 'wishlist' => [],   
+        ];
     }
 
     public function toContentArrayPlus(
@@ -311,32 +329,45 @@ class User extends Model implements TransformableContainer, ContainerAPI
         bool $done = true, string $dir = 'asc'
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
+        $img = $this->image->toImageArray();
+        $otherImages = Image::getArraysFor($this->images);
+        $dates = $this->getDatesArray();
+        $children = $this->getChildren(
+            self::TO_URL_LIST_TRANSFORM, $withTrashed, 
+            $dir, $baseUrl, $useTitle, $fullUrl, 
+            $version, [], $useBaseMaker, $done
+        );
+        $hasChildren = Functions::countHas($children);
         if ($useBaseMaker) {
-            $content = [
-                'value' => [
-                    'id' => $this->uuid,
-                    'name' => $this->name,
-                    'path' => $url,
-                    'email' => $this->email,
-                    'url' => $url,
-                    'img' => $this->image->toImageArray(),
-                    'title' => $this->name,
-                    'article' => [],
-                    'otherImages' => Image::getArraysFor($this->images),
-                    'dates' => [
-                        'created' => $this->created_at,
-                        'modified' => $this->updated_at,
-                        'deleted' => $this->deleted_at
+            /* 
+                $content = [
+                    'value' => [
+                        'id' => $this->uuid,
+                        'name' => $this->name,
+                        'path' => $url,
+                        'email' => $this->email,
+                        'url' => $url,
+                        'img' => $img,
+                        'title' => $this->name,
+                        'article' => [],
+                        'otherImages' => $otherImages,
+                        'dates' => $dates,
+                        'hasChildren' => $hasChildren,
+                        'done' => $done,
                         ],
-                    'hasChildren' => true
-                    ],
-                'children' => [
-                    //'orders' => $this->orders??[],
-                    //'carts' => $this->carts??[],
-                    // 'wishlist' => [],   
-                ],
-                'done' => $done
-            ];
+                    'children' => $children,
+                    'done' => true
+                ]; 
+            */
+            $content = self::makeBaseContentArray(
+                $this->name, $url, $img, [], 
+                $this->name, $dates, 
+                $otherImages,
+                $children, $hasChildren, 
+                true, ''
+            );
+            $content['value']['id'] = $this->uuid;
+            $content['value']['email'] = $this->email;
         } else {
             $content = [
                 // 'id' => $this->id,
@@ -417,18 +448,28 @@ class User extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    static public function getExtraWhereBy()
+    static public function getOurExtraWhereBy()
     {
         return ['id', '>', self::getNumForVer()];
     }
 
     static public function getNamed(
         string $name, bool $withTrashed = false, 
-        $orderingBy = null
+        $extraWhereby = null
     ) {
-        $orderingBy = Functions::arrayableToArray($orderingBy, []);
-        $orderingBy[] = self::getExtraWhereBy();
-        return self::traitGetNamed($name, $withTrashed, $orderingBy);
+        if (Functions::testVar($extraWhereby)) {
+            if (Functions::countHas($extraWhereby)) {
+                $where = Functions::arrayableToArray($extraWhereby, []);
+            } else {
+                $where = [
+                    [self::getOrderByKey(), '=', $extraWhereby]
+                ];
+            }
+        } else {
+            $where = [];
+        }
+        $where[] = self::getOurExtraWhereBy();
+        return self::traitGetNamed($name, $withTrashed, $where);
     }
 
     static public function getOrdered(
@@ -437,14 +478,14 @@ class User extends Model implements TransformableContainer, ContainerAPI
     ) {
         return self::getOrderedBy(
             $dir, $withTrashed, $orderingBy
-        )->where(self::getExtraWhereBy())->get();
+        )->where(self::getOurExtraWhereBy())->get();
     }
 
     static public function getCount(bool $withTrashed = false)
     {
         return $withTrashed 
-        ? self::withTrashed()->where(self::getExtraWhereBy())->count()
-        : self::where(self::getExtraWhereBy())->count();
+        ? self::withTrashed()->where(self::getOurExtraWhereBy())->count()
+        : self::where(self::getOurExtraWhereBy())->count();
     }
 
     static public function getUsers(
@@ -457,8 +498,8 @@ class User extends Model implements TransformableContainer, ContainerAPI
     ) {
         //$numPerPage = 3; // 5;
         $tmp = $withTrashed 
-            ? self::withTrashed()->where(self::getExtraWhereBy())->get()
-            : self::where(self::getExtraWhereBy())->get();
+            ? self::withTrashed()->where(self::getOurExtraWhereBy())->get()
+            : self::where(self::getOurExtraWhereBy())->get();
         //dd($tmp);
         $res = [];
         if (Functions::testVar($tmp) && Functions::countHas($tmp)) {

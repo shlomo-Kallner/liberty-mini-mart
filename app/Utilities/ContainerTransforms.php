@@ -5,13 +5,15 @@ namespace App\Utilities;
 use App\Utilities\Functions\Functions;
 use Illuminate\Support\Collection,
     Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Carbon,
+    App\Utilities\ContainerAPI,
+    App\Utilities\ContainerID;
 use App\Page,
     App\Article,
     App\Image;
 use Illuminate\Contracts\Support\Arrayable;
 
-interface TransformableContainer
+interface TransformableContainer extends ContainerAPI
 {
     const TO_MINI_TRANSFORM = 'mini';
     const TO_FULL_TRANSFORM = 'full';
@@ -21,10 +23,6 @@ interface TransformableContainer
     const TO_NAME_LIST_TRANSFORM = 'name';
     const TO_URL_FRAGMENT_TRANSFORM = 'fragment';
     const TO_URL_LIST_TRANSFORM = 'url';
-
-    static public function getOrderByKey();
-
-    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false);
 
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 
@@ -52,12 +50,6 @@ interface TransformableContainer
     /// all of these below have defaults defined in the Trait below.
 
     public function hasChildren(bool $withTrashed = true);
-
-    public function getParentUrl(string $baseUrl, bool $fullUrl = false);
-
-    public function getUrlFragment(string $baseUrl, bool $fullUrl = false);
-
-    public function getFullUrl(string $baseUrl, bool $fullUrl = false);
 
     public function getChildrenWithPagination(
         $transform = null, bool $withTrashed = true, 
@@ -106,11 +98,7 @@ interface TransformableContainer
 
     public function getDatesArray();
 
-    public function getUrl();
-
     public function getPriceOrSale();
-
-    public function getPubId();
 
     public function getSticker();
 
@@ -125,27 +113,14 @@ interface TransformableContainer
 
 trait ContainerTransforms
 {
+    use ContainerID;
+
     /// some trait defined defaults, 
     ///  redefine in using class to override
     ///  see PHP Language, Trait docs for details.
-    static public function getNamedByKey()
-    {
-        return 'name';
-    }
-
-    static public function getUrlByKey()
-    {
-        return 'url';
-    }
-
     public function getPriceOrSale()
     {
         return '';
-    }
-
-    public function getPubId()
-    {
-        return $this->id;
     }
 
     public function getSticker()
@@ -158,23 +133,14 @@ trait ContainerTransforms
         return $this->image->toImageArray();
     }
 
-    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
-    {
-        return $fullUrl ? url($baseUrl) : $baseUrl;
-    }
-
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
     public function getDatesArray()
     {
-        return Functions::genDatesArray(
+        $dates = Functions::genDatesArray(
             $this->created_at ?? null,
             $this->updated_at ?? null,
             $this->deleted_at ?? null
         );
+        return $dates;
     }
 
     static public function getCount(bool $withTrashed = false)
@@ -294,21 +260,6 @@ trait ContainerTransforms
         : Functions::countHas($num);
     }
 
-    public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
-    {
-        // {$tmp[0]}/section/{section}/category/{category}/product/{product}
-        $surl = $this->getParentUrl($baseUrl, false);
-        $url = self::genUrlFragment($surl, false);
-        return $fullUrl ? url($url) : $url;
-    }
-
-    public function getFullUrl(string $baseUrl, bool $fullUrl = false)
-    {
-        $surl = $this->getUrlFragment($baseUrl);
-        $url = $surl . $this->getUrl();
-        return $fullUrl ? url($url) : $url;
-    }
-
     /// end of defaults.. 
 
     static public function getContentArrays(
@@ -422,9 +373,9 @@ trait ContainerTransforms
         $children = [], $hasChildren = null, 
         bool $done = true, string $next = ''
     ) {
-        $now = empty($dates) || !Functions::countHas($dates) 
-            ? Carbon::now() 
-            : null;
+        $dates = Functions::countHas($dates)
+            ? $dates
+            : Functions::genDefaultDates(true);
         $value = [
             'name' => $name,
             'path' => $url,
@@ -433,11 +384,7 @@ trait ContainerTransforms
             'title' => $title,
             'article' => Article::getArticle($article, true),
             'otherImages' => $otherImages??[],
-            'dates' => $dates ?? [
-                'created' => $now,
-                'updated' => $now,
-                'deleted' => null,
-            ],
+            'dates' => $dates,
             'hasChildren' => is_null($hasChildren)
                 ? Functions::countHas($children)
                 : (is_bool($hasChildren) ? $hasChildren : false),
@@ -600,73 +547,6 @@ trait ContainerTransforms
         );
     }
 
-    /** 
-     * Method getNamed()
-     * 
-     * @param string $name        - the name or url to search for 
-     *                            (uses columns 'name' and 'url' respectively).
-     * @param mixed  $withTrashed - pass 'true' to use soft deleted
-     *                            items or 'false' to not use them.
-     * @param mixed  $orderingBy  - May be a <value> or an array.
-     *                            If is a <value>:
-     *                            - it is added as comparing as 
-     *                            equal to refine the result while using 
-     *                            self::getOrderByKey() to get the 
-     *                            column key.
-     *                            If is an array:
-     *                            - it is either:
-     *                            --[a] an array of '[<Column>, <op>, <Value>]'
-     *                            arrays that where() accepts.
-     *                            --[b] an array of 'Key => Value' pairs
-     *                            (Key MUST be a string!), where Key is the
-     *                            Column key, to refine the results while 
-     *                            comparing for equality.
-     *                            --or [c] an array of 'Key => [Value, Op]'
-     *                            (Key MUST be a string!), where Key is the
-     *                            Column key, to refine the results while 
-     *                            comparing for Op or equality by default.
-     * 
-     * @return mixed|null
-    */
-    static public function getNamed(
-        string $name, bool $withTrashed = false, 
-        $orderingBy = null
-    ) {
-        $where = [
-            [self::getUrlByKey(), '=', $name],
-        ];
-        $orWhere = [
-            [self::getNamedByKey(), '=', $name],
-        ];
-        if (!empty($orderingBy) && !is_array($orderingBy)) {
-            $where[] = [self::getOrderByKey(), '=', $orderingBy];
-            $orWhere[] = [self::getOrderByKey(), '=', $orderingBy];
-        } elseif (!empty($orderingBy) && is_array($orderingBy)) {
-            foreach ($orderingBy as $key => $value) {
-                if (is_array($value)) {
-                    if (count($value) == 2 && is_string($key)) {
-                        $where[] = [$key, $value[1]??'=', $value[0]];
-                        $orWhere[] = [$key, $value[1]??'=', $value[0]];
-                    } elseif (count($value) == 3 && is_int($key)) {
-                        $where[] = $value;
-                        $orWhere[] = $value;
-                    }
-                } elseif (is_string($key)) {
-                    $where[] = [$key, '=', $value];
-                    $orWhere[] = [$key, '=', $value];
-                }
-            }
-        }
-        return $withTrashed 
-            ? self::withTrashed()
-            ->where($where)
-            ->orWhere($orWhere)
-            ->first()
-            : self::where($where)
-            ->orWhere($orWhere)
-            ->first();
-    }
-
     static public function acceptableOrderingByKey($key)
     {
         return !empty($key) && is_string($key);
@@ -677,7 +557,7 @@ trait ContainerTransforms
         bool $withTrashed = true,
         $orderingBy = null
     ) {
-        if (Functions::testVar($arg)) {
+        if (Functions::testVar($arg) && is_object($arg)) {
             if (self::acceptableOrderingByKey($orderingBy)) {
                 $key = $orderingBy;
             } elseif (is_callable($orderingBy)) {
@@ -730,7 +610,7 @@ trait ContainerTransforms
         bool $withTrashed = true,
         $orderingBy = null
     ) {
-        if (Functions::testVar($arg)) {
+        if (Functions::testVar($arg) && is_object($arg)) {
             return self::getOrderedByFor(
                 $arg, $dir, $withTrashed,
                 $orderingBy
@@ -1117,14 +997,12 @@ trait ContainerTransforms
             } else {
                 $res = [];
                 foreach ($args as $item) {
-                    if (Functions::testVar(
-                        $tmp = self::doTransform(
-                            $item, $transform, $baseUrl, $useTitle,
-                            $version, $withTrashed, $fullUrl, null,
-                            $useBaseMaker, $done, $dir
-                        )
-                    )
-                    ) {
+                    $tmp = self::doTransform(
+                        $item, $transform, $baseUrl, $useTitle,
+                        $version, $withTrashed, $fullUrl, null,
+                        $useBaseMaker, $done, $dir
+                    );
+                    if (Functions::testVar($tmp)) {
                         $res[] = $tmp;
                     }
                 }

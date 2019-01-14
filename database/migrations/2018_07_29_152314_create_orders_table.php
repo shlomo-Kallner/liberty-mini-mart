@@ -13,19 +13,21 @@ class CreateOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('orders', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->decimal('total', 12, 2)->nullable();
-            $table->string('status', 255);
-            $table->mediumText('content');
-            $table->mediumText('comments');
-            $table->string('verihash', 255)->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::create(
+            'orders', function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('user_id')->unsigned();
+                $table->decimal('total', 12, 2)->nullable();
+                $table->string('status', 255);
+                $table->mediumText('content');
+                $table->mediumText('comments');
+                $table->string('verihash', 255)->nullable();
+                $table->timestamps();
+                $table->softDeletes();
 
-            //$table->foreign('user_id')->references('id')->on('users');
-        });
+                //$table->foreign('user_id')->references('id')->on('users');
+            }
+        );
     }
 
     /**

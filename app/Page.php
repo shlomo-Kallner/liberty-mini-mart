@@ -333,22 +333,16 @@ class Page extends Model implements TransformableContainer, ContainerAPI
     ) {
         $pages = [];
         $tpg = PageGroup::getOrdered($dir, $withTrashed, 'order');
-        if (Functions::testVar($tpg) && count($tpg) > 0) {
+        if (Functions::countHas($tpg)) {
             foreach ($tpg as $group) {
-                $pg = $withTrashed
-                ? $group->pages()->withTrashed()
-                    ->orderBy('order', $dir)->get()
-                : $group->pages()->orderBy('order', $dir)->get();
+                $pg = $group->getChildren(
+                    $transform, $withTrashed, $dir, $baseUrl,
+                    $useTitle, $fullUrl, 1, [], $useBaseMaker,
+                    self::getIfDoneIterating($transform)
+                );
                 foreach ($pg as $page) {
                     if (Functions::testVar($page)) {
-                        $p = self::doTransform(
-                            $page, $transform, $baseUrl, $useTitle, 1, 
-                            $withTrashed, $fullUrl, null, $useBaseMaker,
-                            self::getIfDoneIterating($transform), $dir
-                        );
-                        if (Functions::testVar($p)) {
-                            $pages[] = $p;
-                        }
+                        $pages[] = $page;
                     }
                 }
             }
@@ -381,6 +375,7 @@ class Page extends Model implements TransformableContainer, ContainerAPI
         // Optional: create a 'PageGroupInfo' 
         //  Table + Migration for use with PageGroup..
         /// UPDATE: DONE (on PageGroup) AND DONE (as PageGrouping)
+        /// UPDATE: DONE ALL (including groupBy [getOrderedByPageGroupings()])
         if ($usePageGroupings) {
             $pages = self::getOrderedByPageGroupings(
                 $dir, $asArrays, $useTitle, $fullUrl, $baseUrl,

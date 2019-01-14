@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model,
     App\Utilities\Functions\Functions,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer,
-    App\Utilities\ContainerAPI,
-    App\Utilities\ContainerID,
     App\Section,
     App\Product,
     App\Image,
@@ -15,10 +13,10 @@ use Illuminate\Database\Eloquent\Model,
     App\Page;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Categorie extends Model implements TransformableContainer, ContainerAPI
+class Categorie extends Model implements TransformableContainer
 {
 
-    use SoftDeletes, ContainerTransforms, ContainerID;
+    use SoftDeletes, ContainerTransforms;
 
     /**
      * The attributes that should be mutated to dates.

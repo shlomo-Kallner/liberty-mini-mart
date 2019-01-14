@@ -72,14 +72,14 @@ class PageGroup extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
-    static public function getFrom($pg) 
+    static public function getFrom($item) 
     {
-        if (is_string($pg) && Functions::testVar($pg)) {
-            $tmp = self::where('name', $pg)->first();
-        } elseif (is_int($pg) && Functions::testVar($pg)) {
-            $tmp = self::where('id', $pg)->first();
-        } elseif ($pg instanceof self) {
-            $tmp = $pg;
+        if (is_string($item) && Functions::testVar($item)) {
+            $tmp = self::where('name', $item)->first();
+        } elseif (is_int($item) && Functions::testVar($item)) {
+            $tmp = self::where('id', $item)->first();
+        } elseif ($item instanceof self) {
+            $tmp = $item;
         } else {
             $tmp = null;
         }
@@ -230,10 +230,10 @@ class PageGroup extends Model implements TransformableContainer, ContainerAPI
         int $version = 1, $default = [], bool $useBaseMaker = true,
         bool $done = true
     ) {
-        $tmp = $withTrashed 
-        ? $this->pages()->withTrashed()
-            ->orderBy('url', $dir)->get()
-        : $this->pages()->orderBy('url', $dir)->get();
+        $tmp = self::getOrderedFor(
+            $this->pages(), $dir, 
+            $withTrashed, 'order'
+        );
         return Page::getFor(
             $tmp, $baseUrl, $transform, $useTitle,
             $version, $withTrashed, $fullUrl, $default, 
