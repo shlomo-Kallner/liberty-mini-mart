@@ -12,6 +12,7 @@
     $cart2 = Functions::getContent($cart??'');
     $pagination2 = Functions::getContent($page['pagination']??[], []);
     //dd($cart2, $cart);
+    $usingOpenGraph = false;
 ?>
 
 <!DOCTYPE html>
@@ -49,18 +50,25 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <!--        Common "standard" viewport meta..-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="Metronic Shop UI description" name="description">
-        <meta content="Metronic Shop UI keywords" name="keywords">
-        <meta content="Shlomo Kallner" name="author">
 
-        <meta property="og:site_name" content="{{ $siteName2 }}">
-        <meta property="og:title" content="-CUSTOMER VALUE-">
-        <meta property="og:description" content="-CUSTOMER VALUE-">
-        <meta property="og:type" content="website">
-        <meta property="og:image" content="-CUSTOMER VALUE-"><!-- link to image for socio -->
-        <meta property="og:url" content="{{ url('') }}">
+        @if ($usingOpenGraph)
+            
+            <meta content="Metronic Shop UI description" name="description">
+            <meta content="Metronic Shop UI keywords" name="keywords">
+            <meta content="Shlomo Kallner" name="author">
+
+            <meta property="og:site_name" content="{{ $siteName2 }}">
+            <meta property="og:title" content="-CUSTOMER VALUE-">
+            <meta property="og:description" content="-CUSTOMER VALUE-">
+            <meta property="og:type" content="website">
+            <meta property="og:image" content="-CUSTOMER VALUE-"><!-- link to image for socio -->
+            <meta property="og:url" content="{{ url('') }}">
+    
+        @endif
+
         @section('header-metas')
         @show
+        
         <meta name="csrf-token" content="{{ csrf_token() }}">
         
 

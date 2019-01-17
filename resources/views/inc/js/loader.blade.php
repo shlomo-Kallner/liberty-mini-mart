@@ -32,14 +32,14 @@
     @if (Functions::testVar($scripts2))
         @foreach ($scripts2 as $script)
             @if (Functions::testVar($usingCDNs2))
-                @if (Functions::testVar($usingMinified2) && Functions::testVar($script['cdn-url-min']))
+                @if (Functions::testVar($usingMinified2) && Functions::testVar($script['cdn-url-min']??null))
                     <script src="{{ $script['cdn-url-min'] }}"></script>
-                @elseif (Functions::testVar($script['cdn-url']))
+                @elseif (Functions::testVar($script['cdn-url']??null))
                     <script src="{{ $script['cdn-url'] }}"></script>
                 @endif
-            @elseif (Functions::testVar($usingMix2) && Functions::testVar($script['mix-path']))
+            @elseif (Functions::testVar($usingMix2) && Functions::testVar($script['mix-path']??null))
                 <script src="{{ mix($script['mix-path']) }}"></script>
-            @elseif (Functions::testVar($script['local-path']))
+            @elseif (Functions::testVar($script['local-path']??null))
                 <script src="{{ mix($script['local-path']) }}"></script>
             @endif
         @endforeach

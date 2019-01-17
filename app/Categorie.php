@@ -98,6 +98,11 @@ class Categorie extends Model implements TransformableContainer
         return 'section_id';
     }
 
+    public function getChildrenQuery()
+    {
+        return $this->products();
+    }
+
     static public function makeContentArray(
         string $name, string $url, string $title,
         $img, $article, string $description,
@@ -139,10 +144,30 @@ class Categorie extends Model implements TransformableContainer
         int $viewNumber = 0, string $listUrl = '#', 
         bool $useBaseMaker = true, bool $done = true
     ) {
-        return $this->toContentArray(
-            $baseUrl, $version, $useTitle, $withTrashed,
-            $fullUrl
+        $products = $this->getProductsWithPagination(
+            Product::TO_URL_LIST_TRANSFORM, $pageNum,
+            $numItemsPerPage, $withTrashed, 
+            'asc', $baseUrl, $listUrl, $fullUrl, 
+            $viewNumber, $useBaseMaker, [], $version, 
+            $useTitle, $pagingFor, false
         );
+        $content = self::makeContentArray(
+            $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
+            $useTitle ? $this->title : $this->image->alt,
+            $this->image, $this->article, $this->description,
+            $products['items'] ?? [], Image::getArraysFor($this->otherImages),
+            $this->sticker, [
+                'created' => $this->created_at,
+                'updated' => $this->updated_at,
+                'deleted' => $this->deleted_at,
+            ], $this->id, $useBaseMaker, true
+        );
+        if ($useBaseMaker) {
+            $content['value']['pagination'] = $products['pagination'] ?? [];
+        } else {
+            $content['pagination'] = $products['pagination'] ?? [];
+        }
+        return $content;
     }
     
     public function toContentArrayPlus(
@@ -206,10 +231,10 @@ class Categorie extends Model implements TransformableContainer
         int $version = 1, $default = [], bool $useBaseMaker = true,
         bool $done = true
     ) {
-        $tmp = $withTrashed 
-            ? $this->products()->withTrashed()
-                ->orderBy('name', $dir)->get()
-            : $this->products()->orderBy('name', $dir)->get();
+        $tmp = self::getOrderedFor(
+            $this->products(), $dir, 
+            $withTrashed, 'name'
+        ); 
         return Product::getFor(
             $tmp, $baseUrl, $transform, $useTitle,
             $version, $withTrashed, $fullUrl, $default,
@@ -244,39 +269,41 @@ class Categorie extends Model implements TransformableContainer
     }
 
     public function getProductsWithPagination(
-        $pageNum, $firstIndex, $lastIndex, 
-        int $numShown = 4, string $pagingFor = '',
-        $transform = null, bool $withTrashed = true, 
+        $transform = null, int $pageNum = 1,
+        int $numShown = 4, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
-        bool $useTitle = true, int $version = 1, 
-        $default = []
+        string $listUrl = '', bool $fullUrl = false, 
+        int $viewNumber = 0, bool $useBaseMaker = true, 
+        $default = [], int $version = 1, bool $useTitle = true,
+        string $pagingFor = '', bool $done = false
     ) {
-        $tmp = $this->getProducts(
-            $transform, $withTrashed, $dir,
-            $baseUrl, $useTitle, $version, $default
-        );
-        $num = count($tmp);
-        return [
-            'items' => $tmp,
-            'pagination' => Page::genPagination(
-                $pageNum, 
-                $firstIndex <= $num ? $firstIndex : 0,
-                $lastIndex <= $num ? $lastIndex : $num,
-                $num,
-                Page::genRange(0, $num), $numShown, $pagingFor
-            )
-        ];
+        $tmp = self::getOrderedFor(
+            $this->products(), $dir, 
+            $withTrashed, 'name'
+        ); 
+        if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
+            return Product::getForWithPagination(
+                $tmp, $transform, $pageNum, $numShown, 
+                $pagingFor,  $listUrl, $baseUrl, $dir, 
+                $viewNumber, $withTrashed, $useTitle, 
+                $fullUrl, $version, $default, 
+                $useBaseMaker, $done
+            );
+        }
+        return $default;
     }
 
     static public function getCategoriesOfSection(
         int $section_id, $transform = null, 
         bool $withTrashed = false, string $baseUrl = 'store',
         bool $useTitle = true, int $version = 1, 
-        $default = []
+        $default = [], string $dir = 'asc'
     ) {
         $tmp = $withTrashed 
-            ? self::withTrashed()->where('section_id', $section_id)->get()
-            : self::where('section_id', $section_id)->get();
+            ? self::withTrashed()->where('section_id', $section_id)
+                ->orderBy('name', $dir)->get()
+            : self::where('section_id', $section_id)
+                ->orderBy('name', $dir)->get();
         return self::getFor(
             $tmp, $baseUrl, $transform, $useTitle,
             $version, $withTrashed, $default
@@ -284,21 +311,31 @@ class Categorie extends Model implements TransformableContainer
     }
 
     static public function getCategoriesOfSectionWithPagination(
-        int $section_id, $pageNum, $firstIndex, $lastIndex, 
-        int $numShown = 4, string $pagingFor = ''
+        int $section_id, $transform = null, int $pageNum = 1,
+        int $numShown = 4, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        string $listUrl = '', bool $fullUrl = false, 
+        int $viewNumber = 0, bool $useBaseMaker = true, 
+        $default = [], int $version = 1, bool $useTitle = true,
+        string $pagingFor = '', bool $done = false
     ) {
-        $tmp = self::getCategoriesOfSection($section_id);
-        $num = count($tmp);
-        return [
-            'items' => $tmp,
-            'pagination' => Page::genPagination(
-                $pageNum, 
-                $firstIndex <= $num ? $firstIndex : 0,
-                $lastIndex <= $num ? $lastIndex : 0,
-                $num,
-                Page::genRange(0, $num), $numShown, $pagingFor
-            )
-        ];
+        $tmp = $withTrashed 
+            ? self::withTrashed()->where('section_id', $section_id)
+                ->orderBy('name', $dir)->get()
+            : self::where('section_id', $section_id)
+                ->orderBy('name', $dir)->get();
+        if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
+            return self::getForWithPagination(
+                $tmp, $transform, $pageNum,
+                $numShown, $pagingFor, 
+                $listUrl, $baseUrl, 
+                $dir, $viewNumber = 0, 
+                $withTrashed, $useTitle, 
+                $fullUrl, $version, $default, 
+                $useBaseMaker, $done
+            );
+        }
+        return $default;
     }
 
     /// the Eloquent Relationship methods:

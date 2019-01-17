@@ -51,6 +51,8 @@ interface TransformableContainer extends ContainerAPI
 
     public function hasChildren(bool $withTrashed = true);
 
+    public function getChildrenQuery();
+
     public function getChildrenWithPagination(
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
@@ -258,6 +260,11 @@ trait ContainerTransforms
         return is_int($num)
         ? $num > 0
         : Functions::countHas($num);
+    }
+
+    public function getChildrenQuery()
+    {
+        return null;
     }
 
     /// end of defaults.. 
@@ -924,16 +931,28 @@ trait ContainerTransforms
         $tmp = self::getOrderedBy($dir, $withTrashed)
             ->offset($pageIdx['begin'])->limit($numShown)
             ->get();
-        $tmp1 = self::getFor(
-            $tmp, $baseUrl, $transform,
-            $useTitle, $version, $withTrashed, $fullUrl,
-            $default, $useBaseMaker, $done, $dir
-        );
-        return self::getPaginatedItemsArray(
-            $tmp1, $pageNum, $numShown, 
-            $pagingFor, $listUrl, 
-            $viewNumber, $totalNum
-        );
+        if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
+            $tmp1 = self::getFor(
+                $tmp, $baseUrl, $transform,
+                $useTitle, $version, $withTrashed, $fullUrl,
+                $default, $useBaseMaker, $done, $dir
+            );
+            if (Functions::testVar($tmp1) && Functions::countHas($tmp1)) {
+                return self::getPaginatedItemsArray(
+                    $tmp1, $pageNum, $numShown, 
+                    $pagingFor, $listUrl, 
+                    $viewNumber, $totalNum
+                );
+            }
+        }
+        return $default;
+    }
+
+    static public function isTransformable($item)
+    {
+        return Functions::testVar($item) 
+            && $item instanceof self 
+            && $item instanceof TransformableContainer;
     }
 
     static public function doTransform(
@@ -943,7 +962,7 @@ trait ContainerTransforms
         $default = null, bool $useBaseMaker = true,
         bool $done = true, string $dir = 'asc'
     ) {
-        if ($item instanceof self) {
+        if (self::isTransformable($item)) {
             if (is_string($transform) && !empty($transform)) {
                 switch ($transform) {
                 case 'mini':

@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model,
     App\Utilities\Functions\Functions,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer,
-    App\Utilities\ContainerAPI,
-    App\Utilities\ContainerID,
     App\Categorie,
     App\Page,
     App\Image,
@@ -15,9 +13,9 @@ use Illuminate\Database\Eloquent\Model,
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
-class Section extends Model implements TransformableContainer, ContainerAPI
+class Section extends Model implements TransformableContainer
 {
-    use SoftDeletes, ContainerTransforms, ContainerID;
+    use SoftDeletes, ContainerTransforms;
 
     /**
      * The attributes that should be mutated to dates.
@@ -89,6 +87,11 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         return true;
     }
 
+    public function getChildrenQuery()
+    {
+        return $this->categories();
+    }
+
     public function numChildren(bool $withTrashed = true)
     {
         return $withTrashed 
@@ -139,11 +142,10 @@ class Section extends Model implements TransformableContainer, ContainerAPI
         $default = [], int $version = 1, bool $useTitle = true,
         string $pagingFor = '', bool $done = false
     ) {
-        $tmp = $withTrashed 
-            ? $this->categories()->withTrashed()
-                ->orderBy('name', $dir)->get() 
-            : $this->categories()->orderBy('name', $dir)->get();
-        $res = [];
+        $tmp = getOrderedFor(
+            $this->categories(), $dir, 
+            $withTrashed, 'name'
+        );
         if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
             return Categorie::getForWithPagination(
                 $tmp, $transform, $pageNum,
@@ -247,7 +249,11 @@ class Section extends Model implements TransformableContainer, ContainerAPI
             ],
             $this->id, $useBaseMaker, $done
         );
-        $content['value']['pagination'] = $cats['pagination'] ?? [];
+        if ($useBaseMaker) {
+            $content['value']['pagination'] = $cats['pagination'] ?? [];
+        } else {
+            $content['pagination'] = $cats['pagination'] ?? [];
+        }
         return $content;
     }
     

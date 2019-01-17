@@ -242,13 +242,21 @@ class Product extends Model implements TransformableContainer
 
     static public function getProductsForCategory(
         $category_id, $transform, string $baseUrl = 'store', 
-        bool $useTitle = true, bool $fullUrl = false, int $version = 1, 
-        bool $withTrashed = true, $default = []
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, bool $withTrashed = true, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
     ) {
-        $products = self::where('category_id', $category_id)->get();
+        $products = $withTrashed
+        ? self::withTrashed()->where('category_id', $category_id)
+        ->orderBy(self::getOrderByKey(), $dir)->get()
+        : self::where('category_id', $category_id)
+        ->orderBy(self::getOrderByKey(), $dir)->get();
+        $done = self::getIfDoneIterating($transform);
         return self::getFor(
             $products, $baseUrl, $transform, $useTitle, $version, 
-            $withTrashed, $fullUrl, $default
+            $withTrashed, $fullUrl, $default, $useBaseMaker,
+            $done, $dir
         );
     }
 
@@ -381,6 +389,11 @@ class Product extends Model implements TransformableContainer
     public function hasChildren(bool $withTrashed = true) 
     {
         return false;
+    }
+
+    public function getChildrenQuery()
+    {
+        return $this->reviews();
     }
 
     public function numChildren(bool $withTrashed = true)
