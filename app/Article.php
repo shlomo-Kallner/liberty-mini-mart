@@ -40,17 +40,6 @@ class Article extends Model implements TransformableContainer
         return null;
     }
 
-    static public function createNewFrom(
-        array $array, bool $retObj = false
-    ) {
-        return self::createNew(
-            $array['article'], $array['header'],
-            $array['image']??($array['img']??0), 
-            $array['subheading'],
-            $retObj
-        );
-    }
-
     static public function isContentArray($article)
     {
         if (Functions::testVar($article) && is_array($article)) {
@@ -130,26 +119,17 @@ class Article extends Model implements TransformableContainer
         ];
     }
 
-    ///
+    /// interface implementations..
 
-    static public function getNamedByKey()
-    {
-        return 'id';
-    }
-
-    static public function getUrlByKey()
-    {
-        return 'id';
-    }
-
-    public function getUrl()
-    {
-        return $this->id;
-    }
-
-    public function getPubName()
-    {
-        return $this->id;
+    static public function createNewFrom(
+        array $array, bool $retObj = false
+    ) {
+        return self::createNew(
+            $array['article'], $array['header'],
+            $array['image']??($array['img']??0), 
+            $array['subheading'],
+            $retObj
+        );
     }
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
@@ -217,6 +197,28 @@ class Article extends Model implements TransformableContainer
             $fullUrl, $children, $paginator,
             $pagingFor, null
         );
+    }
+
+    /// trait overides..
+
+    static public function getNamedByKey()
+    {
+        return 'id';
+    }
+
+    static public function getUrlByKey()
+    {
+        return 'id';
+    }
+
+    public function getUrl()
+    {
+        return $this->id;
+    }
+
+    public function getPubName()
+    {
+        return $this->id;
     }
 
 }

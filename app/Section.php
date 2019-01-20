@@ -147,6 +147,9 @@ class Section extends Model implements TransformableContainer
             $withTrashed, 'name'
         );
         if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
+            $listUrl = !empty($listUrl) || $listUrl !== '#' 
+                ? $listUrl
+                : $this->getFullUrl($baseUrl, $fullUrl);
             return Categorie::getForWithPagination(
                 $tmp, $transform, $pageNum,
                 $numShown, $pagingFor, 
@@ -154,7 +157,8 @@ class Section extends Model implements TransformableContainer
                 $dir, $viewNumber = 0, 
                 $withTrashed, $useTitle, 
                 $fullUrl, $version, $default, 
-                $useBaseMaker, $done
+                $useBaseMaker, 
+                Categorie::getIfDoneIterating($transform)
             );
         }
         return $default;
@@ -165,13 +169,14 @@ class Section extends Model implements TransformableContainer
         string $title, $article, string $description,
         array $otherImages = null,
         array $cats = null, array $dates = [], int $id = 0,
-        bool $useBaseMaker = true, bool $done = true
+        bool $useBaseMaker = true
     ) {
         if ($useBaseMaker) {
             $content = self::makeBaseContentArray(
                 $name, $url, $img, $article, $title,
                 $id, $dates, $otherImages,
-                $cats, Functions::countHas($cats), $done
+                $cats, Functions::countHas($cats), 
+                true, ''
             );
             $content['value']['description'] = $description;
             $content['value']['id'] = $id;
@@ -215,7 +220,7 @@ class Section extends Model implements TransformableContainer
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
             ],
-            $this->id, $useBaseMaker, true
+            $this->id, $useBaseMaker
         );
     }
 
@@ -227,6 +232,7 @@ class Section extends Model implements TransformableContainer
         int $viewNumber = 0, string $listUrl = '#', 
         bool $useBaseMaker = true, bool $done = true
     ) {
+        $url = $this->getFullUrl($baseUrl, $fullUrl);
         $cats = $this->getCategoriesWithPagination(
             Categorie::TO_URL_LIST_TRANSFORM, 
             $pageNum, $numItemsPerPage, $withTrashed, 
@@ -236,8 +242,7 @@ class Section extends Model implements TransformableContainer
             $pagingFor, false
         );
         $content = self::makeContentArray(
-            $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
-            $this->image, 
+            $this->name, $url, $this->image, 
             $useTitle ? $this->title : $this->image->alt, 
             $this->article, $this->description,
             Image::getArraysFor($this->otherImages),
@@ -247,7 +252,7 @@ class Section extends Model implements TransformableContainer
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
             ],
-            $this->id, $useBaseMaker, $done
+            $this->id, $useBaseMaker
         );
         if ($useBaseMaker) {
             $content['value']['pagination'] = $cats['pagination'] ?? [];

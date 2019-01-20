@@ -38,7 +38,7 @@ class CmsController extends MainController
         $sectPageNum = 1;
         $sectPagingFor = 'sectionPanel';
         $sectDir = 'asc';
-        $sectBaseUrl = 'store';
+        $sectBaseUrl = 'admin/store';
         $sectViewNum = 0;
         $sectWithTrashed = true;
         if (false) {
@@ -49,6 +49,16 @@ class CmsController extends MainController
                 $sectWithTrashed, $sectBaseUrl,
                 $request->path(), $sectViewNum, 
                 false, true, 1
+            );
+        } elseif (false) {
+            $sections = Section::getSelfWithPagination(
+                $sectPageNum, $sectNumShown, $sectViewNum, 
+                $sectBaseUrl, $sectBaseUrl, 
+                bool $fullUrl = false,
+                bool $withTrashed = true, bool $useBaseMaker = true,
+                $default = [], string $dir = 'asc', 
+                string $pagingFor = '', bool $useTitle = true, 
+                int $version = 1
             );
         } else {
             $sections = [
@@ -114,7 +124,15 @@ class CmsController extends MainController
             ];
         }
         //dd($pages);
-        $articles = []; // Article::getAll();
+        $articles = Article::getSelfWithPagination(
+            int $pageNumber, int $numPerPage = 4,  int $numView = 0, 
+            string $baseUrl = 'store', string $listUrl = '', 
+            bool $fullUrl = false,
+            bool $withTrashed = true, bool $useBaseMaker = true,
+            $default = [], string $dir = 'asc', 
+            string $pagingFor = '', bool $useTitle = true, 
+            int $version = 1
+        );
         $sidebar = self::getAdminSidebar();
         //dd($sidebar);
         if ($debug[0]) {
@@ -129,7 +147,7 @@ class CmsController extends MainController
             dd($ticks, count($sections['items']), $num, count($users['items']), count($pages['items']));
         }
         $admin_header = 'Admin Dashboard';
-        $admin_article = Article::makeContentArray(
+        $admin_article = Article::makeArticleArray(
             '', 
             'Welcome to OUR DASHBOARD!',
             null,

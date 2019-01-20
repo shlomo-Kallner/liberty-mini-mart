@@ -130,7 +130,6 @@ class Categorie extends Model implements TransformableContainer
         }
     }
 
-    // TO BE IMPLEMENTED!!!
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
@@ -163,6 +162,23 @@ class Categorie extends Model implements TransformableContainer
             $content['pagination'] = $products['pagination'] ?? [];
         }
         return $content;
+    }
+
+    public function getChildrenWithPagination(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useBaseMaker = true, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $listUrl = '#', 
+        string $pagingFor = '', int $viewNumber = 0, 
+        bool $fullUrl = false, bool $useTitle = true,
+        int $version = 1, $default = []
+    ) {
+        return $this->getProductsWithPagination(
+            $transform, $pageNum, $numItemsPerPage, $withTrashed, 
+            $dir, $baseUrl, $listUrl, $fullUrl, $viewNumber, 
+            $useBaseMaker, $default, $version, $useTitle,
+            $pagingFor, self::getIfDoneIterating($transform)
+        );
     }
     
     public function toContentArrayPlus(
@@ -233,7 +249,8 @@ class Categorie extends Model implements TransformableContainer
         return Product::getFor(
             $tmp, $baseUrl, $transform, $useTitle,
             $version, $withTrashed, $fullUrl, $default,
-            $useBaseMaker, $done, $dir
+            $useBaseMaker, Product::getIfDoneIterating($transform), 
+            $dir
         );
     }
 
@@ -252,7 +269,7 @@ class Categorie extends Model implements TransformableContainer
         return $this->getProducts(
             $transform, $withTrashed, $dir, $baseUrl,
             $useTitle, $fullUrl, $version, $default,
-            $useBaseMaker, $done
+            $useBaseMaker, Product::getIfDoneIterating($transform)
         );
     }
 
@@ -277,12 +294,15 @@ class Categorie extends Model implements TransformableContainer
             $withTrashed, 'name'
         ); 
         if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
+            $listUrl = !empty($listUrl) || $listUrl !== '#' 
+                ? $listUrl
+                : $this->getFullUrl($baseUrl, $fullUrl);
             return Product::getForWithPagination(
                 $tmp, $transform, $pageNum, $numShown, 
                 $pagingFor,  $listUrl, $baseUrl, $dir, 
                 $viewNumber, $withTrashed, $useTitle, 
                 $fullUrl, $version, $default, 
-                $useBaseMaker, $done
+                $useBaseMaker, Product::getIfDoneIterating($transform)
             );
         }
         return $default;

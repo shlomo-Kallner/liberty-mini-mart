@@ -120,8 +120,6 @@ interface TransformableContainer extends ContainerAPI
 
     public function getSticker();
 
-    public function getPubName();
-
     static public function getCount(bool $withTrashed = false);
 
     /// end of other getters.
@@ -165,11 +163,6 @@ trait ContainerTransforms
             $this->deleted_at ?? null
         );
         return $dates;
-    }
-
-    public function getPubName()
-    {
-        return $this->name;
     }
 
     static public function getCount(bool $withTrashed = false)
@@ -953,7 +946,8 @@ trait ContainerTransforms
             $tmp1 = self::getFor(
                 $tmp, $baseUrl, $transform,
                 $useTitle, $version, $withTrashed, $fullUrl,
-                $default, $useBaseMaker, $done, $dir
+                $default, $useBaseMaker, 
+                self::getIfDoneIterating($transform), $dir
             );
             if (Functions::testVar($tmp1) && Functions::countHas($tmp1)) {
                 return self::getPaginatedItemsArray(
@@ -993,8 +987,9 @@ trait ContainerTransforms
                     return $item->toContentArray($baseUrl, $version, $useTitle, $withTrashed, $fullUrl);
                 case 'content_plus':
                     return $item->toContentArrayPlus(
-                        $baseUrl, $version, $useTitle, $withTrashed, 
-                        $fullUrl, $useBaseMaker, $done, $dir
+                        $baseUrl, $version, $useTitle, 
+                        $withTrashed, $fullUrl, $useBaseMaker, 
+                        self::getIfDoneIterating($transform), $dir
                     );
                 case 'name':
                     return $item->toNameListing($useBaseMaker);
@@ -1032,7 +1027,8 @@ trait ContainerTransforms
                     $tmp = self::doTransform(
                         $item, $transform, $baseUrl, $useTitle,
                         $version, $withTrashed, $fullUrl, null,
-                        $useBaseMaker, $done, $dir
+                        $useBaseMaker, 
+                        self::getIfDoneIterating($transform), $dir
                     );
                     if (Functions::testVar($tmp)) {
                         $res[] = $tmp;
@@ -1080,8 +1076,8 @@ trait ContainerTransforms
         }
         $tmp = self::getFor(
             $argTmp, $baseUrl, $transform, $useTitle, $version,
-            $withTrashed, $fullUrl, $default, $useBaseMaker, $done,
-            $dir
+            $withTrashed, $fullUrl, $default, $useBaseMaker, 
+            self::getIfDoneIterating($transform), $dir
         );
         if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
             return self::getPaginatedItemsArray(

@@ -37,6 +37,8 @@ interface ContainerAPI
     public function getFullUrl(string $baseUrl, bool $fullUrl = false);
 
     public function getPubId();
+
+    public function getPubName();
 }
 
 trait ContainerID 
@@ -160,6 +162,16 @@ trait ContainerID
     {
         return $this->id;
     }
+
+    public function getPubName()
+    {
+        return $this->name;
+    }
+
+    public function getUrl()
+    {
+        return $this->url;
+    }
     
     static public function getIdFrom(
         $item, bool $usePublic = true, $def = 0
@@ -180,11 +192,6 @@ trait ContainerID
     public function getParentUrl(string $baseUrl, bool $fullUrl = false)
     {
         return $fullUrl ? url($baseUrl) : $baseUrl;
-    }
-
-    public function getUrl()
-    {
-        return $this->url;
     }
 
     /** 
