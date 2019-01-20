@@ -215,7 +215,7 @@ class Section extends Model implements TransformableContainer
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
             ],
-            $this->id, $useBaseMaker, $done
+            $this->id, $useBaseMaker, true
         );
     }
 

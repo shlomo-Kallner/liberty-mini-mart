@@ -3,13 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model,
-    App\Utilities\Functions\Functions;
+    App\Utilities\Functions\Functions,
+    App\Utilities\ContainerTransforms,
+    App\Utilities\TransformableContainer;
 use App\Image;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Article extends Model
+class Article extends Model implements TransformableContainer
 {
-    use SoftDeletes;
+    use SoftDeletes, ContainerTransforms;
 
     /**
      * The attributes that should be mutated to dates.
@@ -22,15 +24,15 @@ class Article extends Model
     static public function createNew(
         string $article, string $header = '', 
         $image = null, string $subheading = '',
-        bool $purify = true, bool $retObj = false
+        bool $retObj = false
     ) {
         if (Functions::testVar($article)) {
             $tImg = Image::getImageToID($image);
             $tmp = new self;
             $tmp->image_id = Functions::testVar($tImg) ? $tImg : 0;
-            $tmp->header = $purify ? Functions::purifyContent($header) : $header;
-            $tmp->subheading = $purify ? Functions::purifyContent($subheading) : $subheading;
-            $tmp->article = $purify ? Functions::purifyContent($article) : $article;
+            $tmp->header = Functions::purifyContent($header);
+            $tmp->subheading = Functions::purifyContent($subheading);
+            $tmp->article = Functions::purifyContent($article);
             if ($tmp->save()) {
                 return $retObj ? $tmp : $tmp->id;
             }
@@ -45,19 +47,8 @@ class Article extends Model
             $array['article'], $array['header'],
             $array['image']??($array['img']??0), 
             $array['subheading'],
-            $array['purify']??true,
             $retObj
         );
-    }
-
-    static public function getFromId(int $id)
-    {
-        return self::where('id', $id)->first();
-    }
-
-    static public function existsId(int $id)
-    {
-        return Functions::testVar(self::getFromId($id));
     }
 
     static public function isContentArray($article)
@@ -78,9 +69,9 @@ class Article extends Model
             if (is_int($article) && self::existsId($article)) {
                 return $article;
             } elseif (self::isContentArray($article)) {
-                if (Functions::testVar($article['id'])) {
+                if (Functions::isPropKeyIn($article, 'id')) {
                     // dangerous recursion!
-                    return self::getToId($article['id']);
+                    return self::getToId(Functions::getPropKey($article, 'id'));
                 } else {
                     return self::createNewFrom($article);
                 }
@@ -95,44 +86,137 @@ class Article extends Model
     }
 
     static public function getArticle(
-        $article, bool $toArray = false, 
-        bool $imgAsArr = true
+        $article, bool $toArray = false
     ) {
         if (Functions::testVar($article)) {
             if ($article instanceof self) {
-                return $toArray ? $article->toContentArray($imgAsArr) : $article;
+                return $toArray ? $article->toArticleArray() : $article;
             } elseif (is_int($article)) {
                 if (Functions::testVar($a = self::getFromId($article))) {
-                    return $toArray ? $a->toContentArray($imgAsArr) :$a;
+                    return $toArray ? $a->toArticleArray() : $a;
                 }
-            } elseif (self::isContentArray($article) && self::existsId($article['id'])) {
-                return $toArray ? $article : self::getFromId($article['id']);
+            } elseif (self::isContentArray($article)) {
+                if (Functions::testVar($b = self::getFromId($article['id']))) {
+                    return $toArray ? $article : $b;
+                } else {
+                    $c = self::createNewFrom($article, true);
+                    return $toArray ? $c->toArticleArray() : $c;
+                }
             }
         }
         return null;
     }
 
-    public function toContentArray(bool $imgAsArr = true)
+    public function toArticleArray()
     {
-        return self::makeContentArray(
+        return self::makeArticleArray(
             $this->article, $this->header,
             $this->image, $this->subheading,
-            $imgAsArr, $this->id
+            $this->id
         );
     }
 
-    static public function makeContentArray(
+    static public function makeArticleArray(
         string $article, string $header = '',
         $img = null, string $subheading = '',
-        bool $imgAsArr = false, int $id = 0
+        int $id = 0
     ) {
         return [
             'id' => $id,
             'header' => $header,
             'subheading' => $subheading,
-            'img' => $imgAsArr ? Image::getImageArray($img) : Image::getImage($img),
+            'img' => Image::getImageArray($img),
             'article' => $article,
         ];
+    }
+
+    ///
+
+    static public function getNamedByKey()
+    {
+        return 'id';
+    }
+
+    static public function getUrlByKey()
+    {
+        return 'id';
+    }
+
+    public function getUrl()
+    {
+        return $this->id;
+    }
+
+    public function getPubName()
+    {
+        return $this->id;
+    }
+
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
+    {
+        $url = empty($baseUrl) ? 'article/' : $baseUrl . '/article/';
+        return $fullUrl ? url($url) : $url;
+    }
+
+    public function toContentArrayPlus(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false, bool $useBaseMaker = true,
+        bool $done = true, string $dir = 'asc'
+    ) {
+        if ($useBaseMaker) {
+            $content = self::makeBaseContentArray(
+                $this->id, $this->getFullUrl($baseUrl, $fullUrl), 
+                $this->image, null, $this->header, 
+                $this->getDatesArray(), 
+                null, [], false, true, ''
+            );
+            $content['value']['article'] = $this->article;
+            $content['value']['header'] = $this->header;
+            $content['value']['subheading'] = $this->subheading;
+        } else {
+            $content = self::makeArticleArray(
+                $this->article, $this->header,
+                $this->image, $this->subheading,
+                $this->id
+            );
+        }
+        return $content;
+    }
+
+    public function numChildren(bool $withTrashed = true)
+    {
+        return 0;
+    }
+
+    public function getChildren(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = [], bool $useBaseMaker = true,
+        bool $done = true
+    ) {
+        return $default;
+    }
+
+    static public function getSelf(
+        string $baseUrl = 'store', bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = ''
+    ) {
+        $title = $name = 'Articles';
+        $article = null;
+        $img = Image::createImageArray(
+            'newspaper-2253408_640.jpg', 'Articles Listing', 
+            'images/site', 'Articles Listing'
+        );
+        $pagingFor = $pagingFor ?: 'articlesPanel';
+        return self::makeSelf(
+            $name, $title, $article,
+            $img, $baseUrl, $withTrashed,
+            $fullUrl, $children, $paginator,
+            $pagingFor, null
+        );
     }
 
 }

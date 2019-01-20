@@ -76,12 +76,7 @@ class Categorie extends Model implements TransformableContainer
             $array['image'], $array['sticker'], $retObj
         );
     }
-
-    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
-    {
-        $url = empty($baseUrl) ? 'category/' : $baseUrl . '/category/';
-        return $fullUrl ? url($url) : $url;
-    }
+    
 
     public function getParentUrl(string $baseUrl, bool $fullUrl = false)
     {

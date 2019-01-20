@@ -63,6 +63,8 @@ interface TransformableContainer extends ContainerAPI
         int $version = 1, int $totalNum = 0, $default = []
     );
 
+    /// transforms...
+
     public function toFull(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
@@ -95,6 +97,20 @@ interface TransformableContainer extends ContainerAPI
         int $viewNumber = 0, string $listUrl = '#', 
         bool $useBaseMaker = true, bool $done = true
     );
+    
+    public function toUrlListing(
+        string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
+    );
+
+    public function toUrlFragrment(
+        string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
+    );
+
+    public function toNameListing(bool $useBaseMaker = false);
+
+    /// end of transforms.
+
+    /// other getters..
 
     public function getImageArray();
 
@@ -103,6 +119,12 @@ interface TransformableContainer extends ContainerAPI
     public function getPriceOrSale();
 
     public function getSticker();
+
+    public function getPubName();
+
+    static public function getCount(bool $withTrashed = false);
+
+    /// end of other getters.
 
     /// this method (toTableArray) is deprecated!
     /// table views will not make use of a special 
@@ -145,6 +167,11 @@ trait ContainerTransforms
         return $dates;
     }
 
+    public function getPubName()
+    {
+        return $this->name;
+    }
+
     static public function getCount(bool $withTrashed = false)
     {
         return $withTrashed 
@@ -157,7 +184,7 @@ trait ContainerTransforms
     ) {
         $url = $this->getFullUrl($baseUrl, false);
         $value = [
-            'name' => $this->name,
+            'name' => $this->getPubName(),
             'url' =>  $fullUrl ? url($url) : $url, 
         ];
         return $useBaseMaker
@@ -181,7 +208,7 @@ trait ContainerTransforms
     public function toNameListing(bool $useBaseMaker = false)
     {
         $value = [
-            'name' => $this->name,
+            'name' => $this->getPubName(),
             'url' => $this->getUrl(), /// the identifying url fragment,
                                  /// NOT the full URL!!!
         ];
@@ -272,12 +299,14 @@ trait ContainerTransforms
     static public function getContentArrays(
         $arrays, string $baseUrl = 'store', $default = [],
         int $version = 1, bool $useTitle = true, 
-        bool $withTrashed = true, bool $fullUrl = false
+        bool $withTrashed = true, bool $fullUrl = false, 
+        bool $useBaseMaker = false, string $dir = 'asc'
     ) {
         return self::getFor(
             $arrays, $baseUrl, 
             TransformableContainer::TO_CONTENT_ARRAY_TRANSFORM,
-            $useTitle, $version, $withTrashed, $fullUrl, $default
+            $useTitle, $version, $withTrashed, $fullUrl, $default,
+            $useBaseMaker, true, $dir
         );
     }
 
@@ -526,27 +555,16 @@ trait ContainerTransforms
         int $version = 1
     ) {
         $itemsArray = self::getAllWithPagination(
-            self::TO_URL_LIST_TRANSFORM, $pageNumber, $numPerPage, 
-            $pagingFor, $dir, 
-            $withTrashed, $baseUrl, 
-            $listUrl, $numView, 
-            $fullUrl, $useTitle, 
-            $version, $default, $useBaseMaker,
+            self::TO_URL_LIST_TRANSFORM, $pageNumber, 
+            $numPerPage, $pagingFor, $dir, $withTrashed, 
+            $baseUrl, $listUrl, $numView, $fullUrl, 
+            $useTitle, $version, $default, $useBaseMaker, 
             false
         );
         $children = Functions::countHas($itemsArray) 
             ? $itemsArray['items'] : null;
         $paginator = Functions::countHas($itemsArray) 
             ? $itemsArray['pagination'] : null;
-        /* 
-            return self::makeBaseContentIterArray(
-                $name, $url, $img, $article, $title, 
-                $pageNumber, $paginator['totalNumPages'] ?? 0, 
-                $numPerPage, $children, $paginator, $dates, 
-                $otherImages, Functions::countHas($children),
-                !empty($pagingFor), $numView, $pagingFor
-            ); 
-        */
         return self::getSelf(
             $baseUrl, $withTrashed,
             $fullUrl, $children, 

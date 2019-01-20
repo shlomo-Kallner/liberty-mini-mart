@@ -169,8 +169,8 @@ trait ContainerID
             $item_id = $usePublic 
             ? $item->getPubId()
             : $item->id;
-        } elseif (is_array($item)) {
-            $item_id = $item['id'];
+        } elseif (Functions::isPropKeyIn($item, 'id')) {
+            $item_id = Functions::getPropKey($item, 'id', $def);
         } elseif (is_int($item) && self::existsId($item)) {
             $item_id = $item;
         }
