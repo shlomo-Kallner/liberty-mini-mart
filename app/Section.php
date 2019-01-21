@@ -164,6 +164,58 @@ class Section extends Model implements TransformableContainer
         return $default;
     }
 
+    static public function getSelf(
+        string $baseUrl = 'store', bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = ''
+    ) {
+        $title = $name = 'Sections';
+        $article = [];
+        $img = Image::createImageArray(
+            'background-906143_640.jpg', 'Section Listing', 
+            'images/site', 'Section Listing'
+        );
+        $pagingFor = $pagingFor ?: 'sectionsPanel';
+        return self::makeSelf(
+            $name, $title, $article,
+            $img, $baseUrl, $withTrashed,
+            $fullUrl, $children, $paginator,
+            $pagingFor, null
+        );
+    }
+
+    static public function makeContentArrayWithPagination(
+        string $name, string $url, string $title,
+        $img, $article, string $description,
+        array $cats = null, $paginator = null, 
+        array $otherImages = null, 
+        array $dates = [], int $id = 0,
+        bool $useBaseMaker = true 
+    ) {
+        if (Functions::testVar($paginator) && $useBaseMaker) {
+            $content = self::makeBaseContentIterArray(
+                $name, $url, $img, $article, $title, 
+                $paginator['currentPage'], $paginator['totalNumPages'], 
+                $paginator['numItemsPerPage'], $cats, 
+                $paginator, $dates, 
+                $otherImages, Functions::countHas($cats),
+                !empty($paginator['pagingFor']), 
+                $paginator['viewNumber'], 
+                $paginator['pagingFor']
+            );
+        } else {
+            $content = self::makeContentArray(
+                $name, $url, $img, $title, $article, 
+                $description, $otherImages, $cats,
+                $dates, $id, $useBaseMaker 
+            );
+            if (Functions::testVar($paginator) && !$useBaseMaker) {
+                $content['pagination'] = $paginator;
+            }
+        }
+        return $content;
+    }
+
     static public function makeContentArray(
         string $name, string $url, $img,
         string $title, $article, string $description,
@@ -241,12 +293,12 @@ class Section extends Model implements TransformableContainer
             [], $version, $useTitle,
             $pagingFor, false
         );
-        $content = self::makeContentArray(
-            $this->name, $url, $this->image, 
-            $useTitle ? $this->title : $this->image->alt, 
-            $this->article, $this->description,
-            Image::getArraysFor($this->otherImages),
-            $cats['items'] ?? [], 
+        $content = self::makeContentArrayWithPagination(
+            $this->name, $url, 
+            $useTitle ? $this->title : $this->image->alt,
+            $this->image, $this->article, $this->description,
+            $cats['items'] ?? [], $cats['pagination'] ?? [], 
+            Image::getArraysFor($this->otherImages), 
             [
                 'created' => $this->created_at,
                 'updated' => $this->updated_at,
@@ -254,11 +306,6 @@ class Section extends Model implements TransformableContainer
             ],
             $this->id, $useBaseMaker
         );
-        if ($useBaseMaker) {
-            $content['value']['pagination'] = $cats['pagination'] ?? [];
-        } else {
-            $content['pagination'] = $cats['pagination'] ?? [];
-        }
         return $content;
     }
     

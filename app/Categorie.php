@@ -143,24 +143,26 @@ class Categorie extends Model implements TransformableContainer
         array $dates = [], int $id = 0,
         bool $useBaseMaker = true 
     ) {
-        $content = Functions::testVar($paginator) && $useBaseMaker
-        ? self::makeBaseContentIterArray(
-            $name, $url, $img, $article, $title, 
-            $paginator['currentPage'], $paginator['totalNumPages'], 
-            $paginator['numItemsPerPage'], $products, 
-            $paginator, $dates, 
-            $otherImages, Functions::countHas($products),
-            !empty($paginator['pagingFor']), 
-            $paginator['viewNumber'], 
-            $paginator['pagingFor']
-        )
-        : self::makeContentArray(
-            $name, $url, $title, $img, $article, 
-            $description, $products, $otherImages,
-            $sticker, $dates, $id, $useBaseMaker 
-        );
-        if (!$useBaseMaker) {
-            $content['pagination'] = $paginator ?? [];
+        if (Functions::testVar($paginator) && $useBaseMaker) {
+            $content = self::makeBaseContentIterArray(
+                $name, $url, $img, $article, $title, 
+                $paginator['currentPage'], $paginator['totalNumPages'], 
+                $paginator['numItemsPerPage'], $products, 
+                $paginator, $dates, 
+                $otherImages, Functions::countHas($products),
+                !empty($paginator['pagingFor']), 
+                $paginator['viewNumber'], 
+                $paginator['pagingFor']
+            );
+        } else {
+            $content = self::makeContentArray(
+                $name, $url, $title, $img, $article, 
+                $description, $products, $otherImages,
+                $sticker, $dates, $id, $useBaseMaker 
+            );
+            if (Functions::testVar($paginator) && !$useBaseMaker) {
+                $content['pagination'] = $paginator;
+            }
         }
         return $content;
     }
@@ -173,7 +175,7 @@ class Categorie extends Model implements TransformableContainer
         $title = $name = 'Categories';
         $article = [];
         $img = Image::createImageArray(
-            'computer-1331579_640.png', 'Categories Listing', 
+            'compare-643305_640.png', 'Categories Listing', 
             'images/site', 'Categories Listing'
         );
         $pagingFor = $pagingFor ?: 'categoriesPanel';

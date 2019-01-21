@@ -54,11 +54,8 @@ class CmsController extends MainController
             $sections = Section::getSelfWithPagination(
                 $sectPageNum, $sectNumShown, $sectViewNum, 
                 $sectBaseUrl, $sectBaseUrl, 
-                bool $fullUrl = false,
-                bool $withTrashed = true, bool $useBaseMaker = true,
-                $default = [], string $dir = 'asc', 
-                string $pagingFor = '', bool $useTitle = true, 
-                int $version = 1
+                true, $sectWithTrashed, true, [], $sectDir, 
+                $sectPagingFor, true, 1
             );
         } else {
             $sections = [

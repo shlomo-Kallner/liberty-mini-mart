@@ -41,7 +41,7 @@
             //dd($pages2, $pages_paginator2);
             //dd($plans2, $plans_paginator2);
         }
-        //dd($page);
+        dd($page);
         
     @endphp
 

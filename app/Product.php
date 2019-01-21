@@ -97,6 +97,7 @@ class Product extends Model implements TransformableContainer
 
     /** 
      * Undocumented Function - DO NOT USE! 
+     * USE the getAll() method from ContainerTransforms instead!!!
     */
     static public function getAllProducts(
         string $surl, string $curl, bool $toArray = true
@@ -318,6 +319,8 @@ class Product extends Model implements TransformableContainer
 
     ///
 
+    /// this method WILL require adjustment 
+    ///  while covering the WISHLIST!
     static public function makeContentArray(
         string $name, string $url, string $title,
         $img, $article, $price, $sale, 
@@ -398,7 +401,8 @@ class Product extends Model implements TransformableContainer
 
     public function numChildren(bool $withTrashed = true)
     {
-        return 0;
+        return 0; /// eventually we will use reviews as above...
+        /// it's a WISHLIST ITEM!
     }
 
     public function getChildren(
@@ -409,6 +413,26 @@ class Product extends Model implements TransformableContainer
         bool $done = true
     ) {
         return [];
+    }
+
+    static public function getSelf(
+        string $baseUrl = 'store', bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = ''
+    ) {
+        $title = $name = 'Products';
+        $article = [];
+        $img = Image::createImageArray(
+            'shopping-1232944_640.jpg', 'Products Listing', 
+            'images/site', 'Products Listing'
+        );
+        $pagingFor = $pagingFor ?: 'productsPanel';
+        return self::makeSelf(
+            $name, $title, $article,
+            $img, $baseUrl, $withTrashed,
+            $fullUrl, $children, $paginator,
+            $pagingFor, null
+        );
     }
 
     static public function getOrderByKey()
