@@ -76,7 +76,12 @@ class Categorie extends Model implements TransformableContainer
             $array['image'], $array['sticker'], $retObj
         );
     }
-    
+
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
+    {
+        $url = empty($baseUrl) ? 'category/' : $baseUrl . '/category/';
+        return $fullUrl ? url($url) : $url;
+    }
 
     public function getParentUrl(string $baseUrl, bool $fullUrl = false)
     {
@@ -103,14 +108,14 @@ class Categorie extends Model implements TransformableContainer
         $img, $article, string $description,
         array $products = null, array $otherImages = null,
         string $sticker = '', array $dates = [], int $id = 0,
-        bool $useBaseMaker = true, bool $done = true
+        bool $useBaseMaker = true 
     ) {
         if ($useBaseMaker) {
             $content = self::makeBaseContentArray(
                 $name, $url, $img, $article, 
                 $title, $dates, 
                 $otherImages, $products, 
-                Functions::countHas($products), $done
+                Functions::countHas($products), true
             );
             return $content;
         } else {
@@ -130,37 +135,83 @@ class Categorie extends Model implements TransformableContainer
         }
     }
 
+    static public function makeContentArrayWithPagination(
+        string $name, string $url, string $title,
+        $img, $article, string $description,
+        array $products = null, $paginator = null, 
+        array $otherImages = null, string $sticker = '', 
+        array $dates = [], int $id = 0,
+        bool $useBaseMaker = true 
+    ) {
+        $content = Functions::testVar($paginator) && $useBaseMaker
+        ? self::makeBaseContentIterArray(
+            $name, $url, $img, $article, $title, 
+            $paginator['currentPage'], $paginator['totalNumPages'], 
+            $paginator['numItemsPerPage'], $products, 
+            $paginator, $dates, 
+            $otherImages, Functions::countHas($products),
+            !empty($paginator['pagingFor']), 
+            $paginator['viewNumber'], 
+            $paginator['pagingFor']
+        )
+        : self::makeContentArray(
+            $name, $url, $title, $img, $article, 
+            $description, $products, $otherImages,
+            $sticker, $dates, $id, $useBaseMaker 
+        );
+        if (!$useBaseMaker) {
+            $content['pagination'] = $paginator ?? [];
+        }
+        return $content;
+    }
+
+    static public function getSelf(
+        string $baseUrl = 'store', bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = ''
+    ) {
+        $title = $name = 'Categories';
+        $article = [];
+        $img = Image::createImageArray(
+            'computer-1331579_640.png', 'Categories Listing', 
+            'images/site', 'Categories Listing'
+        );
+        $pagingFor = $pagingFor ?: 'categoriesPanel';
+        return self::makeSelf(
+            $name, $title, $article,
+            $img, $baseUrl, $withTrashed,
+            $fullUrl, $children, $paginator,
+            $pagingFor, null
+        );
+    }
+
     public function toContentArrayWithPagination(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
         bool $fullUrl = false, int $pageNum = 0, 
         int $numItemsPerPage = 4, string $pagingFor = '', 
         int $viewNumber = 0, string $listUrl = '#', 
-        bool $useBaseMaker = true, bool $done = true
+        bool $useBaseMaker = true
     ) {
         $products = $this->getProductsWithPagination(
             Product::TO_URL_LIST_TRANSFORM, $pageNum,
             $numItemsPerPage, $withTrashed, 
             'asc', $baseUrl, $listUrl, $fullUrl, 
             $viewNumber, $useBaseMaker, [], $version, 
-            $useTitle, $pagingFor, false
+            $useTitle, $pagingFor
         );
-        $content = self::makeContentArray(
+        $content = self::makeContentArrayWithPagination(
             $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
             $useTitle ? $this->title : $this->image->alt,
             $this->image, $this->article, $this->description,
-            $products['items'] ?? [], Image::getArraysFor($this->otherImages),
+            $products['items'] ?? [], $products['pagination'] ?? [],
+            Image::getArraysFor($this->otherImages),
             $this->sticker, [
                 'created' => $this->created_at,
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
-            ], $this->id, $useBaseMaker, true
+            ], $this->id, $useBaseMaker
         );
-        if ($useBaseMaker) {
-            $content['value']['pagination'] = $products['pagination'] ?? [];
-        } else {
-            $content['pagination'] = $products['pagination'] ?? [];
-        }
         return $content;
     }
 
@@ -177,7 +228,7 @@ class Categorie extends Model implements TransformableContainer
             $transform, $pageNum, $numItemsPerPage, $withTrashed, 
             $dir, $baseUrl, $listUrl, $fullUrl, $viewNumber, 
             $useBaseMaker, $default, $version, $useTitle,
-            $pagingFor, self::getIfDoneIterating($transform)
+            $pagingFor
         );
     }
     
@@ -185,7 +236,7 @@ class Categorie extends Model implements TransformableContainer
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false, bool $useBaseMaker = true,
-        bool $done = true, string $dir = 'asc'
+        string $dir = 'asc'
     ) {
         return self::makeContentArray(
             $this->name, $this->getFullUrl($baseUrl, $fullUrl), 
@@ -194,14 +245,14 @@ class Categorie extends Model implements TransformableContainer
             $this->getProducts(
                 Product::TO_URL_LIST_TRANSFORM, 
                 $withTrashed, $dir, $baseUrl, $useTitle,
-                $fullUrl, $version, [], $useBaseMaker, false 
+                $fullUrl, $version, [], $useBaseMaker
             ),
             Image::getArraysFor($this->otherImages),
             $this->sticker, [
                 'created' => $this->created_at,
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
-            ], $this->id, $useBaseMaker, $done
+            ], $this->id, $useBaseMaker
         );
     }
 
@@ -239,8 +290,7 @@ class Categorie extends Model implements TransformableContainer
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
         bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = [], bool $useBaseMaker = true,
-        bool $done = true
+        int $version = 1, $default = [], bool $useBaseMaker = true
     ) {
         $tmp = self::getOrderedFor(
             $this->products(), $dir, 
@@ -249,8 +299,7 @@ class Categorie extends Model implements TransformableContainer
         return Product::getFor(
             $tmp, $baseUrl, $transform, $useTitle,
             $version, $withTrashed, $fullUrl, $default,
-            $useBaseMaker, Product::getIfDoneIterating($transform), 
-            $dir
+            $useBaseMaker, $dir
         );
     }
 
@@ -263,13 +312,12 @@ class Categorie extends Model implements TransformableContainer
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
         bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = [], bool $useBaseMaker = true,
-        bool $done = true
+        int $version = 1, $default = [], bool $useBaseMaker = true
     ) {
         return $this->getProducts(
             $transform, $withTrashed, $dir, $baseUrl,
             $useTitle, $fullUrl, $version, $default,
-            $useBaseMaker, Product::getIfDoneIterating($transform)
+            $useBaseMaker
         );
     }
 
@@ -287,7 +335,7 @@ class Categorie extends Model implements TransformableContainer
         string $listUrl = '', bool $fullUrl = false, 
         int $viewNumber = 0, bool $useBaseMaker = true, 
         $default = [], int $version = 1, bool $useTitle = true,
-        string $pagingFor = '', bool $done = false
+        string $pagingFor = ''
     ) {
         $tmp = self::getOrderedFor(
             $this->products(), $dir, 
@@ -302,7 +350,7 @@ class Categorie extends Model implements TransformableContainer
                 $pagingFor,  $listUrl, $baseUrl, $dir, 
                 $viewNumber, $withTrashed, $useTitle, 
                 $fullUrl, $version, $default, 
-                $useBaseMaker, Product::getIfDoneIterating($transform)
+                $useBaseMaker
             );
         }
         return $default;

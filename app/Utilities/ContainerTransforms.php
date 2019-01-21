@@ -28,7 +28,7 @@ interface TransformableContainer extends ContainerAPI
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false, bool $useBaseMaker = true,
-        bool $done = true, string $dir = 'asc'
+        string $dir = 'asc'
     );
 
     public function numChildren(bool $withTrashed = true);
@@ -37,8 +37,7 @@ interface TransformableContainer extends ContainerAPI
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
         bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = [], bool $useBaseMaker = true,
-        bool $done = true
+        int $version = 1, $default = [], bool $useBaseMaker = true
     );
 
     static public function getSelf(
@@ -95,7 +94,7 @@ interface TransformableContainer extends ContainerAPI
         bool $fullUrl = false, int $pageNum = 0, 
         int $numItemsPerPage = 4, string $pagingFor = '', 
         int $viewNumber = 0, string $listUrl = '#', 
-        bool $useBaseMaker = true, bool $done = true
+        bool $useBaseMaker = true
     );
     
     public function toUrlListing(
@@ -243,11 +242,11 @@ trait ContainerTransforms
         bool $fullUrl = false, int $pageNum = 0, 
         int $numItemsPerPage = 4, string $pagingFor = '', 
         int $viewNumber = 0, string $listUrl = '#', 
-        bool $useBaseMaker = true, bool $done = true
+        bool $useBaseMaker = true
     ) {
         return $this->toContentArrayPlus(
             $baseUrl, $version, $useTitle, $withTrashed, 
-            $fullUrl, $useBaseMaker, $done, 'asc'
+            $fullUrl, $useBaseMaker, 'asc'
         );
     }
 
@@ -270,7 +269,7 @@ trait ContainerTransforms
     ) {
         return $this->toContentArrayPlus(
             $baseUrl, $version, $useTitle, $withTrashed,
-            $fullUrl, true, true, 'asc'
+            $fullUrl, true, 'asc'
         );
     }
 
@@ -299,7 +298,7 @@ trait ContainerTransforms
             $arrays, $baseUrl, 
             TransformableContainer::TO_CONTENT_ARRAY_TRANSFORM,
             $useTitle, $version, $withTrashed, $fullUrl, $default,
-            $useBaseMaker, true, $dir
+            $useBaseMaker, $dir
         );
     }
 
@@ -386,7 +385,8 @@ trait ContainerTransforms
     }
 
     static public function makeDefaultBaseContentIterArray(
-        array $value = null, array $children = null, bool $done = true
+        array $value = null, array $children = null, 
+        bool $done = false
     ) {
         return [
             'value' => $value,
@@ -489,11 +489,10 @@ trait ContainerTransforms
         int $version = 1, int $totalNum = 0, $default = []
     ) {
         if ($this->hasChildren()) {
-            $done = self::getIfDoneIterating($transform);
             $children = $this->getChildren(
                 $transform, $withTrashed, $dir, $baseUrl,
                 $useTitle, $fullUrl, $version, $default, 
-                $useBaseMaker, $done
+                $useBaseMaker
             );
             return self::getPaginatedItemsArray(
                 $children, $pageNum, $numItemsPerPage, 
@@ -514,7 +513,7 @@ trait ContainerTransforms
         array $otherImages = null
     ) {
         $url = self::genUrlFragment($baseUrl, $fullUrl);
-        $usePagingFor = $pagingFor ? true : false;
+        $usePagingFor = !empty($pagingFor) ? true : false;
         $dates = Functions::genDefaultDates(true);
         if (Functions::countHas($children) 
             && Functions::countHas($paginator)
@@ -526,8 +525,7 @@ trait ContainerTransforms
                 $paginator['numItemsPerPage'], $children, 
                 $paginator, $dates, 
                 $otherImages, true, $usePagingFor, 
-                $paginator['viewNumber'] ?? 0, 
-                $pagingFor
+                $paginator['viewNumber'], $pagingFor
             );
         } else {
             return self::makeBaseContentArray(
@@ -541,18 +539,16 @@ trait ContainerTransforms
     static public function getSelfWithPagination(
         int $pageNumber, int $numPerPage = 4,  int $numView = 0, 
         string $baseUrl = 'store', string $listUrl = '', 
-        bool $fullUrl = false,
-        bool $withTrashed = true, bool $useBaseMaker = true,
-        $default = [], string $dir = 'asc', 
-        string $pagingFor = '', bool $useTitle = true, 
-        int $version = 1
+        bool $fullUrl = false,bool $withTrashed = true, 
+        bool $useBaseMaker = true, $default = [], 
+        string $dir = 'asc', string $pagingFor = '', 
+        bool $useTitle = true, int $version = 1
     ) {
         $itemsArray = self::getAllWithPagination(
             self::TO_URL_LIST_TRANSFORM, $pageNumber, 
             $numPerPage, $pagingFor, $dir, $withTrashed, 
             $baseUrl, $listUrl, $numView, $fullUrl, 
-            $useTitle, $version, $default, $useBaseMaker, 
-            false
+            $useTitle, $version, $default, $useBaseMaker
         );
         $children = Functions::countHas($itemsArray) 
             ? $itemsArray['items'] : null;
@@ -643,17 +639,33 @@ trait ContainerTransforms
         return null;
     }
 
+    static public function getAllFor(
+        $arg, string $dir = 'asc', 
+        bool $withTrashed = true,
+        $orderingBy = null
+    ) {
+        $tmp = self::getOrderedByFor(
+            $arg, $dir, $withTrashed,
+            $orderingBy
+        );
+        if (Functions::testVar($tmp) && count($tmp) > 0) {
+            return $tmp->all();
+        }
+        return null;
+    }
+
     static public function getAllWithTransform(
         $transform = null, string $dir = 'asc', 
         bool $withTrashed = true, string $baseUrl = 'store', 
         bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1
+        int $version = 1, $default = [], 
+        bool $useBaseMaker = true
     ) {
         $tmp = self::getOrdered($dir, $withTrashed);
         return self::getFor(
             $tmp, $baseUrl, $transform,
             $useTitle, $version, $withTrashed, 
-            $fullUrl
+            $fullUrl, $default, $useBaseMaker, $dir
         );
     }
 
@@ -932,8 +944,7 @@ trait ContainerTransforms
         bool $withTrashed = true, string $baseUrl = 'store', 
         string $listUrl = '', int $viewNumber = 0, 
         bool $fullUrl = false, bool $useTitle = true, 
-        int $version = 1, $default = [], bool $useBaseMaker = true,
-        bool $done = true
+        int $version = 1, $default = [], bool $useBaseMaker = true
     ) {
         $totalNum = self::getCount($withTrashed);
         $pageIdx = self::genFirstAndLastItemsIdxes( 
@@ -946,8 +957,7 @@ trait ContainerTransforms
             $tmp1 = self::getFor(
                 $tmp, $baseUrl, $transform,
                 $useTitle, $version, $withTrashed, $fullUrl,
-                $default, $useBaseMaker, 
-                self::getIfDoneIterating($transform), $dir
+                $default, $useBaseMaker, $dir
             );
             if (Functions::testVar($tmp1) && Functions::countHas($tmp1)) {
                 return self::getPaginatedItemsArray(
@@ -972,7 +982,7 @@ trait ContainerTransforms
         bool $useTitle = true, int $version = 1, 
         bool $withTrashed = true, bool $fullUrl = false, 
         $default = null, bool $useBaseMaker = true,
-        bool $done = true, string $dir = 'asc'
+        string $dir = 'asc'
     ) {
         if (self::isTransformable($item)) {
             if (is_string($transform) && !empty($transform)) {
@@ -989,7 +999,7 @@ trait ContainerTransforms
                     return $item->toContentArrayPlus(
                         $baseUrl, $version, $useTitle, 
                         $withTrashed, $fullUrl, $useBaseMaker, 
-                        self::getIfDoneIterating($transform), $dir
+                        $dir
                     );
                 case 'name':
                     return $item->toNameListing($useBaseMaker);
@@ -1016,7 +1026,7 @@ trait ContainerTransforms
         bool $useTitle = true, int $version = 1, 
         bool $withTrashed = true, bool $fullUrl = false, 
         $default = [], bool $useBaseMaker = true,
-        bool $done = true, string $dir = 'asc'
+        string $dir = 'asc'
     ) {
         if (Functions::countHas($args)) {
             if (empty($transform)) {
@@ -1027,8 +1037,7 @@ trait ContainerTransforms
                     $tmp = self::doTransform(
                         $item, $transform, $baseUrl, $useTitle,
                         $version, $withTrashed, $fullUrl, null,
-                        $useBaseMaker, 
-                        self::getIfDoneIterating($transform), $dir
+                        $useBaseMaker, $dir
                     );
                     if (Functions::testVar($tmp)) {
                         $res[] = $tmp;
@@ -1057,7 +1066,7 @@ trait ContainerTransforms
         string $dir = 'asc', int $viewNumber = 0, 
         bool $withTrashed = true, bool $useTitle = true, 
         bool $fullUrl = false, int $version = 1, $default = [], 
-        bool $useBaseMaker = true, bool $done = false
+        bool $useBaseMaker = true
     ) {
         $cTmp = count($args);
         if ($cTmp <= $numShown) {
@@ -1077,7 +1086,7 @@ trait ContainerTransforms
         $tmp = self::getFor(
             $argTmp, $baseUrl, $transform, $useTitle, $version,
             $withTrashed, $fullUrl, $default, $useBaseMaker, 
-            self::getIfDoneIterating($transform), $dir
+            $dir
         );
         if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
             return self::getPaginatedItemsArray(
