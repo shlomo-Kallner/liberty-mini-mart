@@ -83,6 +83,8 @@ interface TransformableContainer extends ContainerAPI
         int $version = 1, int $totalNum = 0, $default = []
     );
 
+    static public function getChildrenOrderByKey();
+
     /// transforms...
 
     public function toFull(
@@ -328,7 +330,7 @@ trait ContainerTransforms
         if ($this->hasChildren()) {
             $children = self::getOrderedFor(
                 $this->getChildrenQuery(), $dir, 
-                $withTrashed, $orderingBy
+                $withTrashed, self::getChildrenOrderByKey()
             );
             return self::getChildrenFor(
                 $children, $baseUrl, $transform, $useTitle, 
@@ -356,7 +358,7 @@ trait ContainerTransforms
             );
             $query = self::getOrderedByFor(
                 $this->getChildrenQuery(), $dir, 
-                $withTrashed
+                $withTrashed, self::getChildrenOrderByKey()
             );
             if (Functions::testVar($query)) {
                 $tmp = $query->offset($pageIdx['begin'])
@@ -377,6 +379,11 @@ trait ContainerTransforms
             }
         } 
         return $default;
+    }
+
+    static public function getChildrenOrderByKey()
+    {
+        return 'url'; // or 'id' ...?
     }
 
     /// end of defaults.. 

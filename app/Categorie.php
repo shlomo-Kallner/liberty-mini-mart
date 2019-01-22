@@ -98,6 +98,11 @@ class Categorie extends Model implements TransformableContainer
         return 'section_id';
     }
 
+    static public function getChildrenOrderByKey()
+    {
+        return Product::getOrderByKey();
+    }
+
     public function getChildrenQuery()
     {
         return $this->products();
