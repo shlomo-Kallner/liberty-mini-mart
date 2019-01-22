@@ -310,16 +310,17 @@ class Categorie extends Model implements TransformableContainer
         return true;
     }
 
-    public function getChildren(
-        $transform = null, bool $withTrashed = true, 
-        string $dir = 'asc', string $baseUrl = 'store',
-        bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = [], bool $useBaseMaker = true
+    static public function getChildrenFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
     ) {
-        return $this->getProducts(
-            $transform, $withTrashed, $dir, $baseUrl,
-            $useTitle, $fullUrl, $version, $default,
-            $useBaseMaker
+        return Product::getFor(
+            $args, $baseUrl, $transform, $useTitle,
+            $version, $withTrashed, $fullUrl, $default,
+            $useBaseMaker, $dir
         );
     }
 

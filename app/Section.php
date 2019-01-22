@@ -64,6 +64,7 @@ class Section extends Model implements TransformableContainer
             : $this->categories()->where('url', $url)->first();
     }
 
+    /// probably unnecessary..
     public function getCategories(
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
@@ -99,6 +100,21 @@ class Section extends Model implements TransformableContainer
             : $this->categories()->count();
     }
 
+    static public function getChildrenFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
+    ) {
+        return Categorie::getFor(
+            $args, $baseUrl, $transform, $useTitle,
+            $version, $withTrashed, $fullUrl, $default, 
+            $useBaseMaker, $done, $dir
+        );
+    }
+
+    /// probably unnecessary..
     public function getChildren(
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
@@ -114,6 +130,7 @@ class Section extends Model implements TransformableContainer
         );
     }
 
+    /// probably unnecessary..
     public function getChildrenWithPagination(
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
@@ -133,6 +150,7 @@ class Section extends Model implements TransformableContainer
         );
     }
 
+    /// probably unnecessary..
     public function getCategoriesWithPagination(
         $transform = null, int $pageNum = 1,
         int $numShown = 4, bool $withTrashed = true, 

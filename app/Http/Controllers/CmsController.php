@@ -48,7 +48,7 @@ class CmsController extends MainController
                 $sectPagingFor, $sectDir, 
                 $sectWithTrashed, $sectBaseUrl,
                 $request->path(), $sectViewNum, 
-                false, true, 1
+                true, true, 1, [], true
             );
         } elseif (false) {
             $sections = Section::getSelfWithPagination(
@@ -84,6 +84,8 @@ class CmsController extends MainController
                 $userPn, true, true, $userVn, $request->path(), 
                 $userBaseUrl, true, false
             );
+        } elseif () {
+            $users = User::getSelfWithPagination();
         } else {
             $users = [
                 'items' => [],

@@ -405,14 +405,15 @@ class Product extends Model implements TransformableContainer
         /// it's a WISHLIST ITEM!
     }
 
-    public function getChildren(
-        $transform = null, bool $withTrashed = true, 
-        string $dir = 'asc', string $baseUrl = 'store',
-        bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = [], bool $useBaseMaker = true,
-        bool $done = true
+    static public function getChildrenFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
     ) {
-        return [];
+        return $default; /// eventually we will use reviews as above...
+        /// it's a WISHLIST ITEM!
     }
 
     static public function getSelf(

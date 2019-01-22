@@ -31,13 +31,12 @@ interface TransformableContainer extends ContainerAPI
         string $dir = 'asc'
     );
 
-    public function numChildren(bool $withTrashed = true);
-
-    public function getChildren(
-        $transform = null, bool $withTrashed = true, 
-        string $dir = 'asc', string $baseUrl = 'store',
-        bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = [], bool $useBaseMaker = true
+    static public function getChildrenFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
     );
 
     static public function getSelf(
@@ -46,11 +45,33 @@ interface TransformableContainer extends ContainerAPI
         $paginator = null, string $pagingFor = ''
     );
 
+    /**
+     * Function getChildrenQuery() - Returns the Eloquent Query Builder
+     *                               that returns queries into the 
+     *                               _children_ of a _using_ Model.
+     *                             - While this method has a default 
+     *                               in the trait below, it should be 
+     *                               overiden by the _using_ Model if it
+     *                               indeed has some _children_ to supply..
+     *                             - Should return an Eloquent query-able object..
+     *                             - The Default returns _null_..
+     *
+     * @return \Illuminate\Database\Query\Builder|null
+     */
+    public function getChildrenQuery();
+
     /// all of these below have defaults defined in the Trait below.
+
+    public function numChildren(bool $withTrashed = true);
 
     public function hasChildren(bool $withTrashed = true);
 
-    public function getChildrenQuery();
+    public function getChildren(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = [], bool $useBaseMaker = true
+    );
 
     public function getChildrenWithPagination(
         $transform = null, bool $withTrashed = true, 
@@ -273,6 +294,23 @@ trait ContainerTransforms
         );
     }
 
+    public function getChildrenQuery()
+    {
+        return null;
+    }
+
+    public function numChildren(bool $withTrashed = true)
+    {
+        $query = $this->getChildrenQuery();
+        if (Functions::testVar($query)) {
+            return $withTrashed 
+                ? $this->getChildrenQuery()->withTrashed()->count()
+                : $this->getChildrenQuery()->count();
+        } else {
+            return 0;
+        }
+    }
+
     public function hasChildren(bool $withTrashed = true)
     {
         $num = $this->numChildren($withTrashed);
@@ -281,9 +319,64 @@ trait ContainerTransforms
         : Functions::countHas($num);
     }
 
-    public function getChildrenQuery()
-    {
-        return null;
+    public function getChildren(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, $default = [], bool $useBaseMaker = true
+    ) {
+        if ($this->hasChildren()) {
+            $children = self::getOrderedFor(
+                $this->getChildrenQuery(), $dir, 
+                $withTrashed, $orderingBy
+            );
+            return self::getChildrenFor(
+                $children, $baseUrl, $transform, $useTitle, 
+                $version, $withTrashed, $fullUrl, 
+                $default, $useBaseMaker, $dir
+            );
+        } else {
+            return $default;
+        }
+    }
+
+    public function getChildrenWithPagination(
+        $transform = null, bool $withTrashed = true, 
+        string $dir = 'asc', string $baseUrl = 'store',
+        bool $useBaseMaker = true, int $pageNum = 0, 
+        int $numItemsPerPage = 4, string $listUrl = '#', 
+        string $pagingFor = '', int $viewNumber = 0, 
+        bool $fullUrl = false, bool $useTitle = true,
+        int $version = 1, int $totalNum = 0, $default = []
+    ) {
+        if ($this->hasChildren()) {
+            $totalNum = $this->numChildren($withTrashed);
+            $pageIdx = self::genFirstAndLastItemsIdxes( 
+                $totalNum, $pageNum, $numItemsPerPage
+            );
+            $query = self::getOrderedByFor(
+                $this->getChildrenQuery(), $dir, 
+                $withTrashed
+            );
+            if (Functions::testVar($query)) {
+                $tmp = $query->offset($pageIdx['begin'])
+                    ->limit($numItemsPerPage)
+                    ->get();
+                if (Functions::countHas($tmp)) {
+                    $children = self::getChildrenFor(
+                        $tmp, $baseUrl, $transform, $useTitle, 
+                        $version, $withTrashed, $fullUrl, 
+                        $default, $useBaseMaker, $dir
+                    );
+                    return self::getPaginatedItemsArray(
+                        $children, $pageNum, $numItemsPerPage, 
+                        $pagingFor, $listUrl, $viewNumber, 
+                        $totalNum
+                    );
+                }
+            }
+        } 
+        return $default;
     }
 
     /// end of defaults.. 
@@ -477,31 +570,6 @@ trait ContainerTransforms
             $transform === self::TO_CONTENT_ARRAY_TRANSFORM ||
             $transform === self::TO_CONTENT_ARRAY_PLUS_TRANSFORM ||
             (is_bool($transform) && $transform);
-    }
-
-    public function getChildrenWithPagination(
-        $transform = null, bool $withTrashed = true, 
-        string $dir = 'asc', string $baseUrl = 'store',
-        bool $useBaseMaker = true, int $pageNum = 0, 
-        int $numItemsPerPage = 4, string $listUrl = '#', 
-        string $pagingFor = '', int $viewNumber = 0, 
-        bool $fullUrl = false, bool $useTitle = true,
-        int $version = 1, int $totalNum = 0, $default = []
-    ) {
-        if ($this->hasChildren()) {
-            $children = $this->getChildren(
-                $transform, $withTrashed, $dir, $baseUrl,
-                $useTitle, $fullUrl, $version, $default, 
-                $useBaseMaker
-            );
-            return self::getPaginatedItemsArray(
-                $children, $pageNum, $numItemsPerPage, 
-                $pagingFor, $listUrl, $viewNumber, 
-                $totalNum
-            );
-        } else {
-            return $default;
-        }
     }
 
     static public function makeSelf(
