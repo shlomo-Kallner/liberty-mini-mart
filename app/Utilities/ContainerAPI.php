@@ -57,7 +57,7 @@ trait ContainerID
         return Functions::testVar(self::getFromId($id, $withTrashed));
     }
 
-    // final-ed because it just uses getFor()..
+    // final-ed because it just uses getFrom()..
     final static public function exists($item, bool $withTrashed = true)
     {
         return Functions::testVar(self::getFrom($item, $withTrashed));

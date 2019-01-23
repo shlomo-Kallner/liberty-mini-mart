@@ -3,13 +3,29 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\User;
+use App\User,
+    App\Product,
+    App\Image;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use App\Utilities\Functions\Functions;
+use App\Utilities\Functions\Functions,
+    App\Utilities\ContainerTransforms,
+    App\Utilities\TransformableContainer,
+    Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProductReview extends Model
+class ProductReview extends Model implements TransformableContainer
 {
+    use SoftDeletes, ContainerTransforms {
+        ContainerTransforms::getFrom as private traitGetFrom;
+    }
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+
     static public function createNew(
         $user, int $product_id, int $rating, string $content,
         bool $retObj = false
@@ -21,7 +37,7 @@ class ProductReview extends Model
             $tmp->user_id = $user_id;
             $tmp->content = Functions::purifyContent($content);
             $tmp->rating = $rating;
-            if($tmp->save()) {
+            if ($tmp->save()) {
                 return $retObj ? $tmp : $tmp->id;
             }
         }
@@ -39,11 +55,7 @@ class ProductReview extends Model
 
     static public function getFrom($id, bool $withTrashed = true)
     {
-        if (is_int($id)) {
-            return $withTrashed
-                ? self::withTrashed()->where('id', $id)->first()
-                : self::where('id', $id)->first();
-        } elseif (is_array($id)) {
+        if (is_array($id) && Functions::countHas($id)) {
             $where = [];
             if (Functions::hasPropKeyIn($id, 'user')) {
                 $where[] = [
@@ -52,33 +64,24 @@ class ProductReview extends Model
             }
             if (Functions::hasPropKeyIn($id, 'rating')) {
                 $where[] = [
-                    'rating', '=', Functions::getPropKey($id, 'user')
+                    'rating', '=', Functions::getPropKey($id, 'rating')
                 ];
             }
-            return $withTrashed
+            if (Functions::hasPropKeyIn($id, 'product')) {
+                $where[] = [
+                    'product_id', '=', Functions::getPropKey($id, 'product')
+                ];
+            }
+            if (Functions::countHas($where)) {
+                return $withTrashed
                 ? self::withTrashed()->where($where)->get()
                 : self::where($where)->get();
-        } else {
-            return null;
-        }
+            }
+        } 
+        return self::traitGetFrom($id, $withTrashed);
     }
 
-    static public function getFromId($id, bool $withTrashed = true) 
-    {
-        return self::getFrom($id, $withTrashed);
-    }
-
-    static public function exists($id, bool $withTrashed = true)
-    {
-        return Functions::testVar(self::getFrom($id, $withTrashed));
-    }
-
-    static public function existsId($id, bool $withTrashed = true)
-    {
-        return self::exists($id, $withTrashed);
-    }
-
-    static public function makeContentArray(
+    static public function makeOldContentArray(
         string $content, int $rating, $date = null,
         string $author = '', int $id = 0, bool $useFormattedDate = true
     ) {
@@ -108,20 +111,18 @@ class ProductReview extends Model
         ];
     }
     
-    public function toContentArray(bool $useFormattedDate = true)
+    public function toOldContentArray(bool $useFormattedDate = true)
     {
         $date = $this->created_at >= $this->updated_at 
         ? $this->created_at : $this->updated_at;
-        $name = User::existsId($this->user_id) 
-        ? User::getFromId($this->user_id)->name
-        : '';
-        return self::makeContentArray(
+        $name = $this->user->name;
+        return self::makeOldContentArray(
             $this->content, $this->rating, 
             $date, $name, $this->id, $useFormattedDate
         );
     }
 
-    static function getContentArrays(
+    static public function getContentArrays(
         $arrays, bool $useFormattedDate = true, $default = []
     ) {
         $res = $default;
@@ -130,10 +131,84 @@ class ProductReview extends Model
         ) {
             foreach ($arrays as $val) {
                 if (Functions::testVar($val) && $val instanceof self) {
-                    $res[] = $val->toContentArray($useFormattedDate);
+                    $res[] = $val->toOldContentArray($useFormattedDate);
                 }
             }
         }
         return $res;
     }
+
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
+    {
+        $url = empty($baseUrl) ? 'review/' : $baseUrl . '/review/';
+        return $fullUrl ? url($url) : $url;
+    }
+
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
+    {
+        return $this->product->getFullUrl($baseUrl, $fullUrl);
+    }
+
+    public function getImageArray()
+    {
+        return $this->user->getImageArray();
+    }
+
+    public function toContentArrayPlus(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false, bool $useBaseMaker = true,
+        string $dir = 'asc'
+    ) {
+        if ($useBaseMaker) {
+            $name = $this->product->name;
+            $content = self::makeBaseContentArray(
+                $name, $this->getFullUrl($baseUrl, $fullUrl), 
+                $this->getImageArray(), null, 
+                'Review of ' . $name . ' by ' . $this->user->name, 
+                $this->getDatesArray(), 
+                null, [], false, true, ''
+            );
+            $content['value']['id'] = $this->id;
+            $content['value']['rating'] = $this->rating;
+            $content['value']['content'] = $this->content;
+            return $content;
+        } else {
+            return $this->toOldContentArray();
+        }
+    }
+
+    static public function getChildrenFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
+    );
+
+    static public function getSelf(
+        string $baseUrl = 'store', bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = ''
+    ) {
+        $str = 'A Product Review';
+        return Image::createImageArray(
+            'experience-3239623_640.jpg', $str, 
+            'images/site', $str, 0
+        );
+    }
+
+    /// Eloquent relationships..
+
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'user_id')->withDefault();
+    }
+
+    public function product()
+    {
+        return $this->belongsTo('App\Product', 'product_id')->withDefault();
+    }
+
+    /// end of the Eloquent Relationship methods.
 }

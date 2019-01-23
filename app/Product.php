@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Model,
     App\Image,
     App\ProductImage,
     App\Article,
-    App\Categorie;
+    App\Categorie,
+    App\ProductReview;
 use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -384,25 +385,19 @@ class Product extends Model implements TransformableContainer
                 'created' => $this->created_at,
                 'updated' => $this->updated_at,
                 'deleted' => $this->deleted_at,
-            ], $this->id, $api, ProductReview::getContentArrays($this->reviews),
+            ], $this->id, $api, 
+            ProductReview::getContentArrays(
+                $this->reviews, $baseUrl, [], $version, 
+                $useTitle, $withTrashed, $fullUrl, 
+                $useBaseMaker, $dir
+            ),
             $this->availablity, $this->getPayload(), $useBaseMaker
         );
-    }
-
-    public function hasChildren(bool $withTrashed = true) 
-    {
-        return false;
     }
 
     public function getChildrenQuery()
     {
         return $this->reviews();
-    }
-
-    public function numChildren(bool $withTrashed = true)
-    {
-        return 0; /// eventually we will use reviews as above...
-        /// it's a WISHLIST ITEM!
     }
 
     static public function getChildrenFor(
@@ -412,8 +407,11 @@ class Product extends Model implements TransformableContainer
         $default = [], bool $useBaseMaker = true,
         string $dir = 'asc'
     ) {
-        return $default; /// eventually we will use reviews as above...
-        /// it's a WISHLIST ITEM!
+        return ProductReview::getFor(
+            $tmp, $baseUrl, $transform, $useTitle,
+            $version, $withTrashed, $fullUrl, $default,
+            $useBaseMaker, $dir
+        );
     }
 
     static public function getSelf(

@@ -428,6 +428,11 @@ class User extends Model implements TransformableContainer, ContainerAPI
         );
     }
 
+    public function reviews()
+    {
+        return $this->hasMany('App\ProductReview', 'user_id', 'id');
+    }
+
     static public function getSelf(
         string $baseUrl = 'store', bool $withTrashed = true,
         bool $fullUrl = false, $children = [], 
