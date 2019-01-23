@@ -194,6 +194,8 @@ trait ContainerTransforms
         : self::count();
     }
 
+    /// transforms...
+
     public function toUrlListing(
         string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
     ) {
@@ -295,6 +297,8 @@ trait ContainerTransforms
             $fullUrl, true, 'asc'
         );
     }
+
+    /// end of transforms.
 
     public function getChildrenQuery()
     {
@@ -454,7 +458,8 @@ trait ContainerTransforms
 
     /**
      * Function makeTableArray() - OBSOLETE and DEPRECATED method! 
-     *                        DO NOT USE!
+     *                             DO NOT USE!
+     * 
      * @deprecated any
      *
      * @param string $name
@@ -479,7 +484,7 @@ trait ContainerTransforms
             'title' => $title,
             'url' => $url,
             'description' => $description,
-            'dates' => $dates??[],
+            'dates' => $dates,
             'sticker' => $sticker,
         ];
     }
@@ -571,14 +576,6 @@ trait ContainerTransforms
         return $content;
     }
 
-    static public function getIfDoneIterating($transform)
-    {
-        return $transform === self::TO_FULL_TRANSFORM ||
-            $transform === self::TO_CONTENT_ARRAY_TRANSFORM ||
-            $transform === self::TO_CONTENT_ARRAY_PLUS_TRANSFORM ||
-            (is_bool($transform) && $transform);
-    }
-
     static public function makeSelf(
         string $name, string $title, $article = [],
         $img = [], string $baseUrl = 'store', 
@@ -609,6 +606,14 @@ trait ContainerTransforms
                 true, ''
             );
         }
+    }
+
+    static public function getIfDoneIterating($transform)
+    {
+        return $transform === self::TO_FULL_TRANSFORM ||
+            $transform === self::TO_CONTENT_ARRAY_TRANSFORM ||
+            $transform === self::TO_CONTENT_ARRAY_PLUS_TRANSFORM ||
+            (is_bool($transform) && $transform);
     }
 
     static public function getSelfWithPagination(

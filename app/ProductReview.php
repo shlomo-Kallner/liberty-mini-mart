@@ -122,7 +122,7 @@ class ProductReview extends Model implements TransformableContainer
         );
     }
 
-    static public function getContentArrays(
+    static public function getOldContentArrays(
         $arrays, bool $useFormattedDate = true, $default = []
     ) {
         $res = $default;
@@ -144,6 +144,32 @@ class ProductReview extends Model implements TransformableContainer
         return $fullUrl ? url($url) : $url;
     }
 
+    static public function getOrderByKey()
+    {
+        return 'rating';
+    }
+
+    static public function getNamedByKey()
+    {
+        return 'id';
+    }
+
+    static public function getUrlByKey()
+    {
+        return 'id';
+    }
+
+    public function getUrl()
+    {
+        return $this->id;
+    }
+
+    public function getPubName()
+    {
+        return 'Review of Product ' . $this->product->name 
+        . ' by User ' . $this->user->name;
+    }
+
     public function getParentUrl(string $baseUrl, bool $fullUrl = false)
     {
         return $this->product->getFullUrl($baseUrl, $fullUrl);
@@ -161,12 +187,11 @@ class ProductReview extends Model implements TransformableContainer
         string $dir = 'asc'
     ) {
         if ($useBaseMaker) {
-            $name = $this->product->name;
+            $name = $this->getPubName();
             $content = self::makeBaseContentArray(
                 $name, $this->getFullUrl($baseUrl, $fullUrl), 
                 $this->getImageArray(), null, 
-                'Review of ' . $name . ' by ' . $this->user->name, 
-                $this->getDatesArray(), 
+                $name, $this->getDatesArray(), 
                 null, [], false, true, ''
             );
             $content['value']['id'] = $this->id;
@@ -184,17 +209,27 @@ class ProductReview extends Model implements TransformableContainer
         bool $withTrashed = true, bool $fullUrl = false, 
         $default = [], bool $useBaseMaker = true,
         string $dir = 'asc'
-    );
+    ) {
+        return $default;
+    }
 
     static public function getSelf(
         string $baseUrl = 'store', bool $withTrashed = true,
         bool $fullUrl = false, $children = [], 
         $paginator = null, string $pagingFor = ''
     ) {
-        $str = 'A Product Review';
-        return Image::createImageArray(
+        $title = $name = 'A Product Review';
+        $article = [];
+        $img = Image::createImageArray(
             'experience-3239623_640.jpg', $str, 
             'images/site', $str, 0
+        );
+        $pagingFor = $pagingFor ?: 'reviewsPanel';
+        return self::makeSelf(
+            $name, $title, $article,
+            $img, $baseUrl, $withTrashed,
+            $fullUrl, $children, $paginator,
+            $pagingFor, null
         );
     }
 
