@@ -18,18 +18,10 @@ use Illuminate\Database\Eloquent\Model,
     App\PageGrouping,
     App\User,
     Session;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Page extends Model implements TransformableContainer, ContainerAPI
+class Page extends Model implements TransformableContainer
 {
-    use SoftDeletes, ContainerTransforms, ContainerID, LinkGenerator;
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
+    use ContainerTransforms, LinkGenerator;
 
     ///
 

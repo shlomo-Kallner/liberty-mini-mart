@@ -14,64 +14,56 @@ use Illuminate\Database\Eloquent\Model,
     App\Categorie,
     App\ProductReview;
 use DB;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model implements TransformableContainer
 {
-    use SoftDeletes, ContainerTransforms;
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
-
+    use ContainerTransforms;
 
     static public function createNew(
         string $name, string $url, float $price, 
-        float $sale, int $category_id, string $sticker,
+        float $sale, $category, string $sticker,
         $image, string $description,
         string $title, $article, $payload = null,
         int $availablity = 0, bool $retObj = false
     ) {
-        $tmp = self::withTrashed()
-            ->where(
-                [
-                    ['name', '=', $name],
-                    ['category_id', '=', $category_id],
-                ]
-            )->orWhere(
-                [
-                    ['url', '=', $url],
-                    ['category_id', '=', $category_id],
-                ]
-            )->get();
-        if ((!Functions::testVar($tmp) || count($tmp) === 0)
-            && Categorie::existsId($category_id)
-        ) {
-            $tImg = Image::getImageToID($image);
-            $tArt = Article::getToId($article);
-            if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
-                $data = new self;
-                $data->name = $name;
-                $data->image_id = $tImg;
-                $data->title = Functions::purifyContent($title);
-                $data->article_id = $tArt;
-                $data->url = $url;
-                $data->category_id = $category_id;
-                $data->price = $price;
-                $data->sale = $sale;
-                $data->sticker = $sticker;
-                $data->availablity = $availablity;
-                $data->description = Functions::purifyContent($description);
-                $cnTmp = base64_encode(serialize(Functions::getVar($payload, [])));
-                $data->payload = $cnTmp;
-                $data->verihash = Hash::make($cnTmp);
-                if ($data->save()) {
-                    $pi = ProductImage::createNewFrom($data);
-                    if (Functions::testVar($pi)) {
-                        return $retObj ? $data : $data->id;
+        $category_id = Categorie::getIdFrom($category, false, null);
+        if (Functions::testVar($category_id)) {
+            $tmp = self::withTrashed()
+                ->where(
+                    [
+                        ['name', '=', $name],
+                        ['category_id', '=', $category_id],
+                    ]
+                )->orWhere(
+                    [
+                        ['url', '=', $url],
+                        ['category_id', '=', $category_id],
+                    ]
+                )->get();
+            if (!Functions::testVar($tmp) || !Functions::countHas($tmp)) {
+                $tImg = Image::getImageToID($image);
+                $tArt = Article::getToId($article);
+                if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
+                    $data = new self;
+                    $data->name = $name;
+                    $data->image_id = $tImg;
+                    $data->title = Functions::purifyContent($title);
+                    $data->article_id = $tArt;
+                    $data->url = $url;
+                    $data->category_id = $category_id;
+                    $data->price = $price;
+                    $data->sale = $sale;
+                    $data->sticker = $sticker;
+                    $data->availablity = $availablity;
+                    $data->description = Functions::purifyContent($description);
+                    $cnTmp = base64_encode(serialize(Functions::getVar($payload, [])));
+                    $data->payload = $cnTmp;
+                    $data->verihash = Hash::make($cnTmp);
+                    if ($data->save()) {
+                        $pi = ProductImage::createNewFrom($data, true);
+                        if (Functions::testVar($pi)) {
+                            return $retObj ? $data : $data->id;
+                        }
                     }
                 }
             }
@@ -121,49 +113,6 @@ class Product extends Model implements TransformableContainer
         return $products;
     }
 
-    static public function getRandomSample(
-        int $numProducts, bool $toArray = false, 
-        string $baseUrl = 'store', 
-        bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, bool $withTrashed = true
-    ) {
-        $numTotal = self::count();
-        $res = [];
-        if ($numProducts < $numTotal) {
-            for ($i = 1; $i <= $numProducts; $i++) {
-                $bol = true;
-                while ($bol) {
-                    $smp = random_int(1, $numTotal);
-                    if (!array_key_exists($smp, $res) 
-                        && Functions::testVar($t = self::getFromId($smp, false))
-                    ) {
-                        $res[$smp] = $toArray 
-                            ? $t->toContentArray(
-                                $baseUrl, $version, $useTitle,
-                                $withTrashed, $fullUrl
-                            ) 
-                            : $t;
-                        $bol = false;
-                    }
-                }
-            }
-        } elseif ($numProducts >= $numTotal) {
-            $rng = Functions::genRange(1, $numTotal);
-            shuffle($rng);
-            foreach ($rng as $idx) {
-                if (Functions::testVar($t = self::getFromId($idx, false))) {
-                    $res[] = $toArray 
-                        ? $t->toContentArray(
-                            $baseUrl, $version, $useTitle,
-                            $withTrashed, $fullUrl
-                        ) 
-                        : $t;
-                }
-            }
-        }
-        return $res;
-    }
-
     static public function genProductGallery(
         $name, array &$products, 
         //array &$cssClasses = [],
@@ -200,15 +149,16 @@ class Product extends Model implements TransformableContainer
         string $owlClass = 'owl-carousel5', 
         string $productClass = 'sale-product', 
         bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, bool $withTrashed = true
+        int $version = 1, bool $withTrashed = true, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
     ) {
-        $products = [];
-        foreach (self::getRandomSample($numProducts) as $np) {
-            $products[] = $np->toMini(
-                $baseUrl, $version, $useTitle, $withTrashed,
-                $fullUrl
-            );
-        }
+        $products = self::getRandomSample(
+            $numProducts, self::TO_MINI_TRANSFORM, 
+            $baseUrl, $useTitle, $fullUrl, $version, 
+            $withTrashed, $default, $useBaseMaker,
+            $dir
+        );
         return self::genProductGallery(
             $name, $products, $baseUrl, $sizeClass, $owlClass, $productClass
         );
@@ -218,16 +168,16 @@ class Product extends Model implements TransformableContainer
     static public function getBestsellers(
         int $numProducts = 3, string $baseUrl = 'store', 
         bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, bool $withTrashed = true
+        int $version = 1, bool $withTrashed = true, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
     ) {
-        $bestsellers = [];
-        foreach (self::getRandomSample($numProducts) as $bs) {
-            $bestsellers[] = $bs->toSidebar(
-                $baseUrl, $version, $useTitle,
-                $withTrashed, $fullUrl
-            );
-        }
-        return $bestsellers;
+        return self::getRandomSample(
+            $numProducts, self::TO_SIDEBAR_TRANSFORM, 
+            $baseUrl, $useTitle, $fullUrl, $version, 
+            $withTrashed, $default, $useBaseMaker,
+            $dir
+        );
     }
 
     static public function getProductsFor(

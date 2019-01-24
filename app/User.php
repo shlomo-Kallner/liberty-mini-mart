@@ -8,11 +8,8 @@ use Illuminate\Database\Eloquent\Model,
     Illuminate\Support\Facades\Hash,
     App\Utilities\Functions\Functions,
     App\Utilities\Permits\Permits,
-    App\Utilities\ContainerID,
-    App\Utilities\ContainerAPI,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Utilities\Permits\Basic;
 use App\UserImage;
 use App\Image, 
@@ -21,18 +18,11 @@ use App\Image,
 use Darryldecode\Cart\Helpers\Helpers;
 use Webpatser\Uuid\Uuid;
 
-class User extends Model implements TransformableContainer, ContainerAPI
+class User extends Model implements TransformableContainer
 {
-    use SoftDeletes, ContainerID, ContainerTransforms {
+    use ContainerTransforms {
         ContainerTransforms::getNamed as private traitGetNamed;
     }
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
     
     static public function getNewUserArray(
         string $agent, string $ip,

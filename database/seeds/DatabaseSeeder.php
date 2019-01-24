@@ -71,7 +71,7 @@ class DatabaseSeeder extends Seeder
     }
 
     static protected function genFakeProduct(
-        $faker, $img = null, $article = null, int $category_id = 1,
+        $faker, $img = null, $article = null, $category = 1,
         float $price = 0.0
     ) {
         $tImg = Functions::getVar($img, self::genFakeImage($faker));
@@ -88,14 +88,14 @@ class DatabaseSeeder extends Seeder
         }
         $tmp = Product::createNew(
             $faker->name, $faker->domainWord, $tPrc, 
-            $tSlp, $category_id, $sticker, $tImg, 
+            $tSlp, $category, $sticker, $tImg, 
             $faker->text(100), $faker->text(40), $tArt
         );
         return Functions::getVar($tmp, null);
     }
 
     static protected function genFakeCategory(
-        $faker, $img = null, $article = null, int $section_id = 1
+        $faker, $img = null, $article = null, $section = 1
     ) {
         $tImg = Functions::getVar($img, self::genFakeImage($faker));
         $tArt = Functions::getVar($article, self::genFakeArticle($faker, $tImg));
@@ -109,20 +109,20 @@ class DatabaseSeeder extends Seeder
         }
         $tmp = Categorie::createNew(
             $faker->name, $faker->domainWord, $faker->text(100), 
-            $faker->text(40), $tArt, $section_id,
+            $faker->text(40), $tArt, $section,
             $tImg, $sticker
         );
         return Functions::getVar($tmp, null);
     }
 
     static protected function genFakeSection(
-        $faker, $img = null, $article = null, int $catalog_id = 1
+        $faker, $img = null, $article = null, $catalog = 1
     ) {
         $tImg = Functions::getVar($img, self::genFakeImage($faker));
         $tArt = Functions::getVar($article, self::genFakeArticle($faker, $tImg));
         $tmp = Section::createNew(
             $faker->name, $faker->domainWord, $faker->text(40), $tArt,
-            $faker->text(100), $tImg, $catalog_id
+            $faker->text(100), $tImg, $catalog
         );
         return Functions::getVar($tmp, null);
     }

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model,
+    Illuminate\Support\Collection,
     App\Utilities\Functions\Functions,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer,
@@ -10,19 +11,10 @@ use Illuminate\Database\Eloquent\Model,
     App\Page,
     App\Image,
     App\SectionImage;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
 
 class Section extends Model implements TransformableContainer
 {
-    use SoftDeletes, ContainerTransforms;
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
+    use ContainerTransforms;
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
     {

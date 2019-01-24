@@ -5,7 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model,
     Illuminate\Database\Eloquent\SoftDeletes,
     App\Utilities\Functions\Functions,
-    App\PageGroup;
+    App\PageGroup,
+    App\Page;
 
 class PageGrouping extends Model
 {
@@ -26,21 +27,14 @@ class PageGrouping extends Model
     protected $dates = ['deleted_at'];
 
     static public function createNew(
-        int $group, int $page, int $order, 
+        $group, $page, int $order, 
         bool $retObj = false
     ) {
-        if ($page > 0) {
-            if ($group < 1) {
-                $tgi = PageGroup::getRandId(); //self::max('group_id') + 1;
-            } else {
-                $tgi = $group;
-            } 
-            if (!Functions::testVar($gr = PageGroup::getFrom($tgi)) && $tgi === 1) {
-                $gr = PageGroup::createNew('Pages');
-            }
-            if (Functions::testVar($gr)) {
-                $group_id = $gr->id;
-            }
+        $page_id = Page::getIdFrom($page, false, null);
+        $group_id = PageGroup::getIdFrom(
+            $group, false, PageGroup::getRandId('Pages')
+        );
+        if (Functions::testVar($page_id) && Functions::testVar($group_id)) {
             if ($order < 1) {
                 $order_num = self::getRandOrder($group_id);
                 if ($order_num > 1) {
@@ -53,16 +47,16 @@ class PageGrouping extends Model
             $tg = self::where(
                 [
                     ['group_id', '=', $group_id],
-                    ['page_id', '=', $page],
+                    ['page_id', '=', $page_id],
                     ['order', '=', $order_num]
                 ]
             )->get();
             //dd($tg, "mySecond");
-            if (!Functions::testVar($tg) || count($tg) === 0) {
+            if (!Functions::testVar($tg) || !Functions::countHas($tg)) {
                 $tmp = new self;
                 //dd($tmp, "myThird");
                 $tmp->group_id = $group_id;
-                $tmp->page_id = $page;
+                $tmp->page_id = $page_id;
                 $tmp->order = $order_num;
                 //dd($tmp, "myFourth");
                 if ($tmp->save()) {
@@ -88,9 +82,9 @@ class PageGrouping extends Model
 
     static public function reorderAround(
         int $group, int $page, int $order,
-        int $pgId = -1
+        int $pgId = -1, bool $withTrashed = false
     ) {
-        $tg = self::getGroup($group);
+        $tg = self::getGroup($group, $withTrashed);
         $bol = true;
         if (Functions::testVar($tg)) {
             if (count($tg) !== 0) {
@@ -116,35 +110,44 @@ class PageGrouping extends Model
         return $bol;
     }
 
-    static public function getRandOrder(int $group)
+    static public function getRandOrder(int $group_id, bool $withTrashed = false)
     {
-        $m = self::where('group_id', $group)->max('order');
+        $m = $withTrashed
+            ? self::withTrashed()->where('group_id', $group_id)->max('order')
+            : self::where('group_id', $group_id)->max('order');
         return Functions::testVar($m) && $m > 1 ? random_int(1, $m) : 1;
     }
 
-    static public function getGroup($group, string $dir = 'asc')
+    static public function getGroup($group, string $dir = 'asc', bool $withTrashed = false)
     {
-        $group_id = PageGroup::getIdFrom($group);
-        return self::where('group_id', $group_id)
-            ->orderBy('order', $dir)
-            ->get();
+        $group_id = PageGroup::getIdFrom($group, false, null);
+        if (Functions::testVar($group_id)) {
+            return self::where('group_id', $group_id)
+                ->orderBy('order', $dir)
+                ->get();
+        }
+        return null;
     }
 
-    static public function getGroups(string $dir = 'asc')
+    static public function getGroups(string $dir = 'asc', bool $withTrashed = false)
     {
         return self::orderBy('group_id', $dir)->get();
     }
 
-    static public function getOrderForPage(int $page, int $group)
+    static public function getOrderForPage($page, $group, bool $withTrashed = false)
     {
-        $tmp = self::where(
-            [
-                ['page_id', '=', $page],
-                ['group_id', '=', $group]
-            ]
-        )->get();
-        if (Functions::testVar($tmp) && count($tmp) === 1) {
-            return $tmp[0]->order;
+        $page_id = Page::getIdFrom($page, false, null);
+        $group_id = PageGroup::getIdFrom($group, false, null);
+        if (Functions::testVar($page_id) && Functions::testVar($group_id)) {
+            $tmp = self::where(
+                [
+                    ['page_id', '=', $page_id],
+                    ['group_id', '=', $group_id]
+                ]
+            )->get();
+            if (Functions::testVar($tmp) && count($tmp) === 1) {
+                return $tmp[0]->order;
+            }
         }
         return null;
     }

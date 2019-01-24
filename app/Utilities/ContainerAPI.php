@@ -2,7 +2,8 @@
 
 namespace App\Utilities;
 
-use App\Utilities\Functions\Functions;
+use App\Utilities\Functions\Functions, 
+    Illuminate\Database\Eloquent\SoftDeletes;
 
 interface ContainerAPI
 {
@@ -36,6 +37,8 @@ interface ContainerAPI
 
     public function getFullUrl(string $baseUrl, bool $fullUrl = false);
 
+    public function getDatesArray();
+
     public function getPubId();
 
     public function getPubName();
@@ -43,6 +46,15 @@ interface ContainerAPI
 
 trait ContainerID 
 {
+    use SoftDeletes;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+
     /// some trait defined final-ed methods:
 
     final static public function getFromId(int $id, bool $withTrashed = true)
@@ -81,6 +93,15 @@ trait ContainerID
         $surl = $this->getUrlFragment($baseUrl);
         $url = $surl . $this->getUrl();
         return $fullUrl ? url($url) : $url;
+    }
+
+    final public function getDatesArray()
+    {
+        $dates = Functions::genDatesArray(
+            $this->created_at, $this->updated_at,
+            $this->deleted_at
+        );
+        return $dates;
     }
 
     /**

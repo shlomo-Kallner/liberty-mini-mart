@@ -136,8 +136,6 @@ interface TransformableContainer extends ContainerAPI
 
     public function getImageArray();
 
-    public function getDatesArray();
-
     public function getPriceOrSale();
 
     public function getSticker();
@@ -175,16 +173,6 @@ trait ContainerTransforms
     public function getImageArray()
     {
         return $this->image->toImageArray();
-    }
-
-    public function getDatesArray()
-    {
-        $dates = Functions::genDatesArray(
-            $this->created_at ?? null,
-            $this->updated_at ?? null,
-            $this->deleted_at ?? null
-        );
-        return $dates;
     }
 
     static public function getCount(bool $withTrashed = false)
@@ -426,6 +414,50 @@ trait ContainerTransforms
         $tmp = self::getOrdered($dir, $withTrashed);
         return self::getNameListingOf($tmp, $useBaseMaker);
     }
+
+    static public function getRandomSample(
+        int $numItems, $transform = null, 
+        string $baseUrl = 'store', 
+        bool $useTitle = true, bool $fullUrl = false, 
+        int $version = 1, bool $withTrashed = true, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
+    ) {
+        $numTotal = self::getCount($withTrashed);
+        $rng = [];
+        if ($numItems < $numTotal) {
+            for ($i = 1; $i <= $numProducts; $i++) {
+                $bol = true;
+                while ($bol) {
+                    $smp = random_int(1, $numTotal);
+                    if (!array_key_exists($smp, $res)) {
+                        $rng[$smp] = $smp;
+                        $bol = false;
+                    }
+                }
+            }
+        } elseif ($numItems >= $numTotal) {
+            $rng = Functions::genRange(1, $numTotal);
+            shuffle($rng);
+        }
+        if (Functions::countHas($rng)) {
+            $res = [];
+            foreach ($rng as $idx) {
+                $t = self::getFromId($idx, $withTrashed);
+                if (Functions::testVar($t)) {
+                    $res[] = $t;
+                }
+            }
+            return self::getFor(
+                $res, $baseUrl, $transform, 
+                $useTitle, $version, $withTrashed, $fullUrl, 
+                $default, $useBaseMaker, $dir
+            );
+        }
+        return $default;
+    }
+
+    /// generic make_() methods..
     
     static public function makeSidebar(
         string $url, string $img, string $alt,
@@ -607,6 +639,8 @@ trait ContainerTransforms
             );
         }
     }
+
+    /// end of generic make_() methods.
 
     static public function getIfDoneIterating($transform)
     {
