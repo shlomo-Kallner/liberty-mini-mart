@@ -38,13 +38,7 @@ class Section extends Model implements TransformableContainer
         bool $fullUrl = false, int $version = 1, $default = null
     ) {
         if (Functions::testVar($section)) {
-            if (is_string($section)) {
-                $tmp = self::getNamed($section, $withTrashed, null);          
-            } elseif (is_int($section) && $section > 0) {
-                $tmp = self::getFromId($section, $withTrashed);
-            } elseif ($section instanceof self) {
-                $tmp = $section;
-            }
+            $tmp = self::getFrom($section, $withTrashed);
             if (Functions::testVar($tmp)) {
                 return self::doTransform(
                     $tmp, $transform, $baseUrl,

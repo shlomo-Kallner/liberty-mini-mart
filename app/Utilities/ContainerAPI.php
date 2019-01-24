@@ -138,6 +138,10 @@ trait ContainerID
                 return $item;
             } elseif (is_int($item)) {
                 return self::getFromId($item, $withTrashed);
+            } elseif (is_string($item)) {
+                return self::getNamed(
+                    $item, $withTrashed, null, false
+                );
             }
         } 
         return null;
@@ -183,8 +187,15 @@ trait ContainerID
             : $item->id;
         } elseif (Functions::isPropKeyIn($item, 'id')) {
             $item_id = Functions::getPropKey($item, 'id', $def);
-        } elseif (is_int($item) && self::existsId($item)) {
+        } elseif (is_int($item) && self::existsId($item, true)) {
             $item_id = $item;
+        } elseif (is_string($item)) {
+            $t = self::getNamed($item, true, null, false);
+            if (Functions::testVar($t)) {
+                $item_id = $usePublic 
+                ? $t->getPubId()
+                : $t->id;
+            }
         }
         return $item_id;
     }
@@ -213,7 +224,7 @@ trait ContainerID
     */
     static public function getNamed(
         string $name, bool $withTrashed = false, 
-        $extraWhereby = null
+        $extraWhereby = null, bool $getAll = false
     ) {
         $where = [
             [self::getUrlByKey(), '=', $name],
@@ -237,14 +248,12 @@ trait ContainerID
                 }
             }
         }
-        return $withTrashed 
-            ? self::withTrashed()
-            ->where($where)
-            ->orWhere($orWhere)
-            ->first()
-            : self::where($where)
-            ->orWhere($orWhere)
-            ->first();
+        $query = $withTrashed 
+        ? self::withTrashed()->where($where)->orWhere($orWhere)
+        : self::where($where)->orWhere($orWhere);
+        return $getAll
+        ? $query->get()
+        : $query->first();
     }
 
     /// end of defaults.. 

@@ -2,13 +2,13 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\User,
+use Illuminate\Database\Eloquent\Model,
+    App\User,
     App\Product,
-    App\Image;
-use Illuminate\Support\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use App\Utilities\Functions\Functions,
+    App\Image,
+    Illuminate\Support\Carbon,
+    Illuminate\Database\Eloquent\Collection,
+    App\Utilities\Functions\Functions,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer,
     Illuminate\Database\Eloquent\SoftDeletes;
@@ -196,7 +196,7 @@ class ProductReview extends Model implements TransformableContainer
             );
             $content['value']['id'] = $this->id;
             $content['value']['rating'] = $this->rating;
-            $content['value']['content'] = $this->content;
+            $content['value']['content'] = e($this->content);
             return $content;
         } else {
             return $this->toOldContentArray();
@@ -218,7 +218,7 @@ class ProductReview extends Model implements TransformableContainer
         bool $fullUrl = false, $children = [], 
         $paginator = null, string $pagingFor = ''
     ) {
-        $title = $name = 'A Product Review';
+        $str = $title = $name = 'A Product Review';
         $article = [];
         $img = Image::createImageArray(
             'experience-3239623_640.jpg', $str, 

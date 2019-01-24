@@ -2,15 +2,15 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use App\Utilities\Functions\Functions;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Section;
-use App\Image;
+use Illuminate\Database\Eloquent\Relations\Pivot, 
+    App\Utilities\Functions\Functions,
+    App\Utilities\ImagePivotAPI,
+    App\Utilities\ImagePivot,
+    App\Section;
 
-class SectionImage extends Pivot
+class SectionImage extends Pivot implements ImagePivotAPI
 {
-    use SoftDeletes;
+    use ImagePivot;
     
     /**
      * The table associated with the model.
@@ -19,82 +19,28 @@ class SectionImage extends Pivot
      */
     protected $table = 'section_images';
 
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
-
-    static public function createNew($section, $image) 
+    static public function getOtherKey() 
     {
-        if ($section instanceof Section) {
-            $section_id = $section->id;
-        } elseif (is_int($section) && $section > 0) {
-            $section_id = $section;
-        } else {
-            return null;
-        }
-        if ($image instanceof Image) {
-            $image_id = $image->id;
-        } elseif (is_int($image) && $image > 0) {
-            $image_id = $image;
-        } else {
-            return null;
-        }
-        // duplication avoidance..
-        $t2 = self::where(
-            [
-                ['image_id', '=', $image_id],
-                ['section_id', '=', $section_id]
-            ]
-        )->first();
-        if (Functions::testVar($t2)) {
-            return $t2->id;
-        } else {
-            $tmp = new self;
-            $tmp->section_id = $section_id;
-            $tmp->image_id = $image_id;
-            if ($tmp->save()) {
-                return $tmp->id;
-            } else {
-                return null;
-            }
-        }
+        return 'section_id';
     }
 
-    static public function createNewFrom(Section $section) 
+    static public function getIdFromOther($other)
     {
-        return self::createNew($section->id, $section->image_id);
+        return Section::getIdFrom($other, false, null);
     }
 
-    static public function getAllImages($section, bool $toArray = false) 
+    static public function getOtherClassName()
     {
-        if ($section instanceof Section) {
-            $section_id = $section->id;
-        } elseif (is_int($section) && $section > 0) {
-            $section_id = $section;
-        } else {
-            return null;
-        }
-        $t = self::where('section_id', $section_id)->get();
-        return Image::getAllForPivots($t, $toArray);
+        return 'App\Section';
     }
 
-    static public function getFromImage($image) 
+    static public function createNewFrom(Section $section, bool $retObj = false) 
     {
-        if ($image instanceof Image) {
-            $image_id = $image->id;
-        } elseif (is_int($image) && $image > 0) {
-            $image_id = $image;
-        } else {
-            return null;
-        }
-        $t = self::where('image_id', $image_id)->first();
-        if (Functions::testVar($t)) {
-            return $t->section_id;
-        } else {
-            return null;
-        }
+        return self::createNew($section, $section->image_id, $retObj);
+    }
+
+    public function section()
+    {
+        return $this->belongsTo('App\Section', 'section_id');
     }
 }

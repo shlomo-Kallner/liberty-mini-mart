@@ -2,16 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use App\Utilities\Functions\Functions;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Image;
-use App\Product;
+use Illuminate\Database\Eloquent\Relations\Pivot,
+    App\Utilities\Functions\Functions,
+    App\Utilities\ImagePivotAPI,
+    App\Utilities\ImagePivot,
+    App\Product;
 
 
-class ProductImage extends Pivot
+class ProductImage extends Pivot implements ImagePivotAPI
 {
-    use SoftDeletes;
+    use ImagePivot;
     
     /**
      * The table associated with the model.
@@ -19,84 +19,29 @@ class ProductImage extends Pivot
      * @var string
      */
     protected $table = 'product_images';
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
-
-    static public function createNew($product, $image)
+    
+    static public function getOtherKey() 
     {
-        if ($product instanceof Product) {
-            $product_id = $product->id;
-        } elseif (is_int($product) && $product > 0) {
-            $product_id = $product;
-        } else {
-            return null;
-        }
-        if ($image instanceof Image) {
-            $image_id = $image->id;
-        } elseif (is_int($image) && $image > 0) {
-            $image_id = $image;
-        } else {
-            return null;
-        }
-        // duplication avoidance..
-        $t2 = self::where(
-            [
-                ['image_id', '=', $image_id],
-                ['product_id', '=', $product_id]
-            ]
-        )->first();
-        if (Functions::testVar($t2)) {
-            return $t2->id;
-        } else {
-            $tmp = new self;
-            $tmp->product_id = $product_id;
-            $tmp->image_id = $image_id;
-            if ($tmp->save()) {
-                return $tmp->id;
-            } else {
-                return null;
-            }
-        }
+        return 'product_id';
     }
 
-    static public function createNewFrom(Product $product)
+    static public function getIdFromOther($other)
     {
-        return self::createNew($product->id, $product->image);
+        return Product::getIdFrom($other, false, null);
     }
 
-    static public function getAllImages($product, bool $toArray = false) 
+    static public function getOtherClassName()
     {
-        
-        if ($product instanceof Product) {
-            $product_id = $product->id;
-        } elseif (is_int($product) && $product > 0) {
-            $product_id = $product;
-        } else {
-            return null;
-        }
-        $tmp = self::where('product_id', $product_id)->get();
-        return Image::getAllForPivots($tmp, $toArray);
+        return 'App\Product';
     }
 
-    static public function getForImage($img)
+    static public function createNewFrom(Product $product, bool $retObj = false)
     {
-        if ($img instanceof Image) {
-            $img_id = $img->id;
-        } elseif (is_int($img) && $img > 0) {
-            $img_id = $img;
-        } else {
-            return null;
-        }
-        $t = self::where('image_id', $img_id)->find();
-        if (Functions::testVar($t)) {
-            return $t->product;
-        } else {
-            return null;
-        }
+        return self::createNew($product, $product->image_id, $retObj);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo('App\Product', 'product_id');
     }
 }

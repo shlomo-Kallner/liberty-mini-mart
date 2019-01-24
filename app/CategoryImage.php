@@ -2,15 +2,15 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use App\Utilities\Functions\Functions;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Image;
-use App\Categorie;
+use Illuminate\Database\Eloquent\Relations\Pivot,
+    App\Utilities\Functions\Functions,
+    App\Utilities\ImagePivotAPI,
+    App\Utilities\ImagePivot,
+    App\Categorie;
 
-class CategoryImage extends Pivot
+class CategoryImage extends Pivot implements ImagePivotAPI
 {
-    use SoftDeletes;
+    use ImagePivot;
     
     /**
      * The table associated with the model.
@@ -18,85 +18,29 @@ class CategoryImage extends Pivot
      * @var string
      */
     protected $table = 'category_images';
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
-
-    static public function createNew($category, $image)
+    
+    static public function getOtherKey() 
     {
-        if ($category instanceof Categorie) {
-            $category_id = $category->id;
-        } elseif (is_int($category) && $category > 0) {
-            $category_id = $category;
-        } else {
-            return null;
-        }
-        if ($image instanceof Image) {
-            $image_id = $image->id;
-        } elseif (is_int($image) && $image > 0) {
-            $image_id = $image;
-        } else {
-            return null;
-        }
-        // duplication avoidance..
-        $t2 = self::where(
-            [
-                ['image_id', '=', $image_id],
-                ['category_id', '=', $category_id]
-            ]
-        )->first();
-        if (Functions::testVar($t2)) {
-            return $t2->id;
-        } else {
-            $tmp = new self;
-            $tmp->category_id = $category_id;
-            $tmp->image_id = $image_id;
-            if ($tmp->save()) {
-                return $tmp->id;
-            } else {
-                return null;
-            }
-        }
+        return 'category_id';
     }
 
-    static public function createNewFrom(Categorie $category)
+    static public function getIdFromOther($other)
     {
-        return self::createNew($category->id, $category->image);
+        return Categorie::getIdFrom($other, false, null);
     }
 
-    static public function getAllImages($category, bool $toArray = false) 
+    static public function getOtherClassName()
     {
-        
-        if ($category instanceof Categorie) {
-            $category_id = $category->id;
-        } elseif (is_int($category) && $category > 0) {
-            $category_id = $category;
-        } else {
-            return null;
-        }
-        $tmp = self::where('category_id', $category_id)->get();
-        return Image::getAllForPivots($tmp, $toArray);
+        return 'App\Categorie';
     }
 
-    static public function getForImage($img)
+    static public function createNewFrom(Categorie $category, bool $retObj = false)
     {
-        if ($img instanceof Image) {
-            $img_id = $img->id;
-        } elseif (is_int($img) && $img > 0) {
-            $img_id = $img;
-        } else {
-            return null;
-        }
-        $t = self::where('image_id', $img_id)->first();
-        // redo!! return an array!
-        if (Functions::testVar($t)) {
-            return $t->category;
-        } else {
-            return null;
-        }
+        return self::createNew($category, $category->image_id, $retObj);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo('App\Categorie', 'category_id');
     }
 }

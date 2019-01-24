@@ -11,7 +11,6 @@ class UserRole extends Model
     use SoftDeletes;
 
     /**
-    * use Illuminate\Database\Eloquent\SoftDeletes;
      * The attributes that should be mutated to dates.
      *
      * @var array
@@ -47,7 +46,7 @@ class UserRole extends Model
             $bol = true;
         }
         if ($bol) {
-            $this->save();
+            return $this->save();
         }
         return $bol;
     }

@@ -104,6 +104,8 @@ return array(
     'App\\Utilities\\DatabaseSession' => $baseDir . '/app/Utilities/DatabaseSession.php',
     'App\\Utilities\\DatabaseSessionHandler' => $baseDir . '/app/Utilities/DatabaseSessionHandler.php',
     'App\\Utilities\\Functions\\Functions' => $baseDir . '/app/Utilities/Functions.php',
+    'App\\Utilities\\ImagePivot' => $baseDir . '/app/Utilities/ImagePivotAPI.php',
+    'App\\Utilities\\ImagePivotAPI' => $baseDir . '/app/Utilities/ImagePivotAPI.php',
     'App\\Utilities\\IterationStack\\IterationFrame' => $baseDir . '/app/Utilities/IterationStack.php',
     'App\\Utilities\\IterationStack\\IterationStack' => $baseDir . '/app/Utilities/IterationStack.php',
     'App\\Utilities\\LinkGenerator' => $baseDir . '/app/Utilities/LinkGenerator.php',

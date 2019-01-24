@@ -537,6 +537,8 @@ class ComposerStaticInitc8f191e383c8b428bdb2d9ef6beb446c
         'App\\Utilities\\DatabaseSession' => __DIR__ . '/../..' . '/app/Utilities/DatabaseSession.php',
         'App\\Utilities\\DatabaseSessionHandler' => __DIR__ . '/../..' . '/app/Utilities/DatabaseSessionHandler.php',
         'App\\Utilities\\Functions\\Functions' => __DIR__ . '/../..' . '/app/Utilities/Functions.php',
+        'App\\Utilities\\ImagePivot' => __DIR__ . '/../..' . '/app/Utilities/ImagePivotAPI.php',
+        'App\\Utilities\\ImagePivotAPI' => __DIR__ . '/../..' . '/app/Utilities/ImagePivotAPI.php',
         'App\\Utilities\\IterationStack\\IterationFrame' => __DIR__ . '/../..' . '/app/Utilities/IterationStack.php',
         'App\\Utilities\\IterationStack\\IterationStack' => __DIR__ . '/../..' . '/app/Utilities/IterationStack.php',
         'App\\Utilities\\LinkGenerator' => __DIR__ . '/../..' . '/app/Utilities/LinkGenerator.php',

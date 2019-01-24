@@ -2,16 +2,16 @@
 
 namespace App\Utilities;
 
-use App\Utilities\Functions\Functions;
-use Illuminate\Support\Collection,
-    Illuminate\Http\Request;
-use Illuminate\Support\Carbon,
+use App\Utilities\Functions\Functions,
+    Illuminate\Support\Collection,
+    Illuminate\Http\Request,
+    Illuminate\Support\Carbon,
     App\Utilities\ContainerAPI,
-    App\Utilities\ContainerID;
-use App\Page,
+    App\Utilities\ContainerID,
+    App\Page,
     App\Article,
-    App\Image;
-use Illuminate\Contracts\Support\Arrayable;
+    App\Image,
+    Illuminate\Contracts\Support\Arrayable;
 
 interface TransformableContainer extends ContainerAPI
 {
@@ -411,7 +411,7 @@ trait ContainerTransforms
         $res = [];
         if (is_array($array) || $array instanceof Collection) {
             foreach ($tmp as $item) {
-                if ($item instanceof self) {
+                if (self::isTransformable($item)) {
                     $res[] = $item->toNameListing($useBaseMaker);
                 }
             }
@@ -641,6 +641,8 @@ trait ContainerTransforms
         );
     }
 
+    /// query helpers..
+
     static public function getOrderedByFor(
         $arg, string $dir = 'asc', 
         bool $withTrashed = true,
@@ -707,6 +709,8 @@ trait ContainerTransforms
         }
         return null;
     }
+
+    /// end of query helpers.
 
     static public function getAll(
         string $dir = 'asc', bool $withTrashed = true,
@@ -1207,7 +1211,7 @@ trait ContainerTransforms
             }
             $tmp = [];
             foreach ($argTmp as $item) {
-                if ($item instanceof self) {
+                if (self::isTransformable($item)) {
                     if ($transform) {
                         if ($res = $item->toContentArrayWithPagination(
                             $baseUrl, $version, $useTitle, $withTrashed,
