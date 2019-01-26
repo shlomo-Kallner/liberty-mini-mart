@@ -7,19 +7,11 @@ use App\Utilities\Functions\Functions,
     App\Utilities\ContainerAPI,
     App\Utilities\ContainerID;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class Image extends Model implements ContainerAPI
 {
-    use SoftDeletes, ContainerID;
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
+    use ContainerID;
 
     static public function createNew(
         string $name, string $path, string $alt, 
@@ -60,6 +52,39 @@ class Image extends Model implements ContainerAPI
         array $array, bool $retObj = false
     ) {
         return self::createNewFromArray($array, $retObj);
+    }
+
+    static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
+    {
+        $url = empty($baseUrl) || $baseUrl === 'store' 
+            ? 'images/' 
+            : $baseUrl . '/images/';
+        return $fullUrl ? url($url) : $url;
+    }
+
+    static public function getOrderByKey()
+    {
+        return 'id';
+    }
+
+    static public function getNamedByKey()
+    {
+        return 'id';
+    }
+
+    static public function getUrlByKey()
+    {
+        return 'id';
+    }
+
+    public function getUrl()
+    {
+        return $this->id;
+    }
+
+    public function getPubName()
+    {
+        return $this->id;
     }
 
     static public function getImageToID($image)
