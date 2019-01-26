@@ -7,6 +7,8 @@ use App\Utilities\Functions\Functions,
 
 interface ContainerAPI
 {
+    const DELETED_AT = 'deleted_at';
+
     static public function createNewFrom(array $array, bool $retObj = false);
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false);
@@ -53,7 +55,7 @@ trait ContainerID
      *
      * @var array
      */
-    protected $dates = ['deleted_at'];
+    ///protected $dates = ['deleted_at'];
 
     /// some trait defined final-ed methods:
 
@@ -261,7 +263,7 @@ trait ContainerID
             $where[] = [$key, '=', $extraWhereby];
             $orWhere[] = [$key, '=', $extraWhereby];
         } else {
-            $extraWhereby = self::getExtraWhereBy($orderingBy);
+            $extraWhereby = self::getExtraWhereBy($extraWhereby);
             if (Functions::countHas($extraWhereby)) {
                 foreach ($extraWhereby as $value) {
                     $where[] = $value;

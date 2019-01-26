@@ -19,7 +19,7 @@ class PageImage extends Pivot implements ImagePivotAPI
      */
     protected $table = 'page_images';
     
-    static public function getOtherKey() 
+    static public function getOthersKey() 
     {
         return 'page_id';
     }

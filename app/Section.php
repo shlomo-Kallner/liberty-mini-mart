@@ -116,58 +116,6 @@ class Section extends Model implements TransformableContainer
         );
     }
 
-    /// probably unnecessary..
-    public function getChildrenWithPagination(
-        $transform = null, bool $withTrashed = true, 
-        string $dir = 'asc', string $baseUrl = 'store',
-        bool $useBaseMaker = true, int $pageNum = 0, 
-        int $numItemsPerPage = 4, string $listUrl = '#', 
-        string $pagingFor = '', int $viewNumber = 0, 
-        bool $fullUrl = false, bool $useTitle = true,
-        int $version = 1, $default = []
-    ) {
-        return $this->getCategoriesWithPagination(
-            $transform, $pageNum,
-            $numItemsPerPage, $withTrashed, 
-            $dir, $baseUrl, $listUrl, $fullUrl, 
-            $viewNumber, $useBaseMaker, 
-            $default, $version, $useTitle,
-            $pagingFor, false
-        );
-    }
-
-    /// probably unnecessary..
-    public function getCategoriesWithPagination(
-        $transform = null, int $pageNum = 1,
-        int $numShown = 4, bool $withTrashed = true, 
-        string $dir = 'asc', string $baseUrl = 'store',
-        string $listUrl = '', bool $fullUrl = false, 
-        int $viewNumber = 0, bool $useBaseMaker = true, 
-        $default = [], int $version = 1, bool $useTitle = true,
-        string $pagingFor = '', bool $done = false
-    ) {
-        $tmp = getOrderedFor(
-            $this->categories(), $dir, 
-            $withTrashed, 'name'
-        );
-        if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
-            $listUrl = !empty($listUrl) || $listUrl !== '#' 
-                ? $listUrl
-                : $this->getFullUrl($baseUrl, $fullUrl);
-            return Categorie::getForWithPagination(
-                $tmp, $transform, $pageNum,
-                $numShown, $pagingFor, 
-                $listUrl, $baseUrl, 
-                $dir, $viewNumber = 0, 
-                $withTrashed, $useTitle, 
-                $fullUrl, $version, $default, 
-                $useBaseMaker, 
-                Categorie::getIfDoneIterating($transform)
-            );
-        }
-        return $default;
-    }
-
     static public function getSelf(
         string $baseUrl = 'store', bool $withTrashed = true,
         bool $fullUrl = false, $children = [], 
@@ -257,7 +205,7 @@ class Section extends Model implements TransformableContainer
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false, bool $useBaseMaker = true,
-        bool $done = true, string $dir = 'asc'
+        string $dir = 'asc'
     ) {
         return self::makeContentArray(
             $this->name, $this->getFullUrl($baseUrl, $fullUrl), 

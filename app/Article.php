@@ -7,18 +7,10 @@ use Illuminate\Database\Eloquent\Model,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer;
 use App\Image;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Article extends Model implements TransformableContainer
 {
-    use SoftDeletes, ContainerTransforms;
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
+    use ContainerTransforms;
     //
 
     static public function createNew(
@@ -142,7 +134,7 @@ class Article extends Model implements TransformableContainer
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false, bool $useBaseMaker = true,
-        bool $done = true, string $dir = 'asc'
+        string $dir = 'asc'
     ) {
         if ($useBaseMaker) {
             $content = self::makeBaseContentArray(
@@ -162,6 +154,16 @@ class Article extends Model implements TransformableContainer
             );
         }
         return $content;
+    }
+
+    static public function getChildrenFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
+    ) {
+        return $default;
     }
 
     public function numChildren(bool $withTrashed = true)

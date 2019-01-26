@@ -19,7 +19,7 @@ class SectionImage extends Pivot implements ImagePivotAPI
      */
     protected $table = 'section_images';
 
-    static public function getOtherKey() 
+    static public function getOthersKey() 
     {
         return 'section_id';
     }

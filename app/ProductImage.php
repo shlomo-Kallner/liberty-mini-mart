@@ -20,7 +20,7 @@ class ProductImage extends Pivot implements ImagePivotAPI
      */
     protected $table = 'product_images';
     
-    static public function getOtherKey() 
+    static public function getOthersKey() 
     {
         return 'product_id';
     }

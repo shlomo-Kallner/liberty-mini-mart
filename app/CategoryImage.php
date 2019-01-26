@@ -19,7 +19,7 @@ class CategoryImage extends Pivot implements ImagePivotAPI
      */
     protected $table = 'category_images';
     
-    static public function getOtherKey() 
+    static public function getOthersKey() 
     {
         return 'category_id';
     }

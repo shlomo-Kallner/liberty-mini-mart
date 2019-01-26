@@ -205,7 +205,7 @@ class Page extends Model implements TransformableContainer
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false, bool $useBaseMaker = true,
-        bool $done = true, string $dir = 'asc'
+        string $dir = 'asc'
     ) {
         return self::makeContentArray(
             $this->article, $this->description,  
@@ -240,6 +240,16 @@ class Page extends Model implements TransformableContainer
         bool $done = true
     ) {
         return [];
+    }
+
+    static public function getChildrenFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
+    ) {
+        return $default;
     }
 
     static public function getSelf(

@@ -20,7 +20,7 @@ class UserImage extends Pivot implements ImagePivotAPI
      */
     protected $table = 'user_images';
 
-    static public function getOtherKey() 
+    static public function getOthersKey() 
     {
         return 'user_id';
     }

@@ -8,9 +8,11 @@ use App\Utilities\Functions\Functions,
 
 interface ImagePivotAPI 
 {
+    const DELETED_AT = 'deleted_at';
+
     /// these 3 methods require overides in the implementing class.
-    
-    static public function getOtherKey();
+
+    static public function getOthersKey();
 
     static public function getIdFromOther($other);
 
@@ -42,7 +44,7 @@ trait ImagePivot
      *
      * @var array
      */
-    protected $dates = ['deleted_at'];
+    /// protected $dates = ['deleted_at'];
 
     static public function createNew($other, $image, bool $retObj = false)
     {
@@ -50,7 +52,7 @@ trait ImagePivot
         $image_id = Image::getImageToID($image);
         if (Functions::testVar($other_id) && Functions::testVar($image_id)) {
             // duplication avoidance..
-            $key = self::getOtherKey();
+            $key = self::getOthersKey();
             $t2 = self::where(
                 [
                     ['image_id', '=', $image_id],
@@ -76,7 +78,7 @@ trait ImagePivot
         
         $other_id = self::getIdFromOther($other);
         if (Functions::testVar($other_id)) {
-            $tmp = self::where(self::getOtherKey(), $other_id)->get();
+            $tmp = self::where(self::getOthersKey(), $other_id)->get();
             return Image::getAllForPivots($tmp, $toArray);
         }
         return null;
@@ -97,7 +99,7 @@ trait ImagePivot
     ) {
         $image_id = Image::getImageToID($img);
         if (Functions::testVar($image_id)) {
-            $key = self::getOtherKey();
+            $key = self::getOthersKey();
             if ($getAll) {
                 $tmp = $withTrashed
                 ? self::withTrashed()->where('image_id', $image_id)->get()
@@ -123,7 +125,7 @@ trait ImagePivot
 
     public function other()
     {
-        return $this->belongsTo(self::getOtherClassName(), self::getOtherKey());
+        return $this->belongsTo(self::getOtherClassName(), self::getOthersKey());
     }
 
     public function image()

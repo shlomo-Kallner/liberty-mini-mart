@@ -132,7 +132,7 @@ class DatabaseSeeder extends Seeder
         $tImg = random_int(1, 6) % 2 == 0 ? self::genFakeImage($faker) : $img;
         $tmp = Article::createNew(
             $faker->text(2000), $faker->text(80),
-            $tImg, $faker->text(100), true
+            $tImg, $faker->text(100), false
         );
         return Functions::getVar($tmp, null);
     }
