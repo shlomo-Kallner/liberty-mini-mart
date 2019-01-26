@@ -213,23 +213,6 @@ class Categorie extends Model implements TransformableContainer
         );
         return $content;
     }
-
-    public function getChildrenWithPagination(
-        $transform = null, bool $withTrashed = true, 
-        string $dir = 'asc', string $baseUrl = 'store',
-        bool $useBaseMaker = true, int $pageNum = 0, 
-        int $numItemsPerPage = 4, string $listUrl = '#', 
-        string $pagingFor = '', int $viewNumber = 0, 
-        bool $fullUrl = false, bool $useTitle = true,
-        int $version = 1, $default = []
-    ) {
-        return $this->getProductsWithPagination(
-            $transform, $pageNum, $numItemsPerPage, $withTrashed, 
-            $dir, $baseUrl, $listUrl, $fullUrl, $viewNumber, 
-            $useBaseMaker, $default, $version, $useTitle,
-            $pagingFor
-        );
-    }
     
     public function toContentArrayPlus(
         string $baseUrl = 'store', int $version = 1, 

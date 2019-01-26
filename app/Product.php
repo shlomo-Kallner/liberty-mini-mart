@@ -322,7 +322,7 @@ class Product extends Model implements TransformableContainer
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false, bool $useBaseMaker = true,
-        bool $done = true, string $dir = 'asc'
+        string $dir = 'asc'
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
         $api = $this->getFullUrl('api/' . $baseUrl, $fullUrl);
