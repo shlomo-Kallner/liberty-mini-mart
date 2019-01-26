@@ -282,8 +282,7 @@ class User extends Model implements TransformableContainer
         $transform = null, bool $withTrashed = true, 
         string $dir = 'asc', string $baseUrl = 'store',
         bool $useTitle = true, bool $fullUrl = false, 
-        int $version = 1, $default = [], bool $useBaseMaker = true,
-        bool $done = true
+        int $version = 1, $default = [], bool $useBaseMaker = true
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
         $allOrders = $withTrashed
@@ -316,7 +315,7 @@ class User extends Model implements TransformableContainer
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
         bool $fullUrl = false, bool $useBaseMaker = true,
-        bool $done = true, string $dir = 'asc'
+        string $dir = 'asc'
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
         $img = $this->image->toImageArray();
@@ -325,7 +324,7 @@ class User extends Model implements TransformableContainer
         $children = $this->getChildren(
             self::TO_URL_LIST_TRANSFORM, $withTrashed, 
             $dir, $baseUrl, $useTitle, $fullUrl, 
-            $version, [], $useBaseMaker, $done
+            $version, [], $useBaseMaker
         );
         $hasChildren = Functions::countHas($children);
         if ($useBaseMaker) {
@@ -343,10 +342,8 @@ class User extends Model implements TransformableContainer
                         'otherImages' => $otherImages,
                         'dates' => $dates,
                         'hasChildren' => $hasChildren,
-                        'done' => $done,
                         ],
                     'children' => $children,
-                    'done' => true
                 ]; 
             */
             $content = self::makeBaseContentArray(
