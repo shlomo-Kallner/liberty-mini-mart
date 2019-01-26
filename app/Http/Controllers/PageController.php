@@ -6,7 +6,8 @@ use App\Page,
     App\Product,
     App\Article;
 use Illuminate\Http\Request,
-    App\Utilities\Functions\Functions;
+    App\Utilities\Functions\Functions,
+    Illuminate\Support\Facades\Log;
 
 class PageController extends MainController 
 {
@@ -152,20 +153,29 @@ class PageController extends MainController
             //dd('hello');
         
             //$title = 'test ' . $requestedPage . ' page';
+            $article = Article::makeArticleArray(
+                e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
+                e("<b>Home</b>"), (2),
+                e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
+                true
+            );
+            Log::info('info 1' . __METHOD__);
+            $newProducts = Product::getNewProducts(4, 'New Arrivals');
+            Log::info('info 2' . __METHOD__);
+            $sampleProducts = Product::getNewProducts(3, 'Three Sample Items');
+            Log::info('info 3' . __METHOD__);
+            $bestsellers = Product::getBestsellers();
+            Log::info('info 4' . __METHOD__);
             $content = [
-                'article'=> Article::makeContentArray(
-                    e("<p> World War I-era poster depicts colonial-era celebratory crowd in front of Independence Hall in Philadelphia, PA. Large Liberty Bell used as decorative element. Published by Sackett & Wilhelms Corp, N.Y., ca. 1917- ca. 1919 </p>"),
-                    e("<b>Home</b>"), (2),
-                    e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
-                    true
-                ),
-                'newProducts' => Product::getNewProducts(12, 'New Arrivals'),
-                'sampleProducts' => Product::getNewProducts(3, 'Three Sample Items'),
-                'bestsellers' => Product::getBestsellers(),
+                'article'=> $article,
+                'newProducts' => $newProducts,
+                'sampleProducts' => $sampleProducts,
+                'bestsellers' => $bestsellers,
                 'filters' => [], // search filters are a WISH-LIST ITEM!!!
                 'pricings' => [], // membership plan pricings are a WISH-LIST ITEM!!
             ];
-            //dd('hello', 3);
+            Log::info('info 5' . __METHOD__);
+            //sdd('hello', 3, $content);
         
             // $useFakeData = false;
             //self::$data['sidebar'] = Page::getSidebar($useFakeData);
@@ -173,7 +183,7 @@ class PageController extends MainController
             $breadcrumbs = Page::getBreadcrumbs(
                 Page::genBreadcrumb('Home', '/')
             );
-
+            Log::info('info 6' . __METHOD__);
             //return $this->getTemplateView($title, $content);
             //dd($request->session()->all());
             //dd(session()->all());

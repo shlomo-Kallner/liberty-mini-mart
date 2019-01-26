@@ -11,7 +11,9 @@ use Illuminate\Http\Request,
     App\Product,
     App\Utilities\Functions\Functions,
     App\UserSession,
-    Session;
+    Session,
+    Illuminate\Support\Facades\Log;
+
 
 class MainController extends Controller {
 
@@ -326,7 +328,37 @@ class MainController extends Controller {
         bool $useFakeData = false, array $breadcrumbs = null, 
         array $alert = null, array $sidebar = null
     ) {
-        //dd('hello', 4);
+        self::setTitle($title);
+        self::setPageContent($content);
+        if ($alert !== null || count($alert??[]) > 0) {
+            self::setAlert(
+                $alert['class'], $alert['title'], $alert['content'], 
+                $alert['timeout'], $alert['id']
+            );
+        } elseif (self::$data['alert']['class'] === '') {
+            $mgs = self::getMsgs();
+            if (Functions::testVar($mgs)) {
+                $tStr = '<ul>';
+                foreach ($mgs as $msg) {
+                    $tStr .= '<li>' . Functions::purifyContent($msg) . '</li>';
+                }
+                $tStr .= '</ul>';
+                self::setAlert('alert-info', 'Here are Your Messages:', $tStr, 9000);
+            } else {
+                self::setAlert();
+            }
+        }
+        // self::$data['navbar'] = Page::getNavBar(false);
+        // self::$data['preheader'] = Page::getPreHeader($useFakeData);
+        // self::$data['sidebar'] = $sidebar ?? Page::getSidebar($useFakeData);
+        self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
+        $nut = self::setSiteNut($request);
+        $userData = User::getUserArray($request);
+        self::$data['user'] = $userData;
+        UserSession::updateRegenerate($request, intval($userData['id']));
+        self::$data['cart'] = Cart::getCurrentCart($request, true);
+
+        /*
         self::setTitle($title);
         self::setPageContent($content);
         if ($alert !== null || count($alert??[]) > 0) {
@@ -349,12 +381,8 @@ class MainController extends Controller {
             }
         }
 
-        self::$data['navbar'] = Page::getNavBar(false);
-        //dd($request->session()->all());
-        self::$data['preheader'] = Page::getPreHeader($useFakeData);
         //dd($request->session()->all());
         //dd(self::$data['preheader']); 
-        self::$data['sidebar'] = $sidebar ?? Page::getSidebar($useFakeData);
         //
         self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
         //
@@ -372,7 +400,7 @@ class MainController extends Controller {
 
         //dd($userData, $tmp, $nut, $request->session()->getId(), $request->session()->all());
         //dd($request->session(), self::$data['cart']);
-
+        */
         return view($viewName, self::$data);
     }
 

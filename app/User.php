@@ -420,6 +420,16 @@ class User extends Model implements TransformableContainer
         return $this->hasMany('App\ProductReview', 'user_id', 'id');
     }
 
+    static public function getChildrenFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
+    ) {
+        return $defualt; // more to come!! TO DO!!
+    }
+
     static public function getSelf(
         string $baseUrl = 'store', bool $withTrashed = true,
         bool $fullUrl = false, $children = [], 

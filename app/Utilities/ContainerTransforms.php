@@ -426,11 +426,11 @@ trait ContainerTransforms
         $numTotal = self::getCount($withTrashed);
         $rng = [];
         if ($numItems < $numTotal) {
-            for ($i = 1; $i <= $numProducts; $i++) {
+            for ($i = 1; $i <= $numItems; $i++) {
                 $bol = true;
                 while ($bol) {
                     $smp = random_int(1, $numTotal);
-                    if (!array_key_exists($smp, $res)) {
+                    if (!array_key_exists($smp, $rng)) {
                         $rng[$smp] = $smp;
                         $bol = false;
                     }

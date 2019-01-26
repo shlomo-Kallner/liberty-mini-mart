@@ -79,13 +79,22 @@ class CmsController extends MainController
             $userVn = 0;
         }
         $userBaseUrl = '';
+        $userNumPerPage = 3;
+        $userBaseUrl = 'admin';
         if (false) {    
             $users = User::getUsers(
                 $userPn, true, true, $userVn, $request->path(), 
                 $userBaseUrl, true, false
             );
-        } elseif () {
-            $users = User::getSelfWithPagination();
+        } elseif (false) {
+            /* $users = User::getSelfWithPagination(
+                $userPn, $userNumPerPage,  $userVn, 
+                $userBaseUrl, $request->path(), 
+                true, bool $withTrashed = true, 
+                bool $useBaseMaker = true, $default = [], 
+                string $dir = 'asc', string $pagingFor = '', 
+                bool $useTitle = true, int $version = 1
+            ); */
         } else {
             $users = [
                 'items' => [],

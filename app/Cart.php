@@ -10,6 +10,7 @@ use App\Utilities\Functions\Functions;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use Illuminate\Http\Request;
+use Webpatser\Uuid\Uuid;
 
 class Cart extends Model
 {
@@ -381,6 +382,7 @@ class Cart extends Model
             $tmp->session_id = $session_id;
             $tmp->ip_address = $ip;
             $tmp->user_agent = $agent;
+            $tmp->uuid = Uuid::generate(5, '/carts/' . $session_id, Uuid::NS_URL);
             $cnTmp = base64_encode(serialize($content));
             $tmp->content = $cnTmp;
             $tmp->verihash = Hash::make($cnTmp);

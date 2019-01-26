@@ -188,9 +188,9 @@ class DatabaseSeeder extends Seeder
         $faker = \Faker\Factory::create();
         $num_a = 20;
         self::genFakePages($faker, $num_a);
-        $num_sect = $faker->numberBetween(3, 30);
-        $num_cat = $faker->numberBetween(6, 30);
-        $num_prod = $faker->numberBetween(9, 30);
+        $num_sect = 3; // $faker->numberBetween(3, 30);
+        $num_cat = 6; // $faker->numberBetween(6, 30);
+        $num_prod = 12; // $faker->numberBetween(9, 30);
         self::genFakeStoreShelves($faker, $num_sect, $num_cat, $num_prod);
     }
 
