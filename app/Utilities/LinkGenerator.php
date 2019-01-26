@@ -8,6 +8,7 @@ use App\Utilities\Functions\Functions,
     App\PageGroup,
     App\PageGrouping,
     App\User,
+    Illuminate\Support\Facades\Log,
     App\Section;
 
 trait LinkGenerator {
@@ -280,12 +281,11 @@ trait LinkGenerator {
             $res[] = self::genURLMenuItem('lib/themewagon/metronicShopUI/theme/shop-product-list.html', 'Custom Link');
         } else {
             $sections = Section::all();
-            //dd($sections);
             foreach ($sections as $section) {
+                Log::info('hahahhaa');
                 // each section is a dropdown containing categories
                 // each category is a url link.
                 $cats = $section->categories;
-                //dd($section, $cats);
                 $subs = [];
                 //$section_url = "store/section/". $section->url;
                 foreach ($cats as $cat) {
@@ -295,14 +295,13 @@ trait LinkGenerator {
                         $cat->title
                     );
                 }
-                //dd($subs);
                 $res[] = self::genDropdownLink(
                     $section->title, $subs, '', '', '',
                     $section->getFullUrl('store')
                 );
-                //dd($res);
             }
         }
+        Log::info('hahahhaa========================');
         return $res;
     }
 

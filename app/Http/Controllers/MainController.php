@@ -350,7 +350,7 @@ class MainController extends Controller {
         }
         // self::$data['navbar'] = Page::getNavBar(false);
         // self::$data['preheader'] = Page::getPreHeader($useFakeData);
-        // self::$data['sidebar'] = $sidebar ?? Page::getSidebar($useFakeData);
+        self::$data['sidebar'] = $sidebar ?? Page::getSidebar($useFakeData);
         self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
         $nut = self::setSiteNut($request);
         $userData = User::getUserArray($request);
