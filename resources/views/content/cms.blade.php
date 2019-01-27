@@ -224,9 +224,11 @@
 
 @section('js-preloaded')
     @parent
-    <script>
-        window.Laravel.admin = '@json($page)';
-    </script>
+    @if ($useVueEl)
+        <script>
+            window.Laravel.admin = '@json($page)';
+        </script>
+    @endif
 @endsection
 
 @section('js-main')
@@ -234,6 +236,10 @@
     @php
         // dd(asset('js/admin.js'), asset(mix('js/admin.js')));
     @endphp
-    <script src="{{ asset(mix('js/admin.js')) }}" type="text/javascript"></script>
+    @if ($useVueEl)
+        <script src="{{ asset(mix('js/admin_vue.js')) }}" type="text/javascript"></script>
+    @else
+        <script src="{{ asset(mix('js/admin_blade.js')) }}" type="text/javascript"></script>
+    @endif
 @endsection
 

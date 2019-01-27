@@ -22,7 +22,12 @@ mix.js([
         'resources/assets/js/store.js',
         'resources/assets/js/utils.js',
         'resources/assets/js/bootstrap.js'
-    ], 'public/js/admin.js')
+    ], 'public/js/admin_vue.js')
+    .js([
+        'resources/assets/js/app.js',
+        'resources/assets/js/utils.js',
+        'resources/assets/js/bootstrap.js'
+    ], 'public/js/admin_blade.js')
     .sourceMaps()
     .sass('resources/assets/sass/app.scss', 'public/css');
 
