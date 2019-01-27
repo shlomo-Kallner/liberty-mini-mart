@@ -22,7 +22,7 @@ Route::get('/', 'PageController@home');
 
 Route::prefix('test')->group(
     function () {
-        Route::get('cms', 'CmsController@index');
+        //Route::get('cms', 'CmsController@index');
         Route::get('{method?}', 'TestController@index');
     }
 );
@@ -121,8 +121,9 @@ Route::middleware('adminguard')->prefix('admin')->group(
                     ]
                 );
                 // 'product/' goes to 'index()' which returns 'all-products' of the category..
-                Route::get('product/create', 'ProductController@create');
-                Route::post('product/create', 'ProductController@store');
+                Route::get('products/create', 'ProductController@create');
+                Route::post('products/create', 'ProductController@store');
+                Route::get('products', 'ProductController@index');
                 
                 Route::resource(
                     'section/{section}/category/{category}/product', 'ProductController', [
@@ -234,8 +235,8 @@ Route::middleware('signedguard')->group(
     ); 
 */
 
-Route::get('pages', 'PageController@index');
-Route::get('pages/{page}', 'PageController@show');
+Route::get('page', 'PageController@index');
+Route::get('page/{page}', 'PageController@show');
 
 /* 
 

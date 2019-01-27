@@ -37,6 +37,7 @@ class ProductController extends MainController
      */
     public function index(Request $request)
     {
+        
         $sect = Section::getNamed($request->section);
         if (Functions::testVar($sect)) {
             $cat = $sect->getCategory($request->category);

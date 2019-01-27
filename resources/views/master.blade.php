@@ -3,6 +3,7 @@
     // put any special code here..
     use \App\Utilities\Functions\Functions;
     use \Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\Support\Facades\Log;
     $title2 =  Functions::getBladedString($title ?? '');// . '-- dummy Title -- for testing Master Page 2';
     $siteName2 = Functions::getBladedString($site['name']?? App\Http\Controllers\MainController::$data['site']['name']);
     $nut2 = Functions::getContent($site['nut']??'');
@@ -252,20 +253,19 @@
 
         @section('js-defered')
         @show
-
-        @component('inc.js.loader')
-            @foreach ($site as $key => $val)
-                @slot($key)
-                    @if ($val instanceof Htmlable) 
-                        {!! $val->toHtml() !!}
-                    @elseif (is_array($val) || is_object($val))
-                        {!! serialize($val) !!}
-                    @else
-                        {!! $val !!}
-                    @endif
-                @endslot
-            @endforeach
-        @endcomponent
+        
+        @if (false)
+            @component('inc.js.loader')
+                @php
+                    Log::info('dumping $site', Functions::arrayableToArray($site, []));
+                @endphp
+                @foreach ($site as $key => $val)
+                    @slot($key)
+                        {!! Functions::toBladableContent($val) !!}
+                    @endslot
+                @endforeach
+            @endcomponent
+        @endif
 
         @section('js-main')
             

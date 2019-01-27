@@ -17,7 +17,7 @@
     }
 
     if (!Functions::testVar($cart??'')) {
-        $cart = Cart::getCurrentCart();
+        $cart = Cart::getCurrentCart(null, true);
     }
     
 @endphp

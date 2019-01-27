@@ -161,8 +161,8 @@ class Page extends Model implements TransformableContainer
         // $surl = $this->catalog->getFullUrl($baseUrl);
         //return $baseUrl . '/page/' . $this->url;
         $url = empty($baseUrl) || $baseUrl === 'store' 
-            ? 'pages/' 
-            : $baseUrl . '/pages/';
+            ? 'page/' 
+            : $baseUrl . '/page/';
         return $fullUrl ? url($url) : $url;
     }
 

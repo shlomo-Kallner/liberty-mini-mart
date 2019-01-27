@@ -348,8 +348,8 @@ class MainController extends Controller {
                 self::setAlert();
             }
         }
-        // self::$data['navbar'] = Page::getNavBar(false);
-        // self::$data['preheader'] = Page::getPreHeader($useFakeData);
+        self::$data['navbar'] = Page::getNavBar(false);
+        self::$data['preheader'] = Page::getPreHeader($useFakeData);
         self::$data['sidebar'] = $sidebar ?? Page::getSidebar($useFakeData);
         self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
         $nut = self::setSiteNut($request);
@@ -359,48 +359,49 @@ class MainController extends Controller {
         self::$data['cart'] = Cart::getCurrentCart($request, true);
 
         /*
-        self::setTitle($title);
-        self::setPageContent($content);
-        if ($alert !== null || count($alert??[]) > 0) {
-            self::setAlert(
-                $alert['class'], $alert['title'], $alert['content'], 
-                $alert['timeout'], $alert['id']
-            );
-        } elseif (self::$data['alert']['class'] === '') {
-            $mgs = self::getMsgs();
-            //dd($mgs);
-            if (Functions::testVar($mgs)) {
-                $tStr = '<ul>';
-                foreach ($mgs as $msg) {
-                    $tStr .= '<li>' . Functions::purifyContent($msg) . '</li>';
+            self::setTitle($title);
+            self::setPageContent($content);
+            if ($alert !== null || count($alert??[]) > 0) {
+                self::setAlert(
+                    $alert['class'], $alert['title'], $alert['content'], 
+                    $alert['timeout'], $alert['id']
+                );
+            } elseif (self::$data['alert']['class'] === '') {
+                $mgs = self::getMsgs();
+                //dd($mgs);
+                if (Functions::testVar($mgs)) {
+                    $tStr = '<ul>';
+                    foreach ($mgs as $msg) {
+                        $tStr .= '<li>' . Functions::purifyContent($msg) . '</li>';
+                    }
+                    $tStr .= '</ul>';
+                    self::setAlert('alert-info', 'Here are Your Messages:', $tStr, 9000);
+                } else {
+                    self::setAlert();
                 }
-                $tStr .= '</ul>';
-                self::setAlert('alert-info', 'Here are Your Messages:', $tStr, 9000);
-            } else {
-                self::setAlert();
             }
-        }
 
-        //dd($request->session()->all());
-        //dd(self::$data['preheader']); 
-        //
-        self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
-        //
-        $nut = self::setSiteNut($request);
-        //$tmp = self::getRequestData($request);
-        //
-        //dd($nut, self::getRequestData($request));
-        //
-        $userData = User::getUserArray($request);
-        self::$data['user'] = $userData;
-        //
-        UserSession::updateRegenerate($request, intval($userData['id']));
-        //
-        self::$data['cart'] = Cart::getCurrentCart($request, true);
+            //dd($request->session()->all());
+            //dd(self::$data['preheader']); 
+            //
+            self::$data['breadcrumbs'] = $breadcrumbs ?? Page::getBreadcrumbs();
+            //
+            $nut = self::setSiteNut($request);
+            //$tmp = self::getRequestData($request);
+            //
+            //dd($nut, self::getRequestData($request));
+            //
+            $userData = User::getUserArray($request);
+            self::$data['user'] = $userData;
+            //
+            UserSession::updateRegenerate($request, intval($userData['id']));
+            //
+            self::$data['cart'] = Cart::getCurrentCart($request, true);
 
-        //dd($userData, $tmp, $nut, $request->session()->getId(), $request->session()->all());
-        //dd($request->session(), self::$data['cart']);
+            //dd($userData, $tmp, $nut, $request->session()->getId(), $request->session()->all());
+            //dd($request->session(), self::$data['cart']);
         */
+        Log::info('dumping self::$data', self::$data);
         return view($viewName, self::$data);
     }
 

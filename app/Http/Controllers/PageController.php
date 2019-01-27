@@ -24,28 +24,54 @@ class PageController extends MainController
      */
     public function index(Request $request) 
     {
-        
-        $pages = Page::getAllWithPagination();
+        $pagesData = [
+            'PageNum' => 1,
+            'NumShown' => 12,
+            'PagingFor' => 'pagesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => true,
+            'BaseUrl' => in_array('admin', explode('/', $request->path())) ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => true,
+            'Default' => [],
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+        ];
         if ($request->ajax()) {
             
-            $pagesDir = 'asc';
-            $pagesPaging = 'pagesPanel';
-            if (Functions::testVar($pv = Page::getPagingVars($request, $pagesPaging))) {
-                $pagesPn = $pv['pageNum'];
-                $pagesVn = $pv['viewNum'];
+            $pagesData['Dir'] = $pagesDir = 'asc';
+            $pagesData['PagingFor'] = $pagesPaging = 'pagesPanel';
+            $pv = Page::getPagingVars(
+                $request, $pagesData['PagingFor'], $pagesData['NumShown'],
+                $pagesData['Dir']
+            );
+            if (Functions::testVar($pv)) {
+                $pagesData['PageNum'] = $pagesPn = $pv['pageNum'];
+                $pagesData['ViewNum'] = $pagesVn = $pv['viewNum'];
                 if (Functions::hasPropKeyIn($pv, 'limit')) {
-                    $pagesNumShown = $pv['limit'];
+                    $pagesData['NumShown'] = $pagesNumShown = $pv['limit'];
                 }
             } else {
-                $pagesPn = 1;
-                $pagesVn = 0;
-                $pagesNumShown = 3;
+                $pagesData['PageNum'] = $pagesPn = 1;
+                $pagesData['ViewNum'] = $pagesVn = 0;
+                $pagesData['NumShown'] = $pagesNumShown = 3;
             }
             $usePageGroupings = true;
+            if ($usePageGroupings)
+            $pages = Page::getAllWithPagination(
+                $transform, int $pageNum, int $numShown = 4, 
+                string $pagingFor = '', string $dir = 'asc', 
+                bool $withTrashed = true, string $baseUrl = 'store', 
+                string $listUrl = '', int $viewNumber = 0, 
+                bool $fullUrl = false, bool $useTitle = true, 
+                int $version = 1, $default = [], bool $useBaseMaker = true
+            );
             $pages = Page::getAllPages(
                 true, $pagesDir, $usePageGroupings, $request->path(),
                 $pagesPaging, $pagesVn, $pagesPn, $pagesNumShown
             );
+        } else {
+            abort(404);
         }
     }
 
@@ -76,15 +102,19 @@ class PageController extends MainController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $page) 
+    //public function show(Request $request, $page) 
+    public function show(Request $request) 
     {
-        $page_info = Page::getNamedPage($page, $request->path());
-        if (Functions::testVar($page_info) && $page_info['visible'] > 0) {
+        //$page_info = Page::getNamedPage($page, $request->path());
+        $page_info = Page::getNamedPage($request->page, $request->path());
+        //dd($request, $page_info);
+        if (Functions::testVar($page_info) && $page_info['value']['visible'] > 0) {
             // WISHLIST ITEM: a more sophisticated user role based
             //  Visibility / Access Control Method..
             return self::getView(
-                $request, 'content.content', $page_info['title'], $page_info['content'],
-                false, $page_info['breadcrumbs']
+                $request, 'content.content', $page_info['value']['title'], 
+                $page_info['content'] ?? $page_info['value'],
+                false, $page_info['value']['breadcrumbs']
             );
         } else {
             abort(404);

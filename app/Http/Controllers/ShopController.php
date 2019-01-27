@@ -75,7 +75,7 @@ class ShopController extends MainController {
             }
         */
         $content = [
-            'article' => Article::makeContentArray(
+            'article' => Article::makeArticleArray(
                 self::getLoremIpsum(),
                 'Welcome To Our Store!',
                 2,
