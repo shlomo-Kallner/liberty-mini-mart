@@ -99,48 +99,43 @@ Route::middleware('adminguard')->prefix('admin')->group(
         Route::resource('article', 'ArticleController');
         Route::get('article/{article}/delete', 'ArticleController@showDelete');
 
-        // 'section/' goes to 'index()' which returns 'all-sections' of the store..
-        Route::resource(
-            'section', 'SectionController', [
-                'parameters'=> [
-                    'section' => 'section'
-                ],
-                'except' => [
-                    'show'
-                ]
-            ]
-        );
-        // 'category/' goes to 'index()' which returns 'all-categories' of the section..
-        Route::get('category/create', 'CategorieController@create');
-        Route::post('category/create', 'CategorieController@store');
-        
-        Route::resource(
-            'section/{section}/category', 'CategorieController', [
-                'parameters'=> [
-                    'categorie' => 'category',
-                ],
-                'except' => [
-                    'show'
-                ]
-            ]
-        );
-        // 'product/' goes to 'index()' which returns 'all-products' of the category..
-        Route::get('product/create', 'ProductController@create');
-        Route::post('product/create', 'ProductController@store');
-        
-        Route::resource(
-            'section/{section}/category/{category}/product', 'ProductController', [
-                'parameters'=> [
-                    'categorie' => 'category',
-                ],
-                'except' => [
-                    'show'
-                ]
-            ]
-        );
-        Route::get(
-            'section/{section}/category/{category}/product/{product}/delete', 
-            'ProductController@showDelete'
+        Route::prefix('store')->group( 
+            function () {
+                // 'section/' goes to 'index()' which returns 'all-sections' of the store..
+                Route::resource(
+                    'section', 'SectionController', [
+                        'parameters'=> [
+                            'section' => 'section'
+                        ]
+                    ]
+                );
+                // 'category/' goes to 'index()' which returns 'all-categories' of the section..
+                Route::get('category/create', 'CategorieController@create');
+                Route::post('category/create', 'CategorieController@store');
+                
+                Route::resource(
+                    'section/{section}/category', 'CategorieController', [
+                        'parameters'=> [
+                            'categorie' => 'category',
+                        ]
+                    ]
+                );
+                // 'product/' goes to 'index()' which returns 'all-products' of the category..
+                Route::get('product/create', 'ProductController@create');
+                Route::post('product/create', 'ProductController@store');
+                
+                Route::resource(
+                    'section/{section}/category/{category}/product', 'ProductController', [
+                        'parameters'=> [
+                            'categorie' => 'category',
+                        ]
+                    ]
+                );
+                Route::get(
+                    'section/{section}/category/{category}/product/{product}/delete', 
+                    'ProductController@showDelete'
+                );
+            }
         );
         
         // 'user/' goes to 'index()' which returns 'all-users' of the site..
@@ -148,9 +143,6 @@ Route::middleware('adminguard')->prefix('admin')->group(
             'user', 'UserController', [
                 'parameters'=> [
                     'user' => 'user',
-                ],
-                'except' => [
-                    'show'
                 ]
             ]
         );
@@ -161,37 +153,41 @@ Route::middleware('adminguard')->prefix('admin')->group(
             'page', 'PageController', [
                 'parameters'=> [
                     'page' => 'page',
-                ],
-                'except' => [
-                    'show'
                 ]
             ]
         );
         Route::get('page/{page}/delete', 'PageController@showDelete');
 
-        
+        // 'page/' goes to 'index()' which returns 'all-pages' of the site..
         Route::resource(
-            'search', 'SearchResultController', [
+            'menus', 'PageGroupingController', [
                 'parameters'=> [
-                    'search' => 'search',
-                ],
-                'except' => [
-                    'create', 'edit', 'update'
+                    'menu' => 'menu',
                 ]
             ]
         );
-        Route::get('search/{search}/delete', 'SearchResultController@showDelete');
+        Route::get('menus/{menu}/delete', 'PageController@showDelete');
 
-        // MEMBERSHIP PLANS ARE A WISHLIST ITEM!!!
-        // 'plan/' goes to 'index()' which returns 'all-pages' of the site..
+        
+        // MEMBERSHIP PLANS AND SEARCHES ARE WISHLIST ITEMS!!!
         /* 
+            Route::resource(
+                'search', 'SearchResultController', [
+                    'parameters'=> [
+                        'search' => 'search',
+                    ],
+                    'except' => [
+                        'create', 'edit', 'update'
+                    ]
+                ]
+            );
+            Route::get('search/{search}/delete', 'SearchResultController@showDelete');
+
+            // 'plan/' goes to 'index()' which returns 'all-pages' of the site..
             Route::resource(
                 'plan', 'PlanController', [
                     'parameters'=> [
                         'plan' => 'plan',
-                    ],
-                    'except' => [
-                        'show', 'index'
                     ]
                 ]
             );
@@ -213,19 +209,19 @@ Route::middleware('signedguard')->group(
     }
 );
 
-Route::resource(
-    'search', 'SearchResultController', [
-        'parameters'=> [
-            'search' => 'search',
-        ],
-        'only' => [
-            'index', 'show', 'store'
+
+
+/* /// MEMBERSHIP PLANS AND SEARCHES ARE WISHLIST ITEMS!!
+    Route::resource(
+        'search', 'SearchResultController', [
+            'parameters'=> [
+                'search' => 'search',
+            ],
+            'only' => [
+                'index', 'show', 'store'
+            ]
         ]
-    ]
-);
-
-
-/* /// MEMBERSHIP PLANS ARE A WISHLIST ITEM!!
+    );
     Route::resource(
         'plan', 'PlanController', [
             'parameters'=> [

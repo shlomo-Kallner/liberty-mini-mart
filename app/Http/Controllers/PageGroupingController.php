@@ -12,7 +12,7 @@ class PageGroupingController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
     }
@@ -22,7 +22,7 @@ class PageGroupingController extends MainController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
     }
@@ -44,7 +44,7 @@ class PageGroupingController extends MainController
      * @param  \App\PageGrouping  $pageGrouping
      * @return \Illuminate\Http\Response
      */
-    public function show(PageGrouping $pageGrouping)
+    public function show(Request $request)
     {
         //
     }
@@ -55,7 +55,7 @@ class PageGroupingController extends MainController
      * @param  \App\PageGrouping  $pageGrouping
      * @return \Illuminate\Http\Response
      */
-    public function edit(PageGrouping $pageGrouping)
+    public function edit(Request $request)
     {
         //
     }
@@ -67,7 +67,7 @@ class PageGroupingController extends MainController
      * @param  \App\PageGrouping  $pageGrouping
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, PageGrouping $pageGrouping)
+    public function update(Request $request)
     {
         //
     }
@@ -78,7 +78,12 @@ class PageGroupingController extends MainController
      * @param  \App\PageGrouping  $pageGrouping
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PageGrouping $pageGrouping)
+    public function destroy(Request $request)
+    {
+        //
+    }
+
+    public function showDelete(Request $request)
     {
         //
     }

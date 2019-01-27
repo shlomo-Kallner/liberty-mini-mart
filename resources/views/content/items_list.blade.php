@@ -12,12 +12,12 @@
 
     use \App\Utilities\Functions\Functions;
 
-    $items2 = serialize(Functions::getContent($page['items']??''));
+    $items2 = Functions::toBladableContent(Functions::getContent($page['items']??''));
 
-    $sidebar2 = serialize(Functions::getContent($sidebar??''));
-    $bestsellers2 = serialize(Functions::getContent($page['bestsellers']??'', ''));
+    $sidebar2 = Functions::toBladableContent(Functions::getContent($sidebar??''));
+    $bestsellers2 = Functions::toBladableContent(Functions::getContent($page['bestsellers']??'', ''));
     $currency2 = Functions::getContent($cart['currencyIcon']??'','fa-usd');
-    $filters2 = serialize(Functions::getContent($page['filters']??'', ''));
+    $filters2 = Functions::toBladableContent(Functions::getContent($page['filters']??'', ''));
     
     if (!Functions::hasPropKeyIn($page, 'pagination')) {
         $itemsPerPage2 = intval(Functions::getContent($page['itemsPerPage']??'', '12'));
@@ -26,7 +26,7 @@
         $itemsPerPage2 = intval(Functions::getContent($page['pagination']['numItemsPerPage']??'', '12'));
         $pageNumber2 = intval(Functions::getContent($page['pagination']['currentPage']??'', '-1'));
     }
-    $sorting2 = serialize(Functions::getContent($page['sorting']??'', ''));
+    $sorting2 = Functions::toBladableContent(Functions::getContent($page['sorting']??'', ''));
 @endphp
 
 @section('main-content')

@@ -20,6 +20,9 @@
     // $itemsPerRow2 = getBladedContent($itemsPerRow,3);
     $itemsPerRow2 = 3;
 
+    $useVuePaginator = false;
+    $useOldPagination = false;
+
     // Some Utility Functions for the component..
 
     if(Functions::testVar($items2)){
@@ -66,47 +69,54 @@
 
         if ($pageNumber2 > -1) {
             // initializing the paginator
-            //dd(
-            //    count($rowIdxs[0]),
-            //    $rowIdxs[0][count($rowIdxs[0]) -1],
-            //    $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1]
-            //);
-            //dd($rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])]);
-            $firstItem = $rowIdxs[0][0][0];
-            $lastItem = $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1];
-            $ranges = Functions::genRange(0, $numPages - 1, 1);
-            $paginator = [
-                'totalItems' => $totalItems,
-                'numRanges' => $numPages,
-                'ranges' => $ranges,
-                'currentRange' => [
-                    'begin' => $firstItem,
-                    'end' => $lastItem,
-                    'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
-                ],
-            ];
             $numPagesPerPagingView = 4;
             $viewNumber = 0;
             $baseUrl = '';
-            $pagingFor = '';
-            $paginator2 = Page::genPagination(
-                $pageNumber2 > -1 ? $pageNumber2 : 0, 
-                $firstItem, $lastItem,
-                $totalItems, $ranges, $numPagesPerPagingView ,
-                '', $viewNumber, $baseUrl
-            );
-            $paginator3 = Page::genPagination2(
-                $pageNumber2, $itemsPerPage2, $totalItems, 
-                $numPagesPerPagingView, $pagingFor, $viewNumber, 
-                $baseUrl
-            );
+            if ($useOldPagination) {
+                //dd(
+                //    count($rowIdxs[0]),
+                //    $rowIdxs[0][count($rowIdxs[0]) -1],
+                //    $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1]
+                //);
+                //dd($rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])]);
+                $firstItem = $rowIdxs[0][0][0];
+                $lastItem = $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1];
+                $ranges = Functions::genRange(0, $numPages - 1, 1);
+                $paginator = [
+                    'totalItems' => $totalItems,
+                    'numRanges' => $numPages,
+                    'ranges' => $ranges,
+                    'currentRange' => [
+                        'begin' => $firstItem,
+                        'end' => $lastItem,
+                        'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
+                    ],
+                ];
+                $paginator2 = Page::genPagination(
+                    $pageNumber2 > -1 ? $pageNumber2 : 0, 
+                    $firstItem, $lastItem,
+                    $totalItems, $ranges, $numPagesPerPagingView ,
+                    '', $viewNumber, $baseUrl
+                );
+            } else {
+                $pagingFor = '';
+                $pageNumber3 = $pageNumber2 > -1 ? $pageNumber2 : 0;
+                if ($useVuePaginator) {
+                    $pageNumber3 = $pageNumber3  + 1;
+                } 
+                $paginator2 = Page::genPagination2(
+                    $pageNumber3, $itemsPerPage2, $totalItems, 
+                    $numPagesPerPagingView, $pagingFor, $viewNumber, 
+                    $baseUrl
+                );
+            }
         } else {
-            $paginator3 = [];
+            $paginator2 = [];
         }
         //dd("cont", $paginator, $currentPage, $items2);
             
     } else {
-        $paginator3 = [];
+        $paginator2 = [];
     }
     //dd("cont", $paginator, $items2);
 
@@ -115,22 +125,33 @@
         $viewNumber = 0;
         $baseUrl = '';
         $pagingFor = '';
-        /*
+        $pageNumber3 = $pageNumber2 > -1 ? $pageNumber2 : 0;
+        if ($useVuePaginator) {
+            $pageNumber3 = $pageNumber3  + 1;
+        } 
+        
+        if ($useOldPagination) {
             $paginator2 = Page::genPagination(
-                $pageNumber2 > -1 ? $pageNumber2 : 0, 
-                $firstItem, $lastItem,
+                $pageNumber3, $firstItem, $lastItem,
                 $totalItems, $ranges, $numPagesPerPagingView ,
                 '', $viewNumber, $baseUrl
             );
-        */ 
-        $paginator3 = Page::genPagination2(
-            $pageNumber2 > -1 ? $pageNumber2 : 0, 
-            $itemsPerPage2, $totalItems, 
-            $numPagesPerPagingView, $pagingFor, 
-            $viewNumber, $baseUrl
-        );
+        } else {
+            /*
+                genPagination2(
+                    int $pageNum, int $numItemsShownOnPage, int $totalItems, 
+                    int $numPageLinksPerPagingView = 4, string $pagingFor = '', 
+                    int $viewNumber = 0, string $baseUrl = ''
+                )
+            */
+            $paginator2 = Page::genPagination2(
+                $pageNumber3, $itemsPerPage2, $totalItems, 
+                $numPagesPerPagingView, $pagingFor, 
+                $viewNumber, $baseUrl
+            );
+        }
     }
-    //dd($paginator3);
+    //dd($paginator2);
     
            
 @endphp
@@ -185,6 +206,10 @@
 
     <!-- BEGIN PRODUCT LIST -->
     @if(Functions::testVar($items2))
+
+        @php
+            //dd($rowIdxs[$currentPage]);
+        @endphp
         
         @foreach ($rowIdxs[$currentPage] as $row)
 
@@ -197,34 +222,38 @@
 
                     @php
                         //dd($idx);
+                        // $idx2 = $idx - 1;
                     @endphp
 
-                    @component('lib.themewagon.product_mini')
-                        {{-- 
-                            slot 'extraOuterCss' added above... NOPE!!!
-                        
-                            @slot('extraOuterCss')
-                                {{ "col-md-4 col-sm-6 col-xs-12" }}
+                    @if (array_key_exists($idx, $items2))
+
+                        @component('lib.themewagon.product_mini')
+                            {{-- 
+                                slot 'extraOuterCss' added above... NOPE!!!
+                            
+                                @slot('extraOuterCss')
+                                    {{ "col-md-4 col-sm-6 col-xs-12" }}
+                                @endslot
+
+                            --}}
+                            @if (!array_key_exists('extraOuterCss', $items2[$idx]) 
+                                || empty($items2[$idx]['extraOuterCss']))
+                                @slot('extraOuterCss')
+                                    {{ "col-md-4 col-sm-6 col-xs-12" }}
+                                @endslot
+                            @endif
+                            @foreach ($items2[$idx] as $key => $value)
+                                @slot($key)
+                                    {{ $value }}
+                                @endslot
+                            @endforeach
+                            @slot('currency')
+                                {!! $currency2 !!}
                             @endslot
 
-                        --}}
-                        @if (!array_key_exists('extraOuterCss', $items2[$idx]) 
-                            || empty($items2[$idx]['extraOuterCss']))
-                            @slot('extraOuterCss')
-                                {{ "col-md-4 col-sm-6 col-xs-12" }}
-                            @endslot
-                        @endif
-                        @foreach ($items2[$idx] as $key => $value)
-                            @slot($key)
-                                {{ $value }}
-                            @endslot
-                        @endforeach
-                        @slot('currency')
-                            {!! $currency2 !!}
-                        @endslot
+                        @endcomponent
 
-                    @endcomponent
-
+                    @endif
                 @endforeach
             </div>
             
@@ -404,15 +433,15 @@
     @endif
     <!-- END PRODUCT LIST -->
 
-    @if (Functions::testVar($paginator3))
-        @if (false)
+    @if (Functions::testVar($paginator2))
+        @if ($useVuePaginator)
             <div id="masterPagination"></div>
             <script>
-                window.Laravel.pagination = '@json($paginator3)'
+                window.Laravel.pagination = '@json($paginator2)';
             </script>
         @else
             @component('lib.themewagon.paginator')
-                @foreach ($paginator3 as $key => $val)
+                @foreach ($paginator2 as $key => $val)
                     @slot($key)
                         {!! Functions::toBladableContent($val) !!}
                     @endslot
