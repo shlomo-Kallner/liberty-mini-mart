@@ -47,7 +47,6 @@
                 $items2 = Functions::toBladableContent(Functions::getContent($page['items']??''));
             
                 $sidebar2 = Functions::toBladableContent(Functions::getContent($sidebar??''));
-                $bestsellers2 = Functions::toBladableContent(Functions::getContent($page['bestsellers']??'', ''));
                 $currency2 = Functions::getContent($cart['currencyIcon']??'','fa-usd');
                 $filters2 = Functions::toBladableContent(Functions::getContent($page['filters']??'', ''));
                 

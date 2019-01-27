@@ -16,6 +16,9 @@
     // our default.. is 12 products per page (the template had 9..)
     $itemsPerPage2 = intval(Functions::getBladedString($itemsPerPage??12,12));
 
+    $component2 = Functions::getBladedString($component??'lib.themewagon.product_mini', 'lib.themewagon.product_mini');
+    $type2 = Functions::getBladedString($type??'', '');
+
     // NOTE: every product 'row' can hold up to 3 products! 
     // $itemsPerRow2 = getBladedContent($itemsPerRow,3);
     $itemsPerRow2 = 3;
@@ -227,7 +230,7 @@
 
                     @if (array_key_exists($idx, $items2))
 
-                        @component('lib.themewagon.product_mini')
+                        @component($component2)
                             {{-- 
                                 slot 'extraOuterCss' added above... NOPE!!!
                             
@@ -249,6 +252,9 @@
                             @endforeach
                             @slot('currency')
                                 {!! $currency2 !!}
+                            @endslot
+                            @slot('type')
+                                {!! $type2 !!}
                             @endslot
 
                         @endcomponent
