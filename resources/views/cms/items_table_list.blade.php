@@ -17,7 +17,7 @@ $pageNumber2 = intval(Functions::getBladedString($pageNumber??0,0));
 $itemsPerPage2 = intval(Functions::getBladedString($itemsPerPage??12,12));
 
 $extraContainerCss2 = Functions::getBladedString($extraContainerCss??'', '');
-$type2 = Functions::getBladedString($type??'', '');
+$type2 = Functions::getBladedString($type??'', 'Items');
 
 $paginator2 = Functions::getBladedContent($paginator??[], []);
 
@@ -31,29 +31,12 @@ $useOldPagination = false;
 // Some Utility Functions for the component..
 
 if(Functions::testVar($items2)){
-
-    // adding the 'extraOuterCss' slot & data to the array..
-    // so that we can use 'product_gallery.blade.php' for this..
-    /// HAD TO RESTORE THE SLOTS BELOW>>>!!!
-    /*
-        foreach ($products2 as $value){
-            if(Functions::testVar($value) && is_array($value) 
-            && !array_key_exists('extraOuterCss',$value)){
-                $value['extraOuterCss'] = "col-md-4 col-sm-6 col-xs-12";
-            }
-        }
-    */
-
     // Initializing the row Indices while we are at it..
     $totalItems = Functions::testVar($paginator2)
     ? intval($paginator2['totalItems']) : count($items2);
     $numPages = Functions::testVar($paginator2)
     ? intval($paginator2['totalNumPages']) : 0;
     // Functions::genRowsPerPage($totalProducts, $productsPerPage2);
-    $rowIdxs = Functions::genPagesIndexes(
-        $itemsPerPage2, $itemsPerRow2, 
-        $totalItems, $pageNumber2, $numPages
-    );
     /// $currentPage is an index into $rowIdxs, which will only contain
     ///  more than ONE element (an array) if $pageNumber2 was equal to -2!
     $currentPage = $pageNumber2 > -2 ? 0 : random_int(0, $numPages-1); 
@@ -72,7 +55,6 @@ if(Functions::testVar($items2)){
                 'totalItems' => $totalItems, 
                 'pageNumber' => $pageNumber2, 
                 'numPages' => $numPages, 
-                'rowIdxs' => $rowIdxs,
                 'currentPage' => $currentPage
             ]
         );
@@ -83,44 +65,16 @@ if(Functions::testVar($items2)){
         $numPagesPerPagingView = 4;
         $viewNumber = 0;
         $baseUrl = '';
-        if ($useOldPagination) {
-            //dd(
-            //    count($rowIdxs[0]),
-            //    $rowIdxs[0][count($rowIdxs[0]) -1],
-            //    $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1]
-            //);
-            //dd($rowIdxs[0][count($rowIdxs[0])][count($rowIdxs[0][count($rowIdxs[0])])]);
-            $firstItem = $rowIdxs[0][0][0];
-            $lastItem = $rowIdxs[0][count($rowIdxs[0]) -1][count($rowIdxs[0][count($rowIdxs[0]) -1]) -1];
-            $ranges = Functions::genRange(0, $numPages - 1, 1);
-            $paginator = [
-                'totalItems' => $totalItems,
-                'numRanges' => $numPages,
-                'ranges' => $ranges,
-                'currentRange' => [
-                    'begin' => $firstItem,
-                    'end' => $lastItem,
-                    'index' => $pageNumber2 > -1 ? $pageNumber2 : 0,
-                ],
-            ];
-            $paginator2 = Page::genPagination(
-                $pageNumber2 > -1 ? $pageNumber2 : 0, 
-                $firstItem, $lastItem,
-                $totalItems, $ranges, $numPagesPerPagingView ,
-                '', $viewNumber, $baseUrl
-            );
-        } else {
-            $pagingFor = '';
-            $pageNumber3 = $pageNumber2 > -1 ? $pageNumber2 : 0;
-            if ($useVuePaginator) {
-                $pageNumber3 = $pageNumber3  + 1;
-            } 
-            $paginator2 = Page::genPagination2(
-                $pageNumber3, $itemsPerPage2, $totalItems, 
-                $numPagesPerPagingView, $pagingFor, $viewNumber, 
-                $baseUrl
-            );
-        }
+        $pagingFor = '';
+        $pageNumber3 = $pageNumber2 > -1 ? $pageNumber2 : 0;
+        if ($useVuePaginator) {
+            $pageNumber3 = $pageNumber3  + 1;
+        } 
+        $paginator2 = Page::genPagination2(
+            $pageNumber3, $itemsPerPage2, $totalItems, 
+            $numPagesPerPagingView, $pagingFor, $viewNumber, 
+            $baseUrl
+        );
     } 
     //dd("cont", $paginator, $currentPage, $items2);
         
@@ -132,7 +86,7 @@ if(Functions::testVar($items2)){
 @endphp
 
 <!-- BEGIN CONTENT -->
-<div class="col-md-9 col-sm-7">
+<div class="col-md-9 col-sm-7 {{ $extraContainerCss2 }}">
 
     @if (Functions::testVar($sorting2))
     @else
@@ -189,207 +143,204 @@ if(Functions::testVar($items2)){
                 $lastIdx = intval($paginator2['lastItemIndex']);
                 $trntmp = Functions::genRange($firstIdx, $lastIdx, 1);
                 /* dd([ 
-                    'rowIdxs' => $rowIdxs, 
                     'paginator' => $paginator2, 
                     'currentPage' => $currentPage,
                     'Items' => $items2,
                     'TranslatorArr' => $trntmp
                     ]
                 ); */
+                /*
+                    @php
+                        if (array_key_exists($idx, $items2)) {
+                            $idx2 = $idx;
+                        } else {
+                            $idx2 = Functions::getIndexOf($trntmp, $idx);
+                        }
+                    @endphp
+                */
             @endphp
-            
-            @foreach ($rowIdxs[$currentPage] as $row)
+            <div class="table-wrapper-responsive">
+                <table>
 
-                @php
-                    //dd($row);
-                @endphp
+                
+                    <thead>
+                        <tr>
+                            <th class="goods-page-image">Image</th>
+                            <th class="goods-page-description">Description</th>
+                            <th class="goods-page-ref-no">Ref No</th>
+                            <th class="goods-page-quantity">Quantity</th>
+                            <th class="goods-page-price">Unit price</th>
+                            <th class="goods-page-total" colspan="2">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                <div class="row product-list">
-                    @foreach ($row as $idx)
+                        @foreach ($items2 as $item)
+                            <tr>
+                                <td class="goods-page-image">
+                                    <a href="{{ url($item['url']) }}">
+                                        <img src="{{ asset($item['img']) }}" alt="{{ $item['imgAlt'] }}">
+                                    </a>
+                                </td>
+                                <td class="goods-page-description">
+                                    <h3>
+                                        <a href="{{ url($item['url']) }}">{{ $item['shortDescription'] }}</a>
+                                    </h3>
+                                    <p>
+                                        <strong>Item {{ $loop->index + 1 }}</strong> - 
+                                        @foreach ($item['options'] as $optName => $optVal)
+                                            {{ $optName }}: {{ $optVal }}
+                                        @endforeach
+                                    </p>
+                                    {{-- <em>More info is here</em> --}}
+                                    
+                                </td>
+                                <td class="goods-page-ref-no">
+                                        {{ $item['refNo'] }}
+                                </td>
+                                <td class="goods-page-quantity">
+                                    <div class="product-quantity">
+                                        <input id="product-quantity" type="text" value="{{ $item['quantity'] }}" class="form-control input-sm">
+                                    </div>
+                                </td>
+                                <td class="goods-page-price">
+                                    <strong>
+                                        <span><i class="fa {{ $currency2 }}"></i></span>
+                                        {{ $item['price'] }}
+                                    </strong>
+                                </td>
+                                <td class="goods-page-total">
+                                    <strong>
+                                        <span><i class="fa {{ $currency2 }}"></i></span>
+                                        {{ $item['subtotal'] }}
+                                    </strong>
+                                </td>
+                                <td class="del-goods-col">
+                                    @foreach ($item['buttons'] as $button)
+                                        <a class="{{ $button['class'] }}" href="{{ url($button['url']) }}">
+                                            @if (Functions::isPropKeyIn($button, 'icon'))
+                                                <i class="fa {{ $button['icon'] }}">
+                                            @endif
+                                            @if (Functions::isPropKeyIn($button, 'text'))
+                                                {!! $button['text'] !!}
+                                            @endif
+                                        </a>
+                                    @endforeach
+                                </td>
+                            </tr>
+                        @endforeach
+                    
+                    </tbody>
+
+                    @foreach ($items2 as $item)
 
                         @php
-                            //dd($idx);
-                            // $idx2 = $idx - 1;
-                            if (array_key_exists($idx, $items2)) {
-                                $idx2 = $idx;
-                            } else {
-                                $idx2 = Functions::getIndexOf($trntmp, $idx);
-                            }
+                            //dd($row);
                         @endphp
+                        
+                            @foreach ($row as $idx)
 
-                        @component($component2)
-                            {{-- 
-                                slot 'extraOuterCss' added above... NOPE!!!
-                            
-                                @slot('extraOuterCss')
-                                    {{ "col-md-4 col-sm-6 col-xs-12" }}
-                                @endslot
+                                @php
+                                    //dd($idx);
+                                    // $idx2 = $idx - 1;
+                                    if (array_key_exists($idx, $items2)) {
+                                        $idx2 = $idx;
+                                    } else {
+                                        $idx2 = Functions::getIndexOf($trntmp, $idx);
+                                    }
+                                @endphp
 
-                            --}}
-                            @if (!array_key_exists('extraOuterCss', $items2[$idx2]) 
-                                || empty($items2[$idx2]['extraOuterCss']))
-                                @slot('extraOuterCss')
-                                    {{ "col-md-4 col-sm-6 col-xs-12" }}
-                                @endslot
-                            @endif
-                            @foreach ($items2[$idx2] as $key => $value)
-                                @slot($key)
-                                    {{ $value }}
-                                @endslot
+                                @component($component2)
+                                    {{-- 
+                                        slot 'extraOuterCss' added above... NOPE!!!
+                                    
+                                        @slot('extraOuterCss')
+                                            {{ "col-md-4 col-sm-6 col-xs-12" }}
+                                        @endslot
+
+                                    --}}
+                                    @if (!array_key_exists('extraOuterCss', $items2[$idx2]) 
+                                        || empty($items2[$idx2]['extraOuterCss']))
+                                        @slot('extraOuterCss')
+                                            {{ "col-md-4 col-sm-6 col-xs-12" }}
+                                        @endslot
+                                    @endif
+                                    @foreach ($items2[$idx2] as $key => $value)
+                                        @slot($key)
+                                            {{ $value }}
+                                        @endslot
+                                    @endforeach
+                                    @slot('currency')
+                                        {!! $currency2 !!}
+                                    @endslot
+                                    @slot('type')
+                                        {!! $type2 !!}
+                                    @endslot
+
+                                @endcomponent
                             @endforeach
-                            @slot('currency')
-                                {!! $currency2 !!}
-                            @endslot
-                            @slot('type')
-                                {!! $type2 !!}
-                            @endslot
-
-                        @endcomponent
+                        
                     @endforeach
-                </div>
-                
-            @endforeach
+
+                </table>
+            </div>
             
         @elseif ($testing)
 
+        
 
-            <!-- BEGIN CONTENT -->
-                <div class="col-md-12 {{ $extraContainerCss2 }}">
-                    <h1>{!! $cartTitle2 !!}</h1>
-                    <div class="goods-page">
-                        <div class="goods-data clearfix">
-                            @if (Functions::testVar($cart2))
-                                <div class="table-wrapper-responsive">
-                                    <table summary="Shopping cart">
-                                        
-                                        <thead>
-                                            <tr>
-                                                <th class="goods-page-image">Image</th>
-                                                <th class="goods-page-description">Description</th>
-                                                <th class="goods-page-ref-no">Ref No</th>
-                                                <th class="goods-page-quantity">Quantity</th>
-                                                <th class="goods-page-price">Unit price</th>
-                                                <th class="goods-page-total" colspan="2">Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-
-                                            @foreach ($cart2 as $item)
-                                                <tr>
-                                                    <td class="goods-page-image">
-                                                        <a href="{{ url($item['url']) }}">
-                                                            <img src="{{ asset($item['img']) }}" alt="{{ $item['imgAlt'] }}">
-                                                        </a>
-                                                    </td>
-                                                    <td class="goods-page-description">
-                                                        <h3>
-                                                            <a href="{{ url($item['url']) }}">{{ $item['shortDescription'] }}</a>
-                                                        </h3>
-                                                        <p>
-                                                            <strong>Item {{ $loop->index + 1 }}</strong> - 
-                                                            @foreach ($item['options'] as $optName => $optVal)
-                                                                {{ $optName }}: {{ $optVal }}
-                                                            @endforeach
-                                                        </p>
-                                                        {{-- <em>More info is here</em> --}}
-                                                        
-                                                    </td>
-                                                    <td class="goods-page-ref-no">
-                                                            {{ $item['refNo'] }}
-                                                    </td>
-                                                    <td class="goods-page-quantity">
-                                                        <div class="product-quantity">
-                                                            <input id="product-quantity" type="text" value="{{ $item['quantity'] }}" class="form-control input-sm">
-                                                        </div>
-                                                    </td>
-                                                    <td class="goods-page-price">
-                                                        <strong>
-                                                            <span><i class="fa {{ $currency2 }}"></i></span>
-                                                            {{ $item['price'] }}
-                                                        </strong>
-                                                    </td>
-                                                    <td class="goods-page-total">
-                                                        <strong>
-                                                            <span><i class="fa {{ $currency2 }}"></i></span>
-                                                            {{ $item['subtotal'] }}
-                                                        </strong>
-                                                    </td>
-                                                    <td class="del-goods-col">
-                                                        @foreach ($item['buttons'] as $button)
-                                                            <a class="{{ $button['class'] }}" href="{{ url($button['url']) }}">
-                                                                @if (Functions::isPropKeyIn($button, 'icon'))
-                                                                    <i class="fa {{ $button['icon'] }}">
-                                                                @endif
-                                                                @if (Functions::isPropKeyIn($button, 'text'))
-                                                                    {!! $button['text'] !!}
-                                                                @endif
-                                                            </a>
-                                                        @endforeach
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        
-                                        </tbody>
-
-                                    </table>
-                                </div>
-                            @else
-                                <p>Your {{ $cartType2 }} is empty!</p>
-                            @endif
-                            
-                            <div class="shopping-total">
-                                <ul>
-                                    <li>
-                                        <em>Sub total</em>
-                                        <strong class="price">
-                                            <span><i class="fa {{ $currency2 }}"></i></span>
-                                            {{ $subTotal2 }}
-                                        </strong>
-                                    </li>
-                                    <li>
-                                        <em>Shipping cost</em>
-                                        <strong class="price">
-                                            <span><i class="fa {{ $currency2 }}"></i></span>
-                                            {{ $shippingCost2 }}
-                                        </strong>
-                                    </li>
-                                    <li class="shopping-total-price">
-                                        <em>Total</em>
-                                        <strong class="price">
-                                            <span><i class="fa {{ $currency2 }}"></i></span>
-                                            {{ $totalPrice2 }}
-                                        </strong>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        @foreach ($pageButtons2 as $button)
-                            @if (true)
-                                <button class="btn {{ $button['class'] }}" type="submit">
-                                    {{ $button['text'] }} <i class="fa {{ $button['icon'] }}"></i>
-                                </button>
-                            @else
-                                <a class="btn {{ $button['class'] }}" href="{{ $button['url']??'#' }}" role="button">
-                                    {{ $button['text'] }} <i class="fa {{ $button['icon'] }}"></i>
-                                </a>
-                            @endif
-                        @endforeach
-                    </div>
+            @if (false)
+                @foreach ($pageButtons2 as $button)
+                    @if (true)
+                        <button class="btn {{ $button['class'] }}" type="submit">
+                            {{ $button['text'] }} <i class="fa {{ $button['icon'] }}"></i>
+                        </button>
+                    @else
+                        <a class="btn {{ $button['class'] }}" href="{{ $button['url']??'#' }}" role="button">
+                            {{ $button['text'] }} <i class="fa {{ $button['icon'] }}"></i>
+                        </a>
+                    @endif
+                @endforeach
+                
+                <div class="shopping-total">
+                    <ul>
+                        <li>
+                            <em>Sub total</em>
+                            <strong class="price">
+                                <span><i class="fa {{ $currency2 }}"></i></span>
+                                {{ $subTotal2 }}
+                            </strong>
+                        </li>
+                        <li>
+                            <em>Shipping cost</em>
+                            <strong class="price">
+                                <span><i class="fa {{ $currency2 }}"></i></span>
+                                {{ $shippingCost2 }}
+                            </strong>
+                        </li>
+                        <li class="shopping-total-price">
+                            <em>Total</em>
+                            <strong class="price">
+                                <span><i class="fa {{ $currency2 }}"></i></span>
+                                {{ $totalPrice2 }}
+                            </strong>
+                        </li>
+                    </ul>
                 </div>
-            <!-- END CONTENT -->
+            @endif
+
 
 
         @else
             
             
             <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="well">
                         <h3>
                             <i class="fa fa-exclamation-triangle"></i>
                             <strong>We are Sorry!</strong>
-                            We Have no Items to Display!
+                            We Have no {{ $type2 }} to Display!
                         </h3>
                     </div>
                 </div>
