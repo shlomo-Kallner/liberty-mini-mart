@@ -37,24 +37,101 @@ class ProductController extends MainController
      */
     public function index(Request $request)
     {
-        
-        $sect = Section::getNamed($request->section);
-        if (Functions::testVar($sect)) {
-            $cat = $sect->getCategory($request->category);
-            if (Functions::testVar($cat)) {
-                UserSession::updateRegenerate(
-                    $request, intval(User::getIdFromUserArray(false))
+        if (Functions::testVar($request->section) && Functions::testVar($request->category)) {
+            
+            $sect = Section::getNamed($request->section);
+            if (Functions::testVar($sect)) {
+                $cat = $sect->getCategory($request->category);
+                if (Functions::testVar($cat)) {
+                    UserSession::updateRegenerate(
+                        $request, intval(User::getIdFromUserArray(false))
+                    );
+                    //$request->session()->regenerate();
+                    return redirect(
+                        $cat->getFullUrl(
+                            $request->ajax() 
+                                ? 'api/store' 
+                                : 'store'
+                            )
+                    );
+                }
+            }
+        } else {
+            $productsData = [
+                'PageNum' => 0,
+                'NumShown' => 12,
+                'PagingFor' => 'productsPanel',
+                'Dir' => 'asc',
+                'WithTrashed' => Functions::isAdminPath($request->path()),
+                'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin/store' : 'store',
+                'ViewNum' => 0,
+                'UseBaseMaker' => $request->ajax(),
+                'Default' => [],
+                'UseTitle' => true,
+                'FullUrl' => !$request->ajax(),
+                'ListUrl' => $request->path(),
+                'UseGetSelf' => false,
+                'Transform' => Product::TO_TABLE_ARRAY_TRANSFORM
+            ];
+            $pv = Product::getPagingVars(
+                $request, $productsData['PagingFor'], $productsData['NumShown'],
+                $productsData['Dir']
+            );
+            if (Functions::testVar($pv)) {
+                $productsData['PageNum'] = $pv['pageNum'];
+                $productsData['ViewNum'] = $pv['viewNum'];
+                if (Functions::hasPropKeyIn($pv, 'limit')) {
+                    $productsData['NumShown'] = $pv['limit'];
+                }
+                if (Functions::hasPropKeyIn($pv, 'order')) {
+                    $productsData['Dir'] = $pv['order'];
+                }
+            } 
+            $useSelfPaging = false;
+            if ($useSelfPaging) {
+                $products = Product::getAllWithPagination(
+                    $productsData['Transform'], $productsData['PageNum'], 
+                    $productsData['NumShown'], $productsData['PagingFor'], 
+                    $productsData['Dir'], $productsData['WithTrashed'], 
+                    $productsData['BaseUrl'], $productsData['ListUrl'], 
+                    $productsData['ViewNum'], $productsData['FullUrl'], 
+                    $productsData['UseTitle'], 1, $productsData['Default'], 
+                    $productsData['UseBaseMaker']
                 );
-                //$request->session()->regenerate();
-                return redirect(
-                    $cat->getFullUrl(
-                        $request->ajax() 
-                            ? 'api/store' 
-                            : 'store'
-                        )
+            } else {
+                $products = [];
+                $products['items'] = Product::getAllWithTransform(
+                    $productsData['Transform'], $productsData['Dir'], 
+                    $productsData['WithTrashed'], $productsData['BaseUrl'], 
+                    $productsData['UseTitle'], $productsData['FullUrl'], 
+                    1, $productsData['Default'], $productsData['UseBaseMaker']
+                );
+            }
+            if ($request->ajax()) {
+                return $products;
+            } else {
+                $title = 'Our Products';
+                $products['type'] = 'Products';
+                $bcLinks = [];
+                $bcLinks[] = self::getHomeBreadcumb();
+                if (Functions::isAdminPath($request->path())) {
+                    $bcLinks[] = CmsController::getAdminBreadcrumb();
+                }
+                $breadcrumbs = Page::getBreadcrumbs(
+                    Page::genBreadcrumb(
+                        $title, 
+                        Page::genUrlFragment($productsData['BaseUrl'], $productsData['FullUrl'])
+                    ),
+                    $bcLinks
+                );
+                return self::getView(
+                    $request, 'cms.items_table', $title, $products, false, $breadcrumbs, null,
+                    Functions::isAdminPath($request->path()) 
+                    ? CmsController::getAdminSidebar() : null
                 );
             }
         }
+        abort(404);
     }
 
     public function list(Request $request)
@@ -76,28 +153,66 @@ class ProductController extends MainController
     public function create(Request $request)
     {
         // PARTIAL!! Requires further Implementation!
-        $content = [];
+        $tmpData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'productsPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => Functions::isAdminPath($request->path()),
+            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => Product::TO_TABLE_ARRAY_TRANSFORM
+        ];
+        $slist = Section::getNameListing(false, $tmpData['Dir'], $tmpData['UseBaseMaker']);
+        $content = [
+            'lists' => [
+                'sections' => $slist
+            ],
+            'hasName' => 'true',
+            'hasTitle' => 'true',
+            'hasUrl' => 'true',
+            'hasArticle' => 'true',
+            'hasImage' => 'true',
+        ];
         if ($request->has('section') && $request->has('category')) {
-            $slist = Section::getNameListing();
             $sect = Section::getNamed($request->section);
             if (Functions::testVar($sect)) {
                 $clist = Categorie::getNameListingOf($sect->categories);
                 $cat = $sect->getCategory($request->category);
                 if (Functions::testVar($cat)) {
-                    $content['lists'] = [
-                        'sections' => $slist,
-                        'categories' => $clist,
-                    ];
-                    $content['selected'] = [
-                        'section' => $sect->toNameListing(),
-                        'category' => $cat->toNameListing(),
-                    ];
+                    $content['hasParent'] = 'true';
+                    $content['parentList'] = $clist;
+                    $content['hasSelectedParent'] = 'true';
+                    $content['selectedParent'] = $cat->toNameListing();
+                    $content['hasSelectedSection'] = 'true';
+                    $content['selectedSection'] = $sect->toNameListing();
                 }
             }
         } 
+        $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin/store' : 'store';
+        $bcLinks = [];
+        $bcLinks[] = self::getHomeBreadcumb();
+        if (Functions::isAdminPath($request->path())) {
+            $bcLinks[] = CmsController::getAdminBreadcrumb();
+        }
+        $breadcrumbs = Page::getBreadcrumbs(
+            Page::genBreadcrumb(
+                'Product Creation Form', 
+                Page::genUrlFragment($BaseUrl, !$request->ajax())
+            ),
+            $bcLinks
+        );
         return self::getView(
             $request, 'cms.forms.new.product', 'Create a New Product',
-            $content 
+            $content, false, $breadcrumbs, null, 
+            Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
+            : null
         );
     }
 

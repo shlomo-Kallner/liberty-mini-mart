@@ -136,11 +136,12 @@ class UserController extends MainController
         $name = $request->lastname . ' , ' . $request->firstname;
         $user = User::createNew(
             $name, $request->email, $request->password, 
-            1, 1, $request->rememberToken ? true : false
+            1, 1, $request->rememberToken ? true : false,
+            true
         );
         //dd($user);
         if (Functions::testVar($user)) {
-            $user->setIsAuthUser();
+            $user->setIsAuthUser(true);
             $user->setUserArray($request);
             parent::addMsg(
                 '<h3>New User Registration Successfull!!</h3>'

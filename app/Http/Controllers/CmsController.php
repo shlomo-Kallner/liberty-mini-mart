@@ -285,7 +285,7 @@ class CmsController extends MainController
             '', '', 'fa-plus', 'button'
         );  
         $sidebar[] = Page::genURLMenuItem(
-            'admin/store/products/create', 'Create a New Product', 'fa-shopping-bag', 
+            'admin/store/product/create', 'Create a New Product', 'fa-shopping-bag', 
             '', '', 'fa-plus', 'button'
         );  
         $sidebar[] = Page::genURLMenuItem(

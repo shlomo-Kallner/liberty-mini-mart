@@ -217,8 +217,12 @@
         @php
             //dd($rowIdxs);
             //dd($rowIdxs[$currentPage]);
-            $firstIdx = intval($paginator2['firstItemIndex']);
-            $lastIdx = intval($paginator2['lastItemIndex']);
+            $firstIdx = Functions::testVar($paginator2) 
+            ? intval($paginator2['firstItemIndex'])
+            : 0;
+            $lastIdx = Functions::testVar($paginator2) 
+            ? intval($paginator2['lastItemIndex'])
+            : Functions::getLastIndex($items2);
             $trntmp = Functions::genRange($firstIdx, $lastIdx, 1);
             /* dd([ 
                 'rowIdxs' => $rowIdxs, 

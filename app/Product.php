@@ -252,7 +252,7 @@ class Product extends Model implements TransformableContainer
             'productSalePrice' => $this->sale,
             'productAvailability' => $this->availablity, // a wishList Item!
             'productShortDescription' => $this->description,
-            'productLongDescription' => Article::getFromId($this->article_id)->article??'',
+            'productLongDescription' => Article::getArticle($this->article, true),
             'productRating' => $reviews->avg(
                 function ($item) {
                     return $item->rating;
@@ -268,7 +268,20 @@ class Product extends Model implements TransformableContainer
         ];
     }
 
-    ///
+    public function toTableArray(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
+    ) {
+        $url = $this->getFullUrl($baseUrl, $fullUrl);
+        return self::makeTableArray(
+            $this->name, $url, $useTitle ? $this->title : $this->image->alt,
+            $this->image, $this->description,
+            $this->sticker, $this->getDatesArray(),  $this->id,
+            $this->getPayload(), $this->price, $this->sale??'no sale',
+            $this->category->toUrlListing($baseUrl, $fullUrl, false)
+        );
+    }
 
     /// this method WILL require adjustment 
     ///  while covering the WISHLIST!

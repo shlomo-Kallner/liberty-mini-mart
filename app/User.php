@@ -16,7 +16,8 @@ use App\Image,
     App\Order,
     App\Cart;
 use Darryldecode\Cart\Helpers\Helpers;
-use Webpatser\Uuid\Uuid;
+use Webpatser\Uuid\Uuid,
+    Illuminate\Support\Facades\Log;
 
 class User extends Model implements TransformableContainer
 {
@@ -65,7 +66,8 @@ class User extends Model implements TransformableContainer
         bool $useBaseMaker = false, bool $p = false
     ) {
         $res = [];
-        $perm = new Basic($this->id, $p, 2);
+        $version = 2;
+        $perm = new Basic($this->id, $p, $version);
         if ($perm->isAdmin()) {
             $res[] = $useBaseMaker
                 ? [
@@ -168,7 +170,8 @@ class User extends Model implements TransformableContainer
             $tmp = $tmpCol[0];
             if (Hash::check($password, $tmp->password)) {
                 //dd($tmp);
-                $tmp->setUserArray($request);
+                $data = $tmp->setUserArray($request);
+                // Log::info('new user sesssion array: ', $data);
                 return true;
             }
         }

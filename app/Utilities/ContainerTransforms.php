@@ -21,6 +21,7 @@ interface TransformableContainer extends ContainerAPI
     const TO_SIDEBAR_TRANSFORM = 'sidebar';
     const TO_CONTENT_ARRAY_TRANSFORM = 'content';
     const TO_CONTENT_ARRAY_PLUS_TRANSFORM = 'content_plus';
+    const TO_TABLE_ARRAY_TRANSFORM = 'table';
     const TO_NAME_LIST_TRANSFORM = 'name';
     const TO_URL_FRAGMENT_TRANSFORM = 'fragment';
     const TO_URL_LIST_TRANSFORM = 'url';
@@ -145,13 +146,14 @@ interface TransformableContainer extends ContainerAPI
 
     /// end of other getters.
 
-    /// this method (toTableArray) is deprecated!
-    /// table views will not make use of a special 
+    /// this method (toTableArray) was deprecated!
+    /// table views will now make use of a special 
     ///  data transform.
-    /* public function toTableArray(
+    public function toTableArray(
         string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true
-    ); */
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
+    );
 }
 
 trait ContainerTransforms
@@ -185,14 +187,22 @@ trait ContainerTransforms
 
     /// transforms...
 
+    static public function makeNameListing($name, $url)
+    {
+        return [
+            'name' => $name,
+            'url' =>  $url
+        ];
+    }
+
     public function toUrlListing(
         string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
     ) {
         $url = $this->getFullUrl($baseUrl, false);
-        $value = [
-            'name' => $this->getPubName(),
-            'url' =>  $fullUrl ? url($url) : $url, 
-        ];
+        $value = self::makeNameListing(
+            $this->getPubName(), 
+            $fullUrl ? url($url) : $url
+        );
         return $useBaseMaker
             ? self::makeDefaultBaseContentIterArray($value, null, false)
             : $value;
@@ -202,10 +212,10 @@ trait ContainerTransforms
         string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
     ) {
         $url = $this->getUrlFragment($baseUrl);
-        $value = [
-            'name' => $this->name,
-            'url' =>  $fullUrl ? url($url) : $url, 
-        ];
+        $value = self::makeNameListing(
+            $this->getPubName(), 
+            $fullUrl ? url($url) : $url
+        );
         return $useBaseMaker
             ? self::makeDefaultBaseContentIterArray($value, null, false)
             : $value;
@@ -213,11 +223,11 @@ trait ContainerTransforms
 
     public function toNameListing(bool $useBaseMaker = false)
     {
-        $value = [
-            'name' => $this->getPubName(),
-            'url' => $this->getUrl(), /// the identifying url fragment,
-                                 /// NOT the full URL!!!
-        ];
+        $value = self::makeNameListing(
+            $this->getPubName(), 
+            $this->getUrl() /// the identifying url fragment,
+            /// NOT the full URL!!!
+        );
         return $useBaseMaker
             ? self::makeDefaultBaseContentIterArray($value, null, false)
             : $value;
@@ -261,6 +271,18 @@ trait ContainerTransforms
         return $this->toContentArrayPlus(
             $baseUrl, $version, $useTitle, $withTrashed, 
             $fullUrl, $useBaseMaker, 'asc'
+        );
+    }
+
+    public function toTableArray(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
+    ) {
+        return $this->toContentArray(
+            $baseUrl, $version, 
+            $useTitle, $withTrashed,
+            $fullUrl
         );
     }
 
@@ -398,8 +420,8 @@ trait ContainerTransforms
     static public function getNameListingOf($array, bool $useBaseMaker = false)
     {
         $res = [];
-        if (is_array($array) || $array instanceof Collection) {
-            foreach ($tmp as $item) {
+        if (Functions::countHas($array)) {
+            foreach ($array as $item) {
                 if (self::isTransformable($item)) {
                     $res[] = $item->toNameListing($useBaseMaker);
                 }
@@ -508,9 +530,11 @@ trait ContainerTransforms
     static public function makeTableArray(
         string $name, string $url, string $title,
         $img, string $description,
-        string $sticker = '', array $dates = [], int $id = 0
+        string $sticker = '', array $dates = [], int $id = 0,
+        array $payload = null, $price = '', $sale = '',
+        array $parent = null
     ) {
-        return [
+        $content = [
             'id' => $id,
             'name' => $name,
             'img' => Image::getImageArray($img),
@@ -520,6 +544,19 @@ trait ContainerTransforms
             'dates' => $dates,
             'sticker' => $sticker,
         ];
+        if (Functions::testVar($payload)) {
+            $content['payload'] = $payload;
+        }
+        if (Functions::testVar($price)) {
+            $content['price'] = $price;
+        }
+        if (Functions::testVar($sale)) {
+            $content['sale'] = $sale;
+        }
+        if (Functions::testVar($parent)) {
+            $content['parent'] = $parent;
+        }
+        return $content;
     }
 
     static public function makeDefaultBaseContentIterArray(
@@ -1107,7 +1144,7 @@ trait ContainerTransforms
                     self::genPagination3(
                         $pageIdx['begin'], $pageIdx['end'] - 1, $numShown,
                         $totalNum, $pageNum, Functions::genRowsPerPage(
-                            $totalItems, $numShown
+                            $totalNum, $numShown
                         ), 4, $viewNumber, $pagingFor, $baseUrl
                     )
                 );
@@ -1163,6 +1200,10 @@ trait ContainerTransforms
                     return $item->toUrlFragrment($baseUrl, $fullUrl, $useBaseMaker);
                 case 'url':
                     return $item->toUrlListing($baseUrl, $fullUrl, $useBaseMaker);
+                case 'table':
+                    return $item->toTableArray(
+                        $baseUrl, $version, $useTitle, $withTrashed, $fullUrl
+                    );
                 }
             } elseif (is_callable($transform)) {
                 return $transform($item, $baseUrl, $version, $useTitle, $withTrashed, $fullUrl);

@@ -41,9 +41,6 @@ class PageController extends MainController
             'UseGetSelf' => false,
             'Transform' => Page::TO_MINI_TRANSFORM
         ];
-            
-        $pagesData['Dir'] = 'asc';
-        $pagesData['PagingFor'] = 'pagesPanel';
         $pv = Page::getPagingVars(
             $request, $pagesData['PagingFor'], $pagesData['NumShown'],
             $pagesData['Dir']

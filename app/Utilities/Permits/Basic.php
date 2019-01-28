@@ -3,7 +3,8 @@
 namespace App\Utilities\Permits;
 
 use App\Utilities\Functions\Functions,
-    Illuminate\Support\Collection;
+    Illuminate\Support\Collection,
+    Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\Constraint\IsTrue;
 
 class Basic extends Permits
@@ -152,7 +153,7 @@ class Basic extends Permits
 
     // BASIC Private/Protected Testing method
 
-    private function getBasics(int $version)
+    private function getBasics(int $version = 2)
     {
         $res = [];
         $p = [
@@ -168,33 +169,54 @@ class Basic extends Permits
             
             parent::makeRLpair(parent::GUEST_USER_ROLE, parent::READ_LEVEL, self::BASIC_TYPE),
         ];
-        $t = $this->testIfInPerms($p, 1, null, 2);
+        $t = $this->testIfInPerms($p, 1, null, $version);
+        // Log::info('message', [ 't' => $t]);
         $h_a = false;
         $h_c = false;
         $h_au = false;
         $h_gu = false;
         if ($t !== false && count($t) > 0) {
             foreach ($t as $r) {
-                if ($r['role'] === parent::ADMIN_ROLE 
-                    && !$h_a
+                if ($version == 2 && $r['role'] === parent::ADMIN_ROLE 
+                    && !$h_a 
+                ) {
+                    $res[] = parent::ADMIN_ROLE;
+                    $h_a = true;
+                } elseif ($version == 1 && $r[0]['role'] === parent::ADMIN_ROLE 
+                && !$h_a && $r[1]
                 ) {
                     $res[] = parent::ADMIN_ROLE;
                     $h_a = true;
                 }
-                if ($r['role'] === parent::CONTENT_ROLE 
+                if ($version == 2 && $r['role'] === parent::CONTENT_ROLE 
                     && !$h_c
                 ) {
                     $res[] = parent::CONTENT_ROLE;
                     $h_c = true;
+                } elseif ($version == 1 && $r[0]['role'] === parent::CONTENT_ROLE 
+                && !$h_c && $r[1]
+                ) {
+                    $res[] = parent::CONTENT_ROLE;
+                    $h_c = true;
                 }
-                if ($r['role'] === parent::AUTH_USER_ROLE 
+                if ($version == 2 && $r['role'] === parent::AUTH_USER_ROLE 
                     && !$h_au
                 ) {
                     $res[] = parent::AUTH_USER_ROLE;
                     $h_au = true;
+                } elseif ($version == 1 && $r[0]['role'] === parent::AUTH_USER_ROLE 
+                && !$h_au && $r[1]
+                ) {
+                    $res[] = parent::AUTH_USER_ROLE;
+                    $h_au = true;
                 }
-                if ($r['role'] === parent::GUEST_USER_ROLE 
+                if ($version == 2 && $r['role'] === parent::GUEST_USER_ROLE 
                     && !$h_gu
+                ) {
+                    $res[] = parent::GUEST_USER_ROLE;
+                    $h_gu = true;
+                } elseif ($version == 1 && $r[0]['role'] === parent::GUEST_USER_ROLE 
+                && !$h_gu && $r[1]
                 ) {
                     $res[] = parent::GUEST_USER_ROLE;
                     $h_gu = true;

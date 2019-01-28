@@ -2,25 +2,32 @@
 
 @php
     $testing = true;    
-    use \App\Utilities\Functions\Functions;
+    use \App\Utilities\Functions\Functions,
+        \App\Page;
 
     
-    $hasName2 = Functions::getUnBladedContent($hasName??'', '');
-    $name2 = Functions::getUnBladedContent($name??'', '');
-    $hasTitle2 = Functions::getUnBladedContent($hasTitle??'', '');
-    $title2 = Functions::getUnBladedContent($title??'', '');
-    $hasUrl2 = Functions::getUnBladedContent($hasUrl??'', '');
-    $url2 = Functions::getUnBladedContent($url??'', '');
-    $hasArticle2 = Functions::getUnBladedContent($hasArticle??'', '');
-    $articleLegend2 = Functions::getUnBladedContent($articleLegend??'', '');
-    $hasImage2 = Functions::getUnBladedContent($hasImage??'', '');
+    $hasName2 = Functions::getBladedString($page['hasName']??'', '');
+    $name2 = Functions::getBladedString($page['name']??'', '');
+    $hasTitle2 = Functions::getBladedString($page['hasTitle']??'', '');
+    $title2 = Functions::getBladedString($page['title']??'', '');
+    $hasUrl2 = Functions::getBladedString($page['hasUrl']??'', '');
+    $url2 = Functions::getBladedString($page['url']??'', '');
+    $hasArticle2 = Functions::getBladedString($page['hasArticle']??'', '');
+    // $articleLegend2 = Functions::getBladedString($page['articleLegend']??'', 'Type Your Description Here.');
+    $hasImage2 = Functions::getBladedString($page['hasImage']??'', '');
+    $hasParent2 = Functions::getBladedString($page['hasParent']??'', '');
+    $parentList2 = Functions::getContent($page['parentList']??'', '');
+    $hasSelectedParent2 = Functions::getBladedString($page['hasSelectedParent']??'', '');
+    $selectedParent2 = Functions::getContent(
+        $page['selectedParent']??'', Page::makeNameListing('No Parent', '')
+    );
 
 @endphp
 
 @section('main-content')
     @parent
 
-    <div class="row">
+    <div class="row margin-bottom-40 margin-top-40">
         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
         </div>
         
@@ -50,14 +57,34 @@
                         </div>
                     @endif
 
+                    @if (Functions::testVar($hasParent2))
+                    <div class="form-group">
+                        <label for="parent">Parent:</label>
+                        <select name="parent" id="parent">
+                            <option value="{{ $selectedParent2['url'] }}" selected>
+                                {{ $selectedParent2['name'] }}
+                            </option>
+                            @foreach ($parentList2 as $item)
+                                <option value="{{ $item['url'] }}">{{ $item['name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+
                     @if (Functions::testVar($hasArticle2))
                         <fieldset>
-                            @if (Functions::testVar($articleLegend2))
-                                <legend>{{$articleLegend2}}</legend>    
-                                <br>
-                            @endif
-                            <textarea name="article" id="articleSummernote" cols="30" rows="10"></textarea>
-                            <br>
+                            {{--  
+                                @if (Functions::testVar($articleLegend2))
+                                    <legend>{{$articleLegend2}}</legend>    
+                                    <br>
+                                @endif  
+                            --}}
+                            <div class="row">
+                                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                    <textarea name="article" id="articleSummernote" cols="50" rows="20"></textarea>
+                                </div>
+                            </div>
+                            
                             <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#collapseSubheading" aria-expanded="false" aria-controls="collapseExample">
                                 <i class="fa fa-plus"></i> Add a Subheading
                             </button>

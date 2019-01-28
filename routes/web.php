@@ -121,9 +121,9 @@ Route::middleware('adminguard')->prefix('admin')->group(
                     ]
                 );
                 // 'product/' goes to 'index()' which returns 'all-products' of the category..
-                Route::get('products/create', 'ProductController@create');
-                Route::post('products/create', 'ProductController@store');
-                Route::get('products', 'ProductController@index');
+                Route::get('product/create', 'ProductController@create');
+                Route::post('product/create', 'ProductController@store');
+                Route::get('product', 'ProductController@index');
                 
                 Route::resource(
                     'section/{section}/category/{category}/product', 'ProductController', [

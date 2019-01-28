@@ -53,7 +53,7 @@ class ProductRequest extends FormRequest
     {
         return [
             'title.required' => 'A title is required',
-            'body.required'  => 'A message is required',
+            'category.required'  => 'A category is required',
         ];
     }
 }
