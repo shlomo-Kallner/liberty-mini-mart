@@ -88,6 +88,7 @@ class ProductController extends MainController
                 }
             } 
             $useSelfPaging = false;
+            $useGetAll = true;
             if ($useSelfPaging) {
                 $products = Product::getAllWithPagination(
                     $productsData['Transform'], $productsData['PageNum'], 
@@ -98,13 +99,27 @@ class ProductController extends MainController
                     $productsData['UseTitle'], 1, $productsData['Default'], 
                     $productsData['UseBaseMaker']
                 );
-            } else {
+            } elseif ($useGetAll) {
                 $products = [];
                 $products['items'] = Product::getAllWithTransform(
                     $productsData['Transform'], $productsData['Dir'], 
                     $productsData['WithTrashed'], $productsData['BaseUrl'], 
                     $productsData['UseTitle'], $productsData['FullUrl'], 
                     1, $productsData['Default'], $productsData['UseBaseMaker']
+                );
+            } else {
+                $tmp = Product::getOrderedBy(
+                    $productsData['Dir'], $productsData['WithTrashed']
+                )->paginate($productsData['NumShown']);
+                $products = Product::makeBasePaginatedItemsArray(
+                    Product::getFor(
+                        $tmp->getCollection(), $productsData['BaseUrl'], 
+                        $productsData['Transform'], $productsData['UseTitle'], 
+                        1, $productsData['WithTrashed'], $productsData['FullUrl'], 
+                        $productsData['Default'], $productsData['UseBaseMaker'], 
+                        $productsData['Dir']
+                    ), 
+                    $tmp
                 );
             }
             if ($request->ajax()) {
