@@ -25,54 +25,90 @@ class PageController extends MainController
     public function index(Request $request) 
     {
         $pagesData = [
-            'PageNum' => 1,
+            'PageNum' => 0,
             'NumShown' => 12,
             'PagingFor' => 'pagesPanel',
             'Dir' => 'asc',
-            'WithTrashed' => true,
-            'BaseUrl' => in_array('admin', explode('/', $request->path())) ? 'admin' : '',
+            'WithTrashed' => Functions::isAdminPath($request->path()),
+            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin' : '',
             'ViewNum' => 0,
-            'UseBaseMaker' => true,
+            'UseBaseMaker' => $request->ajax(),
             'Default' => [],
+            'UseTitle' => true,
             'FullUrl' => !$request->ajax(),
             'ListUrl' => $request->path(),
+            'UsePageGroupings' => false,
+            'UseGetSelf' => false,
+            'Transform' => Page::TO_MINI_TRANSFORM
         ];
-        if ($request->ajax()) {
             
-            $pagesData['Dir'] = $pagesDir = 'asc';
-            $pagesData['PagingFor'] = $pagesPaging = 'pagesPanel';
-            $pv = Page::getPagingVars(
-                $request, $pagesData['PagingFor'], $pagesData['NumShown'],
-                $pagesData['Dir']
-            );
-            if (Functions::testVar($pv)) {
-                $pagesData['PageNum'] = $pagesPn = $pv['pageNum'];
-                $pagesData['ViewNum'] = $pagesVn = $pv['viewNum'];
-                if (Functions::hasPropKeyIn($pv, 'limit')) {
-                    $pagesData['NumShown'] = $pagesNumShown = $pv['limit'];
-                }
-            } else {
-                $pagesData['PageNum'] = $pagesPn = 1;
-                $pagesData['ViewNum'] = $pagesVn = 0;
-                $pagesData['NumShown'] = $pagesNumShown = 3;
+        $pagesData['Dir'] = 'asc';
+        $pagesData['PagingFor'] = 'pagesPanel';
+        $pv = Page::getPagingVars(
+            $request, $pagesData['PagingFor'], $pagesData['NumShown'],
+            $pagesData['Dir']
+        );
+        if (Functions::testVar($pv)) {
+            $pagesData['PageNum'] = $pv['pageNum'];
+            $pagesData['ViewNum'] = $pv['viewNum'];
+            if (Functions::hasPropKeyIn($pv, 'limit')) {
+                $pagesData['NumShown'] = $pv['limit'];
             }
-            $usePageGroupings = true;
-            if ($usePageGroupings)
-            $pages = Page::getAllWithPagination(
-                $transform, int $pageNum, int $numShown = 4, 
-                string $pagingFor = '', string $dir = 'asc', 
-                bool $withTrashed = true, string $baseUrl = 'store', 
-                string $listUrl = '', int $viewNumber = 0, 
-                bool $fullUrl = false, bool $useTitle = true, 
-                int $version = 1, $default = [], bool $useBaseMaker = true
-            );
+        } 
+        if ($pagesData['UsePageGroupings']) {
             $pages = Page::getAllPages(
-                true, $pagesDir, $usePageGroupings, $request->path(),
-                $pagesPaging, $pagesVn, $pagesPn, $pagesNumShown
+                true, $pagesData['Dir'], $pagesData['UsePageGroupings'], 
+                $pagesData['ListUrl'], $pagesData['FullUrl'],
+                $pagesData['PagingFor'], $pagesData['ViewNum'], 
+                $pagesData['PageNum'], $pagesData['NumShown'], 
+                $pagesData['BaseUrl'], $pagesData['UseTitle'], 
+                $pagesData['WithTrashed'], $pagesData['UseBaseMaker']
             );
         } else {
-            abort(404);
+            $pages = Page::getAllWithPagination(
+                $pagesData['Transform'], $pagesData['PageNum'], 
+                $pagesData['NumShown'], $pagesData['PagingFor'], 
+                $pagesData['Dir'], $pagesData['WithTrashed'], 
+                $pagesData['BaseUrl'], $pagesData['ListUrl'], 
+                $pagesData['ViewNum'], $pagesData['FullUrl'], 
+                $pagesData['UseTitle'], 1, $pagesData['Default'], 
+                $pagesData['UseBaseMaker']
+            );
+            if ($pagesData['UseGetSelf']) {
+                $children = Functions::countHas($pages) 
+                    ? $pages['items'] : null;
+                $paginator = Functions::countHas($pages) 
+                    ? $pages['pagination'] : null;
+                $pages_index = Page::getSelf(
+                    $pagesData['BaseUrl'], $pagesData['WithTrashed'],
+                    $pagesData['FullUrl'], $children, 
+                    $paginator, $pagesData['PagingFor']
+                );
+            }
         }
+        if ($request->ajax()) {
+            return $pages;
+        } else {
+            $title = 'Our Content Pages';
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            if (Functions::isAdminPath($request->path())) {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+            }
+            $breadcrumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb(
+                    $title, 
+                    Page::genUrlFragment($pagesData['BaseUrl'], $pagesData['FullUrl'])
+                ),
+                $bcLinks
+            );
+            return self::getView(
+                $request, 'cms.items', $title, $pages, false, $breadcrumbs, null,
+                Functions::isAdminPath($request->path()) 
+                ? CmsController::getAdminSidebar() : null
+            );
+        }
+        abort(404);
     }
 
     /**
@@ -106,7 +142,11 @@ class PageController extends MainController
     public function show(Request $request) 
     {
         //$page_info = Page::getNamedPage($page, $request->path());
-        $page_info = Page::getNamedPage($request->page, $request->path());
+        $page_info = Page::getNamedPage(
+            $request->page, $request->path(), false, 
+            Functions::isAdminPath($request->path()),
+            true
+        );
         //dd($request, $page_info);
         if (Functions::testVar($page_info) && $page_info['value']['visible'] > 0) {
             // WISHLIST ITEM: a more sophisticated user role based

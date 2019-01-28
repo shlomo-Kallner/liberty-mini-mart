@@ -322,6 +322,11 @@ class MainController extends Controller {
         return $nut;
     }
 
+    static public function getHomeBreadcumb()
+    {
+        return Page::genBreadcrumb('Home', '/');
+    }
+
     static public function getView(
         Request $request, string $viewName = 'content.content', 
         string $title = '', $content = [], 

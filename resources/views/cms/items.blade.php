@@ -10,7 +10,7 @@
 
         $sidebar2 = Functions::getContent($sidebar??[],[]);
         $article2 = Functions::getContent($page['article']??[],[]);
-        $items2 = Functions::getUnBladedContent($items??[],[]);
+        $items2 = Functions::getContent($page['items']??[],[]);
         $currency2 = Functions::getContent($cart['currencyIcon']??'','fa-usd');
         $filters2 = Functions::toBladableContent(Functions::getContent($page['filters']??'', ''));
         
@@ -53,7 +53,7 @@
                     {!! $sorting2 !!}
                 @endslot
                 @slot('items')
-                    {!! $items2 !!}
+                    {!! Functions::toBladableContent($items2) !!}
                 @endslot
                 @slot('pageNumber')
                     {{ $pageNumber2 }}

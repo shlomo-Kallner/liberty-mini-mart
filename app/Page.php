@@ -311,14 +311,19 @@ class Page extends Model implements TransformableContainer
     }
 
     static public function getNamedPage(
-        $url, $path = null, bool $getObj = false
+        $url, $path = null, bool $getObj = false,
+        bool $fullUrl = false, bool $useBaseMaker = true
     ) {
         $page = self::where('url', $url)->first();
         //dd($page, $url, __METHOD__);
         if (Functions::testVar($page)) {
             //  $ca = $page->toContentArray($image, $otherImages);
             if (!$getObj) {
-                return $page->toContentArray();
+                return $page->toContentArrayPlus(
+                    Functions::isAdminPath($path) ? 'admin' : '', 
+                    1, true, Functions::isAdminPath($path), 
+                    $fullUrl, $useBaseMaker, 'asc'
+                );
             } else {
                 return $page;
             }
@@ -393,7 +398,7 @@ class Page extends Model implements TransformableContainer
                 $asArrays, $pageNum, $numShown, $pagingFor, 
                 $dir, $withTrashed, $baseUrl, $path, 
                 $viewNumber, $fullUrl, $useTitle, 1, [],
-                $useBaseMaker, self::getIfDoneIterating($asArrays)
+                $useBaseMaker
             );
         }
     }

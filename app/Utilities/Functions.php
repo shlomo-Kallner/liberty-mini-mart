@@ -389,6 +389,17 @@ class Functions
         return $res;
     }
 
+    static public function isAdminPath($path)
+    {
+        if (is_string($path)) {
+            return in_array('admin', explode('/', $path));
+        } elseif ($path instanceof Request) {
+            return self::isAdminPath($path->path());
+        } else {
+            return false;
+        }
+    }
+
     static public function is_countable($value)
     {
         if (is_array($value) || $value instanceof Collection
@@ -407,8 +418,8 @@ class Functions
     static public function arrayableToArray($arr, $def = null)
     {
         if (self::testVar($arr)) {
-            if ($args instanceof Collection) {
-                return $args->all();
+            if ($arr instanceof Collection) {
+                return $arr->all();
             } elseif ($arr instanceof Arrayable) {
                 return $arr->toArray();
             } elseif (is_array($arr)) {

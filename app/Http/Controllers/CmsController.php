@@ -147,7 +147,7 @@ class CmsController extends MainController
             null, $usePagingFor ? $productData['PagingFor'] : ''
         );
         $sidebar = self::getAdminSidebar();
-        $admin_header = 'Admin Dashboard';
+        $admin_header = self::getAdminHeader();
         $admin_article = Article::makeArticleArray(
             '', 
             'Welcome to OUR DASHBOARD!',
@@ -241,10 +241,23 @@ class CmsController extends MainController
             $request, 'content.cms', $admin_header, 
             $content, false, 
             Page::getBreadcrumbs(
-                Page::genBreadcrumb($admin_header, $request->path()),
-                Page::genBreadcrumb('Home', '/')
+                self::getAdminBreadcrumb($request->path()),
+                self::getHomeBreadcumb()
             ), null,
             $sidebar
+        );
+    }
+
+    static public function getAdminHeader()
+    {
+        return 'Admin Dashboard';
+    }
+
+    static public function getAdminBreadcrumb(string $path = '')
+    {
+        return Page::genBreadcrumb(
+            self::getAdminHeader(), 
+            !empty($path) ? $path : 'admin'
         );
     }
 

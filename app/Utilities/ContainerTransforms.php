@@ -11,7 +11,8 @@ use App\Utilities\Functions\Functions,
     App\Page,
     App\Article,
     App\Image,
-    Illuminate\Contracts\Support\Arrayable;
+    Illuminate\Contracts\Support\Arrayable,
+    Illuminate\Support\Facades\Log;
 
 interface TransformableContainer extends ContainerAPI
 {
@@ -1065,6 +1066,7 @@ trait ContainerTransforms
         int $version = 1, $default = [], bool $useBaseMaker = true
     ) {
         $totalNum = self::getCount($withTrashed);
+        Log::info('dumping total num..', ['total' => $totalNum]);
         $pageIdx = self::genFirstAndLastItemsIdxes( 
             $totalNum, $pageNum, $numShown
         );
