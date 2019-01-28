@@ -884,9 +884,23 @@ trait ContainerTransforms
         $itemIdxs = self::genFirstAndLastItemsIdxes(
             $totalItems, $pageNum, $numItemsShownOnPage
         );
+        return self::genPagination3(
+            $itemIdxs['begin'], $itemIdxs['end'] - 1, $numItemsShownOnPage,
+            $totalItems, $pageNum, $totalNumPages, 
+            $numPageLinksPerPagingView, $viewNumber,
+            $pagingFor, $baseUrl
+        );
+    }
+
+    static public function genPagination3(
+        int $firstItemIndex, int $lastItemIndex, int $numItemsShownOnPage,
+        int $totalItems, int $pageNum, int $totalNumPages, 
+        int $numPageLinksPerPagingView, int $viewNumber,
+        string $pagingFor = '', string $baseUrl = ''
+    ) {
         return [
-            'firstItemIndex' => $itemIdxs['begin'],
-            'lastItemIndex' => $itemIdxs['end'] - 1,
+            'firstItemIndex' => $firstItemIndex,
+            'lastItemIndex' => $lastItemIndex,
             //'itemsPerPage' => $numItemsShownOnPage,
             'numItemsPerPage' => $numItemsShownOnPage,
             'totalItems' => $totalItems,
@@ -1035,7 +1049,7 @@ trait ContainerTransforms
         int $viewNumber = 0, int $totalNum = 0 
     ) {
         $num = $totalNum > 0 ? $totalNum : count($args);
-        $pageNum = $pageNum ?: 1;
+        $pageNum = $pageNum > -1 ? $pageNum : 0;
         if (Functions::countHas($args) && $num > 0) {
             if ($totalNum > 0) {
                 $items = Functions::arrayableToArray($args, []);
@@ -1066,7 +1080,7 @@ trait ContainerTransforms
         int $version = 1, $default = [], bool $useBaseMaker = true
     ) {
         $totalNum = self::getCount($withTrashed);
-        Log::info('dumping total num..', ['total' => $totalNum]);
+        Log::info('dumping total num in ' . __METHOD__ .' ..', ['total' => $totalNum]);
         $pageIdx = self::genFirstAndLastItemsIdxes( 
             $totalNum, $pageNum, $numShown
         );
@@ -1080,11 +1094,32 @@ trait ContainerTransforms
                 $default, $useBaseMaker, $dir
             );
             if (Functions::testVar($tmp1) && Functions::countHas($tmp1)) {
-                return self::getPaginatedItemsArray(
+                $useGenPaginator2 = true;
+                $content = $useGenPaginator2 
+                ? self::getPaginatedItemsArray(
                     $tmp1, $pageNum, $numShown, 
                     $pagingFor, $listUrl, 
                     $viewNumber, $totalNum
+                )
+                : [
+                    'items' => $tmp1,
+                    'pagination' => self::genPagination3(
+                        $pageIdx['begin'], $pageIdx['end'] - 1, $numShown,
+                        $totalNum, $pageNum, Functions::genRowsPerPage(
+                            $totalItems, $numShown
+                        ), 4, $viewNumber, $pagingFor, $baseUrl
+                    )
+                ];
+                Log::info(
+                    'dumping content from ' . __METHOD__ .' ..', 
+                    [
+                        'total' => $totalNum,
+                        'useGenPaginator2' => $useGenPaginator2,
+                        'content' => $content
+                    ]
                 );
+                return $content;
+                
             }
         }
         return $default;

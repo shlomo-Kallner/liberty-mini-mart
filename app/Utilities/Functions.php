@@ -5,17 +5,18 @@ namespace App\Utilities\Functions;
 use Illuminate\Support\Collection,
     Illuminate\Support\HtmlString,
     Illuminate\Contracts\Support\Htmlable,
-    HTMLPurifier, DB, \Countable;
-use Composer\Semver\Comparator;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\VarDumper\Cloner\VarCloner;
-use Symfony\Component\VarDumper\Dumper\HtmlDumper;
-use Symfony\Component\VarDumper\Dumper\CliDumper;
-use App\Exceptions\JsonException;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Carbon;
+    HTMLPurifier, DB, \Countable,
+    Illuminate\Support\Facades\Log, 
+    Composer\Semver\Comparator,
+    Illuminate\Http\Request,
+    Illuminate\Http\Response,
+    Illuminate\Http\JsonResponse,
+    Symfony\Component\VarDumper\Cloner\VarCloner,
+    Symfony\Component\VarDumper\Dumper\HtmlDumper,
+    Symfony\Component\VarDumper\Dumper\CliDumper,
+    App\Exceptions\JsonException,
+    Illuminate\Contracts\Support\Arrayable,
+    Illuminate\Support\Carbon;
 
 
 class Functions
@@ -85,7 +86,6 @@ class Functions
             } else {
                 return !empty($var) ? $var : $default ;
             }
-
         } else {
             return $default;
         }
@@ -611,6 +611,25 @@ class Functions
         return $res;
     }
 
+    static public function getLastIndex(array $arr)
+    {
+        return self::testVar($arr) ? count($arr) - 1 : 0;
+    }
+
+    static public function getIndexOf(array $arr, $val)
+    {
+        $res = null;
+        if (self::testVar($arr) && self::testVar($val)) {
+            foreach ($arr as $key => $value) {
+                if ($value === $val) {
+                    $res = $key;
+                    break;
+                }
+            }
+        } 
+        return $res;
+    }
+
 
     /**
      *  Function genPagesIndexes
@@ -635,8 +654,21 @@ class Functions
         int &$numPages = 0
     ) {
         $res = [];
-        $numPages = self::genRowsPerPage($tp, $ppp);
+        Log::info('$numPages before: ', ['$numPages' => $numPages]);
+        if ($numPages < 1) {
+            $numPages = self::genRowsPerPage($tp, $ppp);
+        }
         //dd($ppp, $ppr, $tp, $pn, $numPages);
+        /* Log::info(
+            'all parameter in '. __METHOD__ .': ', 
+            [
+                'itemsPerPage' => $ppp, 
+                'itemsPerRow' => $ppr, 
+                'totalItems' => $tp, 
+                'pageNumber' => $pn,
+                'numPages' => $numPages
+            ]
+        ); */
         if ($pn > -3 && $pn < $numPages) {
 
             /// step 0] if not given a valid page index, 
@@ -652,28 +684,74 @@ class Functions
             ///         Page and a Page Number of 0. 
             ///         (aka Generate a PageTable with only 1 entry,
             ///          and return the entry's rowArray.)
+            /* Log::info(
+                'all parameter and vars in '. __METHOD__ .': ', 
+                [
+                    'itemsPerPage' => $ppp, 
+                    'itemsPerRow' => $ppr, 
+                    'totalItems' => $tp, 
+                    'pageNumber' => $pn,
+                    'numPages' => $numPages,
+                    'isPageNumberValid' => $pnValid
+                ]
+            ); */
             if ($pnValid || $pn == -2) {
                 // generate all pages_of_indexes ...
                 // for multiple/single_selected display_page..
                 $pageIndexRanges = self::genPageArray(
-                    self::genRange(0, $tp), $ppp
+                    self::genRange(0, $tp - 1), $ppp
                 );
+                /* Log::info(
+                    'all parameter and vars in '. __METHOD__ .': ', 
+                    [
+                        'itemsPerPage' => $ppp, 
+                        'itemsPerRow' => $ppr, 
+                        'totalItems' => $tp, 
+                        'pageNumber' => $pn,
+                        'numPages' => $numPages,
+                        'isPageNumberValid' => $pnValid,
+                        'pageIndexRanges' => $pageIndexRanges,
+                    ]
+                ); */
             } else {
                 // generate a single page_of_indexes with all products..
                 // for a single display_page of all products..
                 $pageIndexRanges = self::genPageArray(
-                    self::genRange(0, $tp), $tp
+                    self::genRange(0, $tp - 1), $tp
                 );
             }
             // now create the Pages_Of_Rows ...
             if ($pnValid || $pn == -1) {
                 // if generating for a single_selected_display_page
                 // or for a single_display_page_of_all_products ..
+                $tmpArray = $pageIndexRanges[$pnValid?$pn:0];
                 $tmpRange = self::genRange(
-                    $pageIndexRanges[$pnValid?$pn:0][0], 
-                    count($pageIndexRanges[$pnValid?$pn:0]) -1
+                    $tmpArray[0], 
+                    $tmpArray[self::getLastIndex($tmpArray)]
                 );
                 $res[] = self::genPageArray($tmpRange, $ppr);
+                /* Log::info(
+                    'all parameter and vars in '. __METHOD__ .': ', 
+                    [
+                        'itemsPerPage' => $ppp, 
+                        'itemsPerRow' => $ppr, 
+                        'totalItems' => $tp, 
+                        'pageNumber' => $pn,
+                        'numPages' => $numPages,
+                        'isPageNumberValid' => $pnValid,
+                        'pageIndexRanges' => $pageIndexRanges,
+                        'tmpIsOf1' => [
+                            $pageIndexRanges[$pnValid?$pn:0][0], 
+                            count($pageIndexRanges[$pnValid?$pn:0]) -1
+                        ],
+                        'tmpIsOf12' => [
+                            $tmpArray[0], 
+                            $tmpArray[self::getLastIndex($tmpArray)]
+                        ],
+                        'tmpRange' => $tmpRange,
+                        'res' => $res,
+                    ]
+                ); */
                 //dd("res", $res, $tmpRange);
             } else {
                 // if generating all display_pages ..

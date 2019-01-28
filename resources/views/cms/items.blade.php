@@ -17,9 +17,11 @@
         if (!Functions::hasPropKeyIn($page, 'pagination')) {
             $itemsPerPage2 = intval(Functions::getContent($page['itemsPerPage']??'', '12'));
             $pageNumber2 = intval(Functions::getContent($page['pageNumber']??'', '-1'));
+            $paginator2 = Functions::toBladableContent($page['pagination']??[], []);
         } else {
             $itemsPerPage2 = intval(Functions::getContent($page['pagination']['numItemsPerPage']??'', '12'));
             $pageNumber2 = intval(Functions::getContent($page['pagination']['currentPage']??'', '-1'));
+            $paginator2 = Functions::toBladableContent($page['pagination']??[], []);
         }
         $sorting2 = Functions::toBladableContent(Functions::getContent($page['sorting']??'', ''));
         // $paginator2 = Functions::getUnBladedContent($paginator??[],[]);
@@ -69,6 +71,9 @@
                 @endslot
                 @slot('type')
                     {!! $type2 !!}
+                @endslot
+                @slot('paginator')
+                    {!! $paginator2 !!}
                 @endslot
             @endcomponent
             

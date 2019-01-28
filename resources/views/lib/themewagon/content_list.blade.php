@@ -12,12 +12,14 @@
     //dd($products, $products2);
     $currency2 = Functions::getBladedString($currency??'fa-usd','fa-usd');
     $sorting2 = Functions::getBladedContent($sorting??'', '');
-    $pageNumber2 = 0; // intval(Functions::getBladedString($pageNumber??0,0));
+    $pageNumber2 = intval(Functions::getBladedString($pageNumber??0,0));
     // our default.. is 12 products per page (the template had 9..)
     $itemsPerPage2 = intval(Functions::getBladedString($itemsPerPage??12,12));
 
     $component2 = Functions::getBladedString($component??'lib.themewagon.product_mini', 'lib.themewagon.product_mini');
     $type2 = Functions::getBladedString($type??'', '');
+
+    $paginator2 = Functions::getBladedContent($paginator??[], []);
 
     // NOTE: every product 'row' can hold up to 3 products! 
     // $itemsPerRow2 = getBladedContent($itemsPerRow,3);
@@ -43,14 +45,20 @@
         */
 
         // Initializing the row Indices while we are at it..
-        $totalItems = count($items2);
-        $numPages = 0;
+        $totalItems = Functions::testVar($paginator2)
+        ? intval($paginator2['totalItems']) : count($items2);
+        $numPages = Functions::testVar($paginator2)
+        ? intval($paginator2['totalNumPages']) : 0;
         // Functions::genRowsPerPage($totalProducts, $productsPerPage2);
         $rowIdxs = Functions::genPagesIndexes(
             $itemsPerPage2, $itemsPerRow2, 
             $totalItems, $pageNumber2, $numPages
         );
-        $currentPage = $pageNumber2 > -1 ? $pageNumber2 : 0;
+        /// $currentPage is an index into $rowIdxs, which will only contain
+        ///  more than ONE element (an array) if $pageNumber2 was equal to -2!
+        $currentPage = $pageNumber2 > -2 ? 0 : random_int(0, $numPages-1); 
+        /// the old code -> $pageNumber2 > -1 ? $pageNumber2 : 0;
+
         // if $productsPerPage is set then 
         //  EVEN IF $pageNumber2 IS NOT set then we have paganation!
         // THOUGH REALLY if we have more products than 
@@ -70,7 +78,7 @@
             );
         }
 
-        if ($pageNumber2 > -1) {
+        if (!Functions::testVar($paginator2) && $pageNumber2 > -1) {
             // initializing the paginator
             $numPagesPerPagingView = 4;
             $viewNumber = 0;
@@ -113,13 +121,9 @@
                     $baseUrl
                 );
             }
-        } else {
-            $paginator2 = [];
-        }
+        } 
         //dd("cont", $paginator, $currentPage, $items2);
             
-    } else {
-        $paginator2 = [];
     }
     //dd("cont", $paginator, $items2);
 
@@ -211,7 +215,19 @@
     @if(Functions::testVar($items2))
 
         @php
+            //dd($rowIdxs);
             //dd($rowIdxs[$currentPage]);
+            $firstIdx = intval($paginator2['firstItemIndex']);
+            $lastIdx = intval($paginator2['lastItemIndex']);
+            $trntmp = Functions::genRange($firstIdx, $lastIdx, 1);
+            /* dd([ 
+                'rowIdxs' => $rowIdxs, 
+                'paginator' => $paginator2, 
+                'currentPage' => $currentPage,
+                'Items' => $items2,
+                'TranslatorArr' => $trntmp
+                ]
+            ); */
         @endphp
         
         @foreach ($rowIdxs[$currentPage] as $row)
@@ -226,40 +242,41 @@
                     @php
                         //dd($idx);
                         // $idx2 = $idx - 1;
+                        if (array_key_exists($idx, $items2)) {
+                            $idx2 = $idx;
+                        } else {
+                            $idx2 = Functions::getIndexOf($trntmp, $idx);
+                        }
                     @endphp
 
-                    @if (array_key_exists($idx, $items2))
-
-                        @component($component2)
-                            {{-- 
-                                slot 'extraOuterCss' added above... NOPE!!!
-                            
-                                @slot('extraOuterCss')
-                                    {{ "col-md-4 col-sm-6 col-xs-12" }}
-                                @endslot
-
-                            --}}
-                            @if (!array_key_exists('extraOuterCss', $items2[$idx]) 
-                                || empty($items2[$idx]['extraOuterCss']))
-                                @slot('extraOuterCss')
-                                    {{ "col-md-4 col-sm-6 col-xs-12" }}
-                                @endslot
-                            @endif
-                            @foreach ($items2[$idx] as $key => $value)
-                                @slot($key)
-                                    {{ $value }}
-                                @endslot
-                            @endforeach
-                            @slot('currency')
-                                {!! $currency2 !!}
-                            @endslot
-                            @slot('type')
-                                {!! $type2 !!}
+                    @component($component2)
+                        {{-- 
+                            slot 'extraOuterCss' added above... NOPE!!!
+                        
+                            @slot('extraOuterCss')
+                                {{ "col-md-4 col-sm-6 col-xs-12" }}
                             @endslot
 
-                        @endcomponent
+                        --}}
+                        @if (!array_key_exists('extraOuterCss', $items2[$idx2]) 
+                            || empty($items2[$idx2]['extraOuterCss']))
+                            @slot('extraOuterCss')
+                                {{ "col-md-4 col-sm-6 col-xs-12" }}
+                            @endslot
+                        @endif
+                        @foreach ($items2[$idx2] as $key => $value)
+                            @slot($key)
+                                {{ $value }}
+                            @endslot
+                        @endforeach
+                        @slot('currency')
+                            {!! $currency2 !!}
+                        @endslot
+                        @slot('type')
+                            {!! $type2 !!}
+                        @endslot
 
-                    @endif
+                    @endcomponent
                 @endforeach
             </div>
             
@@ -439,7 +456,7 @@
     @endif
     <!-- END PRODUCT LIST -->
 
-    @if (Functions::testVar($paginator2))
+    @if (Functions::testVar($items2) && Functions::testVar($paginator2))
         @if ($useVuePaginator)
             <div id="masterPagination"></div>
             <script>
