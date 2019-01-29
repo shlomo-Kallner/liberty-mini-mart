@@ -64,7 +64,22 @@
                 var cat = $('.form-group > select#category');
                 var sect = $('.form-group > select#section');
                 sect.change(function () {
-                    var nurl = lurl + $(this).val() + '/category/list';
+                    var nurl = lurl + '/' + $(this).val() + '/category/list';
+                    var data = window.Laravel.handleCart.makeData(
+                        {}, nurl, window.Laravel.csrfToken, '', 'list', 
+                        window.Laravel.nut
+                    );
+                    var debug = true;
+                    var _this = $(this);
+                    window.Laravel.handleCart.doAjax($, data, 'GET', function (res) {
+                        cat.empty();
+                        $('<option value="">Pick a Category</option>').appendTo(cat);
+                        for (var i of res) {
+                            var opt = $('<option value="' + i.url + '">' + i.name + '</option>')
+                            .appendTo(cat);
+                        }
+                        alert('Loading of Categories is Complete. Please Pick a Category.');
+                    }, debug)
                 });
             }
         );
