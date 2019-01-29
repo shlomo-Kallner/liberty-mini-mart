@@ -62,6 +62,11 @@ class CategorieController extends MainController
         }
     }
 
+    /**
+     * Display a "Name Listing" of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function list(Request $request)
     {
         $sect = Section::getNamed($request->section);

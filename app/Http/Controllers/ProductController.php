@@ -12,15 +12,18 @@ use App\Product,
     App\UserSession,
     App\Utilities\Functions\Functions,
     Illuminate\Http\Request,
-    Illuminate\Http\Response;
-use Illuminate\Http\Resources\Json\Resource;
-use Illuminate\Http\JsonResponse;
-use App\Http\Resources\ProductResource;
-use App\ProductReview;
-use Intervention\Image\Facades\Image as ImageTool;
-use Intervention\Image\Size, 
-    Intervention\Image\Image as ImageFile;
-use App\Http\Requests\ProductRequest;
+    Illuminate\Http\Response,
+    Illuminate\Http\Resources\Json\Resource,
+    Illuminate\Http\JsonResponse,
+    Illuminate\Support\Facades\Validator,
+    Illuminate\Support\Str,
+    App\Http\Resources\ProductResource,
+    App\ProductReview,
+    Intervention\Image\Facades\Image as ImageTool,
+    Intervention\Image\Size, 
+    Intervention\Image\Image as ImageFile,
+    App\Http\Requests\ProductRequest,
+    Illuminate\Support\Facades\Log;
 
 class ProductController extends MainController
 {
@@ -33,6 +36,8 @@ class ProductController extends MainController
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * 
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -152,6 +157,13 @@ class ProductController extends MainController
         abort(404);
     }
 
+    /**
+     * Display a "Name Listing" of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function list(Request $request)
     {
         $sect = Section::getNamed($request->section);
@@ -166,11 +178,12 @@ class ProductController extends MainController
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * 
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
     {
-        // PARTIAL!! Requires further Implementation!
         $tmpData = [
             'PageNum' => 0,
             'NumShown' => 12,
@@ -240,69 +253,98 @@ class ProductController extends MainController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\ProductRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductRequest $request)
+    public function store(Request $request)
     {
-        //
-        $sect = Section::getNamed($request->section);
-        if (Functions::testVar($sect)) {
-            $cat = $sect->getCategory($request->category);
-            if (Functions::testVar($cat)) {
-                
-                //$request->file('key', 'default');
-                //$request->hasFile('key');
-                if ($request->hasFile('image')) {
-                    $file = $request->file('image');
-                    $tmpPath = 'tmp/products';
-                    $filename = $file->getClientOriginalName() 
-                        . '_'. Functions::getDateTimeStr('_', '-', '-');
-                    $ext = $file->getClientOriginalExtension();
-                    $fullFilename = $filename . '.' . $ext;
-                    // storing original file..
-                    //$file->storeAs($tmpPath, $fullFilename);
-                    $pubPath = 'public/images/products/';
-                    $img = ImageTool::make($file)->resize(300, 200);  //($path . '/' . $fullFilename);
-                    $img->save($pubPath . $fullFilename);
-                    $image_id = Functions::getVar(
-                        Image::createNew(
-                            $fullFilename, $pubPath, 
-                            $request->title, $request->description
-                        ), 0
-                    );
-                } else {
-                    $image_id = 0;
-                }
-                $article_id = Article::createNew(
-                    $request->article, $request->title, 
-                    null, $request->subheading??'', true, false
-                );
-                $product = Product::createNew(
-                    $request->name, $request->url, $request->price,
-                    $request->sale??0.0, $cat->id, $request->sticker??'',
-                    $image_id, $request->description, $request->title,
-                    $article_id, $request->payload??[], true
-                );
-                // $product = $cat->getProduct($request->product);
-                // 'store/section/{section}/category/{category}/product/{product}'...
-                if (Functions::testVar($product)) {
-                    if ($request->ajax()) {
-                        //$user = User::getIdFromUserArray();
-                        $products = $cat->getProducts(false);
-                        $pages = $products->paginate(12);
-                        $pages->withPath();
-                    } else {
-                        UserSession::updateRegenerate(
-                            $request, intval(User::getIdFromUserArray(false))
+        $validator = Validator::make(
+            $request->all(), self::validationRules(), 
+            self::validationMessages()
+        );
+        if ($validator->passes()) {    
+            //
+            $sect = Section::getNamed($request->section);
+            if (Functions::testVar($sect)) {
+                $cat = $sect->getCategory($request->category);
+                if (Functions::testVar($cat)) {
+                    
+                    //$request->file('key', 'default');
+                    //$request->hasFile('key');
+                    if ($request->hasFile('image')) {
+                        $file = $request->file('image');
+                        //$tmpPath = 'tmp/products';
+                        $filename = explode('.', $file->getClientOriginalName())[0] 
+                            . '_'. Functions::getDateTimeStr('_', '-', '-');
+                        $ext = $file->getClientOriginalExtension();
+                        $fullFilename = $filename . '.' . $ext;
+                        // storing original file..
+                        //$file->storeAs($tmpPath, $fullFilename);
+                        $pubPath = public_path('images' . DIRECTORY_SEPARATOR . 'products');
+                        $dbPath = 'images/products';
+                        $img = ImageTool::make($file)->resize(300, 200);  //($path . '/' . $fullFilename);
+                        $fullFilenameWithPath = $pubPath . DIRECTORY_SEPARATOR . $fullFilename;
+                        /*  
+                            if (file_exists($fullFilenameWithPath)) {
+                                Log::info("file ${$fullFilenameWithPath} already exists!");
+                            } 
+                            $dirPerms = 0x4000 | 0644;
+                            dd($dirPerms, 0x4000, 0644, chmod($pubPath, $dirPerms));
+                            if (fileperms($pubPath) === 0) {
+                            ///if (chmod($pubPath, 0644))
+                            } 
+                        */
+                        $img->save($fullFilenameWithPath);
+                        $image_id = Functions::getVar(
+                            Image::createNew(
+                                $fullFilename, $dbPath, 
+                                $request->title, $request->description,
+                                false
+                            ), 0
                         );
-                        //$request->session()->regenerate();
-                        return redirect('admin');
+                    } else {
+                        $image_id = 0;
                     }
+                    Log::info("image_id: " . $image_id);
+                    $article_id = Article::createNew(
+                        $request->article, $request->title, 
+                        null, $request->subheading??'', false
+                    );
+                    Log::info("article_id: " . $article_id);
+                    $product = Product::createNew(
+                        $request->name, $request->url, $request->price,
+                        $request->sale??0.0, $cat->id, $request->sticker??'',
+                        $image_id, $request->description, $request->title,
+                        $article_id, $request->payload??[], true
+                    );
+                    // $product = $cat->getProduct($request->product);
+                    // 'store/section/{section}/category/{category}/product/{product}'...
+                    if (Functions::testVar($product)) {
+                        if ($request->ajax()) {
+                            //$user = User::getIdFromUserArray();
+                            $products = $cat->getProducts(false);
+                            $pages = $products->paginate(12);
+                            $pages->withPath();
+                        } else {
+                            UserSession::updateRegenerate(
+                                $request, intval(User::getIdFromUserArray(false))
+                            );
+                            //$request->session()->regenerate();
+                            return redirect('admin');
+                        }
+                    }
+                    Log::info("Uhhh, if we got here then PRODUCT CREATION FAILED!!!");
                 }
-            }
-        } 
-        abort(404);
+            } 
+        }
+        UserSession::updateRegenerate(
+            $request, intval(User::getIdFromUserArray(false))
+        );
+        $path = $request->path();
+        $path = Str::contains($path, 'create') ? $path : $path . '/create';
+        return redirect($path)
+            ->withErrors($validator)
+            ->withInput($request->except('image'));
     }
 
     public function postReview(Request $request) 
@@ -420,6 +462,51 @@ class ProductController extends MainController
     {
         // display 'ARE YOU SURE' PAGE...
     }
+
+    //// Validation Rules and messages
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    static public function validationRules()
+    {
+        return [
+            //
+            'section' => 'required|max:255|string|min:3',
+            'category' => 'required|max:255|string|min:3',
+            'image' => 'required|file|image',
+            'article' => 'required|max:255000|string|min:3',
+            'subheading' => 'string|nullable|max:255',
+            'title' => 'required|max:255|string|min:3',
+            'name' => 'required|max:255|string|min:3',
+            'description' => 'required|max:255|string|min:3',
+            'url' => [
+                'required', 'max:255', 'string', 'min:3',
+                'regex:'. Functions::getURLRegexStr(),
+            ],
+            'price' => 'required|numeric',
+            'sale' => 'numeric|nullable',
+            'sticker' => 'string|regex:/new|sale/',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    static public function validationMessages()
+    {
+        return [
+            'title.required' => 'A title is required',
+            'category.required'  => 'A category is required',
+        ];
+    }
+
+
+    /// testing
 
     public function test(Request $request)
     {

@@ -19,7 +19,7 @@ class SectionController extends MainController
     /**
      * Display a listing of the resource.
      * 
-     * @param Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return \Illuminate\Http\Response
      */
@@ -88,6 +88,8 @@ class SectionController extends MainController
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * 
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
@@ -95,6 +97,13 @@ class SectionController extends MainController
         return self::getView($request, 'cms.forms.new.section', 'Create a New Store Section');
     }
 
+    /**
+     * Display a "Name Listing" of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function list(Request $request)
     {
         return Section::getNameListing();
@@ -104,6 +113,7 @@ class SectionController extends MainController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * 
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
