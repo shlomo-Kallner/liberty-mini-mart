@@ -130,7 +130,7 @@ class Functions
 
     static public function getURLRegexStr()
     {
-        return '/^[:lower:]{3,}(-[:lower:]{3,})*$/';
+        return '/^[a-z]{3,}(-[a-z]{3,})*$/';
     }
 
     static public function getImageFileMIMETypeStr()

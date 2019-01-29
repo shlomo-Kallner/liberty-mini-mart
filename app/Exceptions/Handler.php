@@ -3,7 +3,8 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler,
+    Illuminate\Session\TokenMismatchException;
 
 class Handler extends ExceptionHandler
 {
@@ -48,6 +49,12 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof TokenMismatchException) {
+            return redirect()
+                ->back()
+                ->withInput($request->except('password', 'password_confirmation', '_token'))
+                ->with(['error' => 'Your form has expired. Please try again']);
+        }
         return parent::render($request, $exception);
     }
 }

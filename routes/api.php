@@ -27,8 +27,14 @@ Route::prefix('store')->group(
     function () {
         //Route::get('/', 'ShopController@getStore');
         // 'store/section/{section}/category/{category}/product/{product}'...
+        Route::get('section/list', 'SectionController@list');
+        Route::post('section/list', 'SectionController@list');
         Route::get('section/{section}', 'SectionController@show');
+        Route::get('section/{section}/category/list', 'CategorieController@list');
+        Route::post('section/{section}/category/list', 'CategorieController@list');
         Route::get('section/{section}/category/{category}', 'CategorieController@show');
+        Route::get('section/{section}/category/{category}/product/list', 'ProductController@list');
+        Route::post('section/{section}/category/{category}/product/list', 'ProductController@list');
         Route::get('section/{section}/category/{category}/product/{product}', 'ProductController@show');
 
         // adding/removing/deleting from the cart API..
@@ -58,8 +64,8 @@ Route::middleware('adminguard')->prefix('admin')->group(
         Route::get('user/{user}/delete', 'UserController@showDelete');
 
         // 'page/' goes to 'index()' which returns 'all-pages' of the site..
-        Route::resource('pages', 'PageController');
-        Route::get('pages/{page}/delete', 'PageController@showDelete');
+        Route::resource('page', 'PageController');
+        Route::get('page/{page}/delete', 'PageController@showDelete');
 
         Route::resource('menus', 'PageGroupingController');
         Route::get('menus/{menu}/delete', 'PageGroupingController@showDelete');
@@ -81,6 +87,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 
                 // 'section/' goes to 'index()' which returns 'all-sections' of the store..
                 Route::get('section/list', 'SectionController@list');
+                Route::post('section/list', 'SectionController@list');
                 Route::resource(
                     'section', 'SectionController', [
                         'parameters'=> [
@@ -92,6 +99,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 Route::get('category/create', 'CategorieController@create');
                 Route::post('category/create', 'CategorieController@store');
                 Route::get('section/{section}/category/list', 'CategorieController@list');
+                Route::post('section/{section}/category/list', 'CategorieController@list');
                 Route::resource(
                     'section/{section}/category', 'CategorieController', [
                         'parameters'=> [
@@ -104,6 +112,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 Route::get('product/create', 'ProductController@create');
                 Route::post('product/create', 'ProductController@store');
                 Route::get('section/{section}/category/{category}/product/list', 'ProductController@list');
+                Route::post('section/{section}/category/{category}/product/list', 'ProductController@list');
                 Route::resource(
                     'section/{section}/category/{category}/product', 'ProductController', [
                         'parameters'=> [

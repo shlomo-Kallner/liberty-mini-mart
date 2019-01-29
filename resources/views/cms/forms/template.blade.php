@@ -7,19 +7,24 @@
 
     
     $hasName2 = Functions::getBladedString($page['hasName']??'', '');
-    $name2 = Functions::getBladedString($page['name']??'', '');
+    $name2 = Functions::getBladedString($page['name']??'', old('name',''));
     $hasTitle2 = Functions::getBladedString($page['hasTitle']??'', '');
-    $title2 = Functions::getBladedString($page['title']??'', '');
+    $title2 = Functions::getBladedString($page['title']??'', old('title',''));
     $hasUrl2 = Functions::getBladedString($page['hasUrl']??'', '');
-    $url2 = Functions::getBladedString($page['url']??'', '');
+    $url2 = Functions::getBladedString($page['url']??'', old('url',''));
+    $hasDescription2 = Functions::getBladedString($page['hasDescription']??'', '');
+    $description2 = Functions::getBladedString($page['description']??'', old('description',''));
     $hasArticle2 = Functions::getBladedString($page['hasArticle']??'', '');
+    $article2 = Functions::getBladedString($page['article']??'', old('article',''));
     // $articleLegend2 = Functions::getBladedString($page['articleLegend']??'', 'Type Your Description Here.');
     $hasImage2 = Functions::getBladedString($page['hasImage']??'', '');
     $hasParent2 = Functions::getBladedString($page['hasParent']??'', '');
+    $parentName2 = Functions::getBladedString($page['parentName']??'', 'Parent');
+    $parentId2 = Functions::getBladedString($page['parentId']??'', 'parent');
     $parentList2 = Functions::getContent($page['parentList']??'', '');
     $hasSelectedParent2 = Functions::getBladedString($page['hasSelectedParent']??'', '');
     $selectedParent2 = Functions::getContent(
-        $page['selectedParent']??'', Page::makeNameListing('No Parent', '')
+        $page['selectedParent']??'', Page::makeNameListing('No ' . $parentName2, '')
     );
 
 @endphp
@@ -34,7 +39,8 @@
         <div class="row">
             <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
                 
-                <form action="" method="POST" role="form" enctype="multipart/form-data" novalidate="novalidate">
+                <form action="{{ request()->fullUrl() }}" method="POST" role="form" enctype="multipart/form-data" novalidate="novalidate">
+                    {{ csrf_field() }}
                     
                     @if (Functions::testVar($hasName2))
                         <div class="form-group">
@@ -55,20 +61,13 @@
                             <label for="url">URL:</label>
                             <input type="text" name="url" id="url" class="form-control" value="{{ $url2 }}" placeholder="Input URL" required="required">
                         </div>
-                    @endif
-
-                    @if (Functions::testVar($hasParent2))
-                    <div class="form-group">
-                        <label for="parent">Parent:</label>
-                        <select name="parent" id="parent">
-                            <option value="{{ $selectedParent2['url'] }}" selected>
-                                {{ $selectedParent2['name'] }}
-                            </option>
-                            @foreach ($parentList2 as $item)
-                                <option value="{{ $item['url'] }}">{{ $item['name'] }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    @endif 
+                
+                    @if (Functions::testVar($hasDescription2))
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <input type="text" name="description" id="description" class="form-control" value="{{ $description2 }}" placeholder="Input Description" required="required">
+                        </div>
                     @endif
 
                     @if (Functions::testVar($hasArticle2))
@@ -106,8 +105,21 @@
                         
                     @show
 
-
-                    
+                    @if (Functions::testVar($hasParent2))
+                        <div class="form-group">
+                            <label for="{{ $parentId2 }}">{{ $parentName2 }}:</label>
+                            <select name="{{ $parentId2 }}" id="{{ $parentId2 }}">
+                                <option value="{{ $selectedParent2['url'] }}" selected>
+                                    {{ $selectedParent2['name'] }}
+                                </option>
+                                @if (Functions::testVar($parentList2))
+                                    @foreach ($parentList2 as $item)
+                                        <option value="{{ $item['url'] }}">{{ $item['name'] }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                    @endif
                 
                     <button type="submit" class="btn btn-primary pull-right">Submit</button>
                     <input type="reset" value="Reset" class="btn btn-default">
@@ -147,7 +159,6 @@
         jQuery(function($) 
         {
             $('#articleSummernote').summernote();
-            
             
             
         });

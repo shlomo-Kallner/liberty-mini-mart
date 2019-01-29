@@ -75,8 +75,10 @@ jQuery(function ($) {
         }
         return result;
     },
-    doAjax: function (jquery, data, type = 'POST', callback = null) {
-      handleCart.dumpData(data);
+    doAjax: function (jquery, data, type = 'POST', callback = null, debug = false) {
+      if (debug) {
+        handleCart.dumpData(data);
+      }
       jquery.ajax(
         {
           url: data.url,
@@ -93,13 +95,17 @@ jQuery(function ($) {
             withCredentials: true
           },
           success: function (result, status, xhr) {
-            // console.log(status + ' -> ' + JSON.stringify(result));
-            console.log(status + ' -> ');
-            // handleCart.dumpData(xhr);
+            if (debug) {
+              // console.log(status + ' -> ' + JSON.stringify(result));
+              console.log(status + ' -> ');
+              // handleCart.dumpData(xhr);
+            }
             if (callback) {
               callback(result);
             }
-            handleCart.dumpData(result);
+            if (debug) {
+              handleCart.dumpData(result);
+            }
             if (data.redirect) {
               window.location.assign(data.redirect);
             } else if (result.redirect) {
@@ -109,7 +115,9 @@ jQuery(function ($) {
           error: function (xhr, status, error) {
             console.log(status + ' -> ' + error)
             // debugger
-            handleCart.dumpData(xhr.responseJSON.trace)
+            if (debug) {
+              handleCart.dumpData(xhr.responseJSON.trace)
+            }
           }
         }
       );

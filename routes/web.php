@@ -124,6 +124,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 Route::get('product/create', 'ProductController@create');
                 Route::post('product/create', 'ProductController@store');
                 Route::get('product', 'ProductController@index');
+                Route::post('product', 'ProductController@store');
                 
                 Route::resource(
                     'section/{section}/category/{category}/product', 'ProductController', [
