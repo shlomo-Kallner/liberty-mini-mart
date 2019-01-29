@@ -44,3 +44,29 @@
                 
                     
 @endsection
+
+
+
+@section('js-extra')
+    @parent
+    @php
+        $catListUrl = url('api/store/section');
+    @endphp
+    <script>
+        /** this script section is to be written here and then converted into a 
+        *   Javascript file of its own and loaded here..
+        **/
+
+        jQuery(
+            function($) 
+            {
+                var lurl = '{{ $catListUrl }}';
+                var cat = $('.form-group > select#category');
+                var sect = $('.form-group > select#section');
+                sect.change(function () {
+                    var nurl = lurl + $(this).val() + '/category/list';
+                });
+            }
+        );
+    </script>
+@endsection

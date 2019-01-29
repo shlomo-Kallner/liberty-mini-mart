@@ -146,6 +146,9 @@ class ProductController extends MainController
                 );
             }
         }
+        UserSession::updateRegenerate(
+            $request, intval(User::getIdFromUserArray(false))
+        );
         abort(404);
     }
 
@@ -192,8 +195,12 @@ class ProductController extends MainController
             'hasName' => 'true',
             'hasTitle' => 'true',
             'hasUrl' => 'true',
+            'hasDescription' => 'true',
             'hasArticle' => 'true',
             'hasImage' => 'true',
+            'hasParent' => 'true',
+            'parentName' => 'Category',
+            'parentId' => 'category',
         ];
         if ($request->has('section') && $request->has('category')) {
             $sect = Section::getNamed($request->section);
@@ -201,7 +208,6 @@ class ProductController extends MainController
                 $clist = Categorie::getNameListingOf($sect->categories);
                 $cat = $sect->getCategory($request->category);
                 if (Functions::testVar($cat)) {
-                    $content['hasParent'] = 'true';
                     $content['parentList'] = $clist;
                     $content['hasSelectedParent'] = 'true';
                     $content['selectedParent'] = $cat->toNameListing();
