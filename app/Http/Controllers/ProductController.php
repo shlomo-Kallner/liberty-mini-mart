@@ -259,8 +259,8 @@ class ProductController extends MainController
     public function store(Request $request)
     {
         $validator = Validator::make(
-            $request->all(), self::validationRules(), 
-            self::validationMessages()
+            $request->all(), self::creationValidationRules(), 
+            self::creationValidationMessages()
         );
         if ($validator->passes()) {    
             //
@@ -305,12 +305,12 @@ class ProductController extends MainController
                     } else {
                         $image_id = 0;
                     }
-                    Log::info("image_id: " . $image_id);
+                    // Log::info("image_id: " . $image_id);
                     $article_id = Article::createNew(
                         $request->article, $request->title, 
                         null, $request->subheading??'', false
                     );
-                    Log::info("article_id: " . $article_id);
+                    // Log::info("article_id: " . $article_id);
                     $product = Product::createNew(
                         $request->name, $request->url, $request->price,
                         $request->sale??0.0, $cat->id, $request->sticker??'',
@@ -442,7 +442,7 @@ class ProductController extends MainController
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(ProductRequest $request)
+    public function update(Request $request)
     {
         //
     }
@@ -466,11 +466,38 @@ class ProductController extends MainController
     //// Validation Rules and messages
 
     /**
-     * Get the validation rules that apply to the request.
+     * Get the validation rules that apply to the creation request.
      *
      * @return array
      */
-    static public function validationRules()
+    static public function creationValidationRules()
+    {
+        return [
+            //
+            'section' => 'required|max:255|string|min:3',
+            'category' => 'required|max:255|string|min:3',
+            'image' => 'required|file|image',
+            'article' => 'required|max:255000|string|min:3',
+            'subheading' => 'string|nullable|max:255',
+            'title' => 'required|max:255|string|min:3',
+            'name' => 'required|max:255|string|min:3',
+            'description' => 'required|max:255|string|min:3',
+            'url' => [
+                'required', 'max:255', 'string', 'min:3',
+                'regex:'. Functions::getURLRegexStr(),
+            ],
+            'price' => 'required|numeric',
+            'sale' => 'numeric|nullable',
+            'sticker' => 'string|regex:/new|sale/',
+        ];
+    }
+
+    /**
+     * Get the validation rules that apply to the modification request.
+     *
+     * @return array
+     */
+    static public function modificationValidationRules()
     {
         return [
             //
@@ -497,7 +524,20 @@ class ProductController extends MainController
      *
      * @return array
      */
-    static public function validationMessages()
+    static public function creationValidationMessages()
+    {
+        return [
+            'title.required' => 'A title is required',
+            'category.required'  => 'A category is required',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    static public function modificationValidationMessages()
     {
         return [
             'title.required' => 'A title is required',
