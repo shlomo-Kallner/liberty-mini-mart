@@ -241,6 +241,38 @@ class UserSession extends Model
         return $retObj ? $us : $bol;
     }
 
+    static public function updateAndAbort(
+        Request $request, int $status = 404, int $user_id = 0
+    ) {
+        self::updateRegenerate(
+            $request, 
+            Functions::getVarOrId(
+                $user_id, intval(User::getIdFromUserArray(false, 0))
+            ),
+            false
+        );
+        abort($status);
+    }
+
+    static public function updateRedirect(
+        Request $request, string $path = '/', 
+        $errors = null, array $input = [],
+        int $user_id = 0, int $status = 302, 
+        array $headers = [], $cookies = []
+    ) {
+        self::updateRegenerate(
+            $request, 
+            Functions::getVarOrId(
+                $user_id, intval(User::getIdFromUserArray(false, 0))
+            ),
+            false
+        );
+        return redirect($path, $status, $headers)
+            ->withCookies($cookies)
+            ->withErrors($errors)
+            ->withInput($input);
+    }
+
     static public function getFrom($id, bool $withTrashed = false)
     {
         return self::getFromId($id, $withTrashed);

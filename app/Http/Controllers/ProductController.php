@@ -343,14 +343,18 @@ class ProductController extends MainController
                 }
             } 
         }
-        UserSession::updateRegenerate(
-            $request, intval(User::getIdFromUserArray(false))
-        );
+        // UserSession::updateRegenerate(
+        //     $request, intval(User::getIdFromUserArray(false))
+        // );
         $path = $request->path();
         $path = Str::contains($path, 'create') ? $path : $path . '/create';
-        return redirect($path)
-            ->withErrors($validator)
-            ->withInput($request->except('image'));
+        // return redirect($path)
+        //     ->withErrors($validator)
+        //     ->withInput($request->except('image'));
+        return UserSession::updateRedirect(
+            $request, $path, $validator, 
+            $request->except('image')
+        );
     }
 
     public function postReview(Request $request) 
@@ -427,7 +431,7 @@ class ProductController extends MainController
                 }
             }
         } 
-        abort(404);
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
@@ -438,7 +442,10 @@ class ProductController extends MainController
      */
     public function edit(Request $request)
     {
-        //
+        if ($request->has('section') && $request->has('category')) {
+            
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
