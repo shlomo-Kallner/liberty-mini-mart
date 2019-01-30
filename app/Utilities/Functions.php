@@ -27,9 +27,26 @@ class Functions
         return isset($var) && !empty($var);
     }
 
+    static public function testVarOrId($var)
+    {
+        if (self::testVar($var)) {
+            if (is_int($var) || is_float($var)) {
+                return $var > 0;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static public function getVar($var, $default = null)
     {
         return self::testVar($var) ? $var : $default;
+    }
+
+    static public function getVarOrId($var, $default = null)
+    {
+        return self::testVarOrId($var) ? $var : $default;
     }
 
     static public function testBladedVar($var)
@@ -121,11 +138,7 @@ class Functions
 
     static public function getContent($var, $default = null)
     {
-        if (self::testVar($var)) {
-            return !empty($var) ? $var : $default ;
-        } else {
-            return $default;
-        }
+        return self::getVar($var, $default);
     }
 
     static public function getURLRegexStr()

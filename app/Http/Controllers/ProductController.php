@@ -11,18 +11,17 @@ use App\Product,
     App\User,
     App\UserSession,
     App\Utilities\Functions\Functions,
+    App\Http\Resources\ProductResource,
+    App\ProductReview,
     Illuminate\Http\Request,
     Illuminate\Http\Response,
     Illuminate\Http\Resources\Json\Resource,
     Illuminate\Http\JsonResponse,
     Illuminate\Support\Facades\Validator,
     Illuminate\Support\Str,
-    App\Http\Resources\ProductResource,
-    App\ProductReview,
     Intervention\Image\Facades\Image as ImageTool,
     Intervention\Image\Size, 
     Intervention\Image\Image as ImageFile,
-    App\Http\Requests\ProductRequest,
     Illuminate\Support\Facades\Log;
 
 class ProductController extends MainController
@@ -272,36 +271,43 @@ class ProductController extends MainController
                     //$request->file('key', 'default');
                     //$request->hasFile('key');
                     if ($request->hasFile('image')) {
-                        $file = $request->file('image');
-                        //$tmpPath = 'tmp/products';
-                        $filename = explode('.', $file->getClientOriginalName())[0] 
-                            . '_'. Functions::getDateTimeStr('_', '-', '-');
-                        $ext = $file->getClientOriginalExtension();
-                        $fullFilename = $filename . '.' . $ext;
-                        // storing original file..
-                        //$file->storeAs($tmpPath, $fullFilename);
-                        $pubPath = public_path('images' . DIRECTORY_SEPARATOR . 'products');
-                        $dbPath = 'images/products';
-                        $img = ImageTool::make($file)->resize(300, 200);  //($path . '/' . $fullFilename);
-                        $fullFilenameWithPath = $pubPath . DIRECTORY_SEPARATOR . $fullFilename;
-                        /*  
-                            if (file_exists($fullFilenameWithPath)) {
-                                Log::info("file ${$fullFilenameWithPath} already exists!");
-                            } 
-                            $dirPerms = 0x4000 | 0644;
-                            dd($dirPerms, 0x4000, 0644, chmod($pubPath, $dirPerms));
-                            if (fileperms($pubPath) === 0) {
-                            ///if (chmod($pubPath, 0644))
-                            } 
-                        */
-                        $img->save($fullFilenameWithPath);
-                        $image_id = Functions::getVar(
-                            Image::createNew(
-                                $fullFilename, $dbPath, 
-                                $request->title, $request->description,
-                                false
-                            ), 0
+                        
+                        $image_id = Image::storeAndCreateNewImage(
+                            $request->file('image'), 'products', 
+                            $request->title, $request->description, 
+                            false, 0
                         );
+                        /* 
+                            //$tmpPath = 'tmp/products';
+                            $filename = explode('.', $file->getClientOriginalName())[0] 
+                                . '_'. Functions::getDateTimeStr('_', '-', '-');
+                            $ext = $file->getClientOriginalExtension();
+                            $fullFilename = $filename . '.' . $ext;
+                            // storing original file..
+                            //$file->storeAs($tmpPath, $fullFilename);
+                            $pubPath = public_path('images' . DIRECTORY_SEPARATOR . 'products');
+                            $dbPath = 'images/products';
+                            $img = ImageTool::make($file)->resize(300, 200);  //($path . '/' . $fullFilename);
+                            $fullFilenameWithPath = $pubPath . DIRECTORY_SEPARATOR . $fullFilename;
+                            
+                                // if (file_exists($fullFilenameWithPath)) {
+                                //     Log::info("file ${$fullFilenameWithPath} already exists!");
+                                // } 
+                                // $dirPerms = 0x4000 | 0644;
+                                // dd($dirPerms, 0x4000, 0644, chmod($pubPath, $dirPerms));
+                                // if (fileperms($pubPath) === 0) {
+                                // ///if (chmod($pubPath, 0644))
+                                // } 
+                        
+                            $img->save($fullFilenameWithPath);
+                            $image_id = Functions::getVar(
+                                Image::createNew(
+                                    $fullFilename, $dbPath, 
+                                    $request->title, $request->description,
+                                    false
+                                ), 0
+                            ); 
+                        */
                     } else {
                         $image_id = 0;
                     }

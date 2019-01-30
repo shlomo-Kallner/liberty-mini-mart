@@ -2,11 +2,17 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model,
+    Illuminate\Database\Eloquent\Relations\Pivot,
+    Illuminate\Support\Str,
+    Illuminate\Support\Facades\Log,
+    Intervention\Image\Facades\Image as ImageTool,
+    Intervention\Image\Size as ImageSize, 
+    Intervention\Image\Image as ImageFile;
+
 use App\Utilities\Functions\Functions,
     App\Utilities\ContainerAPI,
     App\Utilities\ContainerID;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 
 
 class Image extends Model implements ContainerAPI
@@ -140,6 +146,49 @@ class Image extends Model implements ContainerAPI
         } else {
             return null;
         }
+    }
+
+    static public function storeAndCreateNewImage(
+        $file, string $dirname, string $alt, 
+        string $caption, bool $retObj = false, 
+        $def = 0, int $width = 300, int $height = 200
+    ) {
+        if (Functions::testVar($file)) {
+            /// retrieve the file name and extension separately 
+            ///  and add a timestamp to the file name
+            $filename = explode('.', $file->getClientOriginalName())[0] 
+                . '_'. Functions::getDateTimeStr('_', '-', '-');
+            $ext = $file->getClientOriginalExtension();
+            $fullFilename = $filename . '.' . $ext;
+            /* 
+                //originally storing the original file.. (no longer necessary)
+                //$tmpPath = 'tmp/products';
+                //$file->storeAs($tmpPath, $fullFilename);
+            */
+            $pubPath = public_path('images' . DIRECTORY_SEPARATOR . $dirname);
+            $dbPath = 'images/' . $dirname;
+            //  Resize the current image based on given width and/or height.
+            $img = ImageTool::make($file)->resize($width, $height);  
+            $fullFilenameWithPath = $pubPath . DIRECTORY_SEPARATOR . $fullFilename;
+            /*  
+                if (file_exists($fullFilenameWithPath)) {
+                    Log::info("file ${$fullFilenameWithPath} already exists!");
+                } 
+                $dirPerms = 0x4000 | 0644;
+                dd($dirPerms, 0x4000, 0644, chmod($pubPath, $dirPerms));
+                if (fileperms($pubPath) === 0) {
+                ///if (chmod($pubPath, 0644))
+                } 
+            */
+            $img->save($fullFilenameWithPath);
+            return Functions::getVar(
+                Image::createNew(
+                    $fullFilename, $dbPath, $alt, 
+                    $caption, $retObj
+                ), $def
+            );
+        }
+        return $def;
     }
 
     /**
