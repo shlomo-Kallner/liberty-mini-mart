@@ -214,7 +214,7 @@ class ProductController extends MainController
             'parentName' => 'Category',
             'parentId' => 'category',
         ];
-        if ($request->has('section') && $request->has('category')) {
+        if (Functions::testVar($request->section) && Functions::testVar($request->category)) {
             $sect = Section::getNamed($request->section);
             if (Functions::testVar($sect)) {
                 $clist = Categorie::getNameListingOf($sect->categories);
@@ -442,13 +442,15 @@ class ProductController extends MainController
      */
     public function edit(Request $request)
     {
-        if ($request->has('section') && $request->has('category')) {
+        if (Functions::testVar($request->section) && Functions::testVar($request->category)) {
             $section = Section::getNamed(
                 $request->section, true, null, false
             );
+            Log::info('we DO have Section ' . $request->section . ' ...');
             if (Functions::testVar($section)) {
                 $category = $section->getCategory($request->category, true);
-                if (Functions::testVar($category) && $request->has('product')) {
+                Log::info('we DO have Category ' . $request->category . ' ...');
+                if (Functions::testVar($category) && Functions::testVar($request->product)) {
                     $product = $category->getProduct($request->product, true);
                     if (Functions::testVar($product)) {
                         $tmpData = [
@@ -487,6 +489,16 @@ class ProductController extends MainController
                             'selectedParent' => $category->toNameListing(),
                             'hasSelectedSection' => 'true',
                             'selectedSection' => $section->toNameListing(),
+                            'name' => $product->name,
+                            'title' => $product->title,
+                            'url' => $product->url,
+                            'description' => $product->description,
+                            'article' => $product->article->article,
+                            'price' => $product->price,
+                            'sale' => $product->sale,
+                            'subHeading' => $product->article->subheading,
+                            'hasSubHeading' => Functions::testVar($product->article->subheading) ? 'true'  : '',
+                            'image' => $product->getImageArray()
                         ]; 
                         $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin/store' : 'store';
                         $bcLinks = [];
@@ -516,6 +528,7 @@ class ProductController extends MainController
                 }
             }
         }
+        Log::info('we are abotring! at' . __METHOD__);
         UserSession::updateAndAbort($request, 404);
     }
 
@@ -587,7 +600,7 @@ class ProductController extends MainController
             //
             'newsection' => 'required|max:255|string|min:3',
             'newcategory' => 'required|max:255|string|min:3',
-            'image' => 'required|file|image',
+            'image' => 'nullable|file|image',
             'article' => 'required|max:255000|string|min:3',
             'subheading' => 'string|nullable|max:255',
             'title' => 'required|max:255|string|min:3',

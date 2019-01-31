@@ -60,7 +60,7 @@
         jQuery(
             function($) 
             {
-                //var lurl = '{{ $catListUrl }}' + '/';
+                //var lurl = '{{-- $catListUrl --}}' + '/';
                 var cat = $('.form-group > select#newcategory');
                 var sect = $('.form-group > select#newsection');
                 sect.change(function () {

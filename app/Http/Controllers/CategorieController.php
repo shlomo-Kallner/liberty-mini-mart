@@ -6,8 +6,8 @@ use App\Categorie,
     App\Utilities\Functions\Functions,
     App\Product,
     App\Section,
-    App\Page;
-use Illuminate\Http\Request;
+    App\Page,
+    Illuminate\Http\Request;
 
 class CategorieController extends MainController
 {

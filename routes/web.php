@@ -126,13 +126,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 Route::get('product', 'ProductController@index');
                 Route::post('product', 'ProductController@store');
                 
-                Route::resource(
-                    'section/{section}/category/{category}/product', 'ProductController', [
-                        'parameters'=> [
-                            'categorie' => 'category',
-                        ]
-                    ]
-                );
+                Route::resource('section/{section}/category/{category}/product', 'ProductController');
                 Route::get(
                     'section/{section}/category/{category}/product/{product}/delete', 
                     'ProductController@showDelete'

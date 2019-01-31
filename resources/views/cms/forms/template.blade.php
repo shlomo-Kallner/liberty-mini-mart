@@ -16,8 +16,11 @@
     $description2 = Functions::getBladedString($page['description']??'', old('description',''));
     $hasArticle2 = Functions::getBladedString($page['hasArticle']??'', '');
     $article2 = Functions::getBladedString($page['article']??'', old('article',''));
+    $hasSubHeading2 = Functions::getBladedString($page['hasSubHeading']??'', '');
+    $subHeading2 = Functions::getBladedString($page['subHeading']??'', '');
     // $articleLegend2 = Functions::getBladedString($page['articleLegend']??'', 'Type Your Description Here.');
     $hasImage2 = Functions::getBladedString($page['hasImage']??'', '');
+    $image2 = Functions::getContent($page['image']??'', '');
     $hasParent2 = Functions::getBladedString($page['hasParent']??'', '');
     $parentName2 = Functions::getBladedString($page['parentName']??'', 'Parent');
     $parentId2 = Functions::getBladedString($page['parentId']??'', 'parent');
@@ -33,104 +36,134 @@
     @parent
 
     <div class="row margin-bottom-40 margin-top-40">
-        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
         </div>
         
-        <div class="row">
-            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+            
+            <form action="{{ request()->fullUrl() }}" method="POST" role="form" enctype="multipart/form-data" novalidate="novalidate">
+                {{ csrf_field() }}
                 
-                <form action="{{ request()->fullUrl() }}" method="POST" role="form" enctype="multipart/form-data" novalidate="novalidate">
-                    {{ csrf_field() }}
-                    
-                    @if (Functions::testVar($hasName2))
-                        <div class="form-group">
-                            <label for="name">Name:</label>
-                            <input type="text" class="form-control" id="name" name="name" value="{{ $name2 }}" placeholder="Input Name.." required="required">
-                        </div>
-                    @endif
+                @if (Functions::testVar($hasName2))
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ $name2 }}" placeholder="Input Name.." required="required">
+                    </div>
+                @endif
 
-                    @if (Functions::testVar($hasTitle2))
-                        <div class="form-group">
-                            <label for="title">Title:</label>
-                            <input type="text" class="form-control" id="title" name="title" value="{{ $title2 }}" placeholder="Input Title.." required="required">
-                        </div>
-                    @endif
-                
-                    @if (Functions::testVar($hasUrl2))
-                        <div class="form-group">
-                            <label for="url">URL:</label>
-                            <input type="text" name="url" id="url" class="form-control" value="{{ $url2 }}" placeholder="Input URL" required="required">
-                        </div>
-                    @endif 
-                
-                    @if (Functions::testVar($hasDescription2))
-                        <div class="form-group">
-                            <label for="description">Description:</label>
-                            <input type="text" name="description" id="description" class="form-control" value="{{ $description2 }}" placeholder="Input Description" required="required">
-                        </div>
-                    @endif
+                @if (Functions::testVar($hasTitle2))
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ $title2 }}" placeholder="Input Title.." required="required">
+                    </div>
+                @endif
+            
+                @if (Functions::testVar($hasUrl2))
+                    <div class="form-group">
+                        <label for="url">URL:</label>
+                        <input type="text" name="url" id="url" class="form-control" value="{{ $url2 }}" placeholder="Input URL" required="required">
+                    </div>
+                @endif 
+            
+                @if (Functions::testVar($hasDescription2))
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <input type="text" name="description" id="description" class="form-control" value="{{ $description2 }}" placeholder="Input Description" required="required">
+                    </div>
+                @endif
 
-                    @if (Functions::testVar($hasArticle2))
-                        <fieldset>
-                            {{--  
-                                @if (Functions::testVar($articleLegend2))
-                                    <legend>{{$articleLegend2}}</legend>    
-                                    <br>
-                                @endif  
-                            --}}
+                @if (Functions::testVar($hasArticle2))
+
+                    @if (true)
+                        @if (false)
+                            <fieldset>
+                                {{--  
+                                    @if (Functions::testVar($articleLegend2))
+                                        <legend>{{$articleLegend2}}</legend>    
+                                        <br>
+                                    @endif  
+                                --}}
+                                <div class="row">
+                                    <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                                        <textarea name="article" id="articleSummernote" cols="50" rows="20"></textarea>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        @else
                             <div class="row">
-                                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                     <textarea name="article" id="articleSummernote" cols="50" rows="20"></textarea>
                                 </div>
                             </div>
-                            
-                            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#collapseSubheading" aria-expanded="false" aria-controls="collapseExample">
+                        @endif
+                    @else
+                        <div class="form-group">
+                            <textarea name="article" id="articleSummernote" cols="50" rows="20"></textarea>
+                        </div>
+                    @endif
+                    <div class="form-group">
+                        @if (!Functions::testVar($hasSubHeading2))
+                            <button class="btn btn-info" type="button" data-toggle="collapse" 
+                                data-target="#collapseSubheading" aria-expanded="false" aria-controls="collapseExample">
                                 <i class="fa fa-plus"></i> Add a Subheading
                             </button>
                             <div class="collapse" id="collapseSubheading">
                                 <label for="subheading">Subheading:</label>
-                                <input type="text" name="subheading" id="subheading" class="form-control" value="" placeholder="Input Subheading..">
+                                <input type="text" name="subheading" id="subheading" class="form-control" value="{{ $subHeading2 }}" placeholder="Input Subheading..">
                             </div>
-                        </fieldset>
-                    @endif
+                        @else
+                            <label for="subheading">Subheading:</label>
+                            <input type="text" name="subheading" id="subheading" class="form-control" value="{{ $subHeading2 }}" placeholder="Input Subheading..">
+                        @endif
+                    </div>
+                @endif
 
-                    @if (Functions::testVar($hasImage2))
-                        <div class="form-group">
-                            <label for="image">Image File:</label>
-                            <input type="file" accept="{{ Functions::getImageFileMIMETypeStr() }}" class="form-control" name="image" id="image">
-                        </div>
-                    @endif
+                @if (Functions::testVar($hasImage2))
+                    <div class="form-group">
+                        <label for="image">Image File:</label>
+                        @if (Functions::testVar($image2))
+                            @component('inc.figure')
+                                @foreach ($image2 as $key => $item)
+                                    @slot($key)
+                                        {!! Functions::toBladableContent($item) !!}
+                                    @endslot
+                                @endforeach 
+                            @endcomponent
+                        @endif
+                        <input type="file" accept="{{ Functions::getImageFileMIMETypeStr() }}" class="form-control" name="image" id="image">
+                    </div>
+                @endif
 
-                    @section('form-content')
-                        
-                    @show
-
-                    @if (Functions::testVar($hasParent2))
-                        <div class="form-group">
-                            <label for="{{ $parentId2 }}">{{ $parentName2 }}:</label>
-                            <select name="{{ $parentId2 }}" id="{{ $parentId2 }}">
-                                <option value="{{ $selectedParent2['url'] }}" selected>
-                                    {{ $selectedParent2['name'] }}
-                                </option>
-                                @if (Functions::testVar($parentList2))
-                                    @foreach ($parentList2 as $item)
-                                        <option value="{{ $item['url'] }}">{{ $item['name'] }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-                    @endif
-                
-                    <button type="submit" class="btn btn-primary pull-right">Submit</button>
-                    <input type="reset" value="Reset" class="btn btn-default">
-                    <a class="btn btn-default pull-left" href="{{ url('admin') }}" role="button">Cancel</a>
+                @section('form-content')
                     
-                </form>
+                @show
+
+                @if (Functions::testVar($hasParent2))
+                    <div class="form-group">
+                        <label for="{{ $parentId2 }}">{{ $parentName2 }}:</label>
+                        <select name="{{ $parentId2 }}" id="{{ $parentId2 }}">
+                            <option value="{{ $selectedParent2['url'] }}" selected>
+                                {{ $selectedParent2['name'] }}
+                            </option>
+                            @if (Functions::testVar($parentList2))
+                                @foreach ($parentList2 as $item)
+                                    <option value="{{ $item['url'] }}">{{ $item['name'] }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                @endif
+            
+                <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                <input type="reset" value="Reset" class="btn btn-default">
+                <a class="btn btn-default pull-left" href="{{ url('admin') }}" role="button">Cancel</a>
                 
-            </div>
+            </form>
+            
         </div>
         
-        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
         </div>
     </div>
 @endsection
@@ -158,7 +191,7 @@
 
         jQuery(function($) 
         {
-            $('#articleSummernote').summernote();
+            $('#articleSummernote').summernote('editor.insertText', '{{$article2}}');
             
             
         });
