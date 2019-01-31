@@ -74,34 +74,11 @@
 
                 @if (Functions::testVar($hasArticle2))
 
-                    @if (true)
-                        @if (false)
-                            <fieldset>
-                                {{--  
-                                    @if (Functions::testVar($articleLegend2))
-                                        <legend>{{$articleLegend2}}</legend>    
-                                        <br>
-                                    @endif  
-                                --}}
-                                <div class="row">
-                                    <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
-                                        <textarea name="article" id="articleSummernote" cols="50" rows="20"></textarea>
-                                    </div>
-                                </div>
-
-                            </fieldset>
-                        @else
-                            <div class="row">
-                                <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                                    <textarea name="article" id="articleSummernote" cols="50" rows="20"></textarea>
-                                </div>
-                            </div>
-                        @endif
-                    @else
-                        <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                             <textarea name="article" id="articleSummernote" cols="50" rows="20"></textarea>
                         </div>
-                    @endif
+                    </div>
                     <div class="form-group">
                         @if (!Functions::testVar($hasSubHeading2))
                             <button class="btn btn-info" type="button" data-toggle="collapse" 
