@@ -641,83 +641,17 @@ class ProductController extends MainController
                 if (Functions::testVar($category) && Functions::testVar($request->product)) {
                     $product = $category->getProduct($request->product, true);
                     if (Functions::testVar($product)) {
-                        /* $tmpData = [
-                            'PageNum' => 0,
-                            'NumShown' => 12,
-                            'PagingFor' => 'productsPanel',
-                            'Dir' => 'asc',
-                            'WithTrashed' => Functions::isAdminPath($request->path()),
-                            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin/store' : 'store',
-                            'ViewNum' => 0,
-                            'UseBaseMaker' => $request->ajax(),
-                            'Default' => [],
-                            'UseTitle' => true,
-                            'FullUrl' => !$request->ajax(),
-                            'ListUrl' => $request->path(),
-                            'UseGetSelf' => false,
-                            'Transform' => Product::TO_TABLE_ARRAY_TRANSFORM
-                        ];
-                        $content = [
-                            'lists' => [
-                                'sections' => Section::getNameListing(
-                                    false, $tmpData['Dir'], $tmpData['UseBaseMaker']
-                                )
-                            ],
-                            'hasName' => 'true',
-                            'hasTitle' => 'true',
-                            'hasUrl' => 'true',
-                            'hasDescription' => 'true',
-                            'hasArticle' => 'true',
-                            'hasImage' => 'true',
-                            'hasParent' => 'true',
-                            'parentName' => 'Category',
-                            'parentId' => 'newcategory',
-                            'parentList' => Categorie::getNameListingOf($section->categories),
-                            'hasSelectedParent' => 'true',
-                            'selectedParent' => $category->toNameListing(),
-                            'hasSelectedSection' => 'true',
-                            'selectedSection' => $section->toNameListing(),
-                            'name' => $product->name,
-                            'title' => $product->title,
-                            'url' => $product->url,
-                            'description' => $product->description,
-                            'article' => $product->article->article,
-                            'price' => $product->price,
-                            'sale' => $product->sale,
-                            'subHeading' => $product->article->subheading,
-                            'hasSubHeading' => Functions::testVar($product->article->subheading) ? 'true'  : '',
-                            'image' => $product->getImageArray(),
-                            'thisURL' => $product->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl']),
-                        ]; 
-                        $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin/store' : 'store';
-                        $bcLinks = [];
-                        $bcLinks[] = self::getHomeBreadcumb();
-                        $bcLinks[] = Page::genBreadcrumb(
-                            'Our Products', 
-                            Product::genUrlFragment($BaseUrl, !$request->ajax())
-                        );
-                        if (Functions::isAdminPath($request->path())) {
-                            $bcLinks[] = CmsController::getAdminBreadcrumb();
+                        $product->delete();
+                        $errors = [];
+                        if ($product->trashed()) {
+                            self::addMsg('Product ' . $product->name . ' , ' . $product->title . ' Deleted Successfully!');
+                        } else {
+                            $errors = [
+                                'error' => 'Product ' . $product->name . ' , ' . $product->title . ' Deletion failed!'
+                            ];
                         }
-                        $breadcrumbs = Page::getBreadcrumbs(
-                            Page::genBreadcrumb(
-                                'Product Modification Form', 
-                                Page::genUrlFragment($BaseUrl, !$request->ajax())
-                            ),
-                            $bcLinks
-                        );
-                        return self::getView(
-                            $request, 'cms.forms.edit.product', 
-                            'Modify Existing Product: ' . $product->title,
-                            $content, false, $breadcrumbs, null, 
-                            Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
-                            : null
-                        ); */
                         return UserSession::updateRedirect(
-                            $request, 'admin/store/product', 
-                            $errors = null, array $input = [],
-                            int $user_id = 0, int $status = 302, 
-                            array $headers = [], $cookies = []
+                            $request, 'admin/store/product', $errors
                         );
                     }
                 }
