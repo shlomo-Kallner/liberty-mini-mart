@@ -7,7 +7,8 @@ use App\Page,
     App\Article;
 use Illuminate\Http\Request,
     App\Utilities\Functions\Functions,
-    Illuminate\Support\Facades\Log;
+    Illuminate\Support\Facades\Log,
+    Illuminate\Support\Facades\Validator;
 
 class PageController extends MainController 
 {
@@ -130,6 +131,7 @@ class PageController extends MainController
      */
     public function create(Request $request) 
     {
+        $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin' : '';
         $content = [
             'hasName' => 'true',
             'hasTitle' => 'true',
@@ -138,8 +140,8 @@ class PageController extends MainController
             'hasArticle' => 'true',
             'hasImage' => 'true',
             'hasSticker' => 'true',
+            'thisURL' => Page::genUrlFragment($BaseUrl, !$request->ajax()),
         ];
-        $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin' : '';
         $bcLinks = [];
         $bcLinks[] = self::getHomeBreadcumb();
         if (Functions::isAdminPath($request->path())) {
@@ -168,9 +170,54 @@ class PageController extends MainController
      */
     public function store(Request $request) 
     {
-        
+        $validator = Validator::make(
+            $request->all(), self::creationValidationRules(), 
+            self::creationValidationMessages()
+        );
+        if ($validator->passes()) {
+            if ($request->hasFile('image')) {
+                
+                $image_id = Image::storeAndCreateNewImage(
+                    $request->file('image'), 'pages', 
+                    $request->title, $request->description, 
+                    false, 0
+                );
+            } else {
+                $image_id = 0;
+            }
+            // Log::info("image_id: " . $image_id);
+            $article_id = Article::createNew(
+                $request->article, $request->title, 
+                null, $request->subheading??'', false
+            );
+            $visible = 1;
+            $group = -1; 
+            $order = -1;
+            $page = Page::createNew(
+                $request->name, $request->url, $image_id,
+                $request->title, $article_id, $request->description,
+                $visible, $request->sticker,
+                $group, $order, true
+            );
+            if (Functions::testVar($page)) {
+                self::addMsg('Page ' . $page->name . ' , ' . $page->title . ' Creation Successfully!');
+                UserSession::updateRegenerate(
+                    $request, intval(User::getIdFromUserArray(false))
+                );
+                //$request->session()->regenerate();
+                return redirect('admin/page');
+            }
+        }
+        $path = $request->path();
+        $path = Str::contains($path, 'create') ? $path : $path . '/create';
+        // return redirect($path)
+        //     ->withErrors($validator)
+        //     ->withInput($request->except('image'));
         if (!$request->ajax()) {
-            UserSession::updateAndAbort($request, 404);
+            return UserSession::updateRedirect(
+                $request, $path, $validator, 
+                $request->except('image')
+            );
         } else {
             abort(404);
         }
@@ -315,6 +362,81 @@ class PageController extends MainController
             return $this->test3($request);
         }
 
+    }
+
+    //// Validation Rules and messages
+
+    /**
+     * Get the validation rules that apply to the creation request.
+     *
+     * @return array
+     */
+    static public function creationValidationRules()
+    {
+        return [
+            //
+            'image' => 'required|file|image',
+            'article' => 'required|max:255000|string|min:3',
+            'subheading' => 'string|nullable|max:255',
+            'title' => 'required|max:255|string|min:3',
+            'name' => 'required|max:255|string|min:3',
+            'description' => 'required|max:255|string|min:3',
+            'url' => [
+                'required', 'max:255', 'string', 'min:3',
+                'regex:'. Functions::getURLRegexStr(),
+            ],
+            'sticker' => [
+                'string', 'nullable', 'regex:/new|sale/'
+            ],
+        ];
+    }
+
+    /**
+     * Get the validation rules that apply to the modification request.
+     *
+     * @return array
+     */
+    static public function modificationValidationRules()
+    {
+        return [
+            'image' => 'nullable|file|image',
+            'article' => 'required|max:255000|string|min:3',
+            'subheading' => 'string|nullable|max:255',
+            'title' => 'required|max:255|string|min:3',
+            'name' => 'required|max:255|string|min:3',
+            'description' => 'required|max:255|string|min:3',
+            'url' => [
+                'required', 'max:255', 'string', 'min:3',
+                'regex:'. Functions::getURLRegexStr(),
+            ],
+            'sticker' => [
+                'string', 'nullable', 'regex:/new|sale/'
+            ],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    static public function creationValidationMessages()
+    {
+        return [
+            'title.required' => 'A title is required',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    static public function modificationValidationMessages()
+    {
+        return [
+            'title.required' => 'A title is required',
+        ];
     }
 
     /// UTILITY METHODS:

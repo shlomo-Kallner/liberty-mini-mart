@@ -200,6 +200,7 @@ class ProductController extends MainController
             'Transform' => Product::TO_TABLE_ARRAY_TRANSFORM
         ];
         $slist = Section::getNameListing(false, $tmpData['Dir'], $tmpData['UseBaseMaker']);
+        $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin/store' : 'store';
         $content = [
             'lists' => [
                 'sections' => $slist
@@ -226,10 +227,11 @@ class ProductController extends MainController
                     $content['selectedParent'] = $cat->toNameListing();
                     $content['hasSelectedSection'] = 'true';
                     $content['selectedSection'] = $sect->toNameListing();
+                    $BaseUrl = $cat->getFullUrl($BaseUrl, false);
                 }
             }
         } 
-        $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin/store' : 'store';
+        $content['thisURL'] = Product::genUrlFragment($BaseUrl, !$request->ajax());
         $bcLinks = [];
         $bcLinks[] = self::getHomeBreadcumb();
         if (Functions::isAdminPath($request->path())) {
@@ -238,7 +240,7 @@ class ProductController extends MainController
         $breadcrumbs = Page::getBreadcrumbs(
             Page::genBreadcrumb(
                 'Product Creation Form', 
-                Page::genUrlFragment($BaseUrl, !$request->ajax())
+                Product::genUrlFragment($BaseUrl, !$request->ajax())
             ),
             $bcLinks
         );
@@ -333,6 +335,7 @@ class ProductController extends MainController
                             $pages = $products->paginate(12);
                             $pages->withPath();
                         } else {
+                            self::addMsg('Product ' . $product->name . ' , ' . $product->title . ' Creation Successfully!');
                             UserSession::updateRegenerate(
                                 $request, intval(User::getIdFromUserArray(false))
                             );
@@ -482,6 +485,7 @@ class ProductController extends MainController
                             'hasDescription' => 'true',
                             'hasArticle' => 'true',
                             'hasImage' => 'true',
+                            'hasSticker' => 'true',
                             'hasParent' => 'true',
                             'parentName' => 'Category',
                             'parentId' => 'newcategory',
@@ -495,8 +499,9 @@ class ProductController extends MainController
                             'url' => $product->url,
                             'description' => $product->description,
                             'article' => $product->article->article,
-                            'price' => $product->price,
-                            'sale' => $product->sale,
+                            'sticker'=> $product->sticker??'',
+                            'price' => $product->price??'',
+                            'sale' => $product->sale??'',
                             'subHeading' => $product->article->subheading,
                             'hasSubHeading' => Functions::testVar($product->article->subheading) ? 'true'  : '',
                             'image' => $product->getImageArray(),

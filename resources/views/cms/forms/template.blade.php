@@ -31,7 +31,7 @@
     $selectedParent2 = Functions::getContent(
         $page['selectedParent']??'', Page::makeNameListing('No ' . $parentName2, '')
     );
-    $thisURL2 = Functions::getBladedString($page['thisURL']??'', request()->fullUrl());
+    $thisURL2 = Functions::getBladedString($page['thisURL']??'', request()->path());
 
 @endphp
 
@@ -44,7 +44,7 @@
         
         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
             
-            <form action="{{ $thisURL2 }}" method="POST" role="form" enctype="multipart/form-data" novalidate="novalidate">
+            <form action="{{ url($thisURL2) }}" method="POST" role="form" enctype="multipart/form-data" novalidate="novalidate">
                 {{ csrf_field() }}
                 
                 @if (Functions::testVar($hasName2))
@@ -79,6 +79,7 @@
 
                     <div class="row">
                         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                            <label for="articleSummernote">Article:</label>
                             <textarea name="article" id="articleSummernote" cols="50" rows="20"></textarea>
                         </div>
                     </div>
