@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Section,
     App\Page,
     App\Product,
-    App\Categorie;
+    App\Categorie,
+    App\Utilities\Functions\Functions;
 use Illuminate\Http\Request;
 
 class SectionController extends MainController
@@ -136,40 +137,96 @@ class SectionController extends MainController
             $section = Section::getNamed($request->section);
             //$section_items = Categorie::getCategoriesOfSection($section->id);
             //$section_items = $section->getCategories(false);
-            if (false) {
-                $pagingFor = 'section-content';
-                if (Functions::testVar(
-                    $pa = Section::getPagingVars(
-                        $request, $pagingFor
-                    )
+
+            /*
+                getAllWithTransform(
+                    $transform = null, string $dir = 'asc', 
+                    bool $withTrashed = true, string $baseUrl = 'store', 
+                    bool $useTitle = true, bool $fullUrl = false, 
+                    int $version = 1, $default = [], 
+                    bool $useBaseMaker = true
                 )
-                ) {
-                    $viewNumber = $pa['viewNum'];
-                    $pageNum = $pa['pageNum'];
-                } else {
-                    $viewNumber = 0;
-                    $pageNum = 0;
+                getAllWithPagination(
+                    $transform, int $pageNum, int $numShown = 4, 
+                    string $pagingFor = '', string $dir = 'asc', 
+                    bool $withTrashed = true, string $baseUrl = 'store', 
+                    string $listUrl = '', int $viewNumber = 0, 
+                    bool $fullUrl = false, bool $useTitle = true, 
+                    int $version = 1, $default = [], bool $useBaseMaker = true
+                )
+                getFor(
+                    $args, string $baseUrl = 'store', $transform = null, 
+                    bool $useTitle = true, int $version = 1, 
+                    bool $withTrashed = true, bool $fullUrl = false, 
+                    $default = [], bool $useBaseMaker = true,
+                    string $dir = 'asc'
+                )
+                getForWithPagination(
+                    $args, $transform, int $pageNum,
+                    int $numShown = 4, string $pagingFor = '', 
+                    string $listUrl = '', string $baseUrl = 'store', 
+                    string $dir = 'asc', int $viewNumber = 0, 
+                    bool $withTrashed = true, bool $useTitle = true, 
+                    bool $fullUrl = false, int $version = 1, $default = [], 
+                    bool $useBaseMaker = true
+                )
+                toContentArrayWithPagination(
+                    string $baseUrl = 'store', int $version = 1, 
+                    bool $useTitle = true, bool $withTrashed = true,
+                    bool $fullUrl = false, int $pageNum = 0, 
+                    int $numItemsPerPage = 4, string $pagingFor = '', 
+                    int $viewNumber = 0, string $listUrl = '#', 
+                    bool $useBaseMaker = true
+                )
+            */
+            $tmpData = [
+                'PageNum' => 0,
+                'NumShown' => 12,
+                'PagingFor' => 'section-content',
+                'Dir' => 'asc',
+                'WithTrashed' => Functions::isAdminPath($request->path()),
+                'BaseUrl' => $request->ajax() ? 'api/store' : 'store',
+                'ViewNum' => 0,
+                'UseBaseMaker' => $request->ajax(),
+                'Default' => [],
+                'UseTitle' => true,
+                'FullUrl' => !$request->ajax(),
+                'ListUrl' => $request->path(),
+                'UsePagination' => false,
+                'Transform' => Categorie::TO_MINI_TRANSFORM,
+                'Version' => 1,
+            ];    
+            if ($tmpData['UsePagination']) {
+                $pagingFor = 'section-content';
+                $pa = Section::getPagingVars(
+                    $request, $tmpData['PagingFor'], $tmpData['NumShown'],
+                    $tmpData['Dir']
+                );
+                if (Functions::testVar($pa)) {
+                    $tmpData['ViewNum'] = $pa['viewNum'];
+                    $tmpData['PageNum'] = $pa['pageNum'];
+                    $tmpData['NumShown'] = $pa['limit'];
+                    $tmpData['Dir'] = $pa['order'];
                 }
-                $numShown = 12;
-                $dir = 'asc';
-                $useTitle = true;
-                $withTrashed = false;
                 $section_data = Categorie::getForWithPagination(
-                    $section->categories, 
-                    Categorie::TO_MINI_TRANSFORM, $pageNum,
-                    $numShown, $pagingFor, $request->url(), 
-                    $request->ajax() ? 'api/store' : 'store', 
-                    $dir, $viewNumber, $withTrashed, 
-                    $useTitle, 1, []
+                    $section->categories, $tmpData['Transform'], 
+                    $tmpData['PageNum'], $tmpData['NumShown'], 
+                    $tmpData['PagingFor'], $tmpData['ListUrl'], 
+                    $tmpData['BaseUrl'], $tmpData['Dir'], 
+                    $tmpData['ViewNum'], $tmpData['WithTrashed'], 
+                    $tmpData['UseTitle'], $tmpData['FullUrl'], 
+                    $tmpData['Version'], $tmpData['Default'],
+                    $tmpData['UseBaseMaker']
                 );
                 $section_data['bestsellers'] = Product::getBestsellers();
             } else {
                 $section_data = [
                     'items' => Categorie::getFor(
-                        $section->categories, 
-                        $request->ajax() ? 'api/store' : 'store', 
-                        Categorie::TO_MINI_TRANSFORM, true, 1, 
-                        $request->withTrashed??false, []
+                        $section->categories, $tmpData['BaseUrl'], 
+                        $tmpData['Transform'], $tmpData['UseTitle'], 
+                        $tmpData['Version'], $tmpData['WithTrashed'], 
+                        $tmpData['FullUrl'], $tmpData['Default'],
+                        $tmpData['UseBaseMaker'], $tmpData['Dir']
                     ),
                     'bestsellers' => Product::getBestsellers(),
                 ];

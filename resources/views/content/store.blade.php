@@ -107,46 +107,42 @@
                 @foreach ($article2 as $key => $item)
                     
                         @slot($key)
-                            @if (!is_string($item))
-                                {!! serialize($item) !!}
-                            @else
-                                {!! $item !!}
-                            @endif
-                        @endslot
-                    
-                        @slot('subheading')
-                            Article Content is From <a href="https://en.wikipedia.org/wiki/Liberty">Wikipedia, the free encyclopedia</a>
-                        @endslot
-                        @slot('article')
-                        
-                            <p>
-                                <strong>Liberty</strong>, in politics, 
-                                consists of the social, political, and 
-                                <strong>economic freedoms</strong> 
-                                to which all community members are entitled.
-                            </p>
-                            <p>
-                                In philosophy, liberty involves 
-                                <a href="https://en.wikipedia.org/wiki/Free_will">free will</a>
-                                as contrasted with 
-                                <a href="https://en.wikipedia.org/wiki/Determinism">determinism</a>.
-                            </p>
-                            <p>
-                                Generally, liberty is distinctly differentiated 
-                                from freedom in that freedom is primarily, 
-                                if not exclusively, the ability to do as one wills 
-                                and what one has the power to do; 
-                                whereas liberty concerns the absence of arbitrary restraints 
-                                and takes into account the rights of all involved. 
-                                As such, the exercise of liberty is subject to capability and 
-                                limited by the rights of others.
-                                <aside>Mill, J.S. (1869)., "Chapter I: Introductory", On Liberty. 
-                                <a href="http://www.bartleby.com/130/1.html"></a></aside>
-                            </p>
-                            
+                            {!! Functions::toBladableContent($item) !!}
                         @endslot
                         
                 @endforeach
+                    
+                @slot('subheading')
+                    Article Content is From <a href="https://en.wikipedia.org/wiki/Liberty">Wikipedia, the free encyclopedia</a>
+                @endslot
+                @slot('article')
+                
+                    <p>
+                        <strong>Liberty</strong>, in politics, 
+                        consists of the social, political, and 
+                        <strong>economic freedoms</strong> 
+                        to which all community members are entitled.
+                    </p>
+                    <p>
+                        In philosophy, liberty involves 
+                        <a href="https://en.wikipedia.org/wiki/Free_will">free will</a>
+                        as contrasted with 
+                        <a href="https://en.wikipedia.org/wiki/Determinism">determinism</a>.
+                    </p>
+                    <p>
+                        Generally, liberty is distinctly differentiated 
+                        from freedom in that freedom is primarily, 
+                        if not exclusively, the ability to do as one wills 
+                        and what one has the power to do; 
+                        whereas liberty concerns the absence of arbitrary restraints 
+                        and takes into account the rights of all involved. 
+                        As such, the exercise of liberty is subject to capability and 
+                        limited by the rights of others.
+                        <aside>Mill, J.S. (1869)., "Chapter I: Introductory", On Liberty. 
+                        <a href="http://www.bartleby.com/130/1.html"></a></aside>
+                    </p>
+                    
+                @endslot
             @endcomponent
         
 
@@ -159,44 +155,40 @@
             @endif
             
             @if (Functions::testVar($newProducts2))
-            <!-- BEGIN SALE PRODUCT & NEW ARRIVALS -->
-            
-                @component('lib.themewagon.product_gallery')
-                    @slot('containerClasses')
-                        {{ "row margin-bottom-40 margin-top-30" }}
-                    @endslot
-                    @if (true)
-                        @foreach ($newProducts2 as $key => $item)
-                            @slot($key)
-                            @if (is_string($item))
-                                {{ $item }}
-                            @else
-                                {!! serialize($item) !!}
-                            @endif
+                <!-- BEGIN SALE PRODUCT & NEW ARRIVALS -->
+                
+                    @component('lib.themewagon.product_gallery')
+                        @slot('containerClasses')
+                            {{ "row margin-bottom-40 margin-top-30" }}
+                        @endslot
+                        @if (true)
+                            @foreach ($newProducts2 as $key => $item)
+                                @slot($key)
+                                    {!! Functions::toBladableContent($item) !!}
+                                @endslot
+                            @endforeach
+                        @else
+                            
+                            @slot('products')
+                                {!! Functions::toBladableContent($newProducts2) !!}
                             @endslot
-                        @endforeach
-                    @else
-                        
-                        @slot('products')
-                            {!! $newProducts2 !!}
-                        @endslot
-                        @slot('sizeClass')
-                            {{ "col-md-12" }}
-                        @endslot
-                        @slot('productClass')
-                            {{ "sale-product" }}
-                        @endslot
-                        @slot('owlClass')
-                            {{ "owl-carousel5" }}
-                        @endslot
-                        @slot('title')
-                            {{ "New Arrivals" }}
-                        @endslot
+                            @slot('sizeClass')
+                                {{ "col-md-12" }}
+                            @endslot
+                            @slot('productClass')
+                                {{ "sale-product" }}
+                            @endslot
+                            @slot('owlClass')
+                                {{ "owl-carousel5" }}
+                            @endslot
+                            @slot('title')
+                                {{ "New Arrivals" }}
+                            @endslot
 
-                    @endif
-                @endcomponent
+                        @endif
+                    @endcomponent
 
-            <!-- END SALE PRODUCT & NEW ARRIVALS -->
+                <!-- END SALE PRODUCT & NEW ARRIVALS -->
             @endif
             
             @if (false)
@@ -237,7 +229,7 @@
                         @slot('sorting')
                             {{ "" }}
                         @endslot
-                        @slot('products')
+                        @slot('items')
                             {!! $sections2 !!}
                         @endslot
                         @slot('pageNumber')

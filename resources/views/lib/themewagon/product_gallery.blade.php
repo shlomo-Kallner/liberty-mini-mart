@@ -93,14 +93,14 @@
 
     <!-- BEGIN PRODUCT GALLERY -->
     @if( Functions::testVar($containerClasses2) )
-    <div class="{{ $containerClasses2 }}">
+        <div class="{{ $containerClasses2 }}">
     @endif        
         
         @if( Functions::testVar($sizeClass2) )
-        <div class="{{ $sizeClass2 }} {{ $productClass2 }}">
+            <div class="{{ $sizeClass2 }} {{ $productClass2 }}">
         @endif
             @if( Functions::testVar($title2) )
-            <h2>{{ $title2 }}</h2>
+                <h2>{{ $title2 }}</h2>
             @endif
 
             @if (Functions::testVar($owlClass2))
@@ -111,7 +111,7 @@
                     @component('lib.themewagon.product_mini')
                         @foreach ($product as $key => $item)
                             @slot($key)
-                                {{$item}}
+                                {{ $item }}
                             @endslot
                             @slot('currency')
                                 {!! $currency2 !!}
@@ -124,10 +124,10 @@
                 </div>
             @endif
         @if( Functions::testVar($sizeClass2) )
-        </div>
+            </div>
         @endif
     @if( Functions::testVar($containerClasses2) )        
-    </div>
+        </div>
     @endif
     <!-- END PRODUCT GALLERY -->
 

@@ -321,8 +321,8 @@ trait ContainerTransforms
         $query = $this->getChildrenQuery();
         if (Functions::testVar($query)) {
             return $withTrashed 
-                ? $this->getChildrenQuery()->withTrashed()->count()
-                : $this->getChildrenQuery()->count();
+                ? $query->withTrashed()->count()
+                : $query->count();
         } else {
             return 0;
         }
@@ -334,6 +334,19 @@ trait ContainerTransforms
         return is_int($num)
         ? $num > 0
         : Functions::countHas($num);
+    }
+
+    public function getChildByUrl(string $url, bool $withTrashed = false)
+    {
+        $query = $this->getChildrenQuery();
+        if (Functions::testVar($query)) {
+            return $withTrashed 
+                ? $query->withTrashed()
+                    ->where(self::getUrlByKey(), $url)->first()
+                : $query->where(self::getUrlByKey(), $url)->first();
+        } else {
+            return null;
+        }
     }
 
     public function getChildren(
@@ -1157,7 +1170,6 @@ trait ContainerTransforms
                     ]
                 ); */
                 return $content;
-                
             }
         }
         return $default;
@@ -1265,12 +1277,12 @@ trait ContainerTransforms
         bool $fullUrl = false, int $version = 1, $default = [], 
         bool $useBaseMaker = true
     ) {
-        $cTmp = count($args);
-        if ($cTmp <= $numShown) {
+        $totalNum = count($args);
+        if ($totalNum <= $numShown) {
             $argTmp = $args;
         } else {
             $pageIdx = self::genFirstAndLastItemsIdxes( 
-                $cTmp, $pageNum, $numShown
+                $totalNum, $pageNum, $numShown
             );
             $paging = Functions::genRange(
                 $pageIdx['begin'], ($pageIdx['end'] - 1)
@@ -1286,11 +1298,31 @@ trait ContainerTransforms
             $dir
         );
         if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
-            return self::getPaginatedItemsArray(
-                $tmp, $pageNum, $numShown, 
-                $pagingFor, $listUrl, 
-                $viewNumber
-            );///
+            /* 
+                return self::getPaginatedItemsArray(
+                    $tmp, $pageNum, $numShown, 
+                    $pagingFor, $listUrl, 
+                    $viewNumber
+                ); 
+            */
+            $content = self::makeBasePaginatedItemsArray(
+                $tmp,
+                self::genPagination3(
+                    $pageIdx['begin'], $pageIdx['end'] - 1, $numShown,
+                    $totalNum, $pageNum, Functions::genRowsPerPage(
+                        $totalNum, $numShown
+                    ), 4, $viewNumber, $pagingFor, $baseUrl
+                )
+            );
+            /* Log::info(
+                'dumping content from ' . __METHOD__ .' ..', 
+                [
+                    'total' => $totalNum,
+                    'useGenPaginator2' => $useGenPaginator2,
+                    'content' => $content
+                ]
+            ); */
+            return $content;
         } else {
             return $default;
         }

@@ -169,11 +169,7 @@
 
                 @foreach ($product2 as $key => $item)
                     @slot($key)
-                        @if (is_array($item) || is_object($item))
-                            {!! serialize($item) !!}
-                        @else
-                            {!! $item !!}
-                        @endif
+                        {!! Functions::toBladableContent($item) !!}
                     @endslot
                 @endforeach
                 

@@ -114,7 +114,7 @@ class Product extends Model implements TransformableContainer
     }
 
     static public function genProductGallery(
-        $name, array &$products, 
+        string $name, array &$products, 
         //array &$cssClasses = [],
         string $baseUrl = 'store', string $sizeClass = 'col-md-12',
         string $owlClass = 'owl-carousel5', 

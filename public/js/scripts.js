@@ -242,7 +242,13 @@ jQuery(function ($) {
   var myInit = function ($) {
     Layout.init()
     Layout.initOWL()
-    Layout.initImageZoom()
+    // Layout.initImageZoom()
+    $('.product-main-image').zoom(
+      {
+        url: $('.product-main-image img').attr('data-BigImgSrc'),
+        on: 'grab'
+      }
+    );
     Layout.initTouchspin()
     Layout.initFixHeaderWithPreHeader()
     Layout.initNavScrolling()

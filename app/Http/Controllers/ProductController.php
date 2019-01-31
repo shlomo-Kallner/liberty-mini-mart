@@ -139,7 +139,7 @@ class ProductController extends MainController
                 $breadcrumbs = Page::getBreadcrumbs(
                     Page::genBreadcrumb(
                         $title, 
-                        Page::genUrlFragment($productsData['BaseUrl'], $productsData['FullUrl'])
+                        Product::genUrlFragment($productsData['BaseUrl'], $productsData['FullUrl'])
                     ),
                     $bcLinks
                 );
@@ -443,7 +443,78 @@ class ProductController extends MainController
     public function edit(Request $request)
     {
         if ($request->has('section') && $request->has('category')) {
-            
+            $section = Section::getNamed(
+                $request->section, true, null, false
+            );
+            if (Functions::testVar($section)) {
+                $category = $section->getCategory($request->category, true);
+                if (Functions::testVar($category) && $request->has('product')) {
+                    $product = $category->getProduct($request->product, true);
+                    if (Functions::testVar($product)) {
+                        $tmpData = [
+                            'PageNum' => 0,
+                            'NumShown' => 12,
+                            'PagingFor' => 'productsPanel',
+                            'Dir' => 'asc',
+                            'WithTrashed' => Functions::isAdminPath($request->path()),
+                            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin/store' : 'store',
+                            'ViewNum' => 0,
+                            'UseBaseMaker' => $request->ajax(),
+                            'Default' => [],
+                            'UseTitle' => true,
+                            'FullUrl' => !$request->ajax(),
+                            'ListUrl' => $request->path(),
+                            'UseGetSelf' => false,
+                            'Transform' => Product::TO_TABLE_ARRAY_TRANSFORM
+                        ];
+                        $content = [
+                            'lists' => [
+                                'sections' => Section::getNameListing(
+                                    false, $tmpData['Dir'], $tmpData['UseBaseMaker']
+                                )
+                            ],
+                            'hasName' => 'true',
+                            'hasTitle' => 'true',
+                            'hasUrl' => 'true',
+                            'hasDescription' => 'true',
+                            'hasArticle' => 'true',
+                            'hasImage' => 'true',
+                            'hasParent' => 'true',
+                            'parentName' => 'Category',
+                            'parentId' => 'newcategory',
+                            'parentList' => Categorie::getNameListingOf($section->categories),
+                            'hasSelectedParent' => 'true',
+                            'selectedParent' => $category->toNameListing(),
+                            'hasSelectedSection' => 'true',
+                            'selectedSection' => $section->toNameListing(),
+                        ]; 
+                        $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin/store' : 'store';
+                        $bcLinks = [];
+                        $bcLinks[] = self::getHomeBreadcumb();
+                        $bcLinks[] = Page::genBreadcrumb(
+                            'Our Products', 
+                            Product::genUrlFragment($BaseUrl, !$request->ajax())
+                        );
+                        if (Functions::isAdminPath($request->path())) {
+                            $bcLinks[] = CmsController::getAdminBreadcrumb();
+                        }
+                        $breadcrumbs = Page::getBreadcrumbs(
+                            Page::genBreadcrumb(
+                                'Product Modification Form', 
+                                Page::genUrlFragment($BaseUrl, !$request->ajax())
+                            ),
+                            $bcLinks
+                        );
+                        return self::getView(
+                            $request, 'cms.forms.edit.product', 
+                            'Modify Existing Product: ' . $product->title,
+                            $content, false, $breadcrumbs, null, 
+                            Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
+                            : null
+                        );  
+                    }
+                }
+            }
         }
         UserSession::updateAndAbort($request, 404);
     }
@@ -514,8 +585,8 @@ class ProductController extends MainController
     {
         return [
             //
-            'section' => 'required|max:255|string|min:3',
-            'category' => 'required|max:255|string|min:3',
+            'newsection' => 'required|max:255|string|min:3',
+            'newcategory' => 'required|max:255|string|min:3',
             'image' => 'required|file|image',
             'article' => 'required|max:255000|string|min:3',
             'subheading' => 'string|nullable|max:255',

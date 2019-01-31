@@ -74,6 +74,23 @@ class ShopController extends MainController {
                 $sections[] = $sect->toMini('store');
             }
         */
+        $tmpData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'productsPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => Functions::isAdminPath($request->path()),
+            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => Section::TO_MINI_TRANSFORM,
+            'Version' => 1,
+        ];
         $content = [
             'article' => Article::makeArticleArray(
                 self::getLoremIpsum(),
@@ -84,7 +101,13 @@ class ShopController extends MainController {
             ),
             'newProducts' => Product::getNewProducts(),
             'bestsellers' => Product::getBestsellers(),
-            'sections' => Section::getAllWithTransform(Section::TO_MINI_TRANSFORM),
+            'sections' => Section::getAllWithTransform(
+                $tmpData['Transform'], $tmpData['Dir'], 
+                $tmpData['WithTrashed'], $tmpData['BaseUrl'], 
+                $tmpData['UseTitle'], $tmpData['FullUrl'], 
+                $tmpData['Version'], $tmpData['Default'], 
+                $tmpData['UseBaseMaker']
+            ),
         ];
         return parent::getView($request, 'content.store', $title, $content, $useFakeData, $breadcrumbs);
     }
