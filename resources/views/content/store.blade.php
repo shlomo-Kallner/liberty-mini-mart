@@ -19,9 +19,9 @@
         $sections2 = serialize(Functions::getContent($page['sections']??'', ''));
         $newProducts2 = Functions::getContent($page['newProducts']??'','');
         $sidebar2 = serialize(Functions::getContent($sidebar??'',''));
-        $bestsellers2 = serialize(Functions::getContent($page['bestsellers']??$fakeData,$fakeData));
+        $bestsellers2 = serialize(Functions::getContent($page['bestsellers']??'', ''));
         $currency2 = Functions::getContent($currency??'fa-usd','fa-usd');
-        $filters2 = serialize(Functions::getContent($page['filters']??$fakeData,$fakeData));
+        $filters2 = serialize(Functions::getContent($page['filters']??'', ''));
         
         //dd($page);
         /*

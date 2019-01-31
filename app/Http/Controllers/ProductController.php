@@ -209,6 +209,7 @@ class ProductController extends MainController
             'hasUrl' => 'true',
             'hasDescription' => 'true',
             'hasArticle' => 'true',
+            'hasSticker' => 'true',
             'hasImage' => 'true',
             'hasParent' => 'true',
             'parentName' => 'Category',
@@ -385,7 +386,7 @@ class ProductController extends MainController
                 }
             }
         } 
-        abort(404);
+        abort(404); /// this is an AJAX route!
     }
 
     /**
@@ -784,7 +785,9 @@ class ProductController extends MainController
             ],
             'price' => 'required|numeric',
             'sale' => 'numeric|nullable',
-            'sticker' => 'string|regex:/new|sale/',
+            'sticker' => [
+                'string', 'nullable', 'regex:/new|sale/'
+            ],
         ];
     }
 
@@ -811,7 +814,9 @@ class ProductController extends MainController
             ],
             'price' => 'required|numeric',
             'sale' => 'numeric|nullable',
-            'sticker' => 'string|regex:/new|sale/',
+            'sticker' => [
+                'string', 'nullable', 'regex:/new|sale/'
+            ],
         ];
     }
 

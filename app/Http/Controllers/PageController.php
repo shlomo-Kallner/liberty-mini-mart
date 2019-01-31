@@ -39,49 +39,60 @@ class PageController extends MainController
             'ListUrl' => $request->path(),
             'UsePageGroupings' => false,
             'UseGetSelf' => false,
-            'Transform' => Page::TO_MINI_TRANSFORM
+            'Transform' => Page::TO_TABLE_ARRAY_TRANSFORM
         ];
-        $pv = Page::getPagingVars(
-            $request, $pagesData['PagingFor'], $pagesData['NumShown'],
-            $pagesData['Dir']
-        );
-        if (Functions::testVar($pv)) {
-            $pagesData['PageNum'] = $pv['pageNum'];
-            $pagesData['ViewNum'] = $pv['viewNum'];
-            if (Functions::hasPropKeyIn($pv, 'limit')) {
-                $pagesData['NumShown'] = $pv['limit'];
-            }
-        } 
-        if ($pagesData['UsePageGroupings']) {
-            $pages = Page::getAllPages(
-                true, $pagesData['Dir'], $pagesData['UsePageGroupings'], 
-                $pagesData['ListUrl'], $pagesData['FullUrl'],
-                $pagesData['PagingFor'], $pagesData['ViewNum'], 
-                $pagesData['PageNum'], $pagesData['NumShown'], 
-                $pagesData['BaseUrl'], $pagesData['UseTitle'], 
-                $pagesData['WithTrashed'], $pagesData['UseBaseMaker']
+        $usePagination = false;
+        if ($usePagination) {
+            $pv = Page::getPagingVars(
+                $request, $pagesData['PagingFor'], $pagesData['NumShown'],
+                $pagesData['Dir']
             );
-        } else {
-            $pages = Page::getAllWithPagination(
-                $pagesData['Transform'], $pagesData['PageNum'], 
-                $pagesData['NumShown'], $pagesData['PagingFor'], 
-                $pagesData['Dir'], $pagesData['WithTrashed'], 
-                $pagesData['BaseUrl'], $pagesData['ListUrl'], 
-                $pagesData['ViewNum'], $pagesData['FullUrl'], 
-                $pagesData['UseTitle'], 1, $pagesData['Default'], 
-                $pagesData['UseBaseMaker']
-            );
-            if ($pagesData['UseGetSelf']) {
-                $children = Functions::countHas($pages) 
-                    ? $pages['items'] : null;
-                $paginator = Functions::countHas($pages) 
-                    ? $pages['pagination'] : null;
-                $pages_index = Page::getSelf(
-                    $pagesData['BaseUrl'], $pagesData['WithTrashed'],
-                    $pagesData['FullUrl'], $children, 
-                    $paginator, $pagesData['PagingFor']
+            if (Functions::testVar($pv)) {
+                $pagesData['PageNum'] = $pv['pageNum'];
+                $pagesData['ViewNum'] = $pv['viewNum'];
+                if (Functions::hasPropKeyIn($pv, 'limit')) {
+                    $pagesData['NumShown'] = $pv['limit'];
+                }
+            } 
+            if ($pagesData['UsePageGroupings']) {
+                $pages = Page::getAllPages(
+                    true, $pagesData['Dir'], $pagesData['UsePageGroupings'], 
+                    $pagesData['ListUrl'], $pagesData['FullUrl'],
+                    $pagesData['PagingFor'], $pagesData['ViewNum'], 
+                    $pagesData['PageNum'], $pagesData['NumShown'], 
+                    $pagesData['BaseUrl'], $pagesData['UseTitle'], 
+                    $pagesData['WithTrashed'], $pagesData['UseBaseMaker']
                 );
+            } else {
+                $pages = Page::getAllWithPagination(
+                    $pagesData['Transform'], $pagesData['PageNum'], 
+                    $pagesData['NumShown'], $pagesData['PagingFor'], 
+                    $pagesData['Dir'], $pagesData['WithTrashed'], 
+                    $pagesData['BaseUrl'], $pagesData['ListUrl'], 
+                    $pagesData['ViewNum'], $pagesData['FullUrl'], 
+                    $pagesData['UseTitle'], 1, $pagesData['Default'], 
+                    $pagesData['UseBaseMaker']
+                );
+                if ($pagesData['UseGetSelf']) {
+                    $children = Functions::countHas($pages) 
+                        ? $pages['items'] : null;
+                    $paginator = Functions::countHas($pages) 
+                        ? $pages['pagination'] : null;
+                    $pages_index = Page::getSelf(
+                        $pagesData['BaseUrl'], $pagesData['WithTrashed'],
+                        $pagesData['FullUrl'], $children, 
+                        $paginator, $pagesData['PagingFor']
+                    );
+                }
             }
+        } else {
+            $pages = [];
+            $pages['items'] = Page::getAllWithTransform(
+                $pagesData['Transform'], $pagesData['Dir'], 
+                $pagesData['WithTrashed'], $pagesData['BaseUrl'], 
+                $pagesData['UseTitle'], $pagesData['FullUrl'], 
+                1, $pagesData['Default'], $pagesData['UseBaseMaker']
+            );
         }
         if ($request->ajax()) {
             return $pages;
@@ -100,12 +111,16 @@ class PageController extends MainController
                 $bcLinks
             );
             return self::getView(
-                $request, 'cms.items', $title, $pages, false, $breadcrumbs, null,
+                $request, 'cms.items_table', $title, $pages, false, $breadcrumbs, null,
                 Functions::isAdminPath($request->path()) 
                 ? CmsController::getAdminSidebar() : null
             );
         }
-        abort(404);
+        if (!$request->ajax()) {
+            UserSession::updateAndAbort($request, 404);
+        } else {
+            abort(404);
+        }
     }
 
     /**
@@ -115,7 +130,34 @@ class PageController extends MainController
      */
     public function create(Request $request) 
     {
-        return self::getView($request, 'cms.forms.new.page', 'Create a New Content Page');
+        $content = [
+            'hasName' => 'true',
+            'hasTitle' => 'true',
+            'hasUrl' => 'true',
+            'hasDescription' => 'true',
+            'hasArticle' => 'true',
+            'hasImage' => 'true',
+            'hasSticker' => 'true',
+        ];
+        $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin' : '';
+        $bcLinks = [];
+        $bcLinks[] = self::getHomeBreadcumb();
+        if (Functions::isAdminPath($request->path())) {
+            $bcLinks[] = CmsController::getAdminBreadcrumb();
+        }
+        $breadcrumbs = Page::getBreadcrumbs(
+            Page::genBreadcrumb(
+                'Content Page Creation Form', 
+                Page::genUrlFragment($BaseUrl, !$request->ajax())
+            ),
+            $bcLinks
+        );
+        return self::getView(
+            $request, 'cms.forms.new.page', 'Create a New Content Page',
+            $content, false, $breadcrumbs, null, 
+            Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
+            : null
+        );
     }
 
     /**
@@ -126,7 +168,12 @@ class PageController extends MainController
      */
     public function store(Request $request) 
     {
-        //
+        
+        if (!$request->ajax()) {
+            UserSession::updateAndAbort($request, 404);
+        } else {
+            abort(404);
+        }
     }
 
     /**
@@ -145,7 +192,8 @@ class PageController extends MainController
             true
         );
         //dd($request, $page_info);
-        if (Functions::testVar($page_info) && $page_info['value']['visible'] > 0) {
+        $visible = $page_info['value']['visible'] > 0 || Functions::isAdminPath($request->path());
+        if (Functions::testVar($page_info) && $visible) {
             // WISHLIST ITEM: a more sophisticated user role based
             //  Visibility / Access Control Method..
             return self::getView(
@@ -154,7 +202,12 @@ class PageController extends MainController
                 false, $page_info['value']['breadcrumbs']
             );
         } else {
-            abort(404);
+            
+            if (!$request->ajax()) {
+                UserSession::updateAndAbort($request, 404);
+            } else {
+                abort(404);
+            }
         }
         
     }

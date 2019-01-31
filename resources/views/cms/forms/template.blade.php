@@ -21,6 +21,8 @@
     // $articleLegend2 = Functions::getBladedString($page['articleLegend']??'', 'Type Your Description Here.');
     $hasImage2 = Functions::getBladedString($page['hasImage']??'', '');
     $image2 = Functions::getContent($page['image']??'', '');
+    $hasSticker2 = Functions::getBladedString($page['hasSticker']??'', '');
+    $sticker2 = Functions::getContent($page['sticker']??'', 'Please Choose a Sticker..');
     $hasParent2 = Functions::getBladedString($page['hasParent']??'', '');
     $parentName2 = Functions::getBladedString($page['parentName']??'', 'Parent');
     $parentId2 = Functions::getBladedString($page['parentId']??'', 'parent');
@@ -111,6 +113,20 @@
                         @endif
                         <input type="file" accept="{{ Functions::getImageFileMIMETypeStr() }}" class="form-control" name="image" id="image">
                     </div>
+                @endif
+
+                @if (Functions::testVar($hasSticker2))
+                    {{-- $sticker2 --}}
+                    <div class="form-group">
+                            <label for="sticker">Sticker:</label>
+                            <select name="sticker" id="sticker">
+                                <option value="{{ $sticker2 === 'new' || $sticker2 === 'sale'? $sticker2 : '' }}" selected>
+                                    {{ $sticker2 }}
+                                </option>
+                                <option value="new">New Item Sticker</option>
+                                <option value="sale">On Sale Item Sticker</option>
+                            </select>
+                        </div>
                 @endif
 
                 @section('form-content')

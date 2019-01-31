@@ -9,11 +9,11 @@
         \App\Utilities\IterationStack\IterationFrame;
 
     //dd($testing);
-    $menu2 = Functions::getContent($menu??$fakeData,$fakeData);
+    $menu2 = Functions::getContent($menu??'', '');
     //dd($menu2);
-    if (true) {
-        $filters2 = Functions::getContent($filters??$fakeData,$fakeData);
-        $products2 = Functions::getContent($products??$fakeData,$fakeData);  
+    if (!$testing) {
+        $filters2 = Functions::getContent($filters??'', '');
+        $products2 = Functions::getContent($products??'', '');  
     } else {
         $filters2 = serialize([
             [

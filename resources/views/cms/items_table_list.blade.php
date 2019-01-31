@@ -161,7 +161,9 @@
                                 <tr>
                                     <th class="goods-page-image">Image</th>
                                     <th class="goods-page-description">Description</th>
-                                    <th class="goods-page-ref-no">Parent</th>
+                                    @if (Functions::isPropKeyIn($items2[0], 'parent'))
+                                        <th class="goods-page-ref-no">Parent</th>
+                                    @endif
                                     @if (Functions::isPropKeyIn($items2[0], 'quantity'))
                                         <th class="goods-page-quantity">Quantity</th>
                                     @endif
@@ -224,11 +226,13 @@
                                             @endif
                                             
                                         </td>
-                                        <td class="goods-page-ref-no">
-                                            <a href="{{ url($item['parent']['url']) }}">
-                                                {{ $item['parent']['name'] }}
-                                            </a>
-                                        </td>
+                                        @if (Functions::isPropKeyIn($item, 'parent'))
+                                            <td class="goods-page-ref-no">
+                                                <a href="{{ url($item['parent']['url']) }}">
+                                                    {{ $item['parent']['name'] }}
+                                                </a>
+                                            </td>
+                                        @endif
                                         @if (Functions::isPropKeyIn($item, 'quantity'))
                                             <td class="goods-page-quantity">
                                                 <div class="product-quantity">
