@@ -71,6 +71,68 @@ class Product extends Model implements TransformableContainer
         return null;
     }
 
+    public function updateWith(
+        string $name, string $url, float $price, 
+        float $sale, $category, string $sticker,
+        $image, string $description,
+        string $title, $article, $payload = null,
+        int $availablity = 0, bool $retObj = false
+    ) {
+        $category_id = Categorie::getIdFrom($category, false, null);
+        $whereBy = [
+            ['id', '<>', $this->id]
+        ];
+        $orWhereBy = [
+            ['id', '<>', $this->id]
+        ];
+        if (Functions::testVar($category_id) && $category_id !== $this->category_id) {
+            $whereBy[] = ['category_id', '=', $category_id];
+            $orWhereBy[] = ['category_id', '=', $category_id];
+        } else {
+            $whereBy[] = ['category_id', '=', $this->category_id];
+            $orWhereBy[] = ['category_id', '=', $this->category_id];
+        }
+        if ($name !== $this->name) {
+            $whereBy[] = ['name', '=', $name];
+        } else {
+            $whereBy[] = ['name', '=', $this->name];
+        }
+        if ($url !== $this->url) {
+            $orWhereBy[] = ['url', '=', $url];
+        } else {
+            $orWhereBy[] = ['url', '=', $this->url];
+        }
+        $tmp = self::withTrashed()->where($whereBy)->orWhere($orWhereBy)->get();
+        if (!Functions::testVar($tmp) || !Functions::countHas($tmp)) {
+            $tImg = Image::getImageToID($image);
+            $tArt = Article::getToId($article);
+            if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
+                $this->category_id = $category_id;
+                $this->name = $name;
+                $this->url = $url;
+                $this->image_id = $tImg;
+                $this->article_id = $tArt;
+                $this->title = Functions::purifyContent($title);
+                $this->article_id = $tArt;
+                $this->price = $price;
+                $this->sale = $sale;
+                $this->sticker = $sticker;
+                $this->availablity = $availablity;
+                $this->description = Functions::purifyContent($description);
+                $cnTmp = base64_encode(serialize(Functions::getVar($payload, [])));
+                $this->payload = $cnTmp;
+                $this->verihash = Hash::make($cnTmp);
+                if ($this->save()) {
+                    $pi = ProductImage::createNewFrom($this, true);
+                    if (Functions::testVar($pi)) {
+                        return $retObj ? $this : $this->id;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     static public function createNewFrom(
         array $array, bool $retObj = false
     ) {

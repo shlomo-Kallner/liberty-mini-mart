@@ -13,13 +13,13 @@
         $sale2 = Functions::getBladedString($page['sale']??'', old('sale'));
         $sectionList2 = Functions::getContent($page['lists']['sections']??'', '');
         $hasSelectedSection2 = Functions::getBladedString($page['hasSelectedSection']??'', '');
-        $selectedParent2 = Functions::getContent(
+        $selectedSection2 = Functions::getContent(
         $page['selectedSection']??'', Page::makeNameListing('No Section', '')
     );
         
     @endphp
     
-    
+    {{ method_field('PATCH') }}
     <div class="form-group">
         <label for="price">Price:</label>
         <input type="text" name="price" id="price" class="form-control" value="{{ $price2 }}" placeholder="Input Price" required="required">
@@ -33,7 +33,7 @@
     <div class="form-group">
         <label for="newsection">Section:</label>
         <select name="newsection" id="newsection">
-            <option value="{{$selectedParent2['url']}}" selected>{{$selectedParent2['name']}}</option>
+            <option value="{{$selectedSection2['url']}}" selected>{{$selectedSection2['name']}}</option>
             @foreach ($sectionList2 as $item)
                 <option value="{{ $item['url'] }}">{{ $item['name'] }}</option>
             @endforeach

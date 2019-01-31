@@ -41,35 +41,38 @@
         </div>
         
         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+
+            <h1>Are You Sure You Want To Delete?</h1>
             
             <form action="{{ $thisURL2 }}" method="POST" role="form" enctype="multipart/form-data" novalidate="novalidate">
                 {{ csrf_field() }}
+                {{ method_field('DELETE') }}
                 
                 @if (Functions::testVar($hasName2))
-                    <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ $name2 }}" placeholder="Input Name.." required="required">
+                    <h3>Name:</h3>
+                    <div class="well well-sm">
+                        <h3>{{ $name2 }}</h3> 
                     </div>
                 @endif
 
                 @if (Functions::testVar($hasTitle2))
-                    <div class="form-group">
-                        <label for="title">Title:</label>
-                        <input type="text" class="form-control" id="title" name="title" value="{{ $title2 }}" placeholder="Input Title.." required="required">
+                    <h3>Title:</h3>
+                    <div class="well well-sm">
+                        <h3>{{ $title2 }}</h3> 
                     </div>
                 @endif
             
                 @if (Functions::testVar($hasUrl2))
-                    <div class="form-group">
-                        <label for="url">URL:</label>
-                        <input type="text" name="url" id="url" class="form-control" value="{{ $url2 }}" placeholder="Input URL" required="required">
+                    <h3>URL:</h3>
+                    <div class="well well-sm">
+                        <h3>{{ $url2 }}</h3> 
                     </div>
                 @endif 
             
                 @if (Functions::testVar($hasDescription2))
-                    <div class="form-group">
-                        <label for="description">Description:</label>
-                        <input type="text" name="description" id="description" class="form-control" value="{{ $description2 }}" placeholder="Input Description" required="required">
+                    <h3>Description:</h3>
+                    <div class="well well-sm">
+                        <h3>{{ $description2 }}</h3> 
                     </div>
                 @endif
 
@@ -77,29 +80,23 @@
 
                     <div class="row">
                         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                            <textarea name="article" id="articleSummernote" cols="50" rows="20"></textarea>
+                            <h3>Subheading:</h3> 
+                            <div class="well well-sm">
+                                <h3>{{ $subHeading2 }}</h3> 
+                            </div>
+                            <h3>Article:</h3>
+                            <div class="well well-lg">
+                                <textarea cols="100" rows="20">{{ $article2 }}</textarea>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        @if (!Functions::testVar($hasSubHeading2))
-                            <button class="btn btn-info" type="button" data-toggle="collapse" 
-                                data-target="#collapseSubheading" aria-expanded="false" aria-controls="collapseExample">
-                                <i class="fa fa-plus"></i> Add a Subheading
-                            </button>
-                            <div class="collapse" id="collapseSubheading">
-                                <label for="subheading">Subheading:</label>
-                                <input type="text" name="subheading" id="subheading" class="form-control" value="{{ $subHeading2 }}" placeholder="Input Subheading..">
-                            </div>
-                        @else
-                            <label for="subheading">Subheading:</label>
-                            <input type="text" name="subheading" id="subheading" class="form-control" value="{{ $subHeading2 }}" placeholder="Input Subheading..">
-                        @endif
-                    </div>
+
                 @endif
 
                 @if (Functions::testVar($hasImage2))
-                    <div class="form-group">
-                        <label for="image">Image File:</label>
+                
+                    <div class="well well-lg">
+                        <h3>Image File:</h3>
                         @if (Functions::testVar($image2))
                             @component('inc.figure')
                                 @foreach ($image2 as $key => $item)
@@ -109,8 +106,8 @@
                                 @endforeach 
                             @endcomponent
                         @endif
-                        <input type="file" accept="{{ Functions::getImageFileMIMETypeStr() }}" class="form-control" name="image" id="image">
                     </div>
+
                 @endif
 
                 @section('form-content')
@@ -118,23 +115,23 @@
                 @show
 
                 @if (Functions::testVar($hasParent2))
-                    <div class="form-group">
-                        <label for="{{ $parentId2 }}">{{ $parentName2 }}:</label>
-                        <select name="{{ $parentId2 }}" id="{{ $parentId2 }}">
-                            <option value="{{ $selectedParent2['url'] }}" selected>
-                                {{ $selectedParent2['name'] }}
-                            </option>
-                            @if (Functions::testVar($parentList2))
-                                @foreach ($parentList2 as $item)
-                                    <option value="{{ $item['url'] }}">{{ $item['name'] }}</option>
+                    
+                    <h3>{{ $parentName2 }}:</h3>
+                    <div class="well well-sm">
+                        <h3>
+                            @component('lib.themewagon.links')
+                                @foreach (Page::genURLMenuItem($selectedParent2['url'], $selectedParent2['name']) as $key => $item)
+                                    @slot($key)
+                                        {!! Functions::toBladableContent($item) !!}
+                                    @endslot
                                 @endforeach
-                            @endif
-                        </select>
+                            @endcomponent
+                        </h3>
                     </div>
+                    
                 @endif
             
-                <button type="submit" class="btn btn-primary pull-right">Submit</button>
-                <input type="reset" value="Reset" class="btn btn-default">
+                <button type="submit" class="btn btn-primary pull-right">Delete</button>
                 <a class="btn btn-default pull-left" href="{{ url('admin') }}" role="button">Cancel</a>
                 
             </form>
@@ -145,33 +142,3 @@
         </div>
     </div>
 @endsection
-
-
-
-@section('css-preloaded')
-    @parent 
-    <!-- include summernote css -->
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
-@endsection
-
-@section('js-defered')
-    @parent
-    <!-- include summernote js -->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
-@endsection
-
-@section('js-extra')
-    @parent
-    <script>
-        /** this script section is to be written here and then converted into a 
-        *   Javascript file of its own and loaded here..
-        **/
-
-        jQuery(function($) 
-        {
-            $('#articleSummernote').summernote('editor.insertText', '{{$article2}}');
-            
-            
-        });
-    </script>
-@endsection    
