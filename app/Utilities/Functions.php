@@ -5,7 +5,7 @@ namespace App\Utilities\Functions;
 use Illuminate\Support\Collection,
     Illuminate\Support\HtmlString,
     Illuminate\Contracts\Support\Htmlable,
-    HTMLPurifier, DB, \Countable,
+    HTMLPurifier, DB, Countable, ArrayAccess,
     Illuminate\Support\Facades\Log, 
     Composer\Semver\Comparator,
     Illuminate\Http\Request,
@@ -55,7 +55,7 @@ class Functions
             if (is_string($var)) {
                 $tmp = unserialize(html_entity_decode((string)$var));
                 return !empty($tmp);
-            } elseif ($var instanceof HtmlString) {
+            } elseif ($var instanceof Htmlable) {
                 $tmp = unserialize(html_entity_decode($var->toHtml()));
                 return !empty($tmp);
             }
@@ -71,7 +71,7 @@ class Functions
      *
      * @param mixed|string $var
      * @param mixed $default
-     * @return void
+     * @return mixed
      */
     static public function getBladedContent($var, $default = null)
     {
@@ -79,50 +79,60 @@ class Functions
             if (is_string($var) ) {
                 $tmp = unserialize(html_entity_decode((string)$var));
                 return !empty($tmp) ? $tmp : $default ;
-            } elseif ($var instanceof HtmlString) {
+            } elseif ($var instanceof Htmlable) {
                 $tmp = unserialize(html_entity_decode($var->toHtml()));
                 return !empty($tmp) ? $tmp : $default ;
             } else {
-                return !empty($var) ? $var : $default ;
+                return $var;
             }
-
-        } else {
-            return $default;
-        }
+        } 
+        return $default;
     }
 
+    /** 
+     * Function getUnBladedContent - Get the content of a 
+     *                               not Blade Escaped  but 
+     *                               Serialized variable..
+     *
+     * @param mixed|string $var
+     * @param mixed $default
+     * @return mixed
+    */
     static public function getUnBladedContent($var, $default = null)
     {
         if (self::testVar($var)) {
             if (is_string($var) ) {
                 $tmp = unserialize((string)$var);
                 return !empty($tmp) ? $tmp : $default ;
-            } elseif ($var instanceof HtmlString) {
+            } elseif ($var instanceof Htmlable) {
                 $tmp = unserialize($var->toHtml());
                 return !empty($tmp) ? $tmp : $default ;
             } else {
-                return !empty($var) ? $var : $default ;
+                return $var;
             }
-        } else {
-            return $default;
-        }
+        } 
+        return $default;
     }
 
+    /** 
+     * Function getBladedString - Unescape a Blade Escaped string.
+     *
+     * @param mixed|string|Htmlable $str
+     * @param mixed $default
+     * @return mixed
+    */
     static public function getBladedString($str, $default = '')
     {
         if (self::testVar($str)) {
             $tmp = null;
             if (is_string($str)) {
                 $tmp = html_entity_decode((string)$str);
-            } elseif ($str instanceof HtmlString) {
+            } elseif ($str instanceof Htmlable) {
                 $tmp = html_entity_decode($str->toHtml());
-            } else {
-                return $default;
             }
             return !empty($tmp) ? $tmp : $default ;
-        } else {
-            return $default;
         }
+        return $default;
     }
 
     static public function toBladableContent($val)
@@ -166,7 +176,7 @@ class Functions
             $purify = new HTMLPurifier();
             if (is_string($content)) {
                 return $purify->purify($content);
-            } elseif ($content instanceof HtmlString) {
+            } elseif ($content instanceof Htmlable) {
                 return $purify->purify($content->toHtml());
             } elseif (is_object($content)) {
                 foreach ($content as $key => $value) {
@@ -181,10 +191,8 @@ class Functions
             } else {
                 return $purify->purify((string)$content);
             }
-        } else {
-            return null;
-        }
-
+        } 
+        return null;
     }
 
     static public function int2url_encode(int $num, bool $enc = false)
@@ -252,7 +260,7 @@ class Functions
      * 
      * @return array|null
      */
-     static public function dbModel2ViewModel(
+    static public function dbModel2ViewModel(
         array &$dbModel, bool $useTitle = false
     ) {
         /* 
@@ -408,19 +416,15 @@ class Functions
             return in_array('admin', explode('/', $path));
         } elseif ($path instanceof Request) {
             return self::isAdminPath($path->path());
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     static public function is_countable($value)
     {
-        if (is_array($value) || $value instanceof Collection
-            || is_subclass_of($value, '\Countable')
-        ) {
-            return true;
-        }
-        return false;
+        return isset($value) && (is_array($value) 
+        || ($value instanceof Countable && $value instanceof Traversable)
+        );
     }
 
     static public function countHas($value)
@@ -442,13 +446,13 @@ class Functions
         return $def;
     }
 
-    static public function isPropKeyIn($data, $name) 
+    static public function isPropKeyIn($data, $name, $def = null) 
     {
-        $bol = null;
+        $bol = $def;
         if (isset($data) && self::testVar($name)) {
             if (is_array($data) && (is_int($name) || is_string($name))) {
                 $bol = array_key_exists($name, $data);
-            } elseif ($data instanceof Collection) {
+            } elseif ($data instanceof ArrayAccess) {
                 $bol = $data->offsetExists($name); 
             } elseif (is_object($data)) {
                 $bol = property_exists($data, $name) || isset($data->$name) 
@@ -458,12 +462,11 @@ class Functions
         return $bol;
     }
 
-    static public function hasPropKeyIn($data, $name)
+    static public function hasPropKeyIn($data, $name, $def = null)
     {
-        $bol = null;
+        $bol = $def;
         if (isset($data) && self::testVar($name)) {
-            $bol = self::isPropKeyIn($data, $name) 
-                && self::testVar(self::getPropKey($data, $name));
+            $bol = self::testVar(self::getPropKey($data, $name, $def));
         }
         return $bol;
     }
@@ -473,10 +476,8 @@ class Functions
         $res = $default; // null;
         if (isset($data) && self::testVar($name)) {
             if (self::isPropKeyIn($data, $name)) {
-                if (is_array($data)) {
+                if (is_array($data) || $data instanceof ArrayAccess) {
                     $res = $data[$name];
-                } elseif ($data instanceof Collection) {
-                    $res = $data->offsetGet($name); 
                 } elseif (is_object($data)) {
                     $res = $data->$name;
                 }
@@ -487,18 +488,18 @@ class Functions
 
     static public function setPropKey(&$data, $name, $val = null)
     {
-        $res = self::isPropKeyIn($data, $name);
+        //$res = self::isPropKeyIn($data, $name);
         if (isset($data) && self::testVar($name)) {
-            if (is_array($data)) {
+            if (is_array($data) || $data instanceof ArrayAccess) {
                 $data[$name] = $val;
-            } elseif ($data instanceof Collection) {
-                $data->offsetSet($name, $val); 
             } elseif (is_object($data)) {
                 $data->$name = $val;
             }
+            return true;
         } 
         //dd($res, $data, $name, $val, is_array($data));
-        return $res;
+        //return $res;
+        return false;
     }
 
     static public function isValIn($data, $key, $val = null)
@@ -642,7 +643,6 @@ class Functions
         } 
         return $res;
     }
-
 
     /**
      *  Function genPagesIndexes

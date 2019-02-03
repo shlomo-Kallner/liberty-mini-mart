@@ -2,7 +2,8 @@
 
 namespace App\Utilities\Models;
 
-use App\Utilities\Functions\Functions;
+use App\Utilities\Functions\Functions, 
+    Traversable;
 
 abstract class Named extends Basic
 {
