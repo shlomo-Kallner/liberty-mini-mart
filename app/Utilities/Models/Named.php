@@ -169,11 +169,9 @@ abstract class Named extends Basic
     ) {
         $item_id = $def;
         if (is_string($item)) {
-            $t = self::getNamed($item, true, null, false);
-            if (Functions::testVar($t)) {
-                $item_id = $usePublic 
-                ? $t->getPubId()
-                : $t->id;
+            $tmp = self::getNamed($item, true, null, false);
+            if (Functions::testVar($tmp)) {
+                $item_id = parent::getIdFrom($tmp, $usePublic, $def);
             }
         } else {
             $item_id = parent::getIdFrom($item, $usePublic, $def);
