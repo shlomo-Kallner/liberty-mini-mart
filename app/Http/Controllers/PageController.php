@@ -111,6 +111,7 @@ class PageController extends MainController
                 ),
                 $bcLinks
             );
+            //dd($pages);
             return self::getView(
                 $request, 'cms.items_table', $title, $pages, false, $breadcrumbs, null,
                 Functions::isAdminPath($request->path()) 

@@ -15,7 +15,8 @@ use Illuminate\Http\Request,
     Illuminate\Support\Facades\Log;
 
 
-class MainController extends Controller {
+class MainController extends Controller 
+{
 
     static public $data = [
         'title' => '', // 'tab' title

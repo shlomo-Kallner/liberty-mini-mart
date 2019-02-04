@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\User,
     App\UserSession,
-    App\Image;
+    App\Image,
+    App\Article;
 use Illuminate\Http\Request,
     App\Http\Requests\SigninRequest,
     App\Http\Requests\RegisterRequest;
@@ -306,8 +307,10 @@ class UserController extends MainController
 
                 // THE redirect view will have to retrieve the $redirect* data 
                 //  from the Session directly.. 
-
-                return parent::getView($request, 'forms.redirect');
+                $content = Article::makeArticleArray(
+                    '', 'Please Sign In!', null, ''
+                );
+                return parent::getView($request, 'forms.redirect', 'Please Sign In', $content);
             }
         } 
         /* 

@@ -19,6 +19,7 @@ use App\User,
 use Illuminate\Http\Request;
 
 Route::get('/', 'PageController@home');
+Route::get('/home', 'PageController@home');
 
 Route::prefix('test')->group(
     function () {
@@ -31,6 +32,7 @@ Route::middleware('userguard')->group(
     function () {
         //Route::resource('user', 'UserController');
         Route::get('signout', 'UserController@signout');
+        Route::get('logout', 'UserController@signout');
 
         Route::prefix('store')->group( 
             function () {
@@ -65,16 +67,8 @@ Route::middleware('userguard')->group(
 
         Route::prefix('user')->group(
             function () {
-                Route::resource(
-                    'search', 'SearchResultController', [
-                        'parameters'=> [
-                            'search' => 'search',
-                        ],
-                        'except' => [
-                            'create', 'destroy', 'edit', 'update'
-                        ]
-                    ]
-                );
+                Route::get('{user}/search', 'SearchResultController@index');
+                Route::get('{user}/search/{search}', 'SearchResultController@show');
                 
                 Route::get('{user?}', 'UserController@show');
                 //Route::get('{user}', 'PageController@index1');
@@ -198,9 +192,15 @@ Route::middleware('signedguard')->group(
         
         Route::get('signup', 'UserController@signup');
         Route::post('signup', 'UserController@register');
+        
+        Route::get('register', 'UserController@signup');
+        Route::post('register', 'UserController@register');
 
         Route::get('signin/{page?}', 'UserController@signinRedirect');
         Route::post('signin/{page?}', 'UserController@signin');
+
+        Route::get('login/{page?}', 'UserController@signinRedirect');
+        Route::post('login/{page?}', 'UserController@signin');
 
     }
 );

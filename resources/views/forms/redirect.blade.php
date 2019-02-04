@@ -1,25 +1,34 @@
 
-@php
-    //use Session;
-    
-@endphp
+@extends('content.template')
 
-@extends('content.index')
-
-@section('js-extra')
+@section('main-content')
     @parent
 
     @php
+        use \App\Utilities\Functions\Functions;
         $redirectToken = session()->get('redirectToken');
         //dd($redirectToken);
     @endphp
-
-    <script>
-        $(function(){
-            $('#login-modal .modal-body form .form-group:first-of-type')
-            .before('<input type="hidden" name="reTok" value="'+ "{{ $redirectToken }}" +'">');
-            $('#login-modal').modal('show');
-        });
-    </script>
-        
+    
+    <div class="row">
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            {{-- leaving this empty for spacing/centering. --}}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            @component('lib.bootstrapious.modals.login_form')
+                @slot('reTok')
+                    {{ $redirectToken }}
+                @endslot
+            @endcomponent
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            {{-- leaving this empty for spacing/centering. --}}
+        </div>
+    </div>
 @endsection

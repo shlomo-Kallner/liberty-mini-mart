@@ -27,6 +27,7 @@
         // $paginator2 = Functions::getUnBladedContent($paginator??[],[]);
         $type2 = Functions::getBladedString($page['type']??'', '');
        
+        //dd($items2);
         
     @endphp
 

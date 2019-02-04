@@ -4,8 +4,9 @@
     use \App\Utilities\Functions\Functions;
     use \Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Support\Facades\Log;
+    $lang2 = Functions::getBladedString($site['lang']??'', app()->getLocale());
     $title2 =  Functions::getBladedString($title ?? '');// . '-- dummy Title -- for testing Master Page 2';
-    $siteName2 = Functions::getBladedString($site['name']?? App\Http\Controllers\MainController::$data['site']['name']);
+    $siteName2 = Functions::getBladedString($site['name']??'', config('app.name', 'Laravel'));
     $nut2 = Functions::getContent($site['nut']??'');
     $usingCDNs = Functions::getBladedString($site['usingCDNs']??'');
     $alert2 =  Functions::getContent($alert??'');
@@ -40,10 +41,10 @@
     UPDATE(23/04/2018): discovered that the other template pages 
     use the 'no-js' css class for IE9 and below as well.
 --}}
-<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
-<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if IE 8]> <html lang="{{ $lang2 }}" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="{{ $lang2 }}" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
-<html>
+<html lang="{{ $lang2 }}">
     <!--<![endif]-->
     <head>
         <meta charset="UTF-8">
