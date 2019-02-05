@@ -187,8 +187,6 @@
         jQuery(function($) 
         {
             $('#articleSummernote').summernote('editor.insertText', '{{$article2}}');
-            
-            
         });
     </script>
 @endsection    

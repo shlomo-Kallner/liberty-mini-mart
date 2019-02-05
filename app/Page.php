@@ -227,7 +227,7 @@ class Page extends Model implements TransformableContainer
         );
     }
 
-    public function toTableArray(
+    /* public function toTableArray(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true,
         bool $fullUrl = false
@@ -239,7 +239,7 @@ class Page extends Model implements TransformableContainer
             $this->sticker, $this->getDatesArray(),  $this->id,
             [], '', '', []
         );
-    }
+    } */
 
     public function numChildren(bool $withTrashed = true)
     {
@@ -371,39 +371,40 @@ class Page extends Model implements TransformableContainer
         return $pages;
     }
 
-    /*  /// these two methods should overide the trait for Page's
+    /*  
+        /// these two methods should overide the trait for Page's
         ///  more complicated Ordering.. 
         /// Should return a Collection. 
 
 
-      static public function getOrderedBy(
-        string $dir = 'asc', bool $withTrashed = true,
-        $orderingBy = null
-    ) {
-        if (self::acceptableOrderingByKey($orderingBy)) {
-            $key = $orderingBy;
-        } elseif (is_callable($orderingBy)) {
-            $key = $orderingBy();
-            if (!self::acceptableOrderingByKey($key)) {
-                $key = self::getOrderByKey();    
+        static public function getOrderedBy(
+            string $dir = 'asc', bool $withTrashed = true,
+            $orderingBy = null
+        ) {
+            if (self::acceptableOrderingByKey($orderingBy)) {
+                $key = $orderingBy;
+            } elseif (is_callable($orderingBy)) {
+                $key = $orderingBy();
+                if (!self::acceptableOrderingByKey($key)) {
+                    $key = self::getOrderByKey();    
+                }
+            } else {
+                $key = self::getOrderByKey();
             }
-        } else {
-            $key = self::getOrderByKey();
+            return $withTrashed 
+                ? self::withTrashed()
+                    ->orderBy($key, $dir)
+                : self::orderBy($key, $dir);
         }
-        return $withTrashed 
-            ? self::withTrashed()
-                ->orderBy($key, $dir)
-            : self::orderBy($key, $dir);
-    }
 
-    static public function getOrdered(
-        string $dir = 'asc', bool $withTrashed = true,
-        $orderingBy = null
-    ) {
-        return self::getOrderedBy(
-            $dir, $withTrashed, $orderingBy
-        );
-    }
+        static public function getOrdered(
+            string $dir = 'asc', bool $withTrashed = true,
+            $orderingBy = null
+        ) {
+            return self::getOrderedBy(
+                $dir, $withTrashed, $orderingBy
+            );
+        }
     */
 
     static public function getAllPages(

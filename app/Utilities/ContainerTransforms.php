@@ -163,8 +163,27 @@ trait ContainerTransforms
     /// some trait defined defaults, 
     ///  redefine in using class to override
     ///  see PHP Language, Trait docs for details.
+    public function getPrice()
+    {
+        return '';
+    }
+
+    public function getSale()
+    {
+        return '';
+    }
+
     public function getPriceOrSale()
     {
+        $price = $this->getPrice();
+        $sale = $this->getSale();
+        if (Functions::testVar($price) && is_numeric($price)) {
+            if (Functions::testVar($sale) && is_numeric($sale)) {
+                return $sale < $price ? $sale : $price;
+            } else {
+                return $price;
+            }
+        }
         return '';
     }
 
@@ -173,9 +192,36 @@ trait ContainerTransforms
         return '';
     }
 
+    public function getArticle(bool $getText = false)
+    {
+        $art = $this->article??'';
+        if ($getText && Functions::testVar($art)) {
+            return  $art->article??'';
+        } elseif (Functions::testVar($art)) {
+            return $art;
+        }
+        return '';
+    }
+
+    public function getSubHeading()
+    {
+        $article = $this->getArticle();
+        return Functions::testVar($article) ? $article->subheading : '';
+    }
+
     public function getImageArray()
     {
         return $this->image->toImageArray();
+    }
+
+    public function getPubDescription()
+    {
+        return $this->description ?? '';
+    }
+
+    public function getPubTitle()
+    {
+        return $this->title ?? '';
     }
 
     static public function getCount(bool $withTrashed = false)
@@ -253,7 +299,7 @@ trait ContainerTransforms
     ) {
         $img = $this->getImageArray();
         return self::makeMini(
-            $img['img'], $useTitle ? $this->title : $img['alt'], 
+            $img['img'], $useTitle ? $this->getPubTitle() : $img['alt'], 
             $this->getFullUrl($baseUrl, $fullUrl),
             $this->getPriceOrSale(), 
             $this->getPubId(), $this->getSticker()
@@ -279,10 +325,14 @@ trait ContainerTransforms
         bool $useTitle = true, bool $withTrashed = true,
         bool $fullUrl = false
     ) {
-        return $this->toContentArray(
-            $baseUrl, $version, 
-            $useTitle, $withTrashed,
-            $fullUrl
+        $url = $this->getFullUrl($baseUrl, $fullUrl);
+        $img = $this->getImageArray();
+        return self::makeTableArray(
+            $this->getPubName(), $url, 
+            $useTitle ? $this->getPubTitle() : $img['alt'],
+            $img, $this->getPubDescription(),
+            $this->getSticker(), $this->getDatesArray(), $this->getPubId(),
+            [], $this->getPrice(), $this->getSale(), []
         );
     }
 
@@ -525,10 +575,7 @@ trait ContainerTransforms
     }
 
     /**
-     * Function makeTableArray() - OBSOLETE and DEPRECATED method! 
-     *                             DO NOT USE!
-     * 
-     * @deprecated any
+     * Function makeTableArray() 
      *
      * @param string $name
      * @param string $url

@@ -231,14 +231,17 @@ class UserSession extends Model
     static public function updateRegenerate(
         Request $request, int $user_id = 0, bool $retObj = false
     ) {
-        $cart = Cart::storeOrCreateCurrentCart($request, $user_id);
-        $us = UserSession::createNewOrUpdate($request, $user_id);
-        $request->session()->regenerate();
-        if (Functions::testVar($cart)) {
-            $cart->updateCartWithSession($request, $user_id);
-        }
-        $bol = $us->updateWith($request, $user_id);
-        return $retObj ? $us : $bol;
+        if (!$request->ajax()) {
+            $cart = Cart::storeOrCreateCurrentCart($request, $user_id);
+            $us = UserSession::createNewOrUpdate($request, $user_id);
+            $request->session()->regenerate();
+            if (Functions::testVar($cart)) {
+                $cart->updateCartWithSession($request, $user_id);
+            }
+            $bol = $us->updateWith($request, $user_id);
+            return $retObj ? $us : $bol;
+        } 
+        return $retObj ? $us : null;
     }
 
     static public function updateAndAbort(
@@ -262,13 +265,15 @@ class UserSession extends Model
         int $user_id = 0, int $status = 302, 
         array $headers = [], $cookies = []
     ) {
-        self::updateRegenerate(
-            $request, 
-            Functions::getVarOrId(
-                $user_id, intval(User::getIdFromUserArray(false, 0))
-            ),
-            false
-        );
+        if (!$request->ajax()) {
+            self::updateRegenerate(
+                $request, 
+                Functions::getVarOrId(
+                    $user_id, intval(User::getIdFromUserArray(false, 0))
+                ),
+                false
+            );
+        }
         return redirect($path, $status, $headers)
             ->withCookies($cookies)
             ->withErrors($errors)

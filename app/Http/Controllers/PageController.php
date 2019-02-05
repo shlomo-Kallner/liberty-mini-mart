@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Page,
+    App\PageGroup,
     App\Product,
     App\Article,
     App\UserSession,
     App\Image;
 use Illuminate\Http\Request,
     App\Utilities\Functions\Functions,
+    App\Rules\FieldIsUniqueRule,
     Illuminate\Support\Facades\Log,
     Illuminate\Support\Facades\Validator,
     Illuminate\Support\Str,
@@ -134,6 +136,22 @@ class PageController extends MainController
     public function create(Request $request) 
     {
         $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin' : '';
+        $tmpData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'pagesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => Functions::isAdminPath($request->path()),
+            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => Page::TO_TABLE_ARRAY_TRANSFORM
+        ];
         $content = [
             'hasName' => 'true',
             'hasTitle' => 'true',
@@ -142,6 +160,13 @@ class PageController extends MainController
             'hasArticle' => 'true',
             'hasImage' => 'true',
             'hasSticker' => 'true',
+            'hasParent' => 'true',
+            'parentName' => 'Menu',
+            'parentId' => 'menu',
+            'parentList' => PageGroup::getNameListing(
+                $tmpData['WithTrashed'], $tmpData['Dir'],
+                $tmpData['UseBaseMaker']
+            ),
             'thisURL' => Page::genUrlFragment($BaseUrl, !$request->ajax()),
         ];
         $bcLinks = [];
@@ -177,7 +202,10 @@ class PageController extends MainController
             $request->all(), self::creationValidationRules(), 
             self::creationValidationMessages()
         );
-        if ($validator->passes()) {
+        $path = $request->path();
+        $passed = $validator->passes();
+        $is_admin = Functions::isAdminPath($request->path());
+        if ($passed) {
             if ($request->hasFile('image')) {
                 
                 $image_id = Image::storeAndCreateNewImage(
@@ -193,9 +221,12 @@ class PageController extends MainController
                 $request->article, $request->title, 
                 null, $request->subheading??'', false
             );
+            $pageGroup = PageGroup::getNamed(
+                $request->input('menu'), $is_admin, null, false
+            );
+            $group = $pageGroup??-1; 
+            $order = intval($request->order??-1);
             $visible = 1;
-            $group = -1; 
-            $order = -1;
             $page = Page::createNew(
                 $request->name, $request->url, $image_id,
                 $request->title, $article_id, $request->description,
@@ -204,29 +235,23 @@ class PageController extends MainController
             );
             if (Functions::testVar($page)) {
                 self::addMsg('Page ' . $page->name . ' , ' . $page->title . ' Creation Successfully!');
-                UserSession::updateRegenerate(
-                    $request, intval(User::getIdFromUserArray(false))
-                );
-                //$request->session()->regenerate();
-                return redirect('admin/page');
+                $path = 'admin/page';
+            } else {
+                self::addMsg("Uhhh, if we got here then PAGE CREATION FAILED!!!");
+                self::addMsg("You probably chose an in-url or name...");
+                //dd($page);
+                $passed = null;
             }
-            self::addMsg("Uhhh, if we got here then PRODUCT CREATION FAILED!!!");
-            self::addMsg("You probably chose a cu");
-            //dd($page);
         }
-        $path = $request->path();
-        $path = Str::contains($path, 'create') ? $path : $path . '/create';
+        $path = $passed || Str::contains($path, 'create') ? $path : $path . '/create';
         // return redirect($path)
         //     ->withErrors($validator)
         //     ->withInput($request->except('image'));
-        if (!$request->ajax()) {
-            return UserSession::updateRedirect(
-                $request, $path, $validator, 
-                $request->except('image')
-            );
-        } else {
-            abort(404);
-        }
+        return UserSession::updateRedirect(
+            $request, $path, $validator, 
+            !$passed ? $request->except('image')
+            : []
+        );
     }
 
     /**
@@ -254,15 +279,8 @@ class PageController extends MainController
                 $page_info['content'] ?? $page_info['value'],
                 false, $page_info['value']['breadcrumbs']
             );
-        } else {
-            
-            if (!$request->ajax()) {
-                UserSession::updateAndAbort($request, 404);
-            } else {
-                abort(404);
-            }
-        }
-        
+        } 
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
@@ -273,7 +291,80 @@ class PageController extends MainController
      */
     public function edit(Request $request) 
     {
-        //
+        if (Functions::testVar($request->page)) {
+            $page = Page::getNamed($request->page);
+            if (Functions::testVar($page)) {
+                $is_admin = Functions::isAdminPath($request->path());
+                $tmpData = [
+                    'PageNum' => 0,
+                    'NumShown' => 12,
+                    'PagingFor' => 'productsPanel',
+                    'Dir' => 'asc',
+                    'WithTrashed' => $is_admin,
+                    'BaseUrl' => $is_admin ? 'admin/' : '',
+                    'ViewNum' => 0,
+                    'UseBaseMaker' => $request->ajax(),
+                    'Default' => [],
+                    'UseTitle' => true,
+                    'FullUrl' => !$request->ajax(),
+                    'ListUrl' => $request->path(),
+                    'UseGetSelf' => false,
+                    'Transform' => Page::TO_TABLE_ARRAY_TRANSFORM
+                ];
+                $content = [
+                    'hasName' => 'true',
+                    'hasTitle' => 'true',
+                    'hasUrl' => 'true',
+                    'hasDescription' => 'true',
+                    'hasArticle' => 'true',
+                    'hasImage' => 'true',
+                    'hasSticker' => 'true',
+                    'hasParent' => 'true',
+                    'parentName' => 'Menu',
+                    'parentId' => 'newmenu',
+                    'parentList' => Categorie::getNameListingOf($section->categories),
+                    'hasSelectedParent' => 'true',
+                    'selectedParent' => $category->toNameListing(),
+                    'hasSelectedSection' => 'true',
+                    'selectedSection' => $section->toNameListing(),
+                    'name' => $page->getPubName(),
+                    'title' => $page->getPubTitle(),
+                    'url' => $page->getUrl(),
+                    'description' => $page->getPubDescription(),
+                    'article' => $page->getArticle(true),
+                    'sticker'=> $page->getSticker(),
+                    'subHeading' => $page->getSubHeading(),
+                    'hasSubHeading' => Functions::testVar($page->article->subheading) ? 'true'  : '',
+                    'image' => $page->getImageArray(),
+                    'thisURL' => $page->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl']),
+                ]; 
+                $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin' : '';
+                $bcLinks = [];
+                $bcLinks[] = self::getHomeBreadcumb();
+                $bcLinks[] = Page::genBreadcrumb(
+                    'Our Products', 
+                    Product::genUrlFragment($BaseUrl, !$request->ajax())
+                );
+                if (Functions::isAdminPath($request->path())) {
+                    $bcLinks[] = CmsController::getAdminBreadcrumb();
+                }
+                $breadcrumbs = Page::getBreadcrumbs(
+                    Page::genBreadcrumb(
+                        'Product Modification Form', 
+                        Page::genUrlFragment($BaseUrl, !$request->ajax())
+                    ),
+                    $bcLinks
+                );
+                return self::getView(
+                    $request, 'cms.forms.edit.page', 
+                    'Modify Existing Product: ' . $product->title,
+                    $content, false, $breadcrumbs, null, 
+                    Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
+                    : null
+                ); 
+            }
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
@@ -313,9 +404,8 @@ class PageController extends MainController
                     Page::genBreadcrumb('Admin Dashboard', 'admin')
                 ) 
             );
-        } else {
-            abort(404);
-        }
+        } 
+        UserSession::updateAndAbort($request, 404);
     }
 
     public function home(Request $request) 
@@ -367,7 +457,7 @@ class PageController extends MainController
         } else {
             return $this->test3($request);
         }
-
+        UserSession::updateAndAbort($request, 404);
     }
 
     //// Validation Rules and messages
@@ -385,17 +475,25 @@ class PageController extends MainController
             'article' => 'required|max:255000|string|min:3',
             'subheading' => 'string|nullable|max:255',
             'title' => 'required|max:255|string|min:3',
-            'name' => 'required|max:255|string|min:3',
+            'name' => [
+                'required', 'max:255', 'string', 'min:3',
+                new FieldIsUniqueRule((new Page)->getTable(), 'name'),
+            ],
             'description' => 'required|max:255|string|min:3',
             'url' => [
                 'required', 'max:255', 'string', 'min:3',
                 'regex:'. Functions::getURLRegexStr(),
-                Rule::exists((new Page)->getTable())->where(function ($query, $value, $closure) {
-                    $query->where('url', '<>', $value);
-                }),
+                new FieldIsUniqueRule((new Page)->getTable(), 'url'),
             ],
             'sticker' => [
                 'string', 'nullable', 'regex:/new|sale/'
+            ],
+            'menu' => [
+                'sometimes' , 'required', 'string', 
+                'max:255', 'min:3',
+            ],
+            'order' => [
+                'sometimes' , 'required', 'numeric', 
             ],
         ];
     }
@@ -420,6 +518,13 @@ class PageController extends MainController
             ],
             'sticker' => [
                 'string', 'nullable', 'regex:/new|sale/'
+            ],
+            'menu' => [
+                'sometimes' , 'required', 'string', 
+                'max:255', 'min:3',
+            ],
+            'order' => [
+                'sometimes' , 'required', 'numeric', 
             ],
         ];
     }

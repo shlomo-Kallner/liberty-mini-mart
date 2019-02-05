@@ -285,11 +285,23 @@ class Product extends Model implements TransformableContainer
         return $this->category->getFullUrl($baseUrl, $fullUrl);
     }
 
-    public function getPriceOrSale()
+    /* 
+        public function getPriceOrSale()
+        {
+            return Functions::testVar($this->sale) || $this->sale != $this->price 
+            ? $this->sale 
+            : $this->price;
+        } 
+    */
+
+    public function getPrice()
     {
-        return Functions::testVar($this->sale) || $this->sale != $this->price 
-        ? $this->sale 
-        : $this->price;
+        return $this->price;
+    }
+
+    public function getSale()
+    {
+        return $this->sale;
     }
 
     public function getSticker()

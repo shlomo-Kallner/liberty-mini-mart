@@ -249,34 +249,37 @@ trait ContainerID
         string $name, bool $withTrashed = false, 
         $extraWhereby = null, bool $getAll = false
     ) {
-        $where = [
-            [self::getUrlByKey(), '=', $name],
-        ];
-        $orWhere = [
-            [self::getNamedByKey(), '=', $name],
-        ];
-        $key = self::getOrderByKey();
-        if (Functions::testVar($extraWhereby) 
-            && !Functions::countHas($extraWhereby)
-            && self::acceptableOrderingByKey($key)
-        ) {
-            $where[] = [$key, '=', $extraWhereby];
-            $orWhere[] = [$key, '=', $extraWhereby];
-        } else {
-            $extraWhereby = self::getExtraWhereBy($extraWhereby);
-            if (Functions::countHas($extraWhereby)) {
-                foreach ($extraWhereby as $value) {
-                    $where[] = $value;
-                    $orWhere[] = $value;
+        if (Functions::testVar($name)) {
+            $where = [
+                [self::getUrlByKey(), '=', $name],
+            ];
+            $orWhere = [
+                [self::getNamedByKey(), '=', $name],
+            ];
+            $key = self::getOrderByKey();
+            if (Functions::testVar($extraWhereby) 
+                && !Functions::countHas($extraWhereby)
+                && self::acceptableOrderingByKey($key)
+            ) {
+                $where[] = [$key, '=', $extraWhereby];
+                $orWhere[] = [$key, '=', $extraWhereby];
+            } else {
+                $extraWhereby = self::getExtraWhereBy($extraWhereby);
+                if (Functions::countHas($extraWhereby)) {
+                    foreach ($extraWhereby as $value) {
+                        $where[] = $value;
+                        $orWhere[] = $value;
+                    }
                 }
             }
+            $query = $withTrashed 
+            ? self::withTrashed()->where($where)->orWhere($orWhere)
+            : self::where($where)->orWhere($orWhere);
+            return $getAll
+            ? $query->get()
+            : $query->first();
         }
-        $query = $withTrashed 
-        ? self::withTrashed()->where($where)->orWhere($orWhere)
-        : self::where($where)->orWhere($orWhere);
-        return $getAll
-        ? $query->get()
-        : $query->first();
+        return null;
     }
 
     /// end of defaults.. 

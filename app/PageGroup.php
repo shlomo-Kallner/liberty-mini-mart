@@ -198,7 +198,7 @@ class PageGroup extends Model implements TransformableContainer
 
     static public function getOrderByKey()
     {
-        return 'id';
+        return 'order';
     }
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
