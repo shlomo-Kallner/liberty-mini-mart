@@ -831,6 +831,7 @@ trait ContainerTransforms
         bool $useBaseMaker = true
     ) {
         $tmp = self::getOrdered($dir, $withTrashed);
+        //dd($tmp);
         return self::getFor(
             $tmp, $baseUrl, $transform,
             $useTitle, $version, $withTrashed, 
@@ -1177,9 +1178,11 @@ trait ContainerTransforms
 
     static public function isTransformable($item)
     {
-        return Functions::testVar($item) 
+        $bol = Functions::testVar($item) 
             && $item instanceof self 
             && $item instanceof TransformableContainer;
+        //dd($item, $bol, __METHOD__);
+        return $bol;
     }
 
     static public function doTransform(
@@ -1237,11 +1240,14 @@ trait ContainerTransforms
         $default = [], bool $useBaseMaker = true,
         string $dir = 'asc'
     ) {
+        //dd($args, $transform, __METHOD__);
         if (Functions::countHas($args)) {
+            //dd($args, $transform, __METHOD__);
             if (empty($transform)) {
                 return Functions::arrayableToArray($args, $args);
             } else {
                 $res = [];
+                //dd($args, $transform, __METHOD__);
                 foreach ($args as $item) {
                     $tmp = self::doTransform(
                         $item, $transform, $baseUrl, $useTitle,

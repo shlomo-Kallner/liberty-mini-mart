@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Page,
     App\Product,
-    App\Article;
+    App\Article,
+    App\UserSession,
+    App\Image;
 use Illuminate\Http\Request,
     App\Utilities\Functions\Functions,
     Illuminate\Support\Facades\Log,
-    Illuminate\Support\Facades\Validator;
+    Illuminate\Support\Facades\Validator,
+    Illuminate\Support\Str,
+    Illuminate\Validation\Rule;
+    
 
 class PageController extends MainController 
 {
@@ -95,6 +100,7 @@ class PageController extends MainController
                 1, $pagesData['Default'], $pagesData['UseBaseMaker']
             );
         }
+        //dd($pages);
         if ($request->ajax()) {
             return $pages;
         } else {
@@ -111,18 +117,13 @@ class PageController extends MainController
                 ),
                 $bcLinks
             );
-            //dd($pages);
             return self::getView(
                 $request, 'cms.items_table', $title, $pages, false, $breadcrumbs, null,
                 Functions::isAdminPath($request->path()) 
                 ? CmsController::getAdminSidebar() : null
             );
         }
-        if (!$request->ajax()) {
-            UserSession::updateAndAbort($request, 404);
-        } else {
-            abort(404);
-        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
@@ -171,6 +172,7 @@ class PageController extends MainController
      */
     public function store(Request $request) 
     {
+        //dd((new Page)->getTable());
         $validator = Validator::make(
             $request->all(), self::creationValidationRules(), 
             self::creationValidationMessages()
@@ -208,6 +210,9 @@ class PageController extends MainController
                 //$request->session()->regenerate();
                 return redirect('admin/page');
             }
+            self::addMsg("Uhhh, if we got here then PRODUCT CREATION FAILED!!!");
+            self::addMsg("You probably chose a cu");
+            //dd($page);
         }
         $path = $request->path();
         $path = Str::contains($path, 'create') ? $path : $path . '/create';
@@ -385,6 +390,9 @@ class PageController extends MainController
             'url' => [
                 'required', 'max:255', 'string', 'min:3',
                 'regex:'. Functions::getURLRegexStr(),
+                Rule::exists((new Page)->getTable())->where(function ($query, $value, $closure) {
+                    $query->where('url', '<>', $value);
+                }),
             ],
             'sticker' => [
                 'string', 'nullable', 'regex:/new|sale/'

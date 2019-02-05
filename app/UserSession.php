@@ -244,13 +244,15 @@ class UserSession extends Model
     static public function updateAndAbort(
         Request $request, int $status = 404, int $user_id = 0
     ) {
-        self::updateRegenerate(
-            $request, 
-            Functions::getVarOrId(
-                $user_id, intval(User::getIdFromUserArray(false, 0))
-            ),
-            false
-        );
+        if (!$request->ajax()) {
+            self::updateRegenerate(
+                $request, 
+                Functions::getVarOrId(
+                    $user_id, intval(User::getIdFromUserArray(false, 0))
+                ),
+                false
+            );
+        }
         abort($status);
     }
 
