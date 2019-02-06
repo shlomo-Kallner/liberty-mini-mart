@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model,
     App\Image,
-    App\Page,
+    App\Page, 
+    Webpatser\Uuid\Uuid,
     App\Utilities\Functions\Functions,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer;
@@ -35,6 +36,7 @@ class PageGroup extends Model implements TransformableContainer
             $data = new self;
             $data->name = $name;
             $data->order = $o;
+            $data->uuid = Uuid::generate(5, '/menus/' . $name, Uuid::NS_URL);
             if ($data->save()) {
                 return $retObj ? $data : $data->id;
             }
@@ -219,12 +221,12 @@ class PageGroup extends Model implements TransformableContainer
 
     public function getUrl()
     {
-        return $this->name;
+        return $this->uuid;
     }
 
     static public function getUrlByKey()
     {
-        return 'name';
+        return 'uuid';
     }
 
     static public function getChildrenOrderByKey()

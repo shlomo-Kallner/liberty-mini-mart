@@ -156,7 +156,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 ]
             ]
         );
-        Route::get('menus/{menu}/delete', 'PageController@showDelete');
+        Route::get('menus/{menu}/delete', 'PageGroupingController@showDelete');
 
         
         // MEMBERSHIP PLANS AND SEARCHES ARE WISHLIST ITEMS!!!

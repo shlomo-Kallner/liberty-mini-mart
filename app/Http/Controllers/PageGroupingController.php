@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\PageGrouping;
-use Illuminate\Http\Request;
+use App\PageGrouping,
+    App\PageGroup,
+    Illuminate\Http\Request,
+    App\Utilities\Functions\Functions;
 
 class PageGroupingController extends MainController
 {
@@ -15,6 +17,31 @@ class PageGroupingController extends MainController
     public function index(Request $request)
     {
         //
+    }
+
+    /**
+     * Display a "Name Listing" of the resource.
+     *
+     * @param  \Illuminate\Http\Request $request - the request object...
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function orderingList(Request $request)
+    {
+        $is_admin = true; //Functions::isAdminPath($request->path());
+        $pageGroup = PageGroup::getNamed(
+            $request->input('menu'), $is_admin, null, false
+        );
+        $res = [];
+        if (Functions::testVar($pageGroup)) {
+            $group = PageGrouping::getGroup($pageGroup, 'asc', $is_admin);
+            if (Functions::testVar($group)) {
+                foreach ($group as $key => $page) {
+                    $res[] = $page->order;
+                }
+            }
+        }
+        return $res;
     }
 
     /**

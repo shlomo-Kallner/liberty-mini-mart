@@ -15,8 +15,8 @@ use App\UserImage;
 use App\Image, 
     App\Order,
     App\Cart;
-use Darryldecode\Cart\Helpers\Helpers;
-use Webpatser\Uuid\Uuid,
+use Darryldecode\Cart\Helpers\Helpers, 
+    Webpatser\Uuid\Uuid,
     Illuminate\Support\Facades\Log;
 
 class User extends Model implements TransformableContainer

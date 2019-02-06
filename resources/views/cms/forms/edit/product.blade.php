@@ -60,12 +60,11 @@
         jQuery(
             function($) 
             {
-                //var lurl = '{{-- $catListUrl --}}' + '/';
+                var lurl = window.Laravel.baseUrl + '/api/store/section/';
                 var cat = $('.form-group > select#newcategory');
                 var sect = $('.form-group > select#newsection');
                 sect.change(function () {
-                    var nurl = window.Laravel.baseUrl + '/api/store/section/' 
-                        + $(this).val() + '/category/list';
+                    var nurl = lurl + $(this).val() + '/category/list';
                     var data = window.Laravel.handleCart.makeData(
                         {}, nurl, window.Laravel.csrfToken, '', 'list', 
                         window.Laravel.nut

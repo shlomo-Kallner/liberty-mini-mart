@@ -168,6 +168,7 @@ class PageController extends MainController
                 $tmpData['UseBaseMaker']
             ),
             'thisURL' => Page::genUrlFragment($BaseUrl, !$request->ajax()),
+            'hasOrder' => 'true',
         ];
         $bcLinks = [];
         $bcLinks[] = self::getHomeBreadcumb();
@@ -298,10 +299,10 @@ class PageController extends MainController
                 $tmpData = [
                     'PageNum' => 0,
                     'NumShown' => 12,
-                    'PagingFor' => 'productsPanel',
+                    'PagingFor' => 'pagesPanel',
                     'Dir' => 'asc',
                     'WithTrashed' => $is_admin,
-                    'BaseUrl' => $is_admin ? 'admin/' : '',
+                    'BaseUrl' => $is_admin ? 'admin' : '',
                     'ViewNum' => 0,
                     'UseBaseMaker' => $request->ajax(),
                     'Default' => [],
@@ -311,6 +312,9 @@ class PageController extends MainController
                     'UseGetSelf' => false,
                     'Transform' => Page::TO_TABLE_ARRAY_TRANSFORM
                 ];
+                $pageGroup = PageGroup::getNamed(
+                    $request->input('menu'), $is_admin, null, false
+                );
                 $content = [
                     'hasName' => 'true',
                     'hasTitle' => 'true',
@@ -321,12 +325,13 @@ class PageController extends MainController
                     'hasSticker' => 'true',
                     'hasParent' => 'true',
                     'parentName' => 'Menu',
-                    'parentId' => 'newmenu',
-                    'parentList' => Categorie::getNameListingOf($section->categories),
+                    'parentId' => 'menu',
+                    'parentList' => PageGroup::getNameListing(
+                        $tmpData['WithTrashed'], $tmpData['Dir'],
+                        $tmpData['UseBaseMaker']
+                    ),
                     'hasSelectedParent' => 'true',
-                    'selectedParent' => $category->toNameListing(),
-                    'hasSelectedSection' => 'true',
-                    'selectedSection' => $section->toNameListing(),
+                    'selectedParent' => $pageGroup ? $pageGroup->toNameListing() : '',
                     'name' => $page->getPubName(),
                     'title' => $page->getPubTitle(),
                     'url' => $page->getUrl(),
@@ -334,7 +339,7 @@ class PageController extends MainController
                     'article' => $page->getArticle(true),
                     'sticker'=> $page->getSticker(),
                     'subHeading' => $page->getSubHeading(),
-                    'hasSubHeading' => Functions::testVar($page->article->subheading) ? 'true'  : '',
+                    'hasSubHeading' => Functions::testVar($page->getSubHeading()) ? 'true'  : '',
                     'image' => $page->getImageArray(),
                     'thisURL' => $page->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl']),
                 ]; 
@@ -342,22 +347,22 @@ class PageController extends MainController
                 $bcLinks = [];
                 $bcLinks[] = self::getHomeBreadcumb();
                 $bcLinks[] = Page::genBreadcrumb(
-                    'Our Products', 
-                    Product::genUrlFragment($BaseUrl, !$request->ajax())
+                    'Our Content Pages', 
+                    Page::genUrlFragment($BaseUrl, !$request->ajax())
                 );
                 if (Functions::isAdminPath($request->path())) {
                     $bcLinks[] = CmsController::getAdminBreadcrumb();
                 }
                 $breadcrumbs = Page::getBreadcrumbs(
                     Page::genBreadcrumb(
-                        'Product Modification Form', 
+                        'Content Page Modification Form', 
                         Page::genUrlFragment($BaseUrl, !$request->ajax())
                     ),
                     $bcLinks
                 );
                 return self::getView(
                     $request, 'cms.forms.edit.page', 
-                    'Modify Existing Product: ' . $product->title,
+                    'Modify Existing Content Page: ' . $page->getPubTitle(),
                     $content, false, $breadcrumbs, null, 
                     Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
                     : null

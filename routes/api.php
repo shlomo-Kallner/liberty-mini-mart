@@ -44,6 +44,7 @@ Route::prefix('store')->group(
         Route::post('section/{section}/category/{category}/product/{product}/remfromcart', 'CartController@remFromCart');
     }
 );
+Route::get('menus/{menu}/order' ,'PageGroupingController@orderingList');
 
 Route::middleware('adminguard')->prefix('admin')->group(
     function () {
@@ -69,6 +70,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
 
         Route::resource('menus', 'PageGroupingController');
         Route::get('menus/{menu}/delete', 'PageGroupingController@showDelete');
+        Route::get('menus/{menu}/order' ,'PageGroupingController@orderingList');
         
         Route::resource(
             'search', 'SearchResultController', [
