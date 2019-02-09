@@ -32,6 +32,8 @@
         $page['selectedParent']??'', Page::makeNameListing('No ' . $parentName2, '')
     );
     $thisURL2 = Functions::getBladedString($page['thisURL']??'', request()->path());
+    $httpVerb2 = Functions::getBladedString($page['HttpVerb']??'', '');
+    $cancelUrl2 = Functions::getBladedString($page['cancelUrl']??'', 'admin');
 
 @endphp
 
@@ -46,6 +48,9 @@
             
             <form action="{{ url($thisURL2) }}" method="POST" role="form" enctype="multipart/form-data" novalidate="novalidate">
                 {{ csrf_field() }}
+                @if (Functions::testVar($httpVerb2))
+                    {{ method_field($httpVerb2) }}
+                @endif
                 
                 @if (Functions::testVar($hasName2))
                     <div class="form-group">
@@ -152,7 +157,7 @@
             
                 <button type="submit" class="btn btn-primary pull-right">Submit</button>
                 <input type="reset" value="Reset" class="btn btn-default">
-                <a class="btn btn-default pull-left" href="{{ url('admin') }}" role="button">Cancel</a>
+                <a class="btn btn-default pull-left" href="{{ url($cancelUrl2) }}" role="button">Cancel</a>
                 
             </form>
             
@@ -186,7 +191,9 @@
 
         jQuery(function($) 
         {
-            $('#articleSummernote').summernote('editor.insertText', '{{$article2}}');
+            var esc = '{{$article2}}';
+            var unesc = '{!! $article2 !!}';
+            $('#articleSummernote').summernote('editor.insertText', unesc);
         });
     </script>
 @endsection    

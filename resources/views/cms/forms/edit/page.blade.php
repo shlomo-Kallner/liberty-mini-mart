@@ -1,1 +1,1 @@
-@extends('cms.forms.template')
+@extends('cms.forms.new.page')

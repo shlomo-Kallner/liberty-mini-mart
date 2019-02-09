@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\PageGrouping,
     App\PageGroup,
     Illuminate\Http\Request,
-    App\Utilities\Functions\Functions;
+    App\Utilities\Functions\Functions,
+    App\Rules\FieldIsUniqueRule,
+    Illuminate\Support\Facades\Log,
+    Illuminate\Support\Facades\Validator,
+    Illuminate\Support\Str;
 
 class PageGroupingController extends MainController
 {
@@ -30,7 +34,7 @@ class PageGroupingController extends MainController
     {
         $is_admin = true; //Functions::isAdminPath($request->path());
         $pageGroup = PageGroup::getNamed(
-            $request->input('menu'), $is_admin, null, false
+            $request->menu, $is_admin, null, false
         );
         $res = [];
         if (Functions::testVar($pageGroup)) {
@@ -41,6 +45,7 @@ class PageGroupingController extends MainController
                 }
             }
         }
+        Log::info('json response', ['request' => $request, 'res_array' => $res]);
         return $res;
     }
 

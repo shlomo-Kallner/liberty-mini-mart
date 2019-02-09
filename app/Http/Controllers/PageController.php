@@ -135,7 +135,6 @@ class PageController extends MainController
      */
     public function create(Request $request) 
     {
-        $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin' : '';
         $tmpData = [
             'PageNum' => 0,
             'NumShown' => 12,
@@ -167,7 +166,7 @@ class PageController extends MainController
                 $tmpData['WithTrashed'], $tmpData['Dir'],
                 $tmpData['UseBaseMaker']
             ),
-            'thisURL' => Page::genUrlFragment($BaseUrl, !$request->ajax()),
+            'thisURL' => Page::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl']),
             'hasOrder' => 'true',
         ];
         $bcLinks = [];
@@ -178,7 +177,7 @@ class PageController extends MainController
         $breadcrumbs = Page::getBreadcrumbs(
             Page::genBreadcrumb(
                 'Content Page Creation Form', 
-                Page::genUrlFragment($BaseUrl, !$request->ajax())
+                Page::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl'])
             ),
             $bcLinks
         );
@@ -312,9 +311,15 @@ class PageController extends MainController
                     'UseGetSelf' => false,
                     'Transform' => Page::TO_TABLE_ARRAY_TRANSFORM
                 ];
-                $pageGroup = PageGroup::getNamed(
-                    $request->input('menu'), $is_admin, null, false
-                );
+                // $pageGroup = PageGroup::getNamed(
+                //     $request->input('menu'), $tmpData['WithTrashed'], null, false
+                // );
+                $tpg = $page->groups;
+                if (Functions::testVar($tpg) && Functions::countHas($tpg)) {
+                    $pageGroup = $tpg[0];
+                } else {
+                    $pageGroup = null;
+                }
                 $content = [
                     'hasName' => 'true',
                     'hasTitle' => 'true',
@@ -330,8 +335,10 @@ class PageController extends MainController
                         $tmpData['WithTrashed'], $tmpData['Dir'],
                         $tmpData['UseBaseMaker']
                     ),
-                    'hasSelectedParent' => 'true',
-                    'selectedParent' => $pageGroup ? $pageGroup->toNameListing() : '',
+                    'hasSelectedParent' => Functions::testVar($pageGroup) ? 'true' : '',
+                    'selectedParent' => Functions::testVar($pageGroup) 
+                        ? $pageGroup->toNameListing() 
+                        : '',
                     'name' => $page->getPubName(),
                     'title' => $page->getPubTitle(),
                     'url' => $page->getUrl(),
@@ -342,13 +349,15 @@ class PageController extends MainController
                     'hasSubHeading' => Functions::testVar($page->getSubHeading()) ? 'true'  : '',
                     'image' => $page->getImageArray(),
                     'thisURL' => $page->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl']),
+                    'HttpVerb' => 'PATCH',
+                    'cancelUrl' => Page::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl']),
                 ]; 
                 $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin' : '';
                 $bcLinks = [];
                 $bcLinks[] = self::getHomeBreadcumb();
                 $bcLinks[] = Page::genBreadcrumb(
                     'Our Content Pages', 
-                    Page::genUrlFragment($BaseUrl, !$request->ajax())
+                    Page::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl'])
                 );
                 if (Functions::isAdminPath($request->path())) {
                     $bcLinks[] = CmsController::getAdminBreadcrumb();
@@ -356,7 +365,7 @@ class PageController extends MainController
                 $breadcrumbs = Page::getBreadcrumbs(
                     Page::genBreadcrumb(
                         'Content Page Modification Form', 
-                        Page::genUrlFragment($BaseUrl, !$request->ajax())
+                        $request->url()
                     ),
                     $bcLinks
                 );
@@ -427,13 +436,13 @@ class PageController extends MainController
                 e("<p>Ring It Again/Buy U.S. Gov&apos;t Bonds/Third Liberty Loan</p>"),
                 true
             );
-            Log::info('info 1' . __METHOD__);
+            //Log::info('info 1' . __METHOD__);
             $newProducts = Product::getNewProducts(4, 'New Arrivals');
-            Log::info('info 2' . __METHOD__);
+            //Log::info('info 2' . __METHOD__);
             $sampleProducts = Product::getNewProducts(3, 'Three Sample Items');
-            Log::info('info 3' . __METHOD__);
+            //Log::info('info 3' . __METHOD__);
             $bestsellers = Product::getBestsellers();
-            Log::info('info 4' . __METHOD__);
+            //Log::info('info 4' . __METHOD__);
             $content = [
                 'article'=> $article,
                 'newProducts' => $newProducts,
@@ -442,7 +451,7 @@ class PageController extends MainController
                 'filters' => [], // search filters are a WISH-LIST ITEM!!!
                 'pricings' => [], // membership plan pricings are a WISH-LIST ITEM!!
             ];
-            Log::info('info 5' . __METHOD__);
+            //Log::info('info 5' . __METHOD__);
             //sdd('hello', 3, $content);
         
             // $useFakeData = false;
@@ -451,7 +460,7 @@ class PageController extends MainController
             $breadcrumbs = Page::getBreadcrumbs(
                 Page::genBreadcrumb('Home', '/')
             );
-            Log::info('info 6' . __METHOD__);
+            //Log::info('info 6' . __METHOD__);
             //return $this->getTemplateView($title, $content);
             //dd($request->session()->all());
             //dd(session()->all());

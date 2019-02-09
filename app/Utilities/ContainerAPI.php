@@ -232,19 +232,20 @@ trait ContainerID
      * Method getNamed()
      * 
      * @param string $name        - the name or url to search for 
-     *                             (uses columns 'name' and 'url' respectively).
+     *                            (uses columns 'name' and 'url' respectively).
      * @param mixed  $withTrashed - pass 'true' to use soft deleted
-     *                             items or 'false' to not use them.
+     *                            items or 'false' to not use them.
      * @param mixed  $extraWhereby  - May be a <value> or an array.
      *                              - If is a <value>, it is added as comparing as 
-     *                                equal to refine the result while using 
-     *                                self::getOrderByKey() to get the 
-     *                                column key.
+     *                              equal to refine the result while using 
+     *                              self::getOrderByKey() to get the 
+     *                              column key.
      *                              - If is an array, it is an array that
-     *                                self::getExtraWhereBy() will accept.
+     *                              self::getExtraWhereBy() will accept.
+     * @param bool $getAll - get all that might use the name or just the first.
      * 
      * @return mixed|null
-    */
+     */
     static public function getNamed(
         string $name, bool $withTrashed = false, 
         $extraWhereby = null, bool $getAll = false

@@ -345,9 +345,10 @@ class Cart extends Model
         return null;
     }
 
-    static public function exists($id, bool $useGet = false)
-    {
-        return Functions::testVar(self::getFrom($id, $useGet));
+    static public function exists(
+        $id, bool $useGet = false, bool $withTrashed = false
+    ) {
+        return Functions::testVar(self::getFrom($id, $useGet, $withTrashed));
     }
 
     static public function createNew(
@@ -355,14 +356,14 @@ class Cart extends Model
         string $agent, $content = null, bool $retId = true
     ) {
         $user_id = Functions::getVar(User::getUserId($user), 0);
-        /**
+        /*
          * 
-                $table->integer('user_id')->unsigned()->nullable();
-                $table->string('session_id', 255);
-                $table->string('ip_address', 45)->nullable();
-                $table->text('user_agent')->nullable();
-                $table->mediumText('content');
-                $table->string('verihash', 255);
+         *      $table->integer('user_id')->unsigned()->nullable();
+         *      $table->string('session_id', 255);
+         *      $table->string('ip_address', 45)->nullable();
+         *      $table->text('user_agent')->nullable();
+         *      $table->mediumText('content');
+         *      $table->string('verihash', 255);
          */
         if (empty($content)) {
             $content = [];
@@ -406,8 +407,10 @@ class Cart extends Model
     ) {
         if (is_array($data)) {
             return self::createNew(
-                $data['user'], $data['session_id'], $data['ip'],
-                $data['agent'], $data['content'], $retId
+                $data['user'] ?? $user, $data['session_id'], 
+                $data['ip'], $data['agent'], 
+                $data['content'] ?? $content, 
+                $data['retId'] ?? $retId
             );
         } elseif ($data instanceof Request && $data->hasSession()) {
             //dd($data, $user, $content, __METHOD__);

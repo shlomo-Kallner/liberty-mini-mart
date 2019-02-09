@@ -6,10 +6,11 @@ use App\Utilities\Functions\Functions,
     App\User,
     App\Cart,
     App\UserSession;
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Darryldecode\Cart\Cart as DarrylCart;
-use Darryldecode\Cart\CartCollection;
+use Illuminate\Http\Request,
+    Illuminate\Support\Collection,
+    Illuminate\Support\Facades\Log;
+use Darryldecode\Cart\Cart as DarrylCart, 
+    Darryldecode\Cart\CartCollection;
 
 
 class CartStorage
@@ -21,30 +22,27 @@ class CartStorage
     public function __construct(Request $request = null)
     {
         $request2 = $request ?? request();
-        /* 
-            if ($request->ajax()) {
-                if (Functions::testVar($us = UserSession::getFrom($request))) {
-                    $this->session = $us;
-                }
-            } 
-        */
-        $this->loadStorage($request);
+        $this->loadStorage($request2);
     }
 
     protected function loadStorage(Request $request = null)
     {
         $request2 = $request ?? request();
         if (!functions::testVar($this->request)
-        || $this->request !== $request2
+            || $this->request !== $request2
         ) {
             $this->request = $request2;
         }
         $cart = Cart::getFromOrCreate($this->request);
         if (!Functions::testVar($this->storage) 
-        || $cart->id !== $this->storage->id
+            || $cart->id !== $this->storage->id
         ) {
             $this->storage = $cart;
         }
+        // Log::info(
+        //     __METHOD__ . 'message', 
+        //     ['request' => $request2, 'cart' => $cart, 'storage' => $this->storage]
+        // );
         $tmp = $this->storage->getCartContent();
         $this->data = Collection::make(Functions::getVar($tmp, []));
     }
@@ -70,20 +68,5 @@ class CartStorage
         $this->loadStorage($this->request);
         $this->data->put($key, $value);
         $this->storage->updateCartFrom($this->request, null, $this->data->all());
-        /* 
-            if ($this->has($key)) {
-                $this->data->put($key, $value);
-                // update
-                //$row->cart_data = $value;
-                $this->storage->updateCartFrom($this->request, null, $this->data);
-            } else {
-                Cart::create(
-                    [
-                        'id' => $key,
-                        'cart_data' => $value
-                    ]
-                );
-            } 
-        */
     }
 }
