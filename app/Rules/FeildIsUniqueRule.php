@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class FeildIsUniqueRule implements FieldIsUniqueRule
+class FeildIsUniqueRule extends FieldIsUniqueRule
 {
     /// just an Alias..
 }

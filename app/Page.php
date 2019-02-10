@@ -102,6 +102,89 @@ class Page extends Model implements TransformableContainer
         return null;
     }
 
+    public function updateWith(
+        string $name, string $url, $img,
+        string $title, $article, string $description,
+        int $visible = 1, string $sticker = '',
+        $group = -1, int $order = -1, bool $retObj = false
+    ) {
+        $whereBy = [
+            ['id', '<>', $this->id]
+        ];
+        $orWhereBy = [
+            ['id', '<>', $this->id]
+        ];
+        $tpg = $this->groups;
+        $tg = PageGroup::getFrom($group, true);
+        if (Functions::testVar($tpg) && Functions::countHas($tpg)) {
+            if (Functions::testVar($tg) && PageGroup::isInListOf($tg, $tpg)) {
+                $group_id = $tg->id;    
+            } else {
+                $group_id = PageGroup::getIdFrom($tpg[0], false, null);
+            }
+        } else {
+            if (Functions::testVar($tg)) {
+                $group_id = $tg->id;
+            } else {
+                $group_id = PageGroup::getRandId();
+            }
+        }
+        $order_tmp = PageGrouping::getOrderForPage($this, $group, true);
+        if ($order > 0 && Functions::testVar($order_tmp)) {
+            if ($order !== $order_tmp) {
+                $order_num = $order;
+            } else {
+                $order_num = $order_tmp;
+            }
+        } elseif ($order > 0  && !Functions::testVar($order_tmp)) {
+            $order_num = $order;
+        } elseif ($order < 1  && Functions::testVar($order_tmp)) {
+            $order_num = $order_tmp;
+        } else {
+            $order_num = PageGrouping::getRandOrder($group_id, true);
+        }
+        if ($name !== $this->name) {
+            $whereBy[] = ['name', '=', $name];
+        } else {
+            $whereBy[] = ['name', '=', $this->name];
+        }
+        if ($url !== $this->url) {
+            $orWhereBy[] = ['url', '=', $url];
+        } else {
+            $orWhereBy[] = ['url', '=', $this->url];
+        }
+        $tP = self::withTrashed()->where($whereBy)->orWhere($orWhereBy)->get();
+        if (!Functions::testVar($tP) || !Functions::countHas($tP)) {
+            $tImg = Image::getImageToID($img);
+            $tArt = Article::getToId($article);
+            if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
+                $this->name = $name;
+                $this->url = $url;
+                $this->image_id = $tImg;
+                $this->title = Functions::purifyContent($title);
+                $this->article_id = $tArt;
+                $this->description = Functions::purifyContent($description);
+                //dd($visible);
+                $this->viewable = $visible;
+                $this->sticker = $sticker;
+
+                if ($this->save()) {
+                    //dd($data, 2);
+                    if (PageGrouping::reorderAround($group_id, $this->id, $order_num)) {
+                        //dd($data, 3);
+                        $pg = PageGrouping::createNew($group_id, $this->id, $order_num);
+                        $pi = PageImage::createNewFrom($this);
+                        if (Functions::testVar($pg) && Functions::testVar($pi)) {
+                            //dd($data, $pg, 4, "my");
+                            return $retObj ? $this : $this->id;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     static public function createNewFrom(
         array $array, bool $retObj = false
     ) {

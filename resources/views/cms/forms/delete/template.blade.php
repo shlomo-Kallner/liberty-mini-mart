@@ -24,12 +24,13 @@
     $hasParent2 = Functions::getBladedString($page['hasParent']??'', '');
     $parentName2 = Functions::getBladedString($page['parentName']??'', 'Parent');
     $parentId2 = Functions::getBladedString($page['parentId']??'', 'parent');
-    $parentList2 = Functions::getContent($page['parentList']??'', '');
+    //$parentList2 = Functions::getContent($page['parentList']??'', '');
     $hasSelectedParent2 = Functions::getBladedString($page['hasSelectedParent']??'', '');
     $selectedParent2 = Functions::getContent(
         $page['selectedParent']??'', Page::makeNameListing('No ' . $parentName2, '')
     );
     $thisURL2 = Functions::getBladedString($page['thisURL']??'', request()->fullUrl());
+    $cancelUrl2 = Functions::getBladedString($page['cancelUrl']??'', 'admin');
 
 @endphp
 
@@ -58,7 +59,7 @@
                 @if (Functions::testVar($hasTitle2))
                     <h3>Title:</h3>
                     <div class="well well-sm">
-                        <h3>{{ $title2 }}</h3> 
+                        <h3>{!! $title2 !!}</h3> 
                     </div>
                 @endif
             
@@ -86,7 +87,7 @@
                             </div>
                             <h3>Article:</h3>
                             <div class="well well-lg">
-                                <textarea cols="100" rows="20">{{ $article2 }}</textarea>
+                                {!! $article2 !!}
                             </div>
                         </div>
                     </div>
@@ -132,7 +133,7 @@
                 @endif
             
                 <button type="submit" class="btn btn-primary pull-right">Delete</button>
-                <a class="btn btn-default pull-left" href="{{ url('admin') }}" role="button">Cancel</a>
+                <a class="btn btn-default pull-left" href="{{ url($cancelUrl2) }}" role="button">Cancel</a>
                 
             </form>
             

@@ -10,11 +10,13 @@
         //dd($redirectToken);
     @endphp
     
-    <div class="row">
-        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-            {{-- leaving this empty for spacing/centering. --}}
+    @if (false)
+        <div class="row">
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                {{-- leaving this empty for spacing/centering. --}}
+            </div>
         </div>
-    </div>
+    @endif
     
     <div class="row">
         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
@@ -26,9 +28,11 @@
         </div>
     </div>
     
-    <div class="row">
-        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-            {{-- leaving this empty for spacing/centering. --}}
+    @if (false)
+        <div class="row">
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                {{-- leaving this empty for spacing/centering. --}}
+            </div>
         </div>
-    </div>
+    @endif
 @endsection

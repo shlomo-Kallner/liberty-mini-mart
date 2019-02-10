@@ -110,21 +110,79 @@ class PageGrouping extends Model
         return $bol;
     }
 
-    static public function getRandOrder(int $group_id, bool $withTrashed = false)
+    static public function getMaxOrder($group, bool $withTrashed = false)
     {
-        $m = $withTrashed
-            ? self::withTrashed()->where('group_id', $group_id)->max('order')
-            : self::where('group_id', $group_id)->max('order');
-        return Functions::testVar($m) && $m > 1 ? random_int(1, $m) : 1;
+        $query = self::getGroupQuery($group, 'asc', $withTrashed);
+        if (Functions::testVar($query)) {
+            $col = $query->get();
+            if (Functions::testVar($col) && Functions::countHas($col)) {
+                return $col->max('order');
+            }
+        }
+        return null;
+    }
+
+    static public function getMinOrder($group, bool $withTrashed = false)
+    {
+        $query = self::getGroupQuery($group, 'asc', $withTrashed);
+        if (Functions::testVar($query)) {
+            $col = $query->get();
+            if (Functions::testVar($col) && Functions::countHas($col)) {
+                return $col->min('order');
+            }
+        }
+        return null;
+    }
+
+    static public function getRandOrder($group, bool $withTrashed = false)
+    {
+        $query = self::getGroupQuery($group, 'asc', $withTrashed);
+        if (Functions::testVar($query)) {
+            $col = $query->get();
+            if (Functions::testVar($col) && Functions::countHas($col)) {
+                $min = $col->min('order');
+                $max = $col->max('order');
+            } else {
+                $min = 1;
+                $max = 1;
+            }
+            return $max >= 1 && $min >= 1 ? random_int($min, $max) : 1;
+        }
+        return null;
+    }
+
+    static public function getGroupQuery($group, string $dir = 'asc', bool $withTrashed = false)
+    {
+        $group_id = PageGroup::getIdFrom($group, false, null);
+        if (Functions::testVar($group_id)) {
+            return $withTrashed
+            ? self::withTrashed()->where('group_id', $group_id)
+                ->orderBy('order', $dir)
+            : self::where('group_id', $group_id)
+                ->orderBy('order', $dir);
+        }
+        return null;
+    }
+
+    static public function getGroupingsOfPage($page, string $dir = 'asc', bool $withTrashed = false)
+    {
+        $page_id = Page::getIdFrom($page, false, null);
+        if (Functions::testVar($page_id)) {
+            $tmp = $withTrashed 
+            ? self::withTrashed()->where('page_id', $page_id)->get()
+            : self::where('page_id', $page_id)->get();
+            if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
+                return $tmp;
+            }
+        }
+        return null;
     }
 
     static public function getGroup($group, string $dir = 'asc', bool $withTrashed = false)
     {
-        $group_id = PageGroup::getIdFrom($group, false, null);
-        if (Functions::testVar($group_id)) {
-            return self::where('group_id', $group_id)
-                ->orderBy('order', $dir)
-                ->get();
+        $query = self::getGroupQuery($group, $dir, $withTrashed);
+        if (Functions::testVar($query)) {
+            return $query->get();
         }
         return null;
     }
@@ -134,20 +192,36 @@ class PageGrouping extends Model
         return self::orderBy('group_id', $dir)->get();
     }
 
-    static public function getOrderForPage($page, $group, bool $withTrashed = false)
+    static public function getPageAndGroupListing($page, $group, bool $withTrashed = false)
     {
         $page_id = Page::getIdFrom($page, false, null);
         $group_id = PageGroup::getIdFrom($group, false, null);
         if (Functions::testVar($page_id) && Functions::testVar($group_id)) {
-            $tmp = self::where(
+            $tmp = $withTrashed 
+            ? self::withTrashed()->where(
+                [
+                    ['page_id', '=', $page_id],
+                    ['group_id', '=', $group_id]
+                ]
+            )->get()
+            : self::where(
                 [
                     ['page_id', '=', $page_id],
                     ['group_id', '=', $group_id]
                 ]
             )->get();
-            if (Functions::testVar($tmp) && count($tmp) === 1) {
-                return $tmp[0]->order;
+            if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
+                return $tmp;
             }
+        }
+        return null;
+    }
+
+    static public function getOrderForPage($page, $group, bool $withTrashed = false)
+    {
+        $tmp = self::getPageAndGroupListing($page, $group, $withTrashed);
+        if (Functions::testVar($tmp) && Functions::countHas($tmp)) {
+            return $tmp[0]->order;
         }
         return null;
     }

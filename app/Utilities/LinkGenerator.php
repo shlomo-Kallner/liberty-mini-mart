@@ -165,7 +165,7 @@ trait LinkGenerator {
                 $t1 = [];
                 foreach ($tg as $g) {
                     $t2 = [];
-                    $tpg = PageGrouping::getGroup($g);
+                    $tpg = PageGrouping::getGroup($g, 'asc', false);
                     $numPg = Functions::genRowsPerPage(count($tpg), $numPerView);
                     if ($numPg > 1) {
                         for ($i = 1; $i <= $numPg; $i++) {

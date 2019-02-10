@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Page,
     App\PageGroup,
+    App\PageGrouping,
     App\Product,
     App\Article,
     App\UserSession,
@@ -11,6 +12,7 @@ use App\Page,
 use Illuminate\Http\Request,
     App\Utilities\Functions\Functions,
     App\Rules\FieldIsUniqueRule,
+    App\Rules\FieldIsUniqueOrEqualRule,
     Illuminate\Support\Facades\Log,
     Illuminate\Support\Facades\Validator,
     Illuminate\Support\Str,
@@ -292,9 +294,9 @@ class PageController extends MainController
     public function edit(Request $request) 
     {
         if (Functions::testVar($request->page)) {
-            $page = Page::getNamed($request->page);
+            $is_admin = Functions::isAdminPath($request->path());
+            $page = Page::getNamed($request->page, $is_admin);
             if (Functions::testVar($page)) {
-                $is_admin = Functions::isAdminPath($request->path());
                 $tmpData = [
                     'PageNum' => 0,
                     'NumShown' => 12,
@@ -319,6 +321,23 @@ class PageController extends MainController
                     $pageGroup = $tpg[0];
                 } else {
                     $pageGroup = null;
+                }
+                $orderQ = PageGrouping::getGroup(
+                    $pageGroup, $tmpData['Dir'], $tmpData['WithTrashed']
+                );
+                if (Functions::testVar($orderQ)) {
+                    $orderMax = $orderQ->max('order');
+                    $orderMin = $orderQ->min('order');
+                    $hasOrder = 'true';
+                } else {
+                    $orderMax = 1;
+                    $orderMin = 1;
+                }
+                $order_num = PageGrouping::getOrderForPage(
+                    $page, $pageGroup, $tmpData['WithTrashed']
+                );
+                if (!Functions::testVar($order_num)) {
+                    $order_num = PageGrouping::getRandOrder($pageGroup, $tmpData['WithTrashed']);
                 }
                 $content = [
                     'hasName' => 'true',
@@ -348,6 +367,10 @@ class PageController extends MainController
                     'subHeading' => $page->getSubHeading(),
                     'hasSubHeading' => Functions::testVar($page->getSubHeading()) ? 'true'  : '',
                     'image' => $page->getImageArray(),
+                    'orderMin' => $orderMin,
+                    'orderMax' => $orderMax,
+                    'order' => $order_num,
+                    'hasOrder' => 'true',
                     'thisURL' => $page->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl']),
                     'HttpVerb' => 'PATCH',
                     'cancelUrl' => Page::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl']),
@@ -385,38 +408,195 @@ class PageController extends MainController
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Page  $page
+     * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $page) 
+    public function update(Request $request) 
     {
-        //
+        if (Functions::testVar($request->page)) {
+            $is_admin = Functions::isAdminPath($request->path());
+            $page = Page::getNamed($request->page, $is_admin);
+            $path = $request->path();
+            $passed = false;
+            if (Functions::testVar($page)) {
+                $validator = Validator::make(
+                    $request->all(), self::modificationValidationRules($page->name, $page->url), 
+                    self::modificationValidationMessages()
+                );
+                $passed = $validator->passes();
+                if ($passed) {
+                    if ($request->hasFile('image')) {
+                        $image_id = Image::storeAndCreateNewImage(
+                            $request->file('image'), 'pages', 
+                            $request->title, $request->description, 
+                            false, 0
+                        );
+                    } else {
+                        $image_id = $page->image_id;
+                    }
+                    // Log::info("image_id: " . $image_id);
+                    $article_id = Article::createNew(
+                        $request->article, $request->title, 
+                        null, $request->subheading??'', false
+                    );
+                    $pageGroup = PageGroup::getNamed(
+                        $request->menu, $is_admin, null, false
+                    );
+                    $group = $pageGroup??-1; 
+                    $order = intval($request->order??-1);
+                    $visible = $request->veiw ?? 1;
+                    $tmp = $page->updateWith(
+                        $request->name, $request->url, $image_id,
+                        $request->title, $article_id, $request->description,
+                        $visible, $request->sticker ?? '',
+                        $group, $order, true
+                    );
+                    if (Functions::testVar($tmp) && $tmp === $page) {
+                        self::addMsg('Page ' . $page->name . ' , ' . $page->title . ' Modified Successfully!');
+                        $path = 'admin/page';
+                    } else {
+                        self::addMsg("Uhhh, if we got here then PAGE Modification FAILED!!!");
+                        //self::addMsg("You probably chose an in-url or name...");
+                        //dd($page);
+                        $passed = null;
+                    }
+                }
+            }
+            $path = $passed || Str::contains($path, 'edit') ? $path : $path . '/edit';
+            // return redirect($path)
+            //     ->withErrors($validator)
+            //     ->withInput($request->except('image'));
+            return UserSession::updateRedirect(
+                $request, $path, $validator, 
+                !$passed ? $request->except('image')
+                : []
+            );
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Page  $pages
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Page $pages) 
+    public function destroy(Request $request) 
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $page = Page::getNamed($request->page, $is_admin);
+        $path = $request->path();
+        if (Functions::testVar($page)) {
+            $groups = PageGrouping::getGroupingsOfPage($page, 'asc', $is_admin);
+            if (Functions::testVar($groups)) {
+                foreach ($groups as $g) {
+                    $g->delete();
+                }
+            }
+            $page->delete();
+            $errors = [];
+            if ($page->trashed()) {
+                self::addMsg('Page ' . $page->name . ' , ' . $page->title . ' Deleted Successfully!');
+            } else {
+                $errors = [
+                    'error' => 'Page ' . $page->name . ' , ' . $page->title . ' Deletion failed!'
+                ];
+            }
+            return UserSession::updateRedirect(
+                $request, 'admin/page', $errors
+            );
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     public function showDelete(Request $request) 
     {
-        $page = Page::getNamedPage($request->page, $request->path, true);
+        $is_admin = Functions::isAdminPath($request->path());
+        $page = Page::getNamed($request->page, $is_admin);
         if (Functions::testVar($page)) {
+            $tmpData = [
+                'PageNum' => 0,
+                'NumShown' => 12,
+                'PagingFor' => 'pagesPanel',
+                'Dir' => 'asc',
+                'WithTrashed' => $is_admin,
+                'BaseUrl' => $is_admin ? 'admin' : '',
+                'ViewNum' => 0,
+                'UseBaseMaker' => $request->ajax(),
+                'Default' => [],
+                'UseTitle' => true,
+                'FullUrl' => !$request->ajax(),
+                'ListUrl' => $request->path(),
+                'UseGetSelf' => false,
+                'Transform' => Page::TO_TABLE_ARRAY_TRANSFORM
+            ];
+            $tpg = $page->groups;
+            if (Functions::testVar($tpg) && Functions::countHas($tpg)) {
+                $pageGroup = $tpg[0];
+            } else {
+                $pageGroup = null;
+            }
+            $order_num = PageGrouping::getOrderForPage(
+                $page, $pageGroup, $tmpData['WithTrashed']
+            );
+            $content = [
+                'hasName' => 'true',
+                'hasTitle' => 'true',
+                'hasUrl' => 'true',
+                'hasDescription' => 'true',
+                'hasArticle' => 'true',
+                'hasImage' => 'true',
+                'hasSticker' => 'true',
+                'hasParent' => 'true',
+                'parentName' => 'Menu',
+                'parentId' => 'menu',
+                // 'parentList' => PageGroup::getNameListing(
+                //     $tmpData['WithTrashed'], $tmpData['Dir'],
+                //     $tmpData['UseBaseMaker']
+                // ),
+                'hasSelectedParent' => Functions::testVar($pageGroup) ? 'true' : '',
+                'selectedParent' => Functions::testVar($pageGroup) 
+                    ? $pageGroup->toNameListing() 
+                    : '',
+                'hasOrder' => Functions::testVar($pageGroup) ? 'true' : '',
+                'order' => $order_num,
+                'name' => $page->getPubName(),
+                'title' => $page->getPubTitle(),
+                'url' => $page->getUrl(),
+                'description' => $page->getPubDescription(),
+                'article' => $page->getArticle(true),
+                'sticker'=> $page->getSticker(),
+                'subHeading' => $page->getSubHeading(),
+                'hasSubHeading' => Functions::testVar($page->getSubHeading()) ? 'true'  : '',
+                'image' => $page->getImageArray(),
+                'thisURL' => $page->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl']),
+                // 'HttpVerb' => 'PATCH',
+                'cancelUrl' => Page::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl']),
+            ];
+            $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin' : '';
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            $bcLinks[] = Page::genBreadcrumb(
+                'Our Content Pages', 
+                Page::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl'])
+            );
+            if (Functions::isAdminPath($request->path())) {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+            }
+            $breadcrumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb(
+                    'Content Page Deletion Form', 
+                    $request->url()
+                ),
+                $bcLinks
+            );
             return self::getView(
                 $request, 'cms.forms.delete.page', 
                 'Are You Sure That You Want To Delete This Page?',
-                ['data' => $page],
-                false,
-                Page::getBreadcrumbs(
-                    Page::genBreadcrumb('Delete Page', $request->path()),
-                    Page::genBreadcrumb('Admin Dashboard', 'admin')
-                ) 
+                $content, false, $breadcrumbs, null, 
+                Functions::isAdminPath($request->path()) 
+                ? CmsController::getAdminSidebar()
+                : null
             );
         } 
         UserSession::updateAndAbort($request, 404);
@@ -481,7 +661,7 @@ class PageController extends MainController
      *
      * @return array
      */
-    static public function creationValidationRules()
+    static public function creationValidationRules(bool $withTrashed = false)
     {
         return [
             //
@@ -491,13 +671,13 @@ class PageController extends MainController
             'title' => 'required|max:255|string|min:3',
             'name' => [
                 'required', 'max:255', 'string', 'min:3',
-                new FieldIsUniqueRule((new Page)->getTable(), 'name'),
+                new FieldIsUniqueRule((new Page)->getTable(), 'name', $withTrashed),
             ],
             'description' => 'required|max:255|string|min:3',
             'url' => [
                 'required', 'max:255', 'string', 'min:3',
                 'regex:'. Functions::getURLRegexStr(),
-                new FieldIsUniqueRule((new Page)->getTable(), 'url'),
+                new FieldIsUniqueRule((new Page)->getTable(), 'url', $withTrashed),
             ],
             'sticker' => [
                 'string', 'nullable', 'regex:/new|sale/'
@@ -517,18 +697,23 @@ class PageController extends MainController
      *
      * @return array
      */
-    static public function modificationValidationRules()
+    static public function modificationValidationRules($name, $url, bool $withTrashed = false)
     {
         return [
             'image' => 'nullable|file|image',
             'article' => 'required|max:255000|string|min:3',
             'subheading' => 'string|nullable|max:255',
             'title' => 'required|max:255|string|min:3',
-            'name' => 'required|max:255|string|min:3',
+            'name' =>  [
+                'required', 'max:255', 'string', 'min:3',
+                // (string $table, string $field, $value, bool $withTrashed = false)
+                new FieldIsUniqueOrEqualRule((new Page)->getTable(), 'name', $name, $withTrashed),
+            ],
             'description' => 'required|max:255|string|min:3',
             'url' => [
                 'required', 'max:255', 'string', 'min:3',
                 'regex:'. Functions::getURLRegexStr(),
+                new FieldIsUniqueOrEqualRule((new Page)->getTable(), 'url', $url, $withTrashed),
             ],
             'sticker' => [
                 'string', 'nullable', 'regex:/new|sale/'

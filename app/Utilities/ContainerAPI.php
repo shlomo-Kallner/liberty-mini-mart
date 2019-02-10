@@ -3,7 +3,8 @@
 namespace App\Utilities;
 
 use App\Utilities\Functions\Functions, 
-    Illuminate\Database\Eloquent\SoftDeletes;
+    Illuminate\Database\Eloquent\SoftDeletes,
+    Traversable;
 
 interface ContainerAPI
 {
@@ -209,7 +210,8 @@ trait ContainerID
             ? $item->getPubId()
             : $item->id;
         } elseif (Functions::isPropKeyIn($item, 'id')) {
-            $item_id = Functions::getPropKey($item, 'id', $def);
+            $tid = Functions::getPropKey($item, 'id', $def);
+            $item_id  = self::getIdFrom($tid, $usePublic, $def);
         } elseif (is_int($item) && self::existsId($item, true)) {
             $item_id = $item;
         } elseif (is_string($item)) {
@@ -284,4 +286,31 @@ trait ContainerID
     }
 
     /// end of defaults.. 
+
+    static public function isInListOf($item, $args) 
+    {
+        $bol = false;
+        if ((($args instanceof Traversable) || is_array($args))
+            && $item instanceof self
+        ) {
+            $item_id = $item->id;
+            if (Functions::testVar($item_id)) {
+                foreach ($args as $arg) {
+                    if ($arg instanceof self) {
+                        if ($item === $arg) {
+                            $bol = true;
+                            break;
+                        } else {
+                            $arg_id = $arg->id;
+                            if (Functions::testVar($arg_id) && $item_id === $arg_id) {
+                                $bol = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $bol;
+    }
 }

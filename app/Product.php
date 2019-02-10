@@ -91,6 +91,9 @@ class Product extends Model implements TransformableContainer
         } else {
             $whereBy[] = ['category_id', '=', $this->category_id];
             $orWhereBy[] = ['category_id', '=', $this->category_id];
+            if (!Functions::testVar($category_id)) {
+                $category_id = $this->category_id;
+            }
         }
         if ($name !== $this->name) {
             $whereBy[] = ['name', '=', $name];

@@ -148,6 +148,21 @@ class PageGroup extends Model implements TransformableContainer
         );
     }
 
+    /**
+     * @deprecated any
+     *
+     * @param [type] $page
+     * @param string $dir
+     * @param boolean $withTrashed
+     * @return void
+     */
+    private function pageInGroup($page, string $dir = 'asc', bool $withTrashed = false)
+    {
+        return Page::getOrderedByFor(
+            $this->pages(), $dir, $withTrashed, null
+        )->where('id', '<>', Page::getIdFrom($page, false, null))->get();
+    }
+
     /// trait overides and interface implementations..
 
     static public function createNewFrom(array $array, bool $retObj = false)
