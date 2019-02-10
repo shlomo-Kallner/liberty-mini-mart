@@ -339,7 +339,8 @@ class PageGroupingController extends MainController
                 $pagesData['Dir'], $pagesData['WithTrashed'], 'name'
             );
             if (Functions::testVar($groups)) {
-                $orderMin = $groups->min('order');
+                $orderMin_t = $groups->min('order');
+                $orderMin = $orderMin_t > 1 ? 1 : $orderMin_t;
                 $orderMax = $groups->max('order');
             } else {
                 $orderMin = 1;
@@ -455,7 +456,58 @@ class PageGroupingController extends MainController
 
     public function showDelete(Request $request)
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $menu = PageGroup::getNamed($request->menu, $is_admin);
+        $pagesData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'pagesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UsePageGroupings' => false,
+            'UseGetSelf' => false,
+            'Transform' => PageGroup::TO_TABLE_ARRAY_TRANSFORM
+        ];
+        if (Functions::testVar($menu)) {
+            $content = [
+                'hasName' => 'true',
+                'name' => $menu->name,
+                'thisURL' => $menu->getFullUrl($pagesData['BaseUrl'], $pagesData['FullUrl']),
+                'hasOrder' => 'true',
+                'order' => $menu->order,
+                'cancelUrl' => 'admin/menus',
+            ];
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            if (Functions::isAdminPath($request->path())) {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+            }
+            $bcLinks[] = Page::genBreadcrumb(
+                'Our Navigation Menus', 
+                PageGroup::genUrlFragment($pagesData['BaseUrl'], $pagesData['FullUrl'])
+            );
+            $breadcrumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb(
+                    'Navigation Menu Deletion Form',  
+                    $request->url()
+                ),
+                $bcLinks
+            );
+            return self::getView(
+                $request, 'cms.forms.delete.menu', 'Delete Existing Navigation Menu',
+                $content, false, $breadcrumbs, null, 
+                Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
+                : null
+            );
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     //// Validation Rules and messages
@@ -471,7 +523,7 @@ class PageGroupingController extends MainController
             //
             'name' => [
                 'required', 'max:255', 'string', 'min:3',
-                new FieldIsUniqueRule((new Page)->getTable(), 'name', $withTrashed),
+                new FieldIsUniqueRule((new PageGroup)->getTable(), 'name', $withTrashed),
             ],
             'order' => [
                 'sometimes' , 'required', 'numeric', 
@@ -490,7 +542,7 @@ class PageGroupingController extends MainController
             'name' =>  [
                 'required', 'max:255', 'string', 'min:3',
                 // (string $table, string $field, $value, bool $withTrashed = false)
-                new FieldIsUniqueOrEqualRule((new Page)->getTable(), 'name', $name, $withTrashed),
+                new FieldIsUniqueOrEqualRule((new PageGroup)->getTable(), 'name', $name, $withTrashed),
             ],
             'order' => [
                 'sometimes' , 'required', 'numeric', 
