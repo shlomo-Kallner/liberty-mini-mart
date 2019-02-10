@@ -422,7 +422,22 @@ class PageGroupingController extends MainController
                 $pageGroup = $menu->updateWith(
                     $request->name, intval($request->order??-1), true
                 ); 
+                if (Functions::testVar($pageGroup) && $pageGroup === $menu) {
+                    self::addMsg('Navigation Menu ' . $menu->name . ' Modified Successfully!');
+                    $path = 'admin/menus';
+                } else {
+                    self::addMsg("Uhhh, if we got here then Navigation Menu Modification FAILED!!!");
+                    self::addMsg("You probably chose an in use name...");
+                    //dd($page);
+                    $passed = null;
+                }
             }
+            $path = $passed || Str::contains($path, 'edit') ? $path : $path . '/edit';
+            return UserSession::updateRedirect(
+                $request, $path, $validator, 
+                !$passed ? $request->all()
+                : []
+            );
         }
         UserSession::updateAndAbort($request, 404);
     }
