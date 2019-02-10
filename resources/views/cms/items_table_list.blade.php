@@ -167,6 +167,9 @@
                                     @if (Functions::isPropKeyIn($items2[0], 'quantity'))
                                         <th class="goods-page-quantity">Quantity</th>
                                     @endif
+                                    @if (Functions::isPropKeyIn($items2[0], 'order'))
+                                        <th class="goods-page-quantity">Order</th>
+                                    @endif
                                     @if (Functions::isPropKeyIn($items2[0], 'price'))
                                         <th class="goods-page-price">Unit price</th>
                                     @endif
@@ -238,6 +241,13 @@
                                                 <div class="product-quantity">
                                                     <input id="product-quantity" type="text" value="{{ $item['quantity'] }}" class="form-control input-sm">
                                                 </div>
+                                            </td>
+                                        @endif
+                                        @if (Functions::isPropKeyIn($item, 'order'))
+                                            <td class="goods-page-quantity">
+                                                <p>
+                                                    {{ $item['order'] }}
+                                                </p>
                                             </td>
                                         @endif
                                         @if (Functions::isPropKeyIn($item, 'price'))

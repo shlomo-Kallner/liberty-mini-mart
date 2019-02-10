@@ -93,7 +93,7 @@ trait ContainerID
 
     final public function getFullUrl(string $baseUrl, bool $fullUrl = false)
     {
-        $surl = $this->getUrlFragment($baseUrl);
+        $surl = $this->getUrlFragment($baseUrl, false);
         $url = $surl . $this->getUrl();
         return $fullUrl ? url($url) : $url;
     }

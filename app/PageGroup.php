@@ -13,7 +13,9 @@ use Illuminate\Database\Eloquent\Model,
 
 class PageGroup extends Model implements TransformableContainer
 {
-    use ContainerTransforms;
+    use ContainerTransforms {
+        ContainerTransforms::toTableArray as private traitToTableArray;
+    }
     
     /**
      * The table associated with the model.
@@ -42,6 +44,45 @@ class PageGroup extends Model implements TransformableContainer
             }
         }
         return null;
+    }
+
+    public function updateWith(
+        string $name, int $order = -1, bool $retObj = false
+    ) {
+        $tmp = self::where(
+            [
+                ['name', '=', $name],
+                ['order', '=', $order],
+                ['id', '<>', $this->id],
+            ]
+        )->get();
+        if (!Functions::testVar($tmp) || !Functions::countHas($tmp)) {
+            if ($order !== $this->order && $order >= 1) { 
+                self::orderAround($order);
+                $this->order = $order;
+            }
+            if (Functions::testVar($name) && $name !== $this->name) {
+                $this->name = $name;
+            }
+            //$data->uuid = Uuid::generate(5, '/menus/' . $name, Uuid::NS_URL);
+            if ($this->save()) {
+                return $retObj ? $this : $this->id;
+            }
+        }
+        return null;
+    }
+
+    public function toTableArray(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
+    ) {
+        $content = $this->traitToTableArray(
+            $baseUrl, $version, $useTitle, $withTrashed,
+            $fullUrl
+        );
+        $content['order'] = $this->order;
+        return $content;
     }
 
     static public function orderAround(int $order)
