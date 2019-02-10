@@ -451,7 +451,46 @@ class PageGroupingController extends MainController
      */
     public function destroy(Request $request)
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $menu = PageGroup::getNamed($request->menu, $is_admin);
+        $pagesData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'pagesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UsePageGroupings' => false,
+            'UseGetSelf' => false,
+            'Transform' => PageGroup::TO_TABLE_ARRAY_TRANSFORM,
+        ];
+        if (Functions::testVar($menu)) {
+            $groupings = PageGrouping::getGroup($menu, 'asc', false);
+            if (Functions::testVar($groupings) && Functions::countHas($groupings)) {
+                foreach ($groupings as $g) {
+                    $g->delete();
+                }
+            }
+            $menu->delete();
+            $errors = [];
+            if ($menu->trashed()) {
+                self::addMsg('Menu ' . $menu->name . ' Deleted Successfully!');
+            } else {
+                $errors = [
+                    'error' => 'Menu ' . $menu->name . ' Deletion failed!'
+                ];
+            }
+            return UserSession::updateRedirect(
+                $request, 'admin/menus', $errors
+            );
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     public function showDelete(Request $request)
