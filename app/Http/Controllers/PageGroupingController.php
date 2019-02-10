@@ -391,7 +391,40 @@ class PageGroupingController extends MainController
      */
     public function update(Request $request)
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $menu = PageGroup::getNamed($request->menu, $is_admin);
+        $pagesData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'pagesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UsePageGroupings' => false,
+            'UseGetSelf' => false,
+            'Transform' => PageGroup::TO_TABLE_ARRAY_TRANSFORM
+        ];
+        if (Functions::testVar($menu)) {
+            $validator = Validator::make(
+                $request->all(), 
+                self::modificationValidationRules($menu->name, false), 
+                self::modificationValidationMessages()
+            );
+            $path = $request->path();
+            $passed = $validator->passes();
+            if ($passed) {
+                $pageGroup = $menu->updateWith(
+                    $request->name, intval($request->order??-1), true
+                ); 
+            }
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
