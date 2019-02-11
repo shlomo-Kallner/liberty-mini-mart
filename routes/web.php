@@ -62,8 +62,8 @@ Route::middleware('userguard')->group(
 
         Route::get('cart/{cart?}', 'CartController@show');
         //Route::get('wishlist/{wishlist?}', 'WishlistController@show');
-        Route::get('checkout', 'ShopController@checkout');
-        //Route::post('checkout', )
+        Route::get('checkout', 'OrderController@create');
+        Route::post('checkout', 'OrderController@store');
 
         Route::prefix('user')->group(
             function () {
@@ -72,7 +72,9 @@ Route::middleware('userguard')->group(
                 
                 Route::get('{user?}', 'UserController@show');
                 //Route::get('{user}', 'PageController@index1');
-
+                Route::get('{user}/orders', 'OrderController@index');
+                Route::get('{user}/orders/{order}', 'OrderController@show');
+                
             }
         );
 
@@ -137,6 +139,13 @@ Route::middleware('adminguard')->prefix('admin')->group(
             ]
         );
         Route::get('user/{user}/delete', 'UserController@showDelete');
+        
+        Route::resource(
+            '{user}/orders', 'OrderController', 
+            [
+                'parameters' => ['order' => 'order']
+            ]
+        );
 
         // 'page/' goes to 'index()' which returns 'all-pages' of the site..
         Route::resource(
