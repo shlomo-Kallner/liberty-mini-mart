@@ -57,3 +57,34 @@ if (window.jQuery('#masterPagination').length > 0) {
     }
   );
 }
+
+if (window.jQuery('#goodsData').length > 0) {
+  window.Laravel.page.goods = new window.Vue(
+    {
+      el: '#goodsData',
+      template: '<cart-details-component v-bind:initCart="cart" v-bind:baseUrl="baseUrl"></cart-details-component>',
+      data: {
+        baseUrl: window.Laravel.baseUrl,
+        cartData: JSON.parse(window.Laravel.cart)
+      },
+      computed: {
+        cart: {
+          get: function () {
+            return this.cartData
+          },
+          set: function (data) {
+            if (typeof data === 'string') {
+              this.cartData = JSON.parse(data);
+            } else if (typeof data === 'object') {
+              this.cartData = data;
+            }
+          }
+        }
+      }
+    }
+  )
+  window.Laravel.page.setGoods = function (data) {
+    window.Laravel.page.setCart(data)
+    window.Laravel.page.goods.cartData = data
+  }
+}

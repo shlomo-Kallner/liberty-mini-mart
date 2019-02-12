@@ -6,7 +6,16 @@
             <i :class="iconUp"></i>
         </btn>
       </span>
-      <input type="text" class="form-control" placeholder="Search for...">
+      <input 
+        type="text" class="form-control text-center"
+        @wheel="onWheel"
+        pattern="\d*"
+        @mouseup="selectInputValue"
+        @keydown.prevent.up="addTick(1)"
+        @keydown.prevent.down="subTick(1)"
+        :readonly="readonly"
+        v-model.lazy="our_value"
+        >
       <span class="input-group-btn">
         <btn type="link" size="sm" @click="subTick(1)" >
             <i :class="iconDown"></i>
@@ -17,7 +26,7 @@
 </template>
 
 <script>
-import Btn from 'uiv'
+import {Btn} from 'uiv'
 
   export default {
     components: {
@@ -25,8 +34,8 @@ import Btn from 'uiv'
     },
     props: {
       value: {
-        default: 1,
-        type: Number
+        type: Number,
+        required: true
       },
       upIcon: {
         type: String,
@@ -35,6 +44,10 @@ import Btn from 'uiv'
       downIcon: {
         type: String,
         default: 'fa fa-angle-down'
+      },
+      readonly: {
+        type: Boolean,
+        default: false
       }
     },
     data: function () {
@@ -54,10 +67,34 @@ import Btn from 'uiv'
     },
     methods: {
       addTick: function (val) {
-        this.our_value += val;
+        if (!this.readonly) {
+          this.our_value += val;
+          this.changeVal(this.our_value)
+        }
       },
       subTick: function (val) {
-        this.our_value -= val;
+        if (!this.readonly) {
+          this.our_value -= val;
+          this.changeVal(this.our_value)
+        }
+      },
+      onWheel: function (e) {
+        if (!this.readonly) {
+          e.preventDefault()
+          var val = Math.floor(e.deltaY)
+          this.our_value += val
+          this.changeVal(this.our_value)
+        }
+      },
+      changeVal: function (val) {
+        if (!this.readonly) {
+          this.$emit('update:value', val)
+        }
+      },
+      selectInputValue: function (e) {
+        // mouseup should be prevented!
+        // See various comments in https://stackoverflow.com/questions/3272089/programmatically-selecting-text-in-an-input-field-on-ios-devices-mobile-safari
+        e.target.select();
       }
     }
   }

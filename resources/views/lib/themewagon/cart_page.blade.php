@@ -1,6 +1,6 @@
 
 @php
-    $testing = true;
+    $testing = false;
     use \App\Utilities\Functions\Functions;
 
     if ($testing) {
@@ -81,7 +81,7 @@
                 'icon' => 'fa-check',
             ]
         ];
-    } else {
+    } elseif (false) {
         $cart2 = [
             [
                 'url' => 'javascript:;',

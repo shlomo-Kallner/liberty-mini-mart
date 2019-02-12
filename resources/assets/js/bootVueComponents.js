@@ -3,6 +3,8 @@ window.Vue.component('dismissable-alert', require('./components/lib/dismissable-
 window.Vue.component('cart-component', require('./components/metronic/cart.vue'))
 window.Vue.component('boot-pagination', require('./components/lib/bootPaginator.vue'))
 window.Vue.component('boot-carousel', require('./components/lib/bootCarousel.vue'))
+window.Vue.component('boot-touchspin', require('./components/lib/bootTouchspin.vue'))
+window.Vue.component('cart-details-component', require('./components/metronic/cartDetails.vue'))
 
 window.Laravel.page.alert = new window.Laravel.LaravelAlert(window.Laravel.alert)
 

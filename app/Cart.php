@@ -138,6 +138,21 @@ class Cart extends Model
                     $opts = $item->attributes->has('options') 
                         ? $item->attributes['options']
                         : [];
+                    $tConds = $item->getConditions();
+                    $conds = [];
+                    foreach ($tConds as $cond) {
+                        if ($cond->getTarget() === 'item') {
+                            $attr = $cond->getAttributes();
+                            $conds[] = [
+                                'name' => $cond->getName(),
+                                'value' => $cond->getValue(),
+                                'calcValue' => $cond->getCalculatedValue($item->price),
+                                'type' => $cond->getType(),
+                                'description' => Functions::getPropKey($attr, 'description', ''),
+                                'attributes' => $attr,
+                            ];
+                        }
+                    }
                     $cart['items'][] = [
                         'id' => $item->id,
                         'name' => $item->name,
@@ -149,12 +164,14 @@ class Cart extends Model
                             : $item->attributes['img'],
                         'description' => $item->attributes['description'],
                         'quantity' => $item->quantity,
-                        'priceSum' => $item->getPriceSumWithConditions(false),
+                        'priceSum' => $item->getPriceSumWithConditions(true),
                         'price' => $item->price,
+                        'priceCalc' => $item->getPriceWithConditions(true),
                         'api' => $asUrl 
                             ? url($item->attributes['api'])
                             : $item->attributes['api'],
                         'options' => $opts,
+                        'conditions' => $conds,
                     ];
                 } else {
                     $cart['items'][] = $item;
@@ -163,6 +180,25 @@ class Cart extends Model
             $cart['subTotal'] = $darrylCart->getSubTotal();
             $cart['totalItems'] = $darrylCart->getTotalQuantity();
             $cart['total'] = $darrylCart->getTotal();
+            $cnTmp = $darrylCart->getConditions()->all();
+            foreach ($cnTmp as $cond) {
+                if ($asArray) {
+                    $attr = $cond->getAttributes();
+                    $calVal = $cond->getTarget() === 'total'
+                    ? $cart['total'] : $cart['subTotal'];
+                    $cart['conditions'][] = [
+                        'name' => $cond->getName(),
+                        'value' => $cond->getValue(),
+                        'calcValue' => $cond->getCalculatedValue($calVal),
+                        'type' => $cond->getType(),
+                        'description' => Functions::getPropKey($attr, 'description', ''),
+                        'attributes' => $attr,
+                    ];
+                } else {
+                    $cart['conditions'][] = $cond;
+                }
+            }
+            
         }
         return $cart;
     }

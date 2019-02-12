@@ -14,8 +14,8 @@
 
         <div class="top-cart-content-wrapper">
             <div class="top-cart-content">
-                <ul class="scroller" style="height: 250px;" v-if="this.itemsLength > 0">
-                    <li v-for="item in this.items" v-bind:key="item.id">
+                <ul class="scroller" style="height: 250px;" v-if="itemsLength > 0">
+                    <li v-for="item in items" v-bind:key="item.id">
                         <a :href="item.url">
                             <img :src="item.img" :alt="item.description" width="37" height="34">
                         </a>
@@ -48,10 +48,10 @@
                 </ul>
                 <div class="pull-right">
 
-                    <a :href="this.baseUrl + '/cart'" class="btn btn-default">
+                    <a :href="baseUrl + '/cart'" class="btn btn-default">
                         View Cart
                     </a>
-                    <a :href="this.baseUrl + '/checkout'" class="btn btn-primary">
+                    <a :href="baseUrl + '/checkout'" class="btn btn-primary">
                         Checkout
                     </a>
 
