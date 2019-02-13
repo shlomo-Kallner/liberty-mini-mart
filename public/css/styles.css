@@ -345,6 +345,16 @@ BEGIN TOP CART OVERLOADS
 /*
 END TOP CART OVERLOADS
 */
+.product-quantity,
+.product-quantity .input-group {
+  width: 70px !important;
+}
+.product-quantity .input-group .input-group-btn:first-child button {
+  top: 0 !important;
+}
+.product-quantity .input-group .input-group-btn:last-child button {
+  bottom: 0 !important;
+}
 
 
 .pagination > li > a > i.fa::before, .pagination > li > a > i::before, 

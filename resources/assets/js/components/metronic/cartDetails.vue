@@ -2,7 +2,22 @@
             
     <div class="goods-data clearfix">
         <div class="table-wrapper-responsive">
-            <table v-if="!_.isEmpty(items)" summary="Shopping cart">
+            <modal v-model="modal.show" size="lg" :title="modal.title" :footer="false">
+                <template v-slot:header>
+                    <h3><a :href="modal.url">{{modal.title}}</a></h3>      
+                </template>
+                <p>{{modal.description}}</p>
+                <div v-if="!isEmpty(modal.conditions)">
+                    <tooltip v-for="(cond, n) in modal.conditions" :key="n" 
+                        :text="cond.description" :enable="!isEmpty(cond.description)">
+                        <p>
+                            {{ cond.name }} : 
+                            <i :class="'fa ' + currency"></i>{{ cond.calcValue }}
+                        </p>
+                    </tooltip>
+                </div>
+            </modal>
+            <table v-if="!isEmpty(items)" summary="Shopping cart">
                 <tr>
                     <th class="goods-page-image">Image</th>
                     <th class="goods-page-description">Description</th>
@@ -21,17 +36,9 @@
                         </a>
                     </td>
                     <td class="goods-page-description">
-                        <h3><a :href="item.url">{{item.title}}</a></h3>
-                        <p>{{item.description}}</p>
-                        <div v-if="!_.isEmpty(item.conditions)">
-                            <tooltip v-for="(cond, n) in item.conditions" :key="n" 
-                                :text="cond.description" :enable="!_.isEmpty(cond.description)">
-                                <p>
-                                    {{ item.name }} : 
-                                    <i :class="'fa ' + currency"></i>{{ cond.calcValue }}
-                                </p>
-                            </tooltip>
-                        </div>
+                        <btn type="link" @click="showModal(item)">
+                            {{item.name}}
+                        </btn>
                     </td>
                     <!-- 
                         <td class="goods-page-ref-no">
@@ -41,7 +48,7 @@
                     <td class="goods-page-quantity">
                         <div class="product-quantity">
                             <boot-touchspin 
-                                v-bind:value="item.quantity"
+                                v-bind:value="parseInt(item.quantity)"
                                 @update:value="changeQuantiy(item, $event)"
                                 >
                             </boot-touchspin>
@@ -73,7 +80,7 @@
                     </td>
                 </tr>
             </table>
-            
+                
             <div v-else class="well well-lg">
                 <h3 class="text-center">We are Sorry! There are No Items to display!</h3>
             </div>
@@ -86,7 +93,7 @@
                     <strong class="price"><i :class="'fa ' + currency"></i>{{ subTotal }}</strong>
                 </li>
                 <li v-for="(item, index) in conditions" :key="index">
-                    <tooltip :text="item.description" :enable="!_.isEmpty(item.description)">
+                    <tooltip :text="item.description" :enable="!isEmpty(item.description)">
                         <em>{{ item.name }}</em>
                         <strong class="price">
                             <i :class="'fa ' + currency"></i>{{ item.calcValue }}
@@ -105,18 +112,28 @@
 
 <script>
     import BootTouchspin from '../lib/bootTouchspin.vue'
-    import {Tooltip} from 'uiv'
+    import {Tooltip, Modal, Btn} from 'uiv'
     import _ from 'lodash'
     export default {
         components: {
             BootTouchspin,
-            Tooltip
+            Tooltip,
+            Modal, 
+            Btn
         },
         name: 'cart-page-component',
         props: ['initCart', 'baseUrl'],
         data: function () {
             return {
-                cart: this.initCart
+                cart: this.initCart,
+                modal: {
+                    show: false,
+                    url: '',
+                    title: '',
+                    description: '',
+                    conditions: []
+                },
+                del: _.debounce(this.delFromCart, 300, {})
             }
         },
         watch: {
@@ -127,6 +144,9 @@
         computed: {
             items: function () {
                 return this.cart.items;
+            },
+            modals: function () {
+                return this.modalsArray
             },
             itemsLength: function () {
                 return _.size(this.cart.items);
@@ -164,7 +184,7 @@
                     '', 'delFromCart', window.Laravel.nut
                 )
                 var callback = function (result) {
-                    window.Laravel.page.setCart(result)
+                    window.Laravel.page.setGoods(result)
                 }
                 //
                 window.Laravel.handleCart.doAjax(
@@ -182,7 +202,7 @@
                     '', 'addToCart', window.Laravel.nut
                 )
                 var callback = function (result) {
-                    window.Laravel.page.setCart(result)
+                    window.Laravel.page.setGoods(result)
                 }
                 //
                 window.Laravel.handleCart.doAjax(
@@ -200,7 +220,7 @@
                     '', 'remFromCart', window.Laravel.nut
                 )
                 var callback = function (result) {
-                    window.Laravel.page.setCart(result)
+                    window.Laravel.page.setGoods(result)
                 }
                 //
                 window.Laravel.handleCart.doAjax(
@@ -209,14 +229,17 @@
             },
             changeQuantiy: function (item, quantity) {
                 if (_.isNumber(quantity) && _.isInteger(quantity)) {
-                    if (item.quantity != quantity) {
+                    if (item.quantity != quantity && quantity > 0) {
                         if (item.quantity > quantity) {
                             var diff = item.quantity - quantity
-                            this.remFromCart(item, diff)
+                            _.debounce(this.remFromCart(item, diff), 300, {trailing: true})
                         } else if (item.quantity < quantity) {
                             var diff = quantity - item.quantity
-                            this.addToCart(item, diff)
+                            _.debounce(this.addToCart(item, diff), 300, {trailing: true})
                         }
+                    } else if (quantity <= 0) {
+                        //this.delFromCart(item)
+                        this.changeQuantiy(item, 1)
                     }
                 }
             },
@@ -224,6 +247,19 @@
                 // var reg1 = /[&+-]{1,2}/
                 var reg = /%/
                 return reg.test(val) 
+            },
+            isEmpty: function (data) {
+                return _.isEmpty(data)
+            },
+            toInteger: function (val) {
+                return _.toInteger(val)
+            },
+            showModal: function (item) {
+                this.modal.url = item.url
+                this.modal.title = item.name
+                this.modal.description = item.description
+                this.modal.conditions = item.conditions
+                this.modal.show = true
             }
         }
     }

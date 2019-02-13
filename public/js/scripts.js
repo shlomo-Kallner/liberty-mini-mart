@@ -53,7 +53,7 @@ jQuery(function ($) {
     $('.quantity-down').html("<i class='fa fa-angle-down'></i>")
     $('.quantity-up').html("<i class='fa fa-angle-up'></i>")
   }
-  handleCartInit()
+  // handleCartInit()
 
   /*
     var getOptionVals = function (options, jquery) {
@@ -249,7 +249,7 @@ jQuery(function ($) {
         on: 'grab'
       }
     );
-    Layout.initTouchspin()
+    // Layout.initTouchspin()
     Layout.initFixHeaderWithPreHeader()
     Layout.initNavScrolling()
     Layout.initUniform()

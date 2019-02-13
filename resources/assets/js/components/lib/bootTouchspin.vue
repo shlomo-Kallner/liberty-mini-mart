@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import {Btn} from 'uiv'
+  import {Btn} from 'uiv'
 
   export default {
     components: {
@@ -99,3 +99,18 @@ import {Btn} from 'uiv'
     }
   }
 </script>
+
+<style scoped> 
+  
+  .input-group {
+    width: 70px !important;
+  }
+  .input-group .input-group-btn:first-child button {
+    top: 0 !important;
+  }
+  .input-group .input-group-btn:last-child button {
+    bottom: 0 !important;
+  }
+  
+</style>
+
