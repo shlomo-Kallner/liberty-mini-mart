@@ -170,61 +170,47 @@
                 return this.totalItems == 0 || this.totalItems > 1 
                     ? 'items'
                     : 'item';
+            },
+            doAjax: function () {
+                return _.debounce( 
+                    function (item, url, quantity, action, debug = false) {
+                        var info = {
+                            id: item.id,
+                            numProducts: quantity
+                        }
+                        var url = item.api + url
+                        var data = window.Laravel.handleCart.makeData(
+                            info, url, window.Laravel.csrfToken,
+                            '', action, window.Laravel.nut
+                        )
+                        var callback = function (result) {
+                            window.Laravel.page.setGoods(result)
+                        }
+                        //
+                        window.Laravel.handleCart.doAjax(
+                            window.jQuery, data, 'POST', callback, debug
+                        )
+                    }, 
+                    500, {trailing: true})
             }
         },
         methods: {
             delFromCart: function (item) {
-                var info = {
-                    id: item.id,
-                    numProducts: item.quantity
-                }
-                var url = item.api + '/delfromcart'
-                var data = window.Laravel.handleCart.makeData(
-                    info, url, window.Laravel.csrfToken,
-                    '', 'delFromCart', window.Laravel.nut
-                )
-                var callback = function (result) {
-                    window.Laravel.page.setGoods(result)
-                }
-                //
-                window.Laravel.handleCart.doAjax(
-                    window.jQuery, data, 'POST', callback
+                this.doAjax(
+                    item, '/delfromcart', item.quantity, 
+                    'delFromCart', false
                 )
             },
             addToCart: function (item, quantity) {
-                var info = {
-                    id: item.id,
-                    numProducts: quantity
-                }
-                var url = item.api + '/addtocart'
-                var data = window.Laravel.handleCart.makeData(
-                    info, url, window.Laravel.csrfToken,
-                    '', 'addToCart', window.Laravel.nut
-                )
-                var callback = function (result) {
-                    window.Laravel.page.setGoods(result)
-                }
-                //
-                window.Laravel.handleCart.doAjax(
-                    window.jQuery, data, 'POST', callback
+                this.doAjax(
+                    item, '/addtocart', quantity, 
+                    'addToCart', false
                 )
             },
             remFromCart: function (item, quantity) {
-                var info = {
-                    id: item.id,
-                    numProducts: quantity
-                }
-                var url = item.api + '/remfromcart'
-                var data = window.Laravel.handleCart.makeData(
-                    info, url, window.Laravel.csrfToken,
-                    '', 'remFromCart', window.Laravel.nut
-                )
-                var callback = function (result) {
-                    window.Laravel.page.setGoods(result)
-                }
-                //
-                window.Laravel.handleCart.doAjax(
-                    window.jQuery, data, 'POST', callback
+                this.doAjax(
+                    item, '/remfromcart', quantity, 
+                    'remFromCart', false
                 )
             },
             changeQuantiy: function (item, quantity) {
@@ -232,10 +218,10 @@
                     if (item.quantity != quantity && quantity > 0) {
                         if (item.quantity > quantity) {
                             var diff = item.quantity - quantity
-                            _.debounce(this.remFromCart(item, diff), 300, {trailing: true})
+                            this.remFromCart(item, diff)
                         } else if (item.quantity < quantity) {
                             var diff = quantity - item.quantity
-                            _.debounce(this.addToCart(item, diff), 300, {trailing: true})
+                            this.addToCart(item, diff)
                         }
                     } else if (quantity <= 0) {
                         //this.delFromCart(item)

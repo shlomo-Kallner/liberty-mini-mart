@@ -2,11 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Order;
-use Illuminate\Http\Request;
+use App\Page,
+    App\Cart,
+    App\Order,
+    App\UserSession;
+use Illuminate\Http\Request,
+    App\Utilities\Functions\Functions,
+    App\Rules\FieldIsUniqueRule,
+    App\Rules\FieldIsUniqueOrEqualRule,
+    Illuminate\Support\Facades\Log,
+    Illuminate\Support\Facades\Validator,
+    Illuminate\Support\Str;
 
 class OrderController extends MainController
 {
+    
+    public function __construct($name = '', $titleNameSep = ' | ') 
+    {
+        parent::__construct($name, $titleNameSep);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +29,88 @@ class OrderController extends MainController
      */
     public function index(Request $request)
     {
-        //
+        $ordersData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'ordersPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => Functions::isAdminPath($request->path()),
+            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => Order::TO_TABLE_ARRAY_TRANSFORM
+        ];
+        $usePagination = false;
+        if ($usePagination) {
+            $pv = Order::getPagingVars(
+                $request, $ordersData['PagingFor'], $ordersData['NumShown'],
+                $ordersData['Dir']
+            );
+            if (Functions::testVar($pv)) {
+                $ordersData['PageNum'] = $pv['pageNum'];
+                $ordersData['ViewNum'] = $pv['viewNum'];
+                if (Functions::hasPropKeyIn($pv, 'limit')) {
+                    $ordersData['NumShown'] = $pv['limit'];
+                }
+            } 
+            $orders = Order::getAllWithPagination(
+                $ordersData['Transform'], $ordersData['PageNum'], 
+                $ordersData['NumShown'], $ordersData['PagingFor'], 
+                $ordersData['Dir'], $ordersData['WithTrashed'], 
+                $ordersData['BaseUrl'], $ordersData['ListUrl'], 
+                $ordersData['ViewNum'], $ordersData['FullUrl'], 
+                $ordersData['UseTitle'], 1, $ordersData['Default'], 
+                $ordersData['UseBaseMaker']
+            );
+            if ($ordersData['UseGetSelf']) {
+                $children = Functions::countHas($orders) 
+                    ? $orders['items'] : null;
+                $paginator = Functions::countHas($orders) 
+                    ? $orders['pagination'] : null;
+                $orders_index = Order::getSelf(
+                    $ordersData['BaseUrl'], $ordersData['WithTrashed'],
+                    $ordersData['FullUrl'], $children, 
+                    $paginator, $ordersData['PagingFor']
+                );
+            }
+        } else {
+            $orders = [];
+            $orders['items'] = Order::getAllWithTransform(
+                $ordersData['Transform'], $ordersData['Dir'], 
+                $ordersData['WithTrashed'], $ordersData['BaseUrl'], 
+                $ordersData['UseTitle'], $ordersData['FullUrl'], 
+                1, $ordersData['Default'], $ordersData['UseBaseMaker']
+            );
+        }
+        //dd($pages);
+        if ($request->ajax()) {
+            return $orders;
+        } else {
+            $title = 'Our Client\'s Orders';
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            if (Functions::isAdminPath($request->path())) {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+            }
+            $breadcrumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb(
+                    $title, 
+                    Order::genUrlFragment($ordersData['BaseUrl'], $ordersData['FullUrl'])
+                ),
+                $bcLinks
+            );
+            return self::getView(
+                $request, 'cms.items_table', $title, $orders, false, $breadcrumbs, null,
+                Functions::isAdminPath($request->path()) 
+                ? CmsController::getAdminSidebar() : null
+            );
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
@@ -24,7 +120,19 @@ class OrderController extends MainController
      */
     public function create(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            return Cart::getCurrentCart($request, true);
+        } else {
+            return self::getView(
+                $request, 'content.cart', 'Shopping Cart Details', 
+                [
+                    'header' => 'Shopping Cart Details'
+                ], false, 
+                Page::getBreadcrumbs(
+                    Page::genBreadcrumb('cart', 'cart')
+                )
+            );
+        }
     }
 
     /**

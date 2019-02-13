@@ -16,6 +16,12 @@ use App\PageGrouping,
 
 class PageGroupingController extends MainController
 {
+    
+    public function __construct($name = '', $titleNameSep = ' | ') 
+    {
+        parent::__construct($name, $titleNameSep);
+    }
+    
     /**
      * Display a listing of the resource.
      *

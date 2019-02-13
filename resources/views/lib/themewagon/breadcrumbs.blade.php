@@ -43,7 +43,9 @@ $crumbs = Functions::getUnBladedContent($breadcrumbs??'', [
             @endforeach
         @endif
             
-        @if ( !empty($crumbs['current']['url']) && !empty($crumbs['current']['name']) )
+        @if ( !empty($crumbs['current']['url']) && !empty($crumbs['current']['name']) 
+            && $crumbs['current']['url'] != 'home' && $crumbs['current']['name'] != 'Home'
+        )
             <li class="active">{!! $crumbs['current']['name'] !!}</li>
         @endif
                 

@@ -61,17 +61,12 @@ class CartController extends MainController
     public function show(Request $request)
     {
         //
-        $cart = Cart::getCurrentCart($request, true);
-        if ($request->ajax()) {
-            return $cart;
-        } else {
-            return self::getView(
-                $request, 'content.cart', 'Shopping Cart Details', 
-                ['cart' => $cart], false, 
-                Page::getBreadcrumbs(
-                    Page::genBreadcrumb('cart', 'cart')
-                )
+        if (!Functions::testVar($request->cart)) {
+            return UserSession::updateRedirect(
+                $request, 'checkout'
             );
+        } else {
+            abort(404);
         }
     }
 

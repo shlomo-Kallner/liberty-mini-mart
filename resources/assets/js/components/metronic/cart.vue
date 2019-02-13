@@ -48,9 +48,11 @@
                 </ul>
                 <div class="pull-right">
 
-                    <a :href="baseUrl + '/cart'" class="btn btn-default">
-                        View Cart
-                    </a>
+                    <!--
+                        <a :href="baseUrl + '/cart'" class="btn btn-default">
+                            View Cart
+                        </a>
+                    -->
                     <a :href="baseUrl + '/checkout'" class="btn btn-primary">
                         Checkout
                     </a>
@@ -122,3 +124,9 @@
 
     }
 </script>
+
+<style scoped>
+    .top-cart-content .pull-right .btn {
+        width: 120px;
+    }
+</style>
