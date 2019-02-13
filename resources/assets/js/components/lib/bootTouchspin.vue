@@ -2,7 +2,7 @@
   <div>
     <div class="input-group">
       <span class="input-group-btn">
-        <btn type="link" size="sm" @click="addTick(1)" >
+        <btn type="link" size="sm" @click="addTick(1, true)" >
             <i :class="iconUp"></i>
         </btn>
       </span>
@@ -11,13 +11,13 @@
         @wheel="onWheel"
         pattern="\d*"
         @mouseup="selectInputValue"
-        @keydown.prevent.up="addTick(1)"
-        @keydown.prevent.down="subTick(1)"
-        :readonly="readonly"
-        v-model.lazy="our_value"
+        @keydown.prevent.up="addTick(1, false)"
+        @keydown.prevent.down="subTick(1, false)"
+        :readonly="isReadOnly"
+        v-model="our_value"
         >
       <span class="input-group-btn">
-        <btn type="link" size="sm" @click="subTick(1)" >
+        <btn type="link" size="sm" @click="subTick(1, true)" >
             <i :class="iconDown"></i>
         </btn>
       </span>
@@ -48,6 +48,10 @@
       readonly: {
         type: Boolean,
         default: false
+      },
+      extraControls: {
+        type: Boolean,
+        default: false
       }
     },
     data: function () {
@@ -63,23 +67,30 @@
       },
       iconDown: function () {
         return this.our_down_icon
+      },
+      isReadOnly: function () {
+        return !this.extraControls || this.readonly
       }
     },
     methods: {
-      addTick: function (val) {
+      addTick: function (val, isButton) {
         if (!this.readonly) {
-          this.our_value += val;
-          this.changeVal(this.our_value)
+          if (isButton || this.extraControls) {
+            this.our_value += val;
+            this.changeVal(this.our_value)
+          }
         }
       },
-      subTick: function (val) {
+      subTick: function (val, isButton) {
         if (!this.readonly) {
-          this.our_value -= val;
-          this.changeVal(this.our_value)
+          if (isButton || this.extraControls) {
+            this.our_value -= val;
+            this.changeVal(this.our_value)
+          }
         }
       },
       onWheel: function (e) {
-        if (!this.readonly) {
+        if (!this.isReadOnly) {
           e.preventDefault()
           var val = Math.floor(e.deltaY)
           this.our_value += val

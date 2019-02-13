@@ -129,7 +129,7 @@ class OrderController extends MainController
                     'header' => 'Shopping Cart Details'
                 ], false, 
                 Page::getBreadcrumbs(
-                    Page::genBreadcrumb('cart', 'cart')
+                    Page::genBreadcrumb('checkout', 'checkout')
                 )
             );
         }

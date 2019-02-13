@@ -133,7 +133,7 @@
                     description: '',
                     conditions: []
                 },
-                del: _.debounce(this.delFromCart, 300, {})
+                debug: true
             }
         },
         watch: {
@@ -172,6 +172,7 @@
                     : 'item';
             },
             doAjax: function () {
+                var _this = this
                 return _.debounce( 
                     function (item, url, quantity, action, debug = false) {
                         var info = {
@@ -185,6 +186,7 @@
                         )
                         var callback = function (result) {
                             window.Laravel.page.setGoods(result)
+                            _this.$forceUpdate()
                         }
                         //
                         window.Laravel.handleCart.doAjax(
@@ -210,7 +212,7 @@
             remFromCart: function (item, quantity) {
                 this.doAjax(
                     item, '/remfromcart', quantity, 
-                    'remFromCart', false
+                    'remFromCart', this.debug
                 )
             },
             changeQuantiy: function (item, quantity) {

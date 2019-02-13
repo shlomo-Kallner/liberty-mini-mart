@@ -60,7 +60,6 @@ class CartController extends MainController
      */
     public function show(Request $request)
     {
-        //
         if (!Functions::testVar($request->cart)) {
             return UserSession::updateRedirect(
                 $request, 'checkout'
@@ -111,60 +110,63 @@ class CartController extends MainController
 
     public function doCartAction(Request $request, string $action = '')
     {
-        $section = Section::getSection($request->section, false);
-        $category = $section->getCategory($request->category);
-        $product = $category->getProduct($request->product);
-        $productSB = $product->toSidebar('store');
-        $cart = Cart::getSessionCart();
-        $numProducts = $request->input('info.numProducts') ?? 1;
-        if ($action == 'addToCart') {
-            if ($cart->has($product->id)) {
-                $cart->update($product->id, ['quantity' => $numProducts]);
-            } else {
-                $cart->add(
-                    $product->id, $product->name, $productSB['price'],
-                    $numProducts,
-                    [
-                        'url' => url($productSB['url']),
-                        'img' => asset($productSB['img']),
-                        'description' => $product->description,
-                        'api' => url($product->getFullUrl('api/store')),
-                    ]
-                );
-            }
-        } elseif ($action == 'delFromCart') {
-            if ($cart->has($product->id)) {
-                $cart->remove($product->id);
-            }
-        } elseif ($acton == 'remFromCart') {
-            if ($cart->has($product->id)) {
-                $cart->update(
-                    $product->id, 
-                    ['quantity' => $numProducts > 0 ? -1 * $numProducts : $numProducts ]
-                );
+        $section = Section::getSection($request->section);
+        if (Functions::testVar($section)) {
+            $category = $section->getCategory($request->category);
+            if (Functions::testVar($category)) {
+                $product = $category->getProduct($request->product);
+                if (Functions::testVar($product)) {
+                    $productSB = $product->toSidebar('store', 1, true, false, true);
+                    if (Functions::testVar($numProducts = $request->input('info.numProducts'))) {
+                        if (Functions::testVar($cart = Cart::getSessionCart())) {
+                            $bol = false;
+                            if ($cart->has($product->id)) {
+                                if ($action == 'delFromCart') {
+                                    $cart->remove($product->id);
+                                    $bol = true;
+                                } else {
+                                    $num = 0;
+                                    if ($action == 'addToCart' && $numProducts > 0) {
+                                        $num = $numProducts;
+                                    } elseif ($action == 'remFromCart') {
+                                        if ($numProducts > 0) {
+                                            $num = -1 * $numProducts;
+                                        } elseif ($numProducts < 0) {
+                                            $num = $numProducts;
+                                        }
+                                    }
+                                    if ($num != 0) {
+                                        $cart->update($product->id, ['quantity' => $num ]);
+                                        $bol = true;
+                                    }
+                                }
+                            } elseif ($action == 'addToCart') {
+                                $cart->add(
+                                    $product->id, $product->name, $productSB['price'],
+                                    $numProducts,
+                                    [
+                                        'url' => $productSB['url'],
+                                        'img' => asset($productSB['img']),
+                                        'description' => $product->description,
+                                        'api' => $product->getFullUrl('api/store', true),
+                                    ]
+                                );
+                                $bol = true;
+                            }
+                            if ($bol) {
+                                return Cart::getCurrentCart(
+                                    $request, true, 'fa-usd', $cart
+                                );
+                            }
+                        }
+                    }                    
+                }
             }
         }
-        $user = $request->session()->has('user') 
-            ? $request->session()->get('user.id')
-            : null;
-        //dd($request, $user, $cart);
-        /* 
-            $cart1 = Cart::storeOrCreateCurrentCart(
-                $request, $user, $cart
-            ); 
-        */
-        if (!true) {
-            return Functions::genDumpResponse($request, $user, $cart);
-        } elseif (true) {
-            return Cart::getCurrentCart(
-                $request, true, 'fa-usd', $cart
-            );
-        } else {
-            return Functions::genDumpResponse(
-                $request, Cart::getCurrentCart($request), 
-                $cart
-            );
-        }
+        return Functions::genDumpResponse(
+            $request, Cart::getCurrentCart($request),
+            $action
+        );
     }
 
     public function addToCart(Request $request) 

@@ -322,11 +322,13 @@ class Functions
             foreach ($data as $val) {
                 $tmp[] = $dumper->dump((new VarCloner)->cloneVar($val), true);
             }
+            Log::info('ajax message in '. __METHOD__ , $tmp);
             return new JsonResponse($tmp);
         } else {
             $dumper = new HtmlDumper;
             $data[] = $request;
             $tmp = $dumper->dump((new VarCloner)->cloneVar($data), true);
+            Log::info('html message in '. __METHOD__ , $tmp);
             return new Response($tmp);
         }
     }
