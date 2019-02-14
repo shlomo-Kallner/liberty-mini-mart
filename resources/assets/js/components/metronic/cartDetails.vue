@@ -29,7 +29,13 @@
                     <th class="goods-page-price">Unit price after discounts</th>
                     <th class="goods-page-total" colspan="2">Total</th>
                 </tr>
-                <tr v-for="(item, index) in items" :key="index">
+                <cart-detail-item
+                    v-for="item in items" :key="item.id"
+                    :item="item" :base-url="baseUrl" 
+                    :currency="currency"
+                    >
+                </cart-detail-item>
+                <tr v-for="item in items" :key="item.id">
                     <td class="goods-page-image">
                         <a :href="item.img" class="btn btn-default fancybox.image fancybox-button">
                             <img :src="item.img" :alt="item.name" class="img-responsive">
@@ -112,11 +118,14 @@
 
 <script>
     import BootTouchspin from '../lib/bootTouchspin.vue'
+    import CartDetailItem from './cartDetailsItem.vue'
     import {Tooltip, Modal, Btn} from 'uiv'
     import _ from 'lodash'
+    
     export default {
         components: {
             BootTouchspin,
+            CartDetailItem,
             Tooltip,
             Modal, 
             Btn
@@ -186,7 +195,7 @@
                         )
                         var callback = function (result) {
                             window.Laravel.page.setGoods(result)
-                            _this.$forceUpdate()
+                            //_this.$forceUpdate()
                         }
                         //
                         window.Laravel.handleCart.doAjax(
