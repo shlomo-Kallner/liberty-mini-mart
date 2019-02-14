@@ -310,19 +310,20 @@ class Page extends Model implements TransformableContainer
         );
     }
 
-    /* public function toTableArray(
-        string $baseUrl = 'store', int $version = 1, 
-        bool $useTitle = true, bool $withTrashed = true,
-        bool $fullUrl = false
-    ) {
-        $url = $this->getFullUrl($baseUrl, $fullUrl);
-        return self::makeTableArray(
-            $this->name, $url, $useTitle ? $this->title : $this->image->alt,
-            $this->image, $this->description,
-            $this->sticker, $this->getDatesArray(),  $this->id,
-            [], '', '', []
-        );
-    } */
+    /*  public function toTableArray(
+            string $baseUrl = 'store', int $version = 1, 
+            bool $useTitle = true, bool $withTrashed = true,
+            bool $fullUrl = false
+        ) {
+            $url = $this->getFullUrl($baseUrl, $fullUrl);
+            return self::makeTableArray(
+                $this->name, $url, $useTitle ? $this->title : $this->image->alt,
+                $this->image, $this->description,
+                $this->sticker, $this->getDatesArray(),  $this->id,
+                [], '', '', []
+            );
+        } 
+    */
 
     public function numChildren(bool $withTrashed = true)
     {

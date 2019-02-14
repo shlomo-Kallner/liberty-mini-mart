@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Page,
     App\Cart,
     App\Order,
+    App\User,
     App\UserSession;
 use Illuminate\Http\Request,
     App\Utilities\Functions\Functions,
@@ -143,7 +144,41 @@ class OrderController extends MainController
      */
     public function store(Request $request)
     {
-        //
+        $cart = Cart::getSessionCart(true);
+        $user = User::getIdFromUserArray(true, null, $request);
+        $path = $request->path();
+        $errors = [];
+        if (Functions::testVar($user)) {
+            if (Functions::testVar($cart)) {
+                if (!$cart->isEmpty()) {
+                    $content = [
+                        'order_cart_items' => $cart->getContent(),
+                        'order_cart_conditions' => $cart->getConditions()
+                    ];
+                    $order = Order::createNew(
+                        $user, $cart->getTotal(), $content,
+                        [], '', true
+                    );
+                    if (Functions::testVar($order)) {
+                        $cart->clear();
+                        $cart->clearCartConditions();
+                        self::addMsg('Your Order has Been Successfully Placed!');
+                        $path = 'store';
+                    } else {
+                        $errors['error'] = 'We Are Sorry! Your Order Could Not Be Placed!';
+                    }
+                } else {
+                    $errors['error'] = 'We Are Sorry! Your Cart is Empty!';
+                }
+            } else {
+                $errors['error'] = 'We Are Sorry! Your Cart is Empty!';
+            }
+        } else {
+            $errors['error'] = 'We Are Sorry! You are Not Logged in! Please Log in and try again.';
+        }
+        return UserSession::updateRedirect(
+            $request, $path, $errors
+        );
     }
 
     /**
@@ -154,7 +189,27 @@ class OrderController extends MainController
      */
     public function show(Request $request)
     {
-        //
+        $ordersData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'ordersPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => Functions::isAdminPath($request->path()),
+            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => Order::TO_TABLE_ARRAY_TRANSFORM
+        ];
+        $order = Order::getNamed($request->order, $ordersData['WithTrashed']);
+        if (Functions::testVar($order)) {
+            /
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**

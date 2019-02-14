@@ -17,7 +17,7 @@
                 <cart-detail-item
                     v-for="item in items" :key="item.id"
                     :value="item" :base-url="baseUrl" 
-                    :currency="currency"
+                    :currency="currency" :debug="debug"
                     >
                 </cart-detail-item>
             </table>
@@ -37,7 +37,7 @@
                     <tooltip :text="item.description" :enable="!isEmpty(item.description)">
                         <em>{{ item.name }}</em>
                         <strong class="price">
-                            <i :class="'fa ' + currency"></i>{{ item.calcValue }}
+                            <i :class="'fa ' + currency"></i>{{ toFoat(item.calcValue) }}
                         </strong>
                     </tooltip>
                 </li>
@@ -66,7 +66,14 @@
             Btn
         },
         name: 'cart-page-component',
-        props: ['initCart', 'baseUrl'],
+        props: {
+            initCart: Object,
+            baseUrl: String,
+            debug: {
+                type: Boolean,
+                default: false
+            }
+        },
         data: function () {
             return {
                 cart: this.initCart,
@@ -76,8 +83,7 @@
                     title: '',
                     description: '',
                     conditions: []
-                },
-                debug: true
+                }
             }
         },
         watch: {

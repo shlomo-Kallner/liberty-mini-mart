@@ -29,6 +29,7 @@
                     <a class="btn btn-default pull-left" href="{{ url('store') }}" role="button">Continue shopping <i class="fa fa-shopping-cart"></i></a>
                     
                     <form action="{{url('checkout')}}" method="POST" role="form">
+                        {{ csrf_field() }}
                         <button class="btn btn-primary pull-right" type="submit">
                             Checkout <i class="fa fa-check"></i>
                         </button>

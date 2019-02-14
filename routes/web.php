@@ -141,11 +141,12 @@ Route::middleware('adminguard')->prefix('admin')->group(
         Route::get('user/{user}/delete', 'UserController@showDelete');
         
         Route::resource(
-            '{user}/orders', 'OrderController', 
+            'user/{user}/orders', 'OrderController', 
             [
                 'parameters' => ['order' => 'order']
             ]
         );
+        Route::get('orders', 'OrderController@index');
 
         // 'page/' goes to 'index()' which returns 'all-pages' of the site..
         Route::resource(

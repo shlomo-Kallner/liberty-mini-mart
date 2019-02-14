@@ -81,13 +81,16 @@
         props: {
             value: Object,
             baseUrl: String,
-            currency: String
+            currency: String,
+            debug: {
+                type: Boolean,
+                default: false
+            }
         },
         data: function () {
             return {
                 item: this.value,
-                modal_show: false,
-                debug: true
+                modal_show: false
             }
         },
         watch: {
@@ -124,21 +127,24 @@
         },
         methods: {
             delFromCart: function (item) {
+                var dbg = false
                 this.doAjax(
                     item, '/delfromcart', item.quantity, 
-                    'delFromCart', false
+                    'delFromCart', dbg 
                 )
             },
             addToCart: function (item, quantity) {
+                var dbg = false
                 this.doAjax(
                     item, '/addtocart', quantity, 
-                    'addToCart', false
+                    'addToCart', dbg
                 )
             },
             remFromCart: function (item, quantity) {
+                var dbg = this.debug
                 this.doAjax(
                     item, '/remfromcart', quantity, 
-                    'remFromCart', this.debug
+                    'remFromCart', dbg 
                 )
             },
             changeQuantiy: function (item, quantity) {
@@ -166,19 +172,7 @@
             toFoat: function (val) {
                 var v = _.toFinite(val)
                 return _.floor(v, 2)
-            },
-            showModal: function (item) {
-                this.modal.url = item.url
-                this.modal.title = item.name
-                this.modal.description = item.description
-                this.modal.conditions = item.conditions
-                this.modal.show = true
             }
         }
   }
 </script>
-
-<style scoped>
-
-</style>
-

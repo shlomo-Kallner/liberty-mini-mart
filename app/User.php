@@ -149,10 +149,13 @@ class User extends Model implements TransformableContainer
         return false;
     }
 
-    static public function getIdFromUserArray(bool $getUser = true, $def = 0) 
-    {
-        if (session()->has('user.id')) {
-            $tmp = intval(session()->get('user.id'));
+    static public function getIdFromUserArray(
+        bool $getUser = true, $def = 0, Request $request = null
+    ) {
+        $session = Functions::testVar($request) && $request->hasSession()
+            ? $request->session() : session();
+        if ($session->has('user.id')) {
+            $tmp = intval($session->get('user.id'));
             if (Functions::testVarOrId($tmp)) {
                 return $getUser ? self::getFromId($tmp) : $tmp;
             }

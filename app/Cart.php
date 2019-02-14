@@ -116,6 +116,65 @@ class Cart extends Model
         );
     }
 
+    static public function condToArray($cond, $target = null, $price = 0.0)
+    {
+        if (Functions::testVar($cond) && is_object($cond)) {
+            if ($cond->getTarget() === $target) {
+                $attr = $cond->getAttributes();
+                $calcVal = floatval($cond->getCalculatedValue($price));
+                return [
+                    'name' => $cond->getName(),
+                    'value' => $cond->getValue(),
+                    'calcValue' => round($calcVal, 2, PHP_ROUND_HALF_UP),
+                    'type' => $cond->getType(),
+                    'description' => Functions::getPropKey($attr, 'description', ''),
+                    'attributes' => $attr,
+                ];
+            }
+        }
+        return null;
+    }
+
+    static public function itemToArray($item)
+    {
+        if (Functions::testVar($item) && is_object($item)) {
+            $res = [];
+            $opts = $item->attributes->has('options') 
+                ? $item->attributes['options']
+                : [];
+            $tConds = $item->getConditions();
+            $conds = [];
+            foreach ($tConds as $cond) {
+                $c = self::condToArray($cond, 'item', $item->price);
+                if (Functions::testVar($c)) {
+                    $conds[] = $c;
+                }
+            }
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'url' => $asUrl 
+                    ? url($item->attributes['url'])
+                    : $item->attributes['url'],
+                'img' => $asUrl 
+                    ? asset($item->attributes['img'])
+                    : $item->attributes['img'],
+                'description' => $item->attributes['description'],
+                'quantity' => $item->quantity,
+                'priceSum' => round($item->getPriceSumWithConditions(true), 2, PHP_ROUND_HALF_UP),
+                'price' => round($item->price, 2, PHP_ROUND_HALF_UP),
+                'priceCalc' => round($item->getPriceWithConditions(true), 2, PHP_ROUND_HALF_UP),
+                'api' => $asUrl 
+                    ? url($item->attributes['api'])
+                    : $item->attributes['api'],
+                'options' => $opts,
+                'conditions' => $conds,
+            ];
+        }
+        return null;
+    }
+
+
     static public function cartToArray(
         DarrylCartCart $dcart = null, array $acart = null,
         bool $asUrl = true, bool $asArray = true,
@@ -135,70 +194,32 @@ class Cart extends Model
             $cTmp = $darrylCart->getContent()->all();
             foreach ($cTmp as $item) {
                 if ($asArray) {
-                    $opts = $item->attributes->has('options') 
-                        ? $item->attributes['options']
-                        : [];
-                    $tConds = $item->getConditions();
-                    $conds = [];
-                    foreach ($tConds as $cond) {
-                        if ($cond->getTarget() === 'item') {
-                            $attr = $cond->getAttributes();
-                            $conds[] = [
-                                'name' => $cond->getName(),
-                                'value' => $cond->getValue(),
-                                'calcValue' => $cond->getCalculatedValue($item->price),
-                                'type' => $cond->getType(),
-                                'description' => Functions::getPropKey($attr, 'description', ''),
-                                'attributes' => $attr,
-                            ];
-                        }
+                    $i = self::itemToArray($item);
+                    if (Functions::testVar($i)) {
+                        $cart['items'][] = $i;
                     }
-                    $cart['items'][] = [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                        'url' => $asUrl 
-                            ? url($item->attributes['url'])
-                            : $item->attributes['url'],
-                        'img' => $asUrl 
-                            ? asset($item->attributes['img'])
-                            : $item->attributes['img'],
-                        'description' => $item->attributes['description'],
-                        'quantity' => $item->quantity,
-                        'priceSum' => $item->getPriceSumWithConditions(true),
-                        'price' => $item->price,
-                        'priceCalc' => $item->getPriceWithConditions(true),
-                        'api' => $asUrl 
-                            ? url($item->attributes['api'])
-                            : $item->attributes['api'],
-                        'options' => $opts,
-                        'conditions' => $conds,
-                    ];
                 } else {
                     $cart['items'][] = $item;
                 }
             }
-            $cart['subTotal'] = $darrylCart->getSubTotal();
+            $cart['subTotal'] = round($darrylCart->getSubTotal(), 2, PHP_ROUND_HALF_UP);
             $cart['totalItems'] = $darrylCart->getTotalQuantity();
-            $cart['total'] = $darrylCart->getTotal();
+            $cart['total'] = round($darrylCart->getTotal(), 2, PHP_ROUND_HALF_UP);
             $cnTmp = $darrylCart->getConditions()->all();
             foreach ($cnTmp as $cond) {
                 if ($asArray) {
-                    $attr = $cond->getAttributes();
+                    $t = $cond->getTarget() === 'total'
+                    ? 'total' : 'subTotal';
                     $calVal = $cond->getTarget() === 'total'
                     ? $cart['total'] : $cart['subTotal'];
-                    $cart['conditions'][] = [
-                        'name' => $cond->getName(),
-                        'value' => $cond->getValue(),
-                        'calcValue' => $cond->getCalculatedValue($calVal),
-                        'type' => $cond->getType(),
-                        'description' => Functions::getPropKey($attr, 'description', ''),
-                        'attributes' => $attr,
-                    ];
+                    $c = self::condToArray($cond, $t, $calVal);
+                    if (Functions::testVar($c)) {
+                        $cart['conditions'][] = $c;
+                    }
                 } else {
                     $cart['conditions'][] = $cond;
                 }
             }
-            
         }
         return $cart;
     }

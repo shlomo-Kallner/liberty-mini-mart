@@ -142,7 +142,8 @@ class CartController extends MainController
                                 }
                             } elseif ($action == 'addToCart') {
                                 $cart->add(
-                                    $product->id, $product->name, $productSB['price'],
+                                    $product->id, $product->name, 
+                                    round(floatval($productSB['price']), 2, PHP_ROUND_HALF_UP),
                                     $numProducts,
                                     [
                                         'url' => $productSB['url'],

@@ -30,14 +30,14 @@ class Order extends Model implements TransformableContainer
             $table->mediumText('comments');
         */
         $u = User::getFrom($user, false);
-        $total = is_float($total) || is_int($total) ? $total : 0;
+        $total = is_float($total) || is_int($total) ? floatval($total) : 0.0;
         if (Functions::testVar($u) && $total > 0 
             && Functions::testVar($content) && Functions::countHas($content)
         ) {
             $uid = User::getIdFrom($u, false, 0);
             $data = new self;
             $data->user_id = $uid;
-            $data->total = $total;
+            $data->total = round($total, 2, PHP_ROUND_HALF_UP);
             $uuid = Uuid::generate(5, '/orders/' . $u->getUrl(), Uuid::NS_URL);
             $data->uuid = $uuid;
             $cnTmp = base64_encode(serialize(Functions::getVar($content, [])));
@@ -97,9 +97,17 @@ class Order extends Model implements TransformableContainer
         return $this->total;
     }
 
+    static protected function genImage()
+    {
+        return Image::createImageArray(
+            'edit-1105049_640.png', 'A Custumers order', 
+            'images/site', 'A Custumers order', 0
+        );
+    }
+
     public function getImageArray()
     {
-        //
+        return self::genImage();
     }
 
     public function getParentUrl(string $baseUrl, bool $fullUrl = false)
@@ -142,6 +150,54 @@ class Order extends Model implements TransformableContainer
     {
         return $this->uuid;
     }
+
+    public function toContentArrayPlus(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false, bool $useBaseMaker = true,
+        string $dir = 'asc'
+    ) {
+        $url = $this->getFullUrl($baseUrl, $fullUrl);
+        $name = $this->getPubName();
+        $img = $this->getImageArray();
+        $title = $this->getPubTitle();
+        $dates = $this->getDatesArray();
+        $article = [];
+        $status = $this->status;
+        $content = [];
+        $comments = [];
+        $total = round($this->total, 2, PHP_ROUND_HALF_UP);
+        if ($useBaseMaker) {
+            $contentArray = self::makeBaseContentArray(
+                $name, $url, $img, $article, 
+                $title, $dates, 
+                [], [], false, true, ''
+            );
+            $contentArray['value']['content'] = $content;
+            $contentArray['value']['comments'] = $comments;
+            $contentArray['value']['status'] = $status;
+            $contentArray['value']['total'] = $total;
+            return $contentArray;
+        } else {
+            /
+        }
+    }
+
+    static public function getChildrenFor(
+        $args, string $baseUrl = 'store', $transform = null, 
+        bool $useTitle = true, int $version = 1, 
+        bool $withTrashed = true, bool $fullUrl = false, 
+        $default = [], bool $useBaseMaker = true,
+        string $dir = 'asc'
+    ) {
+        return $default;
+    }
+
+    static public function getSelf(
+        string $baseUrl = 'store', bool $withTrashed = true,
+        bool $fullUrl = false, $children = [], 
+        $paginator = null, string $pagingFor = ''
+    );
 
     ///  the Eloquent Relationship methods:
 
