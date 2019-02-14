@@ -5,11 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model,
     Illuminate\Support\Facades\Hash,
     App\Utilities\Functions\Functions,
+    App\Utilities\NoOpEvent,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer,
     App\Utilities\ContainerAPI,
     App\Utilities\ContainerID;
-use App\User;
+use Darryldecode\Cart\Cart as DarrylCart;
+use App\User,
+    App\Cart;
 
 class Order extends Model implements TransformableContainer
 {
@@ -149,6 +152,29 @@ class Order extends Model implements TransformableContainer
     public function getUrl()
     {
         return $this->uuid;
+    }
+
+    public function getContentAsCartArray(
+        string $currencyIcon = 'fa-usd', $default = null
+    ) {
+        /*
+                Cart::cartToArray(
+                    DarrylCartCart $dcart = null, array $acart = null,
+                    bool $asUrl = true, bool $asArray = true,
+                    string $currencyIcon = 'fa-usd'
+                )
+             */
+        if ($this->validate()) {
+            $content = $this->getContent();
+            $cart = new DarrylCart(
+                collect($content), new NoOpEvent, '', 
+                'order', config('shopping_cart')
+            );
+            return Cart::cartToArray(
+                $cart, null, true, true, $currencyIcon
+            );
+        }
+        return $default;
     }
 
     public function toContentArrayPlus(

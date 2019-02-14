@@ -207,7 +207,13 @@ class OrderController extends MainController
         ];
         $order = Order::getNamed($request->order, $ordersData['WithTrashed']);
         if (Functions::testVar($order)) {
-            /
+            /*
+                Cart::cartToArray(
+                    DarrylCartCart $dcart = null, array $acart = null,
+                    bool $asUrl = true, bool $asArray = true,
+                    string $currencyIcon = 'fa-usd'
+                )
+             */
         }
         UserSession::updateAndAbort($request, 404);
     }
