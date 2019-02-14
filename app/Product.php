@@ -117,8 +117,8 @@ class Product extends Model implements TransformableContainer
                 $this->article_id = $tArt;
                 $this->title = Functions::purifyContent($title);
                 $this->article_id = $tArt;
-                $this->price = $price;
-                $this->sale = $sale;
+                $this->price = round($price, 2, PHP_ROUND_HALF_UP);
+                $this->sale = round($sale, 2, PHP_ROUND_HALF_UP);
                 $this->sticker = $sticker;
                 $this->availablity = $availablity;
                 $this->description = Functions::purifyContent($description);
@@ -299,12 +299,12 @@ class Product extends Model implements TransformableContainer
 
     public function getPrice()
     {
-        return $this->price;
+        return round($this->price, 2, PHP_ROUND_HALF_UP);
     }
 
     public function getSale()
     {
-        return $this->sale;
+        return round($this->sale, 2, PHP_ROUND_HALF_UP);
     }
 
     public function getSticker()

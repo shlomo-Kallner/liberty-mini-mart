@@ -90,7 +90,8 @@
                 return this.cart.currencyIcon;
             },
             subTotal: function () {
-                return this.cart.subTotal;
+                var v = this.cart.subTotal;
+                return _.floor(v, 2)
             },
             totalItems: function () {
                 return this.cart.totalItems;

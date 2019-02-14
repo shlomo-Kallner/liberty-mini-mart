@@ -6,16 +6,16 @@
             </a>
         </td>
         <td class="goods-page-description">
-            <btn type="link" @click="showModal(item)">
+            <btn type="link" @click="modal_show = true">
                 {{item.name}}
             </btn>
-            <modal v-model="modal.show" size="lg" :title="modal.title" :footer="false">
-                <template v-slot:header>
-                    <h3><a :href="modal.url">{{modal.title}}</a></h3>      
+            <modal v-model="modal_show" size="lg" :title="item.name" :footer="false">
+                <template slot="header">
+                    <h3><a :href="item.url">{{item.name}}</a></h3>      
                 </template>
-                <p>{{modal.description}}</p>
-                <div v-if="!isEmpty(modal.conditions)">
-                    <tooltip v-for="(cond, n) in modal.conditions" :key="n" 
+                <p>{{item.description}}</p>
+                <div v-if="!isEmpty(item.conditions)">
+                    <tooltip v-for="(cond, n) in item.conditions" :key="n" 
                         :text="cond.description" :enable="!isEmpty(cond.description)">
                         <p>
                             {{ cond.name }} : 
@@ -33,8 +33,8 @@
         <td class="goods-page-quantity">
             <div class="product-quantity">
                 <boot-touchspin 
-                    v-bind:value="parseInt(item.quantity)"
-                    @update:value="changeQuantiy(item, $event)"
+                    v-bind:value="toInteger(item.quantity)"
+                    @update:value="changeQuantiy(item, toInteger($event))"
                     >
                 </boot-touchspin>
             </div>
@@ -42,19 +42,19 @@
         <td class="goods-page-price">
             <strong>
                 <i :class="'fa' + currency"></i>
-                {{ item.price }}
+                {{ toFoat(item.price) }}
             </strong>
         </td>
         <td class="goods-page-price">
             <strong>
                 <i :class="'fa' + currency"></i>
-                {{ item.priceCalc }}
+                {{ toFoat(item.priceCalc) }}
             </strong>
         </td>
         <td class="goods-page-total">
             <strong>
                 <i :class="'fa' + currency"></i>
-                {{ item.priceSum }}
+                {{ toFoat(item.priceSum) }}
             </strong>
         </td>
         <td class="del-goods-col">
@@ -72,17 +72,109 @@
   import _ from 'lodash'
     
   export default {
-      components: {
-          BootTouchspin,
-          Tooltip, 
-          Modal, 
-          Btn
-      },
-      props: {
-          item: Object,
-          baseUrl: String,
-          currency: String
-      }
+        components: {
+            BootTouchspin,
+            Tooltip, 
+            Modal, 
+            Btn
+        },
+        props: {
+            value: Object,
+            baseUrl: String,
+            currency: String
+        },
+        data: function () {
+            return {
+                item: this.value,
+                modal_show: false,
+                debug: true
+            }
+        },
+        watch: {
+            value : function (newVal, oldVal) {
+                this.item = newVal
+                //this.$forceUpdate()
+            }
+        },
+        computed: {
+            doAjax: function () {
+                var _this = this
+                return _.debounce( 
+                    function (item, url, quantity, action, debug = false) {
+                        var info = {
+                            id: item.id,
+                            numProducts: quantity
+                        }
+                        var url = item.api + url
+                        var data = window.Laravel.handleCart.makeData(
+                            info, url, window.Laravel.csrfToken,
+                            '', action, window.Laravel.nut
+                        )
+                        var callback = function (result) {
+                            window.Laravel.page.setGoods(result)
+                            //_this.$forceUpdate()
+                        }
+                        //
+                        window.Laravel.handleCart.doAjax(
+                            window.jQuery, data, 'POST', callback, debug
+                        )
+                    }, 
+                    500, {trailing: true})
+            }
+        },
+        methods: {
+            delFromCart: function (item) {
+                this.doAjax(
+                    item, '/delfromcart', item.quantity, 
+                    'delFromCart', false
+                )
+            },
+            addToCart: function (item, quantity) {
+                this.doAjax(
+                    item, '/addtocart', quantity, 
+                    'addToCart', false
+                )
+            },
+            remFromCart: function (item, quantity) {
+                this.doAjax(
+                    item, '/remfromcart', quantity, 
+                    'remFromCart', this.debug
+                )
+            },
+            changeQuantiy: function (item, quantity) {
+                if (_.isNumber(quantity) && _.isInteger(quantity)) {
+                    if (item.quantity != quantity && quantity > 0) {
+                        if (item.quantity > quantity) {
+                            var diff = item.quantity - quantity
+                            this.remFromCart(item, diff)
+                        } else if (item.quantity < quantity) {
+                            var diff = quantity - item.quantity
+                            this.addToCart(item, diff)
+                        }
+                    } else if (quantity <= 0) {
+                        //this.delFromCart(item)
+                        this.changeQuantiy(item, 1)
+                    }
+                }
+            },
+            isEmpty: function (data) {
+                return _.isEmpty(data)
+            },
+            toInteger: function (val) {
+                return _.toInteger(val)
+            },
+            toFoat: function (val) {
+                var v = _.toFinite(val)
+                return _.floor(v, 2)
+            },
+            showModal: function (item) {
+                this.modal.url = item.url
+                this.modal.title = item.name
+                this.modal.description = item.description
+                this.modal.conditions = item.conditions
+                this.modal.show = true
+            }
+        }
   }
 </script>
 

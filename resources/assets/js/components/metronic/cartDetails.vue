@@ -2,21 +2,6 @@
             
     <div class="goods-data clearfix">
         <div class="table-wrapper-responsive">
-            <modal v-model="modal.show" size="lg" :title="modal.title" :footer="false">
-                <template v-slot:header>
-                    <h3><a :href="modal.url">{{modal.title}}</a></h3>      
-                </template>
-                <p>{{modal.description}}</p>
-                <div v-if="!isEmpty(modal.conditions)">
-                    <tooltip v-for="(cond, n) in modal.conditions" :key="n" 
-                        :text="cond.description" :enable="!isEmpty(cond.description)">
-                        <p>
-                            {{ cond.name }} : 
-                            <i :class="'fa ' + currency"></i>{{ cond.calcValue }}
-                        </p>
-                    </tooltip>
-                </div>
-            </modal>
             <table v-if="!isEmpty(items)" summary="Shopping cart">
                 <tr>
                     <th class="goods-page-image">Image</th>
@@ -31,60 +16,10 @@
                 </tr>
                 <cart-detail-item
                     v-for="item in items" :key="item.id"
-                    :item="item" :base-url="baseUrl" 
+                    :value="item" :base-url="baseUrl" 
                     :currency="currency"
                     >
                 </cart-detail-item>
-                <tr v-for="item in items" :key="item.id">
-                    <td class="goods-page-image">
-                        <a :href="item.img" class="btn btn-default fancybox.image fancybox-button">
-                            <img :src="item.img" :alt="item.name" class="img-responsive">
-                        </a>
-                    </td>
-                    <td class="goods-page-description">
-                        <btn type="link" @click="showModal(item)">
-                            {{item.name}}
-                        </btn>
-                    </td>
-                    <!-- 
-                        <td class="goods-page-ref-no">
-                            javc2133
-                        </td>
-                    -->
-                    <td class="goods-page-quantity">
-                        <div class="product-quantity">
-                            <boot-touchspin 
-                                v-bind:value="parseInt(item.quantity)"
-                                @update:value="changeQuantiy(item, $event)"
-                                >
-                            </boot-touchspin>
-                        </div>
-                    </td>
-                    <td class="goods-page-price">
-                        <strong>
-                            <i :class="'fa' + this.currency"></i>
-                            {{ item.price }}
-                        </strong>
-                    </td>
-                    <td class="goods-page-price">
-                        <strong>
-                            <i :class="'fa' + this.currency"></i>
-                            {{ item.priceCalc }}
-                        </strong>
-                    </td>
-                    <td class="goods-page-total">
-                        <strong>
-                            <i :class="'fa' + this.currency"></i>
-                            {{ item.priceSum }}
-                        </strong>
-                    </td>
-                    <td class="del-goods-col">
-                        <a href="javascript:;" class="del-goods text-center"
-                            @click="delFromCart(item)">
-                            <i class="fa fa-times-circle"></i>
-                        </a>
-                    </td>
-                </tr>
             </table>
                 
             <div v-else class="well well-lg">
@@ -148,6 +83,7 @@
         watch: {
             initCart : function (newCart, oldCart) {
                 this.cart = newCart;
+                //this.$forceUpdate()
             }
         },
         computed: {
@@ -167,10 +103,10 @@
                 return this.cart.currencyIcon;
             },
             subTotal: function () {
-                return this.cart.subTotal;
+                return this.toFoat(this.cart.subTotal);
             },
             total: function () {
-                return this.cart.total;
+                return this.toFoat(this.cart.total);
             },
             totalItems: function () {
                 return this.cart.totalItems;
@@ -250,6 +186,10 @@
             },
             toInteger: function (val) {
                 return _.toInteger(val)
+            },
+            toFoat: function (val) {
+                var v = _.toFinite(val)
+                return _.floor(v, 2)
             },
             showModal: function (item) {
                 this.modal.url = item.url

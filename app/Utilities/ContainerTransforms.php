@@ -178,11 +178,13 @@ trait ContainerTransforms
         $price = $this->getPrice();
         $sale = $this->getSale();
         if (Functions::testVar($price) && is_numeric($price)) {
+            $num = 0;
             if (Functions::testVar($sale) && is_numeric($sale)) {
-                return $sale < $price ? $sale : $price;
+                $num = $sale < $price ? $sale : $price;
             } else {
-                return $price;
+                $num = $price;
             }
+            return is_float($num) ? round($num, 2, PHP_ROUND_HALF_UP) : $num;
         }
         return '';
     }
