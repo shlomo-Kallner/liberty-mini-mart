@@ -56,9 +56,7 @@ class ShopController extends MainController {
     {
         
         //self::$data['sidebar'] = Page::getSidebar($useFakeData);
-        $breadcrumbs = Page::getBreadcrumbs(
-            Page::genBreadcrumb('Store', 'store')
-        );
+        $breadcrumbs = self::getStoreBreadcrumbs($request);
         $title = 'test Store page';
         /* 
             $newProducts = [];
@@ -109,7 +107,19 @@ class ShopController extends MainController {
                 $tmpData['UseBaseMaker']
             ),
         ];
-        return parent::getView($request, 'content.store', $title, $content, $useFakeData, $breadcrumbs);
+        return parent::getView(
+            $request, 'content.store', $title, $content, 
+            $useFakeData, $breadcrumbs
+        );
+    }
+
+    static public function getStoreBreadcrumbs(Request $request)
+    {
+        //$url = Functions::isAdminPath($request->path()) ? 'admin/store' : 'store';
+        $url = 'store';
+        return Page::getBreadcrumbs(
+            Page::genBreadcrumb('Store', $url)
+        );
     }
 
     public function checkout(Request $request) 

@@ -124,8 +124,6 @@ class CmsController extends MainController
             'UseTitle' => true,
             'FullUrl' => !$useVue,// !$request->ajax(),
             'ListUrl' => $request->path(),
-            //'UseGetSelf' => false,
-            //'Transform' => Order::TO_TABLE_ARRAY_TRANSFORM
         ];
         /*
             ::getSelf(

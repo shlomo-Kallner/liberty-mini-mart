@@ -26,26 +26,39 @@ class CategorieController extends MainController
      */
     public function index(Request $request)
     {
+        $catData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'categoriesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => Functions::isAdminPath($request->path()),
+            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => Order::TO_TABLE_ARRAY_TRANSFORM
+        ];
+        $usePagination = false;
         $sect = Section::getNamed($request->section);
         if (Functions::testVar($sect)) {
-            UserSession::updateRegenerate(
-                $request, intval(User::getIdFromUserArray(false))
-            );
-            //$request->session()->regenerate();
-            return redirect(
-                $sect->getFullUrl(
-                    $request->ajax() 
-                        ? 'api/store' 
-                        : 'store'
-                )
+            return UserSession::updateRedirect(
+                $request, $sect->getFullUrl($catData['BaseUrl'], $catData['FullUrl'])
             );
         } else {
             $title = 'All Our Categories';
             $breadcrumbs = Page::getBreadcrumbs( 
                 Page::genBreadcrumb($title, $request->path()),
                 [
-                    Page::genBreadcrumb('Store', 'store'),
-                    Page::genBreadcrumb($sect->title, $sect->getFullUrl('store'))
+                    ShopController::getStoreBreadcrumbs($request),
+                    Page::genBreadcrumb(
+                        $sect->title, 
+                        $sect->getFullUrl($catData['BaseUrl'], $catData['FullUrl']
+                        )
+                    )
                 ]
             );
             $content = [
