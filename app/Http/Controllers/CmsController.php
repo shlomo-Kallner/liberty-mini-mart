@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request,
-    Illuminate\Support\Facades\Session;
-use App\Http\Controllers\UserController,
+    Illuminate\Support\Facades\Session,
+    Illuminate\Support\Carbon, 
+    App\Http\Controllers\UserController,
     App\Utilities\Functions\Functions,
     App\Page,
     App\User,
@@ -12,9 +13,10 @@ use App\Http\Controllers\UserController,
     App\Categorie,
     App\Article,
     App\Product,
-    App\PageGroup;
-use HRTime\StopWatch, HRTime\Unit;
-use Illuminate\Support\Carbon;
+    App\Order,
+    App\PageGroup,
+    HRTime\StopWatch, 
+    HRTime\Unit;
 
 class CmsController extends MainController 
 {
@@ -109,6 +111,22 @@ class CmsController extends MainController
             'FullUrl' => !$useVue,
             'ListUrl' => $request->path(),
         ];
+        $ordersData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'ordersPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => true,// Functions::isAdminPath($request->path()),
+            'BaseUrl' => 'admin',// Functions::isAdminPath($request->path()) ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => true,// $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$useVue,// !$request->ajax(),
+            'ListUrl' => $request->path(),
+            //'UseGetSelf' => false,
+            //'Transform' => Order::TO_TABLE_ARRAY_TRANSFORM
+        ];
         /*
             ::getSelf(
                 string $baseUrl = 'store', bool $withTrashed = true,
@@ -145,6 +163,11 @@ class CmsController extends MainController
             $productData['BaseUrl'], $productData['WithTrashed'],
             $productData['FullUrl'], [], 
             null, $usePagingFor ? $productData['PagingFor'] : ''
+        );
+        $orders = Order::getSelf(
+            $ordersData['BaseUrl'], $ordersData['WithTrashed'],
+            $ordersData['FullUrl'], [], 
+            null, $usePagingFor ? $ordersData['PagingFor'] : ''
         );
         $sidebar = self::getAdminSidebar();
         $admin_header = self::getAdminHeader();
@@ -210,29 +233,46 @@ class CmsController extends MainController
                         ),
                     */
                     Section::makeMini(
-                        $sections['value']['img']['img'], $sections['value']['name'], 
-                        $sections['value']['url'], '', 0, ''
+                        $sections['value']['img']['img'], 
+                        $sections['value']['name'], 
+                        $sections['value']['url'], 
+                        '', 0, ''
                     ),
                     User::makeMini(
-                        $users['value']['img']['img'], $users['value']['name'], 
-                        $users['value']['url'], '', 0, ''
+                        $users['value']['img']['img'], 
+                        $users['value']['name'], 
+                        $users['value']['url'], 
+                        '', 0, ''
                     ),
                     Page::makeMini(
-                        $pages['value']['img']['img'], $pages['value']['name'], 
-                        $pages['value']['url'], '', 0, ''
+                        $pages['value']['img']['img'], 
+                        $pages['value']['name'], 
+                        $pages['value']['url'], 
+                        '', 0, ''
                     ),
                     Article::makeMini(
-                        $articles['value']['img']['img'], $articles['value']['name'], 
-                        $articles['value']['url'], '', 0, ''
+                        $articles['value']['img']['img'], 
+                        $articles['value']['name'], 
+                        $articles['value']['url'], 
+                        '', 0, ''
                     ),
                     PageGroup::makeMini(
-                        $menus['value']['img']['img'], $menus['value']['name'], 
-                        $menus['value']['url'], '', 0, ''
+                        $menus['value']['img']['img'], 
+                        $menus['value']['name'], 
+                        $menus['value']['url'], 
+                        '', 0, ''
                     ),
                     Product::makeMini(
                         $products['value']['img']['img'], 
                         $products['value']['name'], 
-                        $products['value']['url'], '', 0, ''
+                        $products['value']['url'], 
+                        '', 0, ''
+                    ),
+                    Order::makeMini(
+                        $orders['value']['img']['img'], 
+                        $orders['value']['name'], 
+                        $orders['value']['url'], 
+                        '', 0, ''
                     ),
                 ]
             ];

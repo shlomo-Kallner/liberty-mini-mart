@@ -199,21 +199,61 @@ class OrderController extends MainController
             'ViewNum' => 0,
             'UseBaseMaker' => $request->ajax(),
             'Default' => [],
+            'Version' => 1,
             'UseTitle' => true,
             'FullUrl' => !$request->ajax(),
             'ListUrl' => $request->path(),
             'UseGetSelf' => false,
-            'Transform' => Order::TO_TABLE_ARRAY_TRANSFORM
+            //'Transform' => Order::TO_TABLE_ARRAY_TRANSFORM
         ];
         $order = Order::getNamed($request->order, $ordersData['WithTrashed']);
         if (Functions::testVar($order)) {
+            $currencyIcon = $request->session()->has('currency') 
+                ? $request->session()->get('currency')
+                : 'fa-usd';
             /*
-                Cart::cartToArray(
-                    DarrylCartCart $dcart = null, array $acart = null,
-                    bool $asUrl = true, bool $asArray = true,
-                    string $currencyIcon = 'fa-usd'
+                Order::toContentArrayPlusExtra(
+                    string $baseUrl = 'store', int $version = 1, 
+                    bool $useTitle = true, bool $withTrashed = true, 
+                    bool $fullUrl = false, bool $useBaseMaker = true,
+                    string $dir = 'asc', string $currencyIcon = 'fa-usd', 
+                    $default = []
                 )
-             */
+            */
+            $content = $order->toContentArrayPlusExtra(
+                $ordersData['BaseUrl'], $ordersData['Version'], 
+                $ordersData['UseTitle'], $ordersData['WithTrashed'], 
+                $ordersData['FullUrl'], $ordersData['UseBaseMaker'],
+                $ordersData['Dir'], $currencyIcon, 
+                $ordersData['Default']
+            );
+            if ($request->ajax()) {
+                return $content;
+            } else {    
+                $title = 'Customer Order: ' . $order->getPubName();
+                $bcLinks = [];
+                $bcLinks[] = self::getHomeBreadcumb();
+                if (Functions::isAdminPath($request->path())) {
+                    $bcLinks[] = CmsController::getAdminBreadcrumb();
+                }
+                $bcLinks[] = Page::genBreadcrumb(
+                    'Our Customers\' Orders', 
+                    Order::genUrlFragment($ordersData['BaseUrl'], $ordersData['FullUrl'])
+                );
+                $breadcrumbs = Page::getBreadcrumbs(
+                    Page::genBreadcrumb(
+                        $title, 
+                        $order->getFullUrl($ordersData['BaseUrl'], $ordersData['FullUrl'])
+                    ),
+                    $bcLinks
+                );
+                return self::getView(
+                    $request, 'cms.orders', $title, 
+                    $content, false, $breadcrumbs, null, 
+                    Functions::isAdminPath($request->path()) 
+                    ? CmsController::getAdminSidebar() : null
+                );
+            }
         }
         UserSession::updateAndAbort($request, 404);
     }

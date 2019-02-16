@@ -179,6 +179,8 @@
                                     <th class="goods-page-description" colspan="3">Dates</th>
                                     @if (Functions::isPropKeyIn($items2[0], 'subtotal'))
                                         <th class="goods-page-total" colspan="2">Total</th>
+                                    @elseif (Functions::isPropKeyIn($items2[0], 'total'))
+                                        <th class="goods-page-total" colspan="2">Total</th>
                                     @endif
                                 </tr>
                             </thead>
@@ -281,6 +283,13 @@
                                                 <strong>
                                                     <span><i class="fa {{ $currency2 }}"></i></span>
                                                     {{ $item['subtotal'] }}
+                                                </strong>
+                                            </td>
+                                        @elseif (Functions::isPropKeyIn($items2[0], 'total'))
+                                            <td class="goods-page-total">
+                                                <strong>
+                                                    <span><i class="fa {{ $currency2 }}"></i></span>
+                                                    {{ $item['total'] }}
                                                 </strong>
                                             </td>
                                         @endif

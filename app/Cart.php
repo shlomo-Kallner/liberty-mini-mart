@@ -26,7 +26,7 @@ class Cart extends Model
     static public function getNewCartArray(
         string $currencyIcon = 'fa-usd', array $items = [],
         float $subTotal = 0.0, int $totalItems = 0, 
-        int $total = 0
+        int $total = 0, array $conditions = []
     ) {
         /*
             'cart' => [
@@ -42,6 +42,7 @@ class Cart extends Model
             'subTotal' => $subTotal,
             'totalItems' => $totalItems,
             'total' => $total,
+            'conditions' => $conditions,
         ];
     }
 
@@ -137,10 +138,9 @@ class Cart extends Model
         return null;
     }
 
-    static public function itemToArray($item)
+    static public function itemToArray($item, bool $asUrl = false)
     {
         if (Functions::testVar($item) && is_object($item)) {
-            $res = [];
             $opts = $item->attributes->has('options') 
                 ? $item->attributes['options']
                 : [];
@@ -179,51 +179,57 @@ class Cart extends Model
 
     static public function cartToArray(
         DarrylCartCart $dcart = null, 
-        bool $asArray = true,
-        string $currencyIcon = 'fa-usd' //,
-        //float $subTotal = 0.0, int $totalItems = 0, 
-        //int $total = 0
+        bool $asArray = true, 
+        bool $asUrl = false,
+        string $currencyIcon = 'fa-usd' 
     ) {
         $darrylCart = Functions::testVar($dcart) ? $dcart : self::getSessionCart();
         $totalItems = $darrylCart->getTotalQuantity();
-        $subTotal = round($darrylCart->getSubTotal(), 2, PHP_ROUND_HALF_UP);
-        $total = round($darrylCart->getTotal(), 2, PHP_ROUND_HALF_UP);
-        $cart = self::getNewCartArray(
-            $currencyIcon, [], $subTotal, 
-            $totalItems, $total
+        $subTotal = round(
+            floatval($darrylCart->getSubTotal()), 2, PHP_ROUND_HALF_UP
         );
-        if (!$darrylCart->isEmpty()) {
-            $cTmp = $darrylCart->getContent()->all();
-            foreach ($cTmp as $item) {
+        $total = round(
+            floatval($darrylCart->getTotal()), 2, PHP_ROUND_HALF_UP
+        );
+        $items = [];
+        $cTmp = $darrylCart->getContent();
+        if (!$cTmp->isEmpty()) {
+            foreach ($cTmp->all() as $item) {
                 if ($asArray) {
-                    $i = self::itemToArray($item);
+                    $i = self::itemToArray($item, $asUrl);
                     if (Functions::testVar($i)) {
-                        $cart['items'][] = $i;
+                        $items[] = $i;
                     }
                 } else {
-                    $cart['items'][] = $item;
-                }
-            }
-            //$cart['subTotal'] = round($darrylCart->getSubTotal(), 2, PHP_ROUND_HALF_UP);
-            //$cart['totalItems'] = $darrylCart->getTotalQuantity();
-            //$cart['total'] = round($darrylCart->getTotal(), 2, PHP_ROUND_HALF_UP);
-            $cnTmp = $darrylCart->getConditions()->all();
-            foreach ($cnTmp as $cond) {
-                if ($asArray) {
-                    $t = $cond->getTarget() === 'total'
-                    ? 'total' : 'subTotal';
-                    $calVal = $cond->getTarget() === 'total'
-                    ? $cart['total'] : $cart['subTotal'];
-                    $c = self::condToArray($cond, $t, $calVal);
-                    if (Functions::testVar($c)) {
-                        $cart['conditions'][] = $c;
-                    }
-                } else {
-                    $cart['conditions'][] = $cond;
+                    $items[] = $item;
                 }
             }
         }
-        return $cart;
+        $conds = [];
+        $cnTmp = $darrylCart->getConditions();
+        if (!$cnTmp->isEmpty()) {
+            foreach ($cnTmp->all() as $cond) {
+                if ($asArray) {
+                    if ($cond->getTarget() === 'total') {
+                        $t = 'total';
+                        $calVal = $total;
+                    } else {
+                        $t = 'subTotal';
+                        $calVal = $subTotal;
+                    }
+                    $c = self::condToArray($cond, $t, $calVal);
+                    if (Functions::testVar($c)) {
+                        $conds[] = $c;
+                    }
+                } else {
+                    $conds[] = $cond;
+                }
+            }
+        }
+        return self::getNewCartArray(
+            $currencyIcon, $items, $subTotal, 
+            $totalItems, $total, $conds
+        );
     }
 
     /**
@@ -233,6 +239,7 @@ class Cart extends Model
      * @param Request $request
      * @param boolean $asArray
      * @param string $currencyIcon - a default currency Font Awesome icon.
+     * @param mixed $dcart
      * 
      * @return array
      */
@@ -245,9 +252,8 @@ class Cart extends Model
                     ? $request->session() 
                     : session();
         $ci = $sess->has('currency') ? $sess->get('currency') : $currencyIcon;
-        //$acart = self::getNewCartArray($ci);
-        $cart = self::cartToArray($dcart, $asArray, $ci);
-        //dd($cart, $darrylCart, $darrylCart->getContent(), DarrylCart::getContent());
+        $cart = self::cartToArray($dcart, $asArray, !$request->ajax(), $ci);
+        //dd($cart, $dcart, $dcart->getContent(), DarrylCart::getContent());
         return $cart;
     }
 

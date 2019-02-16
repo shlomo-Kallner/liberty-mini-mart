@@ -363,7 +363,7 @@ class MainController extends Controller
         self::$data['user'] = $userData;
         UserSession::updateRegenerate($request, intval($userData['id']));
         self::$data['cart'] = Cart::getCurrentCart($request, true);
-
+        
         /*
             self::setTitle($title);
             self::setPageContent($content);

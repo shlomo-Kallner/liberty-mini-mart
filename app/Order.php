@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Model,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer,
     App\Utilities\ContainerAPI,
-    App\Utilities\ContainerID;
+    App\Utilities\ContainerID, 
+    Webpatser\Uuid\Uuid;
 use Darryldecode\Cart\Cart as DarrylCart;
 use App\User,
     App\Cart;
@@ -155,33 +156,37 @@ class Order extends Model implements TransformableContainer
     }
 
     public function getContentAsCartArray(
-        string $currencyIcon = 'fa-usd', $default = null
+        string $currencyIcon = 'fa-usd', 
+        bool $asUrl = false, $default = null
     ) {
-        /*
-                Cart::cartToArray(
-                    DarrylCartCart $dcart = null, array $acart = null,
-                    bool $asUrl = true, bool $asArray = true,
-                    string $currencyIcon = 'fa-usd'
-                )
-             */
         if ($this->validate()) {
             $content = $this->getContent();
             $cart = new DarrylCart(
                 collect($content), new NoOpEvent, '', 
                 'order', config('shopping_cart')
             );
+            /*
+                Cart::cartToArray(
+                    DarrylCartCart $dcart = null, 
+                    bool $asArray = true, 
+                    bool $asUrl = false,
+                    string $currencyIcon = 'fa-usd' 
+                )
+
+            */
             return Cart::cartToArray(
-                $cart, null, true, true, $currencyIcon
+                $cart, true, $asUrl, $currencyIcon
             );
         }
         return $default;
     }
 
-    public function toContentArrayPlus(
+    public function toContentArrayPlusExtra(
         string $baseUrl = 'store', int $version = 1, 
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false, bool $useBaseMaker = true,
-        string $dir = 'asc'
+        string $dir = 'asc', string $currencyIcon = 'fa-usd', 
+        $default = []
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
         $name = $this->getPubName();
@@ -190,8 +195,8 @@ class Order extends Model implements TransformableContainer
         $dates = $this->getDatesArray();
         $article = [];
         $status = $this->status;
-        $content = [];
-        $comments = [];
+        $content = $this->getContentAsCartArray($currencyIcon, $fullUrl, $default);
+        $comments = $this->getComments();
         $total = round($this->total, 2, PHP_ROUND_HALF_UP);
         if ($useBaseMaker) {
             $contentArray = self::makeBaseContentArray(
@@ -205,8 +210,51 @@ class Order extends Model implements TransformableContainer
             $contentArray['value']['total'] = $total;
             return $contentArray;
         } else {
-            /
+            return [
+                'name' => $name,
+                'path' => $url,
+                'url' => $url,
+                'img' => $img,
+                'title' => $title,
+                'article' => $article,
+                'otherImages' => [],
+                'dates' => $dates,
+                'content' => $content,
+                'comments' => $comments,
+                'status' => $status, 
+                'total' => $total
+            ];
         }
+    }
+
+    public function toTableArray(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true,
+        bool $fullUrl = false
+    ) {
+        $url = $this->getFullUrl($baseUrl, $fullUrl);
+        $img = $this->getImageArray();
+        return self::makeTableArray(
+            $this->getPubName(), $url, 
+            $useTitle ? $this->getPubTitle() : $img['alt'],
+            $img, $this->getPubDescription(),
+            $this->getSticker(), $this->getDatesArray(), $this->getPubId(),
+            [], $this->getPrice(), $this->getSale(),
+            $this->user->toUrlListing($baseUrl, $fullUrl, false)
+        );
+    }
+
+    public function toContentArrayPlus(
+        string $baseUrl = 'store', int $version = 1, 
+        bool $useTitle = true, bool $withTrashed = true, 
+        bool $fullUrl = false, bool $useBaseMaker = true,
+        string $dir = 'asc'
+    ) {
+        return $this->toContentArrayPlusExtra(
+            $baseUrl, $version, $useTitle, $withTrashed, 
+            $fullUrl, $useBaseMaker, $dir, 'fa-usd', 
+            []
+        );
     }
 
     static public function getChildrenFor(
@@ -223,7 +271,21 @@ class Order extends Model implements TransformableContainer
         string $baseUrl = 'store', bool $withTrashed = true,
         bool $fullUrl = false, $children = [], 
         $paginator = null, string $pagingFor = ''
-    );
+    ) {
+        $title = $name = 'Orders';
+        $article = [];
+        $img = Image::createImageArray(
+            'edit-1105049_640.png', 'Orders Listing', 
+            'images/site', 'Orders Listing'
+        );
+        $pagingFor = $pagingFor ?: 'ordersPanel';
+        return self::makeSelf(
+            $name, $title, $article,
+            $img, $baseUrl, $withTrashed,
+            $fullUrl, $children, $paginator,
+            $pagingFor, null
+        );
+    }
 
     ///  the Eloquent Relationship methods:
 

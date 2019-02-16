@@ -592,7 +592,7 @@ trait ContainerTransforms
     static public function makeTableArray(
         string $name, string $url, string $title,
         $img, string $description,
-        string $sticker = '', array $dates = [], int $id = 0,
+        string $sticker = '', array $dates = [], $id = 0,
         array $payload = null, $price = '', $sale = '',
         array $parent = null
     ) {
