@@ -51,7 +51,7 @@ Route::middleware('userguard')->group(
                 Route::get('section/{section}/category/{category?}', 'CategorieController@show');
                 //
                 Route::get('section/{section}/category/{category}/product/{product?}', 'ProductController@show');
-                Route::post('section/{section}/category/{category}/product/{product?}', 'ProductController@postReveiw');
+                Route::post('section/{section}/category/{category}/product/{product?}/reveiw', 'ProductController@postReveiw');
                 //
                 // a category 'all' should return all products in the catalog/store.. nope.
 
@@ -107,7 +107,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 );
                 // 'category/' goes to 'index()' which returns 'all-categories' of the section..
                 Route::get('category/create', 'CategorieController@create');
-                Route::post('category/create', 'CategorieController@store');
+                Route::post('category', 'CategorieController@store');
                 
                 Route::resource(
                     'section/{section}/category', 'CategorieController', [
@@ -118,7 +118,7 @@ Route::middleware('adminguard')->prefix('admin')->group(
                 );
                 // 'product/' goes to 'index()' which returns 'all-products' of the category..
                 Route::get('product/create', 'ProductController@create');
-                Route::post('product/create', 'ProductController@store');
+                Route::post('product', 'ProductController@store');
                 Route::get('product', 'ProductController@index');
                 Route::post('product', 'ProductController@store');
                 

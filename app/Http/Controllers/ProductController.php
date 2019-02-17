@@ -265,15 +265,15 @@ class ProductController extends MainController
             $request->all(), self::creationValidationRules(), 
             self::creationValidationMessages()
         );
-        if ($validator->passes()) {    
+        $path = $request->path();
+        $passes = $validator->passes();
+        if ($passes) {    
             //
             $sect = Section::getNamed($request->section);
             if (Functions::testVar($sect)) {
                 $cat = $sect->getCategory($request->category);
                 if (Functions::testVar($cat)) {
                     
-                    //$request->file('key', 'default');
-                    //$request->hasFile('key');
                     if ($request->hasFile('image')) {
                         
                         $image_id = Image::storeAndCreateNewImage(
@@ -281,37 +281,6 @@ class ProductController extends MainController
                             $request->title, $request->description, 
                             false, 0
                         );
-                        /* 
-                            //$tmpPath = 'tmp/products';
-                            $filename = explode('.', $file->getClientOriginalName())[0] 
-                                . '_'. Functions::getDateTimeStr('_', '-', '-');
-                            $ext = $file->getClientOriginalExtension();
-                            $fullFilename = $filename . '.' . $ext;
-                            // storing original file..
-                            //$file->storeAs($tmpPath, $fullFilename);
-                            $pubPath = public_path('images' . DIRECTORY_SEPARATOR . 'products');
-                            $dbPath = 'images/products';
-                            $img = ImageTool::make($file)->resize(300, 200);  //($path . '/' . $fullFilename);
-                            $fullFilenameWithPath = $pubPath . DIRECTORY_SEPARATOR . $fullFilename;
-                            
-                                // if (file_exists($fullFilenameWithPath)) {
-                                //     Log::info("file ${$fullFilenameWithPath} already exists!");
-                                // } 
-                                // $dirPerms = 0x4000 | 0644;
-                                // dd($dirPerms, 0x4000, 0644, chmod($pubPath, $dirPerms));
-                                // if (fileperms($pubPath) === 0) {
-                                // ///if (chmod($pubPath, 0644))
-                                // } 
-                        
-                            $img->save($fullFilenameWithPath);
-                            $image_id = Functions::getVar(
-                                Image::createNew(
-                                    $fullFilename, $dbPath, 
-                                    $request->title, $request->description,
-                                    false
-                                ), 0
-                            ); 
-                        */
                     } else {
                         $image_id = 0;
                     }
@@ -337,25 +306,16 @@ class ProductController extends MainController
                             $pages->withPath();
                         } else {
                             self::addMsg('Product ' . $product->name . ' , ' . $product->title . ' Creation Successfully!');
-                            UserSession::updateRegenerate(
-                                $request, intval(User::getIdFromUserArray(false))
-                            );
-                            //$request->session()->regenerate();
-                            return redirect('admin');
+                            $path = 'admin/store/product';
                         }
+                    } else {
+                        Log::info("Uhhh, if we got here then PRODUCT CREATION FAILED!!!");
+                        $passes = null;
                     }
-                    Log::info("Uhhh, if we got here then PRODUCT CREATION FAILED!!!");
                 }
             } 
         }
-        // UserSession::updateRegenerate(
-        //     $request, intval(User::getIdFromUserArray(false))
-        // );
-        $path = $request->path();
-        $path = Str::contains($path, 'create') ? $path : $path . '/create';
-        // return redirect($path)
-        //     ->withErrors($validator)
-        //     ->withInput($request->except('image'));
+        $path = $passes || Str::contains($path, 'create') ? $path : $path . '/create';
         return UserSession::updateRedirect(
             $request, $path, $validator, 
             $request->except('image')

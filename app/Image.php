@@ -156,7 +156,8 @@ class Image extends Model implements ContainerAPI
         if (Functions::testVar($file)) {
             /// retrieve the file name and extension separately 
             ///  and add a timestamp to the file name
-            $filename = explode('.', $file->getClientOriginalName())[0] 
+            $origFilename = explode('.', $file->getClientOriginalName())[0];
+            $filename =  $origFilename
                 . '_'. Functions::getDateTimeStr('_', '-', '-');
             $ext = $file->getClientOriginalExtension();
             $fullFilename = $filename . '.' . $ext;

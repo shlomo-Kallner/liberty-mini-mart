@@ -313,7 +313,7 @@
                         @endif
                         
                         <!-- BEGIN FORM-->
-                        <form id="review-form" method="POST" action="#" class="reviews-form" role="form">
+                        <form id="review-form" method="POST" action="{{ url($productURL2 . '/reveiw') }}" class="reviews-form" role="form">
                             <h2>Write a review</h2>
                             {{ csrf_field() }}
                             <input type="hidden" name="product-id" value="{{ $productID2 }}">

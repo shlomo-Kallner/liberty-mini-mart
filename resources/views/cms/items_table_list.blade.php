@@ -187,6 +187,9 @@
                             <tbody>
 
                                 @foreach ($items2 as $item)
+                                @php
+                                    //dd($item);
+                                @endphp
                                     <tr>
                                         <td class="goods-page-image">
                                             <a href="{{ url($item['url']) }}">
