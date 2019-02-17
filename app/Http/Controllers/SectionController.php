@@ -373,6 +373,9 @@ class SectionController extends MainController
                     ];
                     //dd($section_data);
                 }
+                if ($request->ajax()) {
+                    return $section_data;
+                }
                 $bcLinks = [];
                 $bcLinks[] = self::getHomeBreadcumb();
                 if ($is_admin) {
@@ -416,7 +419,38 @@ class SectionController extends MainController
      */
     public function edit(Section $section)
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $usePagination = !$is_admin;
+        $tmpData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'sectionPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UsePagination' => $usePagination,
+            'Transform' => $usePagination 
+                ? Categorie::TO_MINI_TRANSFORM
+                : Categorie::TO_TABLE_ARRAY_TRANSFORM,
+        ];   
+        $section = Section::getNamed($request->section);
+        if (Functions::testVar($section)) {
+            $content = [
+                'hasName' => 'true',
+                'name' => $section->name,
+                'thisURL' => $section->getFullUrl($pagesData['BaseUrl'], $pagesData['FullUrl']),
+                'HttpVerb' => 'PATCH',
+                'cancelUrl' => 'admin/menus',
+            ];
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
