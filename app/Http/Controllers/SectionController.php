@@ -129,6 +129,18 @@ class SectionController extends MainController
     }
 
     /**
+     * Display a "Name Listing" of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function list(Request $request)
+    {
+        return Section::getNameListing();
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -191,18 +203,6 @@ class SectionController extends MainController
             Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
             : null
         );
-    }
-
-    /**
-     * Display a "Name Listing" of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function list(Request $request)
-    {
-        return Section::getNameListing();
     }
 
     /**
@@ -417,7 +417,7 @@ class SectionController extends MainController
      * @param  \App\Section  $section
      * @return \Illuminate\Http\Response
      */
-    public function edit(Section $section)
+    public function edit(Request $request)
     {
         $is_admin = Functions::isAdminPath($request->path());
         $usePagination = !$is_admin;
@@ -442,13 +442,48 @@ class SectionController extends MainController
         ];   
         $section = Section::getNamed($request->section);
         if (Functions::testVar($section)) {
+            $sh = $section->getSubHeading();
             $content = [
                 'hasName' => 'true',
                 'name' => $section->name,
-                'thisURL' => $section->getFullUrl($pagesData['BaseUrl'], $pagesData['FullUrl']),
+                'hasTitle' => 'true',
+                'title' => $section->title,
+                'hasUrl' => 'true',
+                'url' => $section->url,
+                'hasDescription' => 'true',
+                'description' => $section->description,
+                'hasArticle' => 'true',
+                'article' => $section->getArticle(true),
+                'hasSubHeading' => !empty($sh) ? 'true' : '',
+                'subHeading' => !empty($sh) ? $sh : '',
+                'hasImage' => 'true',
+                'image' => $section->getImageArray(),
+                'thisURL' => $section->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl']),
                 'HttpVerb' => 'PATCH',
-                'cancelUrl' => 'admin/menus',
+                'cancelUrl' => 'admin/store/section',
             ];
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            if ($is_admin) {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+            }
+            $bcLinks[] = Page::genBreadcrumb(
+                'Our Produce Sections', 
+                Section::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl'])
+            );
+            $breadcrumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb(
+                    'Section Modification Form', 
+                    Section::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl'])
+                ),
+                $bcLinks
+            );
+            return self::getView(
+                $request, 'cms.forms.edit.section', 'Modify Existing Store Section',
+                $content, false, $breadcrumbs, null, 
+                $is_admin ? CmsController::getAdminSidebar()
+                : null
+            );
         }
         UserSession::updateAndAbort($request, 404);
     }
@@ -460,7 +495,7 @@ class SectionController extends MainController
      * @param  \App\Section  $section
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Section $section)
+    public function update(Request $request)
     {
         //
     }
