@@ -23,6 +23,7 @@ use App\Product,
     Intervention\Image\Size, 
     Intervention\Image\Image as ImageFile,
     Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class ProductController extends MainController
 {
@@ -548,21 +549,23 @@ class ProductController extends MainController
      */
     public function update(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(), self::modificationValidationRules(), 
-            self::modificationValidationRules()
-        );
-        if ($validator->passes()) {    
-            //
-            $sect = Section::getNamed($request->newsection);
-            $section = Section::getNamed($request->section);
-            if (Functions::testVar($sect) && Functions::testVar($section)) {
-                $category = $section->getCategory($request->category);
-                $cat = $sect->getCategory($request->newcategory);
-                if (Functions::testVar($cat) && Functions::testVar($category)) {
-                    $product = $category->getProduct($request->product);
-                    if (Functions::testVar($product)) {
-                            //$request->file('key', 'default');
+        $section = Section::getNamed($request->section);
+        $sect = Section::getNamed($request->newsection);
+        if (Functions::testVar($sect) && Functions::testVar($section)) {
+            $category = $section->getCategory($request->category);
+            $cat = $sect->getCategory($request->newcategory);
+            if (Functions::testVar($cat) && Functions::testVar($category)) {
+                $product = $category->getProduct($request->product);
+                if (Functions::testVar($product)) {
+                    
+                    $validator = Validator::make(
+                        $request->all(), self::modificationValidationRules(
+                            $product->url, $product->name
+                        ), 
+                        self::modificationValidationMessages()
+                    );
+                    if ($validator->passes()) {
+                        //$request->file('key', 'default');
                         //$request->hasFile('key');
                         if ($request->hasFile('image')) {
                             
@@ -612,7 +615,7 @@ class ProductController extends MainController
                         //Log::info("Uhhh, if we got here then PRODUCT MODIFICATION FAILED!!!");
                     }
                 }
-            } 
+            }
         }
         // UserSession::updateRegenerate(
         //     $request, intval(User::getIdFromUserArray(false))
@@ -801,7 +804,7 @@ class ProductController extends MainController
      *
      * @return array
      */
-    static public function modificationValidationRules()
+    static public function modificationValidationRules($url, $name)
     {
         return [
             //
@@ -811,11 +814,15 @@ class ProductController extends MainController
             'article' => 'required|max:255000|string|min:3',
             'subheading' => 'string|nullable|max:255',
             'title' => 'required|max:255|string|min:3',
-            'name' => 'required|max:255|string|min:3',
+            'name' => [
+                'required', 'max:255', 'string', 'min:3',
+                Rule::unique('products', 'name')->ignore($name, 'name')
+            ],
             'description' => 'required|max:255|string|min:3',
             'url' => [
                 'required', 'max:255', 'string', 'min:3',
                 'regex:'. Functions::getURLRegexStr(),
+                Rule::unique('products', 'url')->ignore($url, 'url')
             ],
             'price' => 'required|numeric',
             'sale' => 'numeric|nullable',

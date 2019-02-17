@@ -8,6 +8,7 @@ use App\Section,
     App\Categorie,
     App\Utilities\Functions\Functions;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SectionController extends MainController
 {
@@ -152,8 +153,39 @@ class SectionController extends MainController
                 ? Section::TO_MINI_TRANSFORM
                 : Section::TO_TABLE_ARRAY_TRANSFORM 
         ];
-        $content = [];
-        return self::getView($request, 'cms.forms.new.section', 'Create a New Store Section');
+        $content = [
+            'hasName' => 'true',
+            'hasTitle' => 'true',
+            'hasUrl' => 'true',
+            'hasDescription' => 'true',
+            'hasArticle' => 'true',
+            'hasImage' => 'true',
+            'thisURL' => Section::genUrlFragment($sectData['BaseUrl'], $sectData['FullUrl']),
+            'cancelUrl' => Section::genUrlFragment($sectData['BaseUrl'], $sectData['FullUrl']),
+        ];
+        
+        $bcLinks = [];
+        $bcLinks[] = self::getHomeBreadcumb();
+        if (Functions::isAdminPath($request->path())) {
+            $bcLinks[] = CmsController::getAdminBreadcrumb();
+        }
+        $bcLinks[] = Page::genBreadcrumb(
+            'Our Produce Sections', 
+            Section::genUrlFragment($sectData['BaseUrl'], $sectData['FullUrl'])
+        );
+        $breadcrumbs = Page::getBreadcrumbs(
+            Page::genBreadcrumb(
+                'Section Creation Form', 
+                Section::genUrlFragment($sectData['BaseUrl'], $sectData['FullUrl'])
+            ),
+            $bcLinks
+        );
+        return self::getView(
+            $request, 'cms.forms.new.section', 'Create a New Store Section',
+            $content, false, $breadcrumbs, null, 
+            Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
+            : null
+        );
     }
 
     /**
@@ -343,6 +375,84 @@ class SectionController extends MainController
     {
         // display 'ARE YOU SURE' PAGE...
     }
+
+    //// Validation Rules and messages
+
+    /**
+     * Get the validation rules that apply to the creation request.
+     *
+     * @return array
+     */
+    static public function creationValidationRules()
+    {
+        return [
+            //
+            'image' => 'required|file|image',
+            'article' => 'required|max:255000|string|min:3',
+            'subheading' => 'string|nullable|max:255',
+            'title' => 'required|max:255|string|min:3',
+            'name' => 'required|max:255|string|min:3|unique:sections,name',
+            'description' => 'required|max:255|string|min:3',
+            'url' => [
+                'required', 'max:255', 'string', 'min:3',
+                'regex:'. Functions::getURLRegexStr(),
+                'unique:sections,url'
+            ],
+        ];
+    }
+
+    /**
+     * Get the validation rules that apply to the modification request.
+     *
+     * @return array
+     */
+    static public function modificationValidationRules($url, $name)
+    {
+        return [
+            //
+            'image' => 'nullable|file|image',
+            'article' => 'required|max:255000|string|min:3',
+            'subheading' => 'string|nullable|max:255',
+            'title' => 'required|max:255|string|min:3',
+            'name' => [
+                'required', 'max:255', 'string', 'min:3',
+                Rule::unique('sections', 'name')->ignore($name, 'name')
+            ],
+            'description' => 'required|max:255|string|min:3',
+            'url' => [
+                'required', 'max:255', 'string', 'min:3',
+                'regex:'. Functions::getURLRegexStr(),
+                Rule::unique('sections', 'url')->ignore($url, 'url')
+            ],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    static public function creationValidationMessages()
+    {
+        return [
+            'title.required' => 'A title is required',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    static public function modificationValidationMessages()
+    {
+        return [
+            'title.required' => 'A title is required',
+        ];
+    }
+
+
+    /// testing!!!
 
     public function test(Request $request)
     {

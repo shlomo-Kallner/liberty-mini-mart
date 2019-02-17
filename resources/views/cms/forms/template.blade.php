@@ -193,7 +193,9 @@
         {
             var esc = '{{$article2}}';
             var unesc = '{!! $article2 !!}';
-            $('#articleSummernote').summernote('editor.insertText', unesc);
+            var oldCom = 'editor.insertText';
+            var newCom = 'code';
+            $('#articleSummernote').summernote(newCom, unesc);
         });
     </script>
 @endsection    
