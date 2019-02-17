@@ -26,62 +26,98 @@ class SectionController extends MainController
      */
     public function index(Request $request)
     {
-        $withTrashed = $request->is('*/admin/*');
-        $pageVars = Section::getPagingVars(
-            $request, 'sectionPanel', 8, 'asc'
-        );
-        if ($request->ajax()) {
-            $baseUrl = $withTrashed 
-                ? 'api/admin/store'
-                : 'api/store';
-            if (Functions::testVar($pageVars)) {
-                $content = Section::getAllWithPagination(
-                    Section::TO_CONTENT_ARRAY_TRANSFORM, 
-                    $pageVars['pageNum'], $pageVars['limit'],
-                    '', $pageVars['order'], $withTrashed,
-                    $baseUrl, $request->path(), 
-                    $pageVars['viewNum'], false, true, 1
+        $is_admin = Functions::isAdminPath($request->path());
+        $usePagination = !$is_admin; // false;
+        $sectData = [
+            'PageNum' => 0,
+            'NumShown' => 6,
+            'PagingFor' => 'sectionPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => $usePagination 
+                ? Section::TO_MINI_TRANSFORM
+                : Section::TO_TABLE_ARRAY_TRANSFORM 
+        ];
+        $content = [];
+        if ($usePagination) {
+            $pv = Section::getPagingVars(
+                $request, $sectData['PagingFor'], $sectData['NumShown'], $sectData['Dir']
+            );
+            if (Functions::testVar($pv)) {
+                $sectData['PageNum'] = $pv['pageNum'];
+                $sectData['ViewNum'] = $pv['viewNum'];
+                if (Functions::hasPropKeyIn($pv, 'limit')) {
+                    $sectData['NumShown'] = $pv['limit'];
+                }
+            } 
+            $sections = Section::getAllWithPagination(
+                $sectData['Transform'], $sectData['PageNum'], 
+                $sectData['NumShown'], $sectData['PagingFor'], 
+                $sectData['Dir'], $sectData['WithTrashed'], 
+                $sectData['BaseUrl'], $sectData['ListUrl'], 
+                $sectData['ViewNum'], $sectData['FullUrl'], 
+                $sectData['UseTitle'], $sectData['Version'], 
+                $sectData['Default'], $sectData['UseBaseMaker']
+            );
+            if ($sectData['UseGetSelf']) {
+                $children = Functions::countHas($sections) 
+                    ? $sections['items'] : null;
+                $paginator = Functions::countHas($sections) 
+                    ? $sections['pagination'] : null;
+                $content = Section::getSelf(
+                    $sectData['BaseUrl'], $sectData['WithTrashed'],
+                    $sectData['FullUrl'], $children, 
+                    $paginator, $sectData['PagingFor']
                 );
             } else {
-                $content = [
-                    'items' => Section::getAllWithTransform(
-                        Section::TO_MINI_TRANSFORM, 'asc', 
-                        $withTrashed, $baseUrl, true, 1
-                    ),
-                ];
+                $content = $sections;
             }
+        } else {
+            $content['items'] = Section::getAllWithTransform(
+                $sectData['Transform'], $sectData['Dir'], 
+                $sectData['WithTrashed'], $sectData['BaseUrl'], 
+                $sectData['UseTitle'], $sectData['FullUrl'], 
+                $sectData['Version'], $sectData['Default'], 
+                $sectData['UseBaseMaker']
+            );
+        }
+        if ($request->ajax()) {
             return $content;
         } else {
             // get a listing of all sections... 
-            $baseUrl = $withTrashed 
-                ? 'admin/store'
-                : 'store';
             $title = 'All Our Sections';
-            $links = $withTrashed
-                ? [
-                    Page::genBreadcrumb('Home', '/'),
-                    Page::genBreadcrumb('Admin DashBoard', 'admin'),
-                    Page::genBreadcrumb('Store', $baseUrl),
-                ]
-                : [
-                    Page::genBreadcrumb('Home', '/'),
-                    Page::genBreadcrumb('Store', $baseUrl),
-                ];
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            if (!$is_admin) {
+                $content['bestsellers'] = Product::getBestsellers();
+                $viewName = 'content.items_list';
+                $content['component'] = 'lib.themewagon.product_mini';
+                $bcLinks[] = ShopController::getStoreBreadcrumbs($request);
+            } else {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+                $viewName = 'cms.items_table';
+            }
             $breadcumbs = Page::getBreadcrumbs(
-                Page::genBreadcrumb($title, $baseUrl .'/section'),
-                $links
-            );
-            $content = [
-                'items' => Section::getAllWithTransform(
-                    Section::TO_MINI_TRANSFORM, 'asc', false, $baseUrl,
-                    true, 1
+                Page::genBreadcrumb(
+                    $title,
+                    Section::genUrlFragment($sectData['BaseUrl'], $sectData['FullUrl'])
                 ),
-                'bestsellers' => Product::getBestsellers(),
-            ];
-            // optionally add pagination... 
+                $bcLinks
+            );
             return self::getView(
-                $request, 'content.items_list', $title, 
-                $content, false, $breadcumbs
+                $request, $viewName, $title, 
+                $content, false, $breadcumbs, null,
+                $is_admin 
+                ? CmsController::getAdminSidebar() : null
             );
         }
     }
@@ -95,6 +131,28 @@ class SectionController extends MainController
      */
     public function create(Request $request)
     {
+        $is_admin = Functions::isAdminPath($request->path());
+        $usePagination = !$is_admin; // false;
+        $sectData = [
+            'PageNum' => 0,
+            'NumShown' => 6,
+            'PagingFor' => 'sectionPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => $usePagination 
+                ? Section::TO_MINI_TRANSFORM
+                : Section::TO_TABLE_ARRAY_TRANSFORM 
+        ];
+        $content = [];
         return self::getView($request, 'cms.forms.new.section', 'Create a New Store Section');
     }
 

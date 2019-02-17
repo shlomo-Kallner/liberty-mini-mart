@@ -13,6 +13,7 @@
     use \App\Utilities\Functions\Functions;
 
     $items2 = Functions::toBladableContent(Functions::getContent($page['items']??''));
+    $component2 = Functions::toBladableContent(Functions::getContent($page['component']??''));
 
     $sidebar2 = Functions::toBladableContent(Functions::getContent($sidebar??''));
     $bestsellers2 = Functions::toBladableContent(Functions::getContent($page['bestsellers']??'', ''));
@@ -64,6 +65,9 @@
             @endslot
             @slot('currency')
                 {{ $currency2 }}
+            @endslot
+            @slot('component')
+                {{ $component2 }}
             @endslot
         @endcomponent
 

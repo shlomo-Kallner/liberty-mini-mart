@@ -10,6 +10,7 @@
     $price2 = Functions::getBladedString($price??'','');
     $sticker2 = Functions::getBladedString($sticker??'','');
     $type2 = Functions::getBladedString($type??'item','item');
+    $useViewBtn2 = Functions::getBladedString($useViewBtn??'', '');
 
     $apiGetURL = 'api/' . $url2;
     $editUrl = $url2 . '/edit';
@@ -28,10 +29,14 @@
             <img src="{{ asset($img2) }}" class="img-responsive" alt="{{ $name2 }}">
             <div>
                 <a href="{{ url($img2) }}" class="btn btn-default fancybox.image fancybox-button">Zoom</a>
-                <a href="#product-pop-up" class="btn btn-default fancybox-fast-view" 
-                    data-fancybox="product" data-product-id="{{ $id2 }}"
-                    data-product-info-url="{{ url($apiGetURL) }}"
-                    >View</a>
+                @if (Functions::testVar($useViewBtn2))
+                    <a href="#product-pop-up" class="btn btn-default fancybox-fast-view" 
+                        data-fancybox="product" data-product-id="{{ $id2 }}"
+                        data-product-info-url="{{ url($apiGetURL) }}"
+                        >
+                        View
+                    </a>
+                @endif
             </div>
         </div>
         <h3><a href="{{ url($url2) }}">{{ $name2 }}</a></h3>

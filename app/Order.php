@@ -21,7 +21,7 @@ class Order extends Model implements TransformableContainer
 
     static public function createNew(
         $user, $total, $content = [], 
-        $comments = [], string $status = '', 
+        string $comments = '', string $status = '', 
         bool $retObj = false
     ) {
         /*
@@ -48,7 +48,7 @@ class Order extends Model implements TransformableContainer
             $data->content = $cnTmp;
             $data->verihash = Hash::make($uid . $total . $uuid . $cnTmp);
             $data->status = $status;
-            $data->comments = base64_encode(serialize(Functions::getVar($comments, [])));
+            $data->comments = $comments; // base64_encode(serialize(Functions::getVar($comments, [])));
             if ($data->save()) {
                 return $retObj ? $data : $data->id;
             } 
@@ -57,10 +57,13 @@ class Order extends Model implements TransformableContainer
     }
 
     public function updateWith(
-        $comments = [], string $status = '', bool $retObj = false
+        string $comments = '', string $status = '', bool $retObj = false
     ) {
-        if (Functions::testVar($comments) && Functions::countHas($comments)) {
-            $this->comments = base64_encode(serialize($comments));
+        // if (Functions::testVar($comments) && Functions::countHas($comments)) {
+        //     $this->comments = base64_encode(serialize($comments));
+        // }
+        if (Functions::testVar($comments)) {
+            $this->comments = $comments;
         }
         if (Functions::testVar($status)) {
             $this->status = $status;
@@ -73,7 +76,7 @@ class Order extends Model implements TransformableContainer
 
     public function getComments()
     {
-        return unserialize(base64_decode($this->comments));
+        return $this->comments; // unserialize(base64_decode($this->comments));
     }
 
     public function getContent()

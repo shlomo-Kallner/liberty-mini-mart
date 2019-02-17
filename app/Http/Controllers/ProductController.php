@@ -231,7 +231,7 @@ class ProductController extends MainController
                 }
             }
         } 
-        $content['thisURL'] = Product::genUrlFragment($BaseUrl, !$request->ajax());
+        $content['thisURL'] = Product::genUrlFragment($BaseUrl, $tmpData['FullUrl']);
         $bcLinks = [];
         $bcLinks[] = self::getHomeBreadcumb();
         if (Functions::isAdminPath($request->path())) {
@@ -240,7 +240,7 @@ class ProductController extends MainController
         $breadcrumbs = Page::getBreadcrumbs(
             Page::genBreadcrumb(
                 'Product Creation Form', 
-                Product::genUrlFragment($BaseUrl, !$request->ajax())
+                Product::genUrlFragment($BaseUrl, $tmpData['FullUrl'])
             ),
             $bcLinks
         );

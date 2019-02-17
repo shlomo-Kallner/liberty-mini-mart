@@ -48,7 +48,7 @@
 @if (Functions::testVar($article2))
     <div class="row">
         <div class="{{$containerCss2}}">
-                {!! $article2 !!}
+            {!! $article2 !!}
         </div>
     </div>
 @endif

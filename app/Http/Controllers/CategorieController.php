@@ -26,51 +26,113 @@ class CategorieController extends MainController
      */
     public function index(Request $request)
     {
+        $is_admin = Functions::isAdminPath($request->path());
+        $usePagination = !$is_admin; // false;
         $catData = [
             'PageNum' => 0,
             'NumShown' => 12,
             'PagingFor' => 'categoriesPanel',
             'Dir' => 'asc',
-            'WithTrashed' => Functions::isAdminPath($request->path()),
-            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin/store' : 'store',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
             'ViewNum' => 0,
             'UseBaseMaker' => $request->ajax(),
             'Default' => [],
+            'Version' => 1,
             'UseTitle' => true,
             'FullUrl' => !$request->ajax(),
             'ListUrl' => $request->path(),
             'UseGetSelf' => false,
-            'Transform' => Order::TO_TABLE_ARRAY_TRANSFORM
+            'Transform' => $usePagination 
+                ? Categorie::TO_MINI_TRANSFORM
+                : Categorie::TO_TABLE_ARRAY_TRANSFORM, 
         ];
-        $usePagination = false;
         $sect = Section::getNamed($request->section);
         if (Functions::testVar($sect)) {
             return UserSession::updateRedirect(
                 $request, $sect->getFullUrl($catData['BaseUrl'], $catData['FullUrl'])
             );
         } else {
+            $content = [];
+            if ($usePagination) {
+                $pv = Categorie::getPagingVars(
+                    $request, $catData['PagingFor'], $catData['NumShown'],
+                    $catData['Dir']
+                );
+                if (Functions::testVar($pv)) {
+                    $catData['PageNum'] = $pv['pageNum'];
+                    $catData['ViewNum'] = $pv['viewNum'];
+                    if (Functions::hasPropKeyIn($pv, 'limit')) {
+                        $catData['NumShown'] = $pv['limit'];
+                    }
+                } 
+                $cats = Categorie::getAllWithPagination(
+                    $catData['Transform'], $catData['PageNum'], 
+                    $catData['NumShown'], $catData['PagingFor'], 
+                    $catData['Dir'], $catData['WithTrashed'], $catData['BaseUrl'], 
+                    $catData['ListUrl'], $catData['ViewNum'], 
+                    $catData['FullUrl'], $catData['UseTitle'], 
+                    $catData['Version'], $catData['Default'], 
+                    $catData['UseBaseMaker']
+                );
+                if ($catData['UseGetSelf']) {
+                    $children = Functions::countHas($cats) 
+                        ? $cats['items'] : null;
+                    $paginator = Functions::countHas($cats) 
+                        ? $cats['pagination'] : null;
+                    $content = Page::getSelf(
+                        $catData['BaseUrl'], $catData['WithTrashed'],
+                        $catData['FullUrl'], $children, 
+                        $paginator, $catData['PagingFor']
+                    );
+                } else {
+                    $content = $cats;
+                    // $content['items'] = $cats['items'];
+                    // $content['pagination'] = $cats['pagination'];
+                }
+                
+            } else {
+                $content['items'] = Categorie::getAllWithTransform(
+                    $catData['Transform'], $catData['Dir'], 
+                    $catData['WithTrashed'], $catData['BaseUrl'], 
+                    $catData['UseTitle'], $catData['FullUrl'], 
+                    $catData['Version'], $catData['Default'], 
+                    $catData['UseBaseMaker']
+                );
+            }
             $title = 'All Our Categories';
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            if ($is_admin) {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+            } else {
+                $bcLinks[] = ShopController::getStoreBreadcrumbs($request);
+                $content['bestsellers'] = Product::getBestsellers();
+            }
+            $bcLinks[] = Page::genBreadcrumb(
+                $sect->title, 
+                $sect->getFullUrl(
+                    $catData['BaseUrl'], $catData['FullUrl']
+                )
+            );
             $breadcrumbs = Page::getBreadcrumbs( 
                 Page::genBreadcrumb($title, $request->path()),
-                [
-                    ShopController::getStoreBreadcrumbs($request),
-                    Page::genBreadcrumb(
-                        $sect->title, 
-                        $sect->getFullUrl($catData['BaseUrl'], $catData['FullUrl']
-                        )
-                    )
-                ]
+                $bcLinks
             );
-            $content = [
-                'items' => Categorie::getAllWithTransform(
-                    Categorie::TO_MINI_TRANSFORM, 'asc', false, 'store',
-                    true, 1
-                ),
-                'bestsellers' => Product::getBestsellers(),
-            ];
+            if ($is_admin) {
+                $viewName = 'cms.items_table';
+            } elseif ($usePagination) {
+                $viewName = 'content.items_list';
+                $content['component'] = 'lib.themewagon.product_mini';
+            } else {
+                $viewName = 'content.items_list';
+                $content['component'] = 'lib.themewagon.product_mini';
+            }
             return self::getView(
-                $request, 'content.items_list', $title, 
-                $content, false, $breadcumbs
+                $request, $viewName, $title, 
+                $content, false, $breadcumbs, null,
+                $is_admin 
+                ? CmsController::getAdminSidebar() : null
             );
         }
     }

@@ -6,6 +6,7 @@ use App\Page,
     App\Cart,
     App\Order,
     App\User,
+    App\Article,
     App\UserSession;
 use Illuminate\Http\Request,
     App\Utilities\Functions\Functions,
@@ -220,17 +221,24 @@ class OrderController extends MainController
                     $default = []
                 )
             */
-            $content = $order->toContentArrayPlusExtra(
-                $ordersData['BaseUrl'], $ordersData['Version'], 
-                $ordersData['UseTitle'], $ordersData['WithTrashed'], 
-                $ordersData['FullUrl'], $ordersData['UseBaseMaker'],
-                $ordersData['Dir'], $currencyIcon, 
-                $ordersData['Default']
-            );
+            $content = [
+                'order' =>$order->toContentArrayPlusExtra(
+                    $ordersData['BaseUrl'], $ordersData['Version'], 
+                    $ordersData['UseTitle'], $ordersData['WithTrashed'], 
+                    $ordersData['FullUrl'], $ordersData['UseBaseMaker'],
+                    $ordersData['Dir'], $currencyIcon, 
+                    $ordersData['Default']
+                )
+            ];
             if ($request->ajax()) {
                 return $content;
             } else {    
                 $title = 'Customer Order: ' . $order->getPubName();
+                /* $article = Article::makeArticleArray(
+                    string $article, string $header = '',
+                    null, string $subheading = '',
+                    0
+                ) */
                 $bcLinks = [];
                 $bcLinks[] = self::getHomeBreadcumb();
                 if (Functions::isAdminPath($request->path())) {
@@ -248,7 +256,7 @@ class OrderController extends MainController
                     $bcLinks
                 );
                 return self::getView(
-                    $request, 'cms.orders', $title, 
+                    $request, 'cms.order', $title, 
                     $content, false, $breadcrumbs, null, 
                     Functions::isAdminPath($request->path()) 
                     ? CmsController::getAdminSidebar() : null
@@ -266,7 +274,65 @@ class OrderController extends MainController
      */
     public function edit(Request $request)
     {
-        //
+        $ordersData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'ordersPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => Functions::isAdminPath($request->path()),
+            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            //'Transform' => Order::TO_TABLE_ARRAY_TRANSFORM
+        ];
+        $order = Order::getNamed($request->order, $ordersData['WithTrashed']);
+        if (Functions::testVar($order)) {
+            $currencyIcon = $request->session()->has('currency') 
+                ? $request->session()->get('currency')
+                : 'fa-usd';
+            $content = [
+                'order' =>$order->toContentArrayPlusExtra(
+                    $ordersData['BaseUrl'], $ordersData['Version'], 
+                    $ordersData['UseTitle'], $ordersData['WithTrashed'], 
+                    $ordersData['FullUrl'], $ordersData['UseBaseMaker'],
+                    $ordersData['Dir'], $currencyIcon, 
+                    $ordersData['Default']
+                ),
+                'thisURL' => $order->getFullUrl($ordersData['BaseUrl'], $ordersData['FullUrl']),
+                'HttpVerb' => 'PATCH',
+                'cancelUrl' => Order::genUrlFragment($ordersData['BaseUrl'], $ordersData['FullUrl']),
+            ];  
+            $title = 'Customer Order: ' . $order->getPubName();
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            if (Functions::isAdminPath($request->path())) {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+            }
+            $bcLinks[] = Page::genBreadcrumb(
+                'Our Customers\' Orders', 
+                Order::genUrlFragment($ordersData['BaseUrl'], $ordersData['FullUrl'])
+            );
+            $breadcrumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb(
+                    'Administrative Order Review and Modification Form', 
+                    $order->getFullUrl($ordersData['BaseUrl'], $ordersData['FullUrl'])
+                ),
+                $bcLinks
+            );
+            return self::getView(
+                $request, 'cms.forms.edit.order', 'Administrative Order Review and Modification Form',
+                $content, false, $breadcrumbs, null, 
+                Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
+                : null
+            );
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
@@ -278,7 +344,54 @@ class OrderController extends MainController
      */
     public function update(Request $request)
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $ordersData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'ordersPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => Functions::isAdminPath($request->path()),
+            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            //'Transform' => Order::TO_TABLE_ARRAY_TRANSFORM
+        ];
+        $order = Order::getNamed($request->order, $ordersData['WithTrashed']);
+        if (Functions::testVar($order)) {
+            $validator = Validator::make(
+                $request->all(), 
+                [
+                    'status' => 'required|string|max:255',
+                    'comments' => 'required|string',
+                ]
+            );
+            $path = $request->path();
+            $passed = $validator->passes();
+            if ($passed) {
+                $val = $order->updateWith($request->comments, $request->status, true);
+                if (Functions::testVar($val) && $val === $order) {
+                    self::addMsg('Customer Order: ' . $order->getPubName() . ' Modified Successfully!');
+                    $path = 'admin/orders';
+                } else {
+                    self::addMsg("Uhhh, if we got here then Customer Order Modification FAILED!!!");
+                    //dd($page);
+                    $passed = null;
+                }
+            }
+            $path = $passed || Str::contains($path, 'edit') ? $path : $path . '/edit';
+            return UserSession::updateRedirect(
+                $request, $path, $validator, 
+                !$passed ? $request->all()
+                : []
+            );
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
@@ -294,6 +407,8 @@ class OrderController extends MainController
 
     public function showDelete(Request $request)
     {
-        // display 'ARE YOU SURE' PAGE...
+        return UserSession::updateRedirect(
+            $request, 'admin/orders'
+        );
     }
 }
