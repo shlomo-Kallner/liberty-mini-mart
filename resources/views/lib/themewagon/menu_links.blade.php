@@ -130,6 +130,7 @@
                     $elem = $frameStack->current();
                     $elem_type = $elem->get('type');
                     $elem_parent = $elem->parent();
+                    $elem_listCssClass = '';
                     //dd($frameStack);
                     //dd($elem);
                     //dd($elem_type);

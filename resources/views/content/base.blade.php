@@ -8,6 +8,8 @@
     use \App\Page;
     use \App\Cart;
 
+    $testing = false;
+
     if (!Functions::testVar($navbar??'')) {
         $navbar = Page::getNavBar(false);
     }
@@ -35,21 +37,28 @@
             Moving fully over to 'lib.themewagon.nav' for 
             Navigational, Header & Footer Content.
 --}}
+@if ($testing)
 
-@component('lib.themewagon.nav')
-    @slot('navbar')
-        {!! serialize($navbar) !!}
-    @endslot
-    @slot('preheader')
-        {!! serialize($preheader) !!}
-    @endslot
-    @slot('cart')
-        {!! serialize($cart) !!}
-    @endslot
-    @slot('currency')
-        {{ $cart['currencyIcon']??'fa-usd' }}
-    @endslot
-@endcomponent
+@else
+
+    
+    @component('lib.themewagon.nav')
+        @slot('navbar')
+            {!! serialize($navbar) !!}
+        @endslot
+        @slot('preheader')
+            {!! serialize($preheader) !!}
+        @endslot
+        @slot('cart')
+            {!! serialize($cart) !!}
+        @endslot
+        @slot('currency')
+            {{ $cart['currencyIcon']??'fa-usd' }}
+        @endslot
+    @endcomponent
+
+    
+@endif
 
 @include('lib.bootstrapious.modals.login')
 @include('lib.bootstrapious.modals.search')

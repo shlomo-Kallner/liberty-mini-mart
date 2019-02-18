@@ -185,28 +185,29 @@
 
     @endphp
 
-    @component('lib.themewagon.article-sm')
-        @foreach ($page['article'] as $key => $item)
-            @if ($key === 'img' || is_array($item) || is_object($item))
-                @php
-                    //dd($key, $item);
-                    //dd(serialize($item));
-                @endphp
-                @slot($key)
-                    {!! serialize($item) !!}
-                @endslot
-            @else
-                @slot($key)
-                    {!! $item !!}
-                @endslot
-            @endif
-        @endforeach
-    @endcomponent
-
-    @if (false)
+    @if ($testing)
+        {{-- we are testing! --}}
         
         
     @else
+
+        @component('lib.themewagon.article-sm')
+            @foreach ($page['article'] as $key => $item)
+                @if ($key === 'img' || is_array($item) || is_object($item))
+                    @php
+                        //dd($key, $item);
+                        //dd(serialize($item));
+                    @endphp
+                    @slot($key)
+                        {!! serialize($item) !!}
+                    @endslot
+                @else
+                    @slot($key)
+                        {!! $item !!}
+                    @endslot
+                @endif
+            @endforeach
+        @endcomponent
         @php
             //dd('in' . __FILE__, 'content.index') ;
         @endphp

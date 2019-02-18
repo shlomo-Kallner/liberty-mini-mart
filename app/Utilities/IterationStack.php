@@ -2,25 +2,51 @@
 
 namespace App\Utilities\IterationStack;
 
+use App\Utilities\Functions\Functions;
+
 
 class IterationStack 
 {
 
-    protected $stack = [];
-    protected $current;
+    protected $stack, $current;
 
     public function __construct(array &$elems, &$parent = null)
     {
         //dd($elems);
         $this->current = new IterationFrame($elems, $parent);
+        $this->stack = [];
+    }
+
+    static public function isAcceptableKey($key)
+    {
+        if (!empty($key)) {
+            return is_string($key) || (is_int($key) && $key >= 0);
+        }
+        return false;
+    }
+
+    public function empty()
+    {
+        if (count($this->stack) === 0 && $this->current === null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function testKey($key) 
+    {
+        if (!$this->empty() && self::isAcceptableKey($key)) {
+            return Functions::getVar($this->current->get($key), false);
+        }
+        return false;
     }
 
     public function push($key)
     {
-        if ((is_string($key) || is_int($key)) 
-            && !$this->empty() && $this->current->get($key) !== null) {
+        $tArr = $this->testKey($key);
+        if ($tArr !== false) {
             $this->stack[] = $this->current;
-            $tArr = $this->current->get($key);
             $tmp = new IterationFrame($tArr, $this->current);
             $this->current = $tmp;
         }
@@ -54,15 +80,6 @@ class IterationStack
             $this->current->prev();
         }
         return $this;
-    }
-
-    public function empty()
-    {
-        if (count($this->stack) === 0 && $this->current === null) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public function eof()
@@ -109,6 +126,29 @@ class IterationFrame
         $this->parent = null;
     }
 
+    public function eoa()
+    {
+        if ($this->index >= count($this->elems)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function boa()
+    {
+        if ($this->index <= 0 ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function testIndex($i) 
+    {
+        return $this->index < count($this->elems) && $this->index >= 0;
+    }
+
     public function next(bool $wrap = false)
     {
         if (!$this->eoa()) {
@@ -138,24 +178,6 @@ class IterationFrame
         return $this->parent;
     }
 
-    public function eoa()
-    {
-        if ($this->index >= count($this->elems)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function boa()
-    {
-        if ($this->index <= 0 ) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public function len()
     {
         return count($this->elems);
@@ -163,40 +185,59 @@ class IterationFrame
 
     public function current()
     {
-        return $this->elems[$this->index];
+        if ($this->testIndex($this->index)) {
+            return $this->elems[$this->index];
+        }
+        return null;
+    }
+
+    static public function testKey($key)
+    {
+        if (!empty($value)) {
+            return is_string($key) || (is_int($key) && $key >= 0);
+        }
+        return false;
+    }
+
+    public function has($key)
+    {
+        //dd($key);
+        if ($this->testIndex($this->index)) {
+            if (self::testKey($key)) {
+                //dd($key);
+                return Functions::isPropKeyIn($this->current(), $key, false);
+            }
+        }
+        return false;
     }
 
     public function get($key, $default = null)
     {
         //dd($key);
         if ($this->has($key)) {
-            return $this->elems[$this->index][$key];
+            return Functions::getPropKey($this->current(), $key, $default);
         } else {
             return $default;
         }
     }
 
-    public function has($key)
-    {
-        //dd($key);
-        if ((is_string($key) && $key !== '') || is_int($key)) {
-            //dd($key);
-            return !empty($this->elems[$this->index][$key]);
-        } else {
-            return false;
-        }
-    }
-
     public function set($key, $value = null)
     {
-        if (((is_string($key) && $key !== '' ) || is_int($key)) && !empty($value)) {
-            $this->elems[$this->index][$key] = $value;
-        } elseif (is_array($key)) {
-            foreach ($key as $idx => $val) {
-                $this->elems[$this->index][$idx] = $val;
+        if ($this->testIndex($this->index)) {
+            if (self::testKey($key) && !empty($value)) {
+                Functions::setPropKey($this->current(), $key, $value);
+                // $this->elems[$this->index][$key] = $value;
+            } elseif (is_array($key)) {
+                foreach ($key as $idx => $val) {
+                    if (self::testKey($idx) && !empty($val)) {
+                        //$this->elems[$this->index][$idx] = $val;
+                        Functions::setPropKey($this->current(), $idx, $val);
+                    }
+                }
             }
+            return $this;
         }
-        return $this;
+        return null;
     }
 
 }

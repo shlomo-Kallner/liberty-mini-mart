@@ -408,6 +408,7 @@ class MainController extends Controller
             //dd($request->session(), self::$data['cart']);
         */
         Log::info('dumping self::$data', self::$data);
+        //abort(404);
         return view($viewName, self::$data);
     }
 
