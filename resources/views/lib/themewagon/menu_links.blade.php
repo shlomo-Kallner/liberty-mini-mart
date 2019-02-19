@@ -132,8 +132,8 @@
                     $elem_parent = $elem->parent();
                     $elem_listCssClass = '';
                     //dd($frameStack);
-                    //dd($elem);
-                    //dd($elem_type);
+                    //dd($elem, $elem->current());
+                    //dd($elem, $elem_type, $elem->current());
 
                     if ($elem_type === 'url' || $elem_type === 'modal') {
                         $elem_listCssClass = '';
@@ -206,7 +206,9 @@
                     @endcomponent
 
                 
-                    
+                    @php
+                        //dd($elem, $elem_type);
+                    @endphp
                     
                     @if(($elem_type === 'dropdown-submenu' || $elem_type === 'dropdown')
                     && Functions::testVar($elem->get('submenus')))

@@ -19,8 +19,10 @@ class IterationStack
 
     static public function isAcceptableKey($key)
     {
-        if (!empty($key)) {
-            return is_string($key) || (is_int($key) && $key >= 0);
+        if (is_string($key)) {
+            return !empty($key); 
+        } elseif (is_int($key)) {
+            return $key >= 0;
         }
         return false;
     }
@@ -146,7 +148,7 @@ class IterationFrame
 
     private function testIndex($i) 
     {
-        return $this->index < count($this->elems) && $this->index >= 0;
+        return $i >= 0 && $i < count($this->elems);
     }
 
     public function next(bool $wrap = false)
@@ -193,19 +195,22 @@ class IterationFrame
 
     static public function testKey($key)
     {
-        if (!empty($value)) {
-            return is_string($key) || (is_int($key) && $key >= 0);
+        if (is_string($key)) {
+            return !empty($key);
+        } elseif (is_int($key)) {
+            return $key >= 0;
         }
         return false;
     }
 
     public function has($key)
     {
-        //dd($key);
+        //dd($this, $key);
         if ($this->testIndex($this->index)) {
+            $cur = $this->current();
+            //dd($this, $key, $cur, self::testKey($key), 'in ' . __METHOD__);
             if (self::testKey($key)) {
-                //dd($key);
-                return Functions::isPropKeyIn($this->current(), $key, false);
+                return Functions::isPropKeyIn($cur, $key, false);
             }
         }
         return false;
@@ -214,8 +219,10 @@ class IterationFrame
     public function get($key, $default = null)
     {
         //dd($key);
-        if ($this->has($key)) {
-            return Functions::getPropKey($this->current(), $key, $default);
+        if ($this->testIndex($this->index) && self::testKey($key)) {
+            $cur = $this->current();
+            dd($this, $key, $cur, self::testKey($key), 'in ' . __METHOD__);
+            return Functions::getPropKey($cur, $key, $default);
         } else {
             return $default;
         }
