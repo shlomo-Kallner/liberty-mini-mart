@@ -281,8 +281,10 @@ trait LinkGenerator {
             $res[] = self::genURLMenuItem('lib/themewagon/metronicShopUI/theme/shop-product-list.html', 'Custom Link');
         } else {
             $sections = Section::all();
+            Log::info('hahahhaa in: ' . __METHOD__);
+            $icon = 'fa-angle-right';
             foreach ($sections as $section) {
-                Log::info('hahahhaa');
+                //Log::info('hahahhaa');
                 // each section is a dropdown containing categories
                 // each category is a url link.
                 $cats = $section->categories;
@@ -291,17 +293,17 @@ trait LinkGenerator {
                 foreach ($cats as $cat) {
                     // $section_url . "/category/". $cat->url
                     $subs[] = self::genURLMenuItem(
-                        $cat->getFullUrl('store'), 
-                        $cat->title
+                        $cat->getFullUrl('store', true), 
+                        $cat->title, $icon
                     );
                 }
                 $res[] = self::genDropdownLink(
-                    $section->title, $subs, '', '', '',
-                    $section->getFullUrl('store')
+                    $section->title, $subs, $icon, '', '',
+                    $section->getFullUrl('store', true), ''
                 );
             }
         }
-        Log::info('hahahhaa========================');
+        Log::info('hahahhaa========================' . __METHOD__);
         return $res;
     }
 

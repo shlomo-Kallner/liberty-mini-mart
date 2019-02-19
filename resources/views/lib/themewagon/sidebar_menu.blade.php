@@ -11,12 +11,15 @@
     $menu2 = Functions::getUnBladedContent($menu??'');
     //dd($menu2, "my_menu");
 
+    $hasMenus = Functions::testVar($menu2) && Functions::countHas($menu2);
+    $useThisRecurse = $hasMenus && false;
+
 @endphp
 
 
     <ul class="list-group margin-bottom-25 sidebar-menu">
 
-        @if(Functions::testVar($menu2) && count($menu2) > 0)
+        @if($useThisRecurse)
             
             @php
             
@@ -185,7 +188,24 @@
                 @endif
 
             @endwhile
-        
+        @elseif($hasMenus)
+            @php
+                // dd($menu2)
+            @endphp
+
+            @foreach ($menu2 as $item)
+                @component('lib.themewagon.menu_links')
+                    @slot('listCSS')
+                        {!! "list-group-item clearfix" !!}
+                    @endslot
+                    @foreach ($item as $key => $val)
+                        @slot($key)
+                            {!! Functions::toBladableContent($val) !!}
+                        @endslot
+                    @endforeach
+                @endcomponent
+            @endforeach
+
         @elseif($testing)
 
             <li class="list-group-item clearfix">

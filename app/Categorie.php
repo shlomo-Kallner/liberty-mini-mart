@@ -19,9 +19,10 @@ class Categorie extends Model implements TransformableContainer
 
     static public function createNew(
         string $name, string $url, string $description, 
-        string $title, $article, int $section_id,
+        string $title, $article, $section,
         $image, string $sticker, bool $retObj = false
     ) {
+        $section_id = Section::getIdFrom($section, false, 0);
         $tmp = self::withTrashed()
             ->where(
                 [

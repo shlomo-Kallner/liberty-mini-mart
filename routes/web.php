@@ -105,9 +105,14 @@ Route::middleware('adminguard')->prefix('admin')->group(
                         ]
                     ]
                 );
+                Route::get(
+                    'section/{section}/delete', 
+                    'SectionController@showDelete'
+                );
                 // 'category/' goes to 'index()' which returns 'all-categories' of the section..
                 Route::get('category/create', 'CategorieController@create');
                 Route::post('category', 'CategorieController@store');
+                Route::get('category', 'CategorieController@index');
                 
                 Route::resource(
                     'section/{section}/category', 'CategorieController', [
@@ -116,11 +121,14 @@ Route::middleware('adminguard')->prefix('admin')->group(
                         ]
                     ]
                 );
+                Route::get(
+                    'section/{section}/category/{category}/delete', 
+                    'CategorieController@showDelete'
+                );
                 // 'product/' goes to 'index()' which returns 'all-products' of the category..
                 Route::get('product/create', 'ProductController@create');
                 Route::post('product', 'ProductController@store');
                 Route::get('product', 'ProductController@index');
-                Route::post('product', 'ProductController@store');
                 
                 Route::resource('section/{section}/category/{category}/product', 'ProductController');
                 Route::get(

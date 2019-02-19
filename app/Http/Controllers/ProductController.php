@@ -184,13 +184,14 @@ class ProductController extends MainController
      */
     public function create(Request $request)
     {
+        $is_admin = Functions::isAdminPath($request->path());
         $tmpData = [
             'PageNum' => 0,
             'NumShown' => 12,
             'PagingFor' => 'productsPanel',
             'Dir' => 'asc',
-            'WithTrashed' => Functions::isAdminPath($request->path()),
-            'BaseUrl' => Functions::isAdminPath($request->path()) ? 'admin/store' : 'store',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
             'ViewNum' => 0,
             'UseBaseMaker' => $request->ajax(),
             'Default' => [],
@@ -201,7 +202,7 @@ class ProductController extends MainController
             'Transform' => Product::TO_TABLE_ARRAY_TRANSFORM
         ];
         $slist = Section::getNameListing(false, $tmpData['Dir'], $tmpData['UseBaseMaker']);
-        $BaseUrl = Functions::isAdminPath($request->path()) ? 'admin/store' : 'store';
+        //$BaseUrl = Functions::isAdminPath($request->path()) ? 'admin/store' : 'store';
         $content = [
             'lists' => [
                 'sections' => $slist
@@ -228,11 +229,11 @@ class ProductController extends MainController
                     $content['selectedParent'] = $cat->toNameListing();
                     $content['hasSelectedSection'] = 'true';
                     $content['selectedSection'] = $sect->toNameListing();
-                    $BaseUrl = $cat->getFullUrl($BaseUrl, false);
+                    $tmpData['BaseUrl'] = $cat->getFullUrl($tmpData['BaseUrl'], false);
                 }
             }
         } 
-        $content['thisURL'] = Product::genUrlFragment($BaseUrl, $tmpData['FullUrl']);
+        $content['thisURL'] = Product::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl']);
         $bcLinks = [];
         $bcLinks[] = self::getHomeBreadcumb();
         if (Functions::isAdminPath($request->path())) {
@@ -241,14 +242,15 @@ class ProductController extends MainController
         $breadcrumbs = Page::getBreadcrumbs(
             Page::genBreadcrumb(
                 'Product Creation Form', 
-                Product::genUrlFragment($BaseUrl, $tmpData['FullUrl'])
+                Product::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl'])
             ),
             $bcLinks
         );
         return self::getView(
             $request, 'cms.forms.new.product', 'Create a New Product',
             $content, false, $breadcrumbs, null, 
-            Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
+            Functions::isAdminPath($request->path()) 
+            ? CmsController::getAdminSidebar()
             : null
         );
     }
@@ -269,16 +271,18 @@ class ProductController extends MainController
         $passes = $validator->passes();
         if ($passes) {    
             //
-            $sect = Section::getNamed($request->section);
+            $sect = Section::getNamed($request->input('section'));
             if (Functions::testVar($sect)) {
-                $cat = $sect->getCategory($request->category);
+                $cat = $sect->getCategory($request->input('category'));
                 if (Functions::testVar($cat)) {
+                    $desc = $request->input('description');
+                    $tit = $request->input('title');
                     
                     if ($request->hasFile('image')) {
                         
                         $image_id = Image::storeAndCreateNewImage(
                             $request->file('image'), 'products', 
-                            $request->title, $request->description, 
+                            $tit, $desc, 
                             false, 0
                         );
                     } else {
@@ -286,14 +290,14 @@ class ProductController extends MainController
                     }
                     // Log::info("image_id: " . $image_id);
                     $article_id = Article::createNew(
-                        $request->article, $request->title, 
+                        $request->article, $tit, 
                         null, $request->subheading??'', false
                     );
                     // Log::info("article_id: " . $article_id);
                     $product = Product::createNew(
                         $request->name, $request->url, $request->price,
                         $request->sale??0.0, $cat, $request->sticker??'',
-                        $image_id, $request->description, $request->title,
+                        $image_id, $desc, $tit,
                         $article_id, $request->payload??[], 1, true
                     );
                     // $product = $cat->getProduct($request->product);
@@ -511,6 +515,8 @@ class ProductController extends MainController
     {
         $section = Section::getNamed($request->section);
         $sect = Section::getNamed($request->newsection);
+        $path = $request->path();
+        $passes = null;
         if (Functions::testVar($sect) && Functions::testVar($section)) {
             $category = $section->getCategory($request->category);
             $cat = $sect->getCategory($request->newcategory);
@@ -524,7 +530,8 @@ class ProductController extends MainController
                         ), 
                         self::modificationValidationMessages()
                     );
-                    if ($validator->passes()) {
+                    $passes = $validator->passes();
+                    if ($passes) {
                         //$request->file('key', 'default');
                         //$request->hasFile('key');
                         if ($request->hasFile('image')) {
@@ -553,38 +560,22 @@ class ProductController extends MainController
                         // $product = $cat->getProduct($request->product);
                         // 'store/section/{section}/category/{category}/product/{product}'...
                         if (Functions::testVar($saved) && $product === $saved) {
-                            if ($request->ajax()) {
-                                //$user = User::getIdFromUserArray();
-                                // $products = $cat->getProducts(false);
-                                // $pages = $products->paginate(12);
-                                // $pages->withPath();
-                            } else {
-                                self::addMsg('Product ' . $product->name . ' , ' . $product->title . ' Modified Successfully!');
-                                UserSession::updateRegenerate(
-                                    $request, intval(User::getIdFromUserArray(false))
-                                );
-                                //$request->session()->regenerate();
-                                return redirect('admin/store/product');
-                            }
+                            self::addMsg('Product ' . $product->name . ' , ' . $product->title . ' Modified Successfully!');
+                            $path = 'admin/store/product';
+                        } else {
+                            self::addMsg(
+                                'Attempt to Modify Product ' . $product->name . ' , ' . $product->title 
+                                . ' collided with another product on new Name, URL, Section, or Category!'
+                                . ' Please Try again.'
+                            );
+                            $passes = null;
+                            //Log::info("Uhhh, if we got here then PRODUCT MODIFICATION FAILED!!!");
                         }
-                        self::addMsg(
-                            'Attempt to Modify Product ' . $product->name . ' , ' . $product->title 
-                            . ' collided with another product on new Name, URL, Section, or Category!'
-                            . ' Please Try again.'
-                        );
-                        //Log::info("Uhhh, if we got here then PRODUCT MODIFICATION FAILED!!!");
                     }
                 }
             }
         }
-        // UserSession::updateRegenerate(
-        //     $request, intval(User::getIdFromUserArray(false))
-        // );
-        $path = $request->path();
-        $path = Str::contains($path, 'edit') ? $path : $path . '/edit';
-        // return redirect($path)
-        //     ->withErrors($validator)
-        //     ->withInput($request->except('image'));
+        $path = $passes || Str::contains($path, 'edit') ? $path : $path . '/edit';
         return UserSession::updateRedirect(
             $request, $path, $validator, 
             $request->except('image')
@@ -599,6 +590,7 @@ class ProductController extends MainController
      */
     public function destroy(Request $request)
     {
+        $errors = [];
         if (Functions::testVar($request->section) && Functions::testVar($request->category)) {
             $section = Section::getNamed(
                 $request->section, true, null, false
@@ -611,7 +603,6 @@ class ProductController extends MainController
                     $product = $category->getProduct($request->product, true);
                     if (Functions::testVar($product)) {
                         $product->delete();
-                        $errors = [];
                         if ($product->trashed()) {
                             self::addMsg('Product ' . $product->name . ' , ' . $product->title . ' Deleted Successfully!');
                         } else {
@@ -619,15 +610,14 @@ class ProductController extends MainController
                                 'error' => 'Product ' . $product->name . ' , ' . $product->title . ' Deletion failed!'
                             ];
                         }
-                        return UserSession::updateRedirect(
-                            $request, 'admin/store/product', $errors
-                        );
                     }
                 }
             }
         }
         Log::info('we are abotring! at' . __METHOD__);
-        UserSession::updateAndAbort($request, 404);
+        return UserSession::updateRedirect(
+            $request, 'admin/store/product', $errors
+        );
     }
 
     public function showDelete(Request $request)

@@ -125,6 +125,21 @@ class CmsController extends MainController
             'FullUrl' => !$useVue,// !$request->ajax(),
             'ListUrl' => $request->path(),
         ];
+        $catData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'categoriesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => true,// Functions::isAdminPath($request->path()),
+            'BaseUrl' => 'admin/store',// Functions::isAdminPath($request->path()) ? 'admin' : '',
+            'ViewNum' => 0,
+            'UseBaseMaker' => true,// $request->ajax(),
+            'Default' => [],
+            'UseTitle' => true,
+            'FullUrl' => !$useVue,// !$request->ajax(),
+            'ListUrl' => $request->path(),
+        ];
+
         /*
             ::getSelf(
                 string $baseUrl = 'store', bool $withTrashed = true,
@@ -167,6 +182,11 @@ class CmsController extends MainController
             $ordersData['FullUrl'], [], 
             null, $usePagingFor ? $ordersData['PagingFor'] : ''
         );
+        $categories = Categorie::getSelf(
+            $catData['BaseUrl'], $catData['WithTrashed'],
+            $catData['FullUrl'] = false, [], 
+            null, $usePagingFor ? $catData['PagingFor'] : ''
+        );
         $sidebar = self::getAdminSidebar();
         $admin_header = self::getAdminHeader();
         $admin_article = Article::makeArticleArray(
@@ -182,6 +202,7 @@ class CmsController extends MainController
                 'sections' => $sections,
                 'users'=> $users,
                 'pages'=> $pages,
+                'categories' => $categories,
                 /*
                     ''=> [
                         'items' => $->toArray(),
@@ -191,7 +212,7 @@ class CmsController extends MainController
             ];
         } elseif ($useVue) {
             $children = [
-                $sections, $users, $pages,
+                $sections, $users, $pages, $categories,
             ];
             $dates = [
                 'created' => Carbon::now(),
@@ -227,7 +248,8 @@ class CmsController extends MainController
                         ::makeMini(
                             string $img ['value']['img']['img'], 
                             string $name ['value']['name'], 
-                            string $url ['value']['url'], '', 0, ''
+                            string $url ['value']['url'], 
+                            '', 0, ''
                         ),
                     */
                     Section::makeMini(
@@ -272,6 +294,12 @@ class CmsController extends MainController
                         $orders['value']['url'], 
                         '', 0, ''
                     ),
+                    Categorie::makeMini(
+                        $categories['value']['img']['img'], 
+                        $categories['value']['name'], 
+                        $categories['value']['url'], 
+                        '', 0, ''
+                    ),
                 ]
             ];
         }
@@ -313,30 +341,37 @@ class CmsController extends MainController
             /// for each of the "create" Links below..
 
         */
-
+        $iconAfter = false ? 'fa-plus' : '';
+        $useIcons = false;
         $sidebar[] = Page::genURLMenuItem(
-            'admin/store/section/create', 'Create a New Section', 'fa-shopping-cart', 
-            '', '', 'fa-plus', 'button'
+            'admin/store/section/create', 'Create a New Section', 
+            $useIcons ? 'fa-shopping-cart' : '', 
+            '', '', $iconAfter, 'button'
         );  
         $sidebar[] = Page::genURLMenuItem(
-            'admin/store/category/create', 'Create a New Category', 'fa-shopping-basket', 
-            '', '', 'fa-plus', 'button'
+            'admin/store/category/create', 'Create a New Category', 
+            $useIcons ? 'fa-shopping-basket' : '', 
+            '', '', $iconAfter, 'button'
         );  
         $sidebar[] = Page::genURLMenuItem(
-            'admin/store/product/create', 'Create a New Product', 'fa-shopping-bag', 
-            '', '', 'fa-plus', 'button'
+            'admin/store/product/create', 'Create a New Product', 
+            $useIcons ? 'fa-shopping-bag' : '', 
+            '', '', $iconAfter, 'button'
         );  
         $sidebar[] = Page::genURLMenuItem(
-            'admin/user/create', 'Create a New User', 'fa-address-book', 
-            '', '', 'fa-plus', 'button'
+            'admin/user/create', 'Create a New User', 
+            $useIcons ? 'fa-address-book' : '', 
+            '', '', $iconAfter, 'button'
         );  
         $sidebar[] = Page::genURLMenuItem(
-            'admin/page/create', 'Create a New Content Page', 'fa-newspaper-o', 
-            '', '', 'fa-plus', 'button'
+            'admin/page/create', 'Create a New Content Page', 
+            $useIcons ? 'fa-newspaper-o' : '', 
+            '', '', $iconAfter, 'button'
         );  
         $sidebar[] = Page::genURLMenuItem(
-            'admin/menus/create', 'Create a New Navigation Menu', 'fa-bars', 
-            '', '', 'fa-plus', 'button'
+            'admin/menus/create', 'Create a New Navigation Menu', 
+            $useIcons ? 'fa-bars' : '', 
+            '', '', $iconAfter, 'button'
         );  
         return $sidebar;
     }

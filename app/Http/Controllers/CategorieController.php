@@ -4,9 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Categorie,
     App\Utilities\Functions\Functions,
+    Illuminate\Support\Facades\Log, 
+    Illuminate\Validation\Rule,
+    Illuminate\Support\Facades\Validator,
+    Illuminate\Support\Str,
     App\Product,
     App\Section,
     App\Page,
+    App\Image,
+    App\Article,
+    App\UserSession,
     Illuminate\Http\Request;
 
 class CategorieController extends MainController
@@ -47,7 +54,7 @@ class CategorieController extends MainController
                 ? Categorie::TO_MINI_TRANSFORM
                 : Categorie::TO_TABLE_ARRAY_TRANSFORM, 
         ];
-        $sect = Section::getNamed($request->section);
+        $sect = Section::getNamed($request->section??'', $catData['WithTrashed']);
         if (Functions::testVar($sect)) {
             return UserSession::updateRedirect(
                 $request, $sect->getFullUrl($catData['BaseUrl'], $catData['FullUrl'])
@@ -109,12 +116,12 @@ class CategorieController extends MainController
                 $bcLinks[] = ShopController::getStoreBreadcrumbs($request);
                 $content['bestsellers'] = Product::getBestsellers();
             }
-            $bcLinks[] = Page::genBreadcrumb(
-                $sect->title, 
-                $sect->getFullUrl(
-                    $catData['BaseUrl'], $catData['FullUrl']
-                )
-            );
+            // $bcLinks[] = Page::genBreadcrumb(
+            //     $sect->title, 
+            //     $sect->getFullUrl(
+            //         $catData['BaseUrl'], $catData['FullUrl']
+            //     )
+            // );
             $breadcrumbs = Page::getBreadcrumbs( 
                 Page::genBreadcrumb($title, $request->path()),
                 $bcLinks
@@ -130,7 +137,7 @@ class CategorieController extends MainController
             }
             return self::getView(
                 $request, $viewName, $title, 
-                $content, false, $breadcumbs, null,
+                $content, false, $breadcrumbs, null,
                 $is_admin 
                 ? CmsController::getAdminSidebar() : null
             );
@@ -157,7 +164,69 @@ class CategorieController extends MainController
      */
     public function create(Request $request)
     {
-        return self::getView($request, 'cms.forms.new.category', 'Create a New Category');
+        $is_admin = Functions::isAdminPath($request->path());
+        $usePagination = !$is_admin; // false;
+        $catData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'categoriesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => $usePagination 
+                ? Categorie::TO_MINI_TRANSFORM
+                : Categorie::TO_TABLE_ARRAY_TRANSFORM, 
+        ];
+        $slist = Section::getNameListing(
+            $catData['WithTrashed'], $catData['Dir'], $catData['UseBaseMaker']
+        );
+        $content = [
+            'parentList' => $slist,
+            'hasName' => 'true',
+            'hasTitle' => 'true',
+            'hasUrl' => 'true',
+            'hasDescription' => 'true',
+            'hasArticle' => 'true',
+            'hasSticker' => 'true',
+            'hasImage' => 'true',
+            'hasParent' => 'true',
+            'parentName' => 'Section',
+            'parentId' => 'secturl',
+        ];
+        $sect = Section::getNamed($request->section??'', $catData['WithTrashed']);
+        if (Functions::testVar($sect)) {
+            $content['hasSelectedParent'] = 'true';
+            $content['selectedParent'] = $sect->toNameListing();
+            $catData['BaseUrl'] = $sect->getFullUrl($catData['BaseUrl'], false);
+        } 
+        $content['thisURL'] = Categorie::genUrlFragment($catData['BaseUrl'], $catData['FullUrl']);
+        $bcLinks = [];
+        $bcLinks[] = self::getHomeBreadcumb();
+        if (Functions::isAdminPath($request->path())) {
+            $bcLinks[] = CmsController::getAdminBreadcrumb();
+        }
+        $breadcrumbs = Page::getBreadcrumbs(
+            Page::genBreadcrumb(
+                'Category Creation Form', 
+                Categorie::genUrlFragment($catData['BaseUrl'], $catData['FullUrl'])
+            ),
+            $bcLinks
+        );
+        return self::getView(
+            $request, 'cms.forms.new.category', 'Create a New Category',
+            $content, false, $breadcrumbs, null, 
+            Functions::isAdminPath($request->path()) 
+            ? CmsController::getAdminSidebar()
+            : null
+        );
     }
 
     /**
@@ -168,7 +237,70 @@ class CategorieController extends MainController
      */
     public function store(Request $request)
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $usePagination = !$is_admin; // false;
+        $catData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'categoriesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => $usePagination 
+                ? Categorie::TO_MINI_TRANSFORM
+                : Categorie::TO_TABLE_ARRAY_TRANSFORM, 
+        ];
+        $validator = Validator::make(
+            $request->all(), self::creationValidationRules(), 
+            self::creationValidationMessages()
+        );
+        $path = $request->path();
+        $passes = $validator->passes();
+        if ($passes) {
+
+            if ($request->hasFile('image')) {
+                        
+                $image_id = Image::storeAndCreateNewImage(
+                    $request->file('image'), 'categories', 
+                    $request->title, $request->description, 
+                    false, 0
+                );
+            } else {
+                $image_id = 0;
+            }
+            // Log::info("image_id: " . $image_id);
+            $article_id = Article::createNew(
+                $request->article, $request->title, 
+                null, $request->subheading??'', false
+            );
+            // Log::info("article_id: " . $article_id);
+            $section_id = Section::getIdFrom($request->secturl, false, 0);
+            $category = Categorie::createNew(
+                $request->name, $request->url, $request->description, 
+                $request->title, $article_id, $section_id,
+                $image_id, $request->sticker, true
+            );
+            if (Functions::testVar($category)) {
+                self::addMsg('Category ' . $category->name . ' , ' . $category->title . ' Creation Successfull!');
+                $path = 'admin/store/category';
+            } else {
+                Log::info("Uhhh, if we got here then Category CREATION FAILED!!!");
+                $passes = null;
+            }
+        }
+        $path = $passes || Str::contains($path, 'create') ? $path : $path . '/create';
+        return UserSession::updateRedirect(
+            $request, $path, $validator, 
+            $request->except('image')
+        );
     }
 
     /**
@@ -179,48 +311,79 @@ class CategorieController extends MainController
      */
     public function show(Request $request)
     {
-        //dd($categorie);
-        //dd($request->section, $request->category);
-        //$categorie
+        $is_admin = Functions::isAdminPath($request->path());
+        $usePagination = !$is_admin;
+        $tmpData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'categoriesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UsePagination' => $usePagination,
+            'Transform' => $usePagination 
+                ? Product::TO_MINI_TRANSFORM
+                : Product::TO_TABLE_ARRAY_TRANSFORM,
+        ];   
+        $tmpData['BaseUrl'] = $request->ajax() ? 'api/' . $tmpData['BaseUrl'] : $tmpData['BaseUrl'];
         $sect = Section::getNamed($request->section);
-        //dd($sect->id);
-        //dd($sect);
         if (Functions::testVar($sect)) {
-            /* 
-                $cat = Categorie::where(
-                    [
-                        ['section_id', $sect->id],
-                        ['url', $request->category]
-                    ]
-                )->first(); 
-            */
-            $cat = $sect->getCategory($request->category);
+            $cat = $sect->getCategory($request->category, $tmpData['WithTrashed']);
             // 'store/section/{section}/category/{category}/product/{product}'...
             //$sect_url = 'store/section/'. $sect->url;
             //$cat_url = $sect_url . '/category/' . $request->category;
-            $breadcrumbs = Page::getBreadcrumbs( 
-                Page::genBreadcrumb($cat->title, $cat->getFullUrl('store')),
-                [
-                    Page::genBreadcrumb('Store', 'store'),
-                    Page::genBreadcrumb($sect->title, $sect->getFullUrl('store'))
-                ]
-            );
-            //dd($cat);
+           //dd($cat);
             // getting the products of the category..
             $content = [
-                'items' => Product::getProductsFor(
-                    $cat->products, 'store', Product::TO_MINI_TRANSFORM,
-                    true, 1, false
+                'items' => Product::getFor(
+                    $cat->products, $tmpData['BaseUrl'], 
+                    $tmpData['Transform'], $tmpData['UseTitle'], 
+                    $tmpData['Version'], $tmpData['WithTrashed'],
+                    $tmpData['FullUrl'], $tmpData['Default'], 
+                    $tmpData['UseBaseMaker'], $tmpData['Dir']
                 ),
-                'bestsellers' => Product::getBestsellers(3, 'store', true, 1),
-            
             ];
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            if ($is_admin) {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+                $viewName = 'cms.items_table';
+            } else {
+                $bcLinks[] = ShopController::getStoreBreadcrumbs($request);
+                $content['bestsellers'] = Product::getBestsellers(
+                    3, $tmpData['BaseUrl'], $tmpData['UseTitle'], 
+                    $tmpData['FullUrl'], $tmpData['Version'], 
+                    $tmpData['WithTrashed'], $tmpData['Default'], 
+                    $tmpData['UseBaseMaker'], $tmpData['Dir']
+                );
+                $viewName = 'content.items_list';
+                $content['component'] = 'lib.themewagon.product_mini';
+            }
+            $bcLinks[] = Page::genBreadcrumb(
+                $sect->title, 
+                $sect->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl'])
+            );
             //self::$data['products'] = Product::getProductsForCategory($cat->id, 'mini', $cat_url);
             //self::$data['products'] = $prods;
             //dd($products);
+            $breadcrumbs = Page::getBreadcrumbs( 
+                Page::genBreadcrumb(
+                    $cat->title, $cat->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl'])
+                ),
+                $bcLinks
+            );
             return parent::getView(
-                $request, 'content.items_list', $cat->title, 
-                $content, false, $breadcrumbs
+                $request, $viewName, $cat->title, 
+                $content, false, $breadcrumbs, null, 
+                Functions::isAdminPath($request->path()) ? CmsController::getAdminSidebar()
+                : null
             );
         } 
         abort(404);
@@ -264,6 +427,92 @@ class CategorieController extends MainController
     {
         // display 'ARE YOU SURE' PAGE...
     }
+
+    //// Validation Rules and messages
+
+    /**
+     * Get the validation rules that apply to the creation request.
+     *
+     * @return array
+     */
+    static public function creationValidationRules()
+    {
+        return [
+            //
+            'secturl' => 'required|max:255|string|min:3|exists:sections,url',
+            'image' => 'required|file|image',
+            'article' => 'required|max:255000|string|min:3',
+            'subheading' => 'string|nullable|max:255',
+            'title' => 'required|max:255|string|min:3',
+            'name' => 'required|max:255|string|min:3|unique:categories,name',
+            'description' => 'required|max:255|string|min:3',
+            'url' => [
+                'required', 'max:255', 'string', 'min:3',
+                'regex:'. Functions::getURLRegexStr(),
+                'unique:categories,url'
+            ],
+            'sticker' => [
+                'string', 'nullable', 'regex:/new|sale/'
+            ],
+        ];
+    }
+
+    /**
+     * Get the validation rules that apply to the modification request.
+     *
+     * @return array
+     */
+    static public function modificationValidationRules($url, $name)
+    {
+        return [
+            //
+            'secturl' => 'required|max:255|string|min:3|exists:sections,url',
+            'image' => 'nullable|file|image',
+            'article' => 'required|max:255000|string|min:3',
+            'subheading' => 'string|nullable|max:255',
+            'title' => 'required|max:255|string|min:3',
+            'name' => [
+                'required', 'max:255', 'string', 'min:3',
+                Rule::unique('categories', 'name')->ignore($name, 'name')
+            ],
+            'description' => 'required|max:255|string|min:3',
+            'url' => [
+                'required', 'max:255', 'string', 'min:3',
+                'regex:'. Functions::getURLRegexStr(),
+                Rule::unique('categories', 'url')->ignore($url, 'url')
+            ],
+            'sticker' => [
+                'string', 'nullable', 'regex:/new|sale/'
+            ],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    static public function creationValidationMessages()
+    {
+        return [
+            'title.required' => 'A title is required',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    static public function modificationValidationMessages()
+    {
+        return [
+            'title.required' => 'A title is required',
+        ];
+    }
+
+
+    /// testing!!!
 
     public function test(Request $request)
     {

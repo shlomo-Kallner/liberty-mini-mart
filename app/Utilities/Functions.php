@@ -425,9 +425,11 @@ class Functions
 
     static public function is_countable($value)
     {
-        return isset($value) && (is_array($value) 
-        || ($value instanceof Countable && $value instanceof Traversable)
-        );
+        if (isset($value)) {
+            return is_array($value) 
+            || ($value instanceof Countable && $value instanceof Traversable);
+        }
+        return false;
     }
 
     static public function countHas($value)

@@ -1,4 +1,4 @@
-@extends('content.base')
+@extends('cms.template')
 
 @section('main-content')
     @parent
@@ -82,13 +82,4 @@
 
     </div>
 
-@endsection
-
-@section('js-main')
-    @parent
-    @php
-        // dd(asset('js/admin_blade.js'), asset(mix('js/admin_blade.js')));
-    @endphp
-    
-    <script src="{{ asset(mix('js/admin_blade.js')) }}" type="text/javascript"></script>
 @endsection

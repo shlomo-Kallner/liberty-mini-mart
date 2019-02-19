@@ -1,4 +1,4 @@
-@extends('content.template')
+@extends('cms.template')
 
 @php
     $testing = true;    

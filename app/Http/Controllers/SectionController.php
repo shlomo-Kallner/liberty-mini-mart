@@ -13,6 +13,7 @@ use App\Section,
 use Illuminate\Http\Request, 
     Illuminate\Validation\Rule,
     Illuminate\Support\Facades\Validator,
+    Illuminate\Support\Facades\Log,
     Illuminate\Support\Str;
 
 class SectionController extends MainController
@@ -225,7 +226,7 @@ class SectionController extends MainController
             if ($request->hasFile('image')) {
                         
                 $image_id = Image::storeAndCreateNewImage(
-                    $request->file('image'), 'products', 
+                    $request->file('image'), 'sections', 
                     $request->title, $request->description, 
                     false, 0
                 );
@@ -383,7 +384,12 @@ class SectionController extends MainController
                     $viewName = 'cms.items_table';
                 } else {
                     $bcLinks[] = ShopController::getStoreBreadcrumbs($request);
-                    $section_data[] = Product::getBestsellers();
+                    $section_data['bestsellers'] = Product::getBestsellers(
+                        3, $tmpData['BaseUrl'], $tmpData['UseTitle'], 
+                        $tmpData['FullUrl'], $tmpData['Version'], 
+                        $tmpData['WithTrashed'], $tmpData['Default'], 
+                        $tmpData['UseBaseMaker'], $tmpData['Dir']
+                    );
                     $viewName = 'content.items_list';
                     $section_data['component'] = 'lib.themewagon.product_mini';
                 }
@@ -405,6 +411,7 @@ class SectionController extends MainController
                     : null
                 );
             }
+
         } else {
             return $this->index($request);
         }
@@ -497,7 +504,57 @@ class SectionController extends MainController
      */
     public function update(Request $request)
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $section = Section::getNamed($request->section, $is_admin);
+        $path = $request->path();
+        $validator = $passes = null;
+        if (Functions::testVar($section)) {
+            $validator = Validator::make(
+                $request->all(), 
+                self::modificationValidationRules($section->url, $section->name), 
+                self::modificationValidationMessages()
+            );
+            $passes = $validator->passes();
+            if ($passes) {
+                    
+                if ($request->hasFile('image')) {
+                    
+                    $image_id = Image::storeAndCreateNewImage(
+                        $request->file('image'), 'sections', 
+                        $request->title, $request->description, 
+                        false, 0
+                    );
+                } else {
+                    $image_id = $section->image_id;
+                }
+                // Log::info("image_id: " . $image_id);
+                $article_id = Article::createNew(
+                    $request->article, $request->title, 
+                    null, $request->subheading??'', false
+                );
+                $sect = $section->updateWith(
+                    $request->name, $request->url, $request->title, 
+                    $article_id, $request->description, $image_id, 
+                    1, true
+                );
+                if (Functions::testVar($sect) && $sect === $section) {
+                    self::addMsg('Section ' . $section->name . ' , ' . $section->title . ' Modified Successfully!');
+                    $path = 'admin/store/section';
+                } else {
+                    self::addMsg(
+                        'Attempt to Modify Section ' . $section->name . ' , ' . $section->title 
+                        . ' collided with another product on new Name or URL!'
+                        . ' Please Try again.'
+                    );
+                    $passes = null;
+                }
+            }
+        }
+        $path = $passes || Str::contains($path, 'edit') ? $path : $path . '/edit';
+        return UserSession::updateRedirect(
+            $request, $path, $validator, 
+            $request->except('image')
+        );
     }
 
     /**
@@ -506,14 +563,112 @@ class SectionController extends MainController
      * @param  \App\Section  $section
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Section $section)
+    public function destroy(Request $request)
     {
-        //
+        //dd($request);
+        $is_admin = Functions::isAdminPath($request->path());
+        $section = Section::getNamed($request->section, $is_admin);
+        $path = $request->path();
+        $errors = [];
+        if (Functions::testVar($section)) {
+            $cats = $section->categories;
+            if (Functions::testVar($cats) && Functions::countHas($cats)) {
+                foreach ($cats as $cat) {
+                    $prods = $cat->products;
+                    if (Functions::testVar($prods) && Functions::countHas($prods)) {
+                        foreach ($prods as $prod) {
+                            $prod->delete();
+                        }
+                    }
+                    $cat->delete();
+                }
+            }
+            $section->delete();
+            if ($section->trashed()) {
+                self::addMsg('Section ' . $section->name . ' , ' . $section->title . ' Deleted Successfully!');
+            } else {
+                $errors = [
+                    'error' => 'Section ' . $section->name . ' , ' . $section->title . ' Deletion failed!'
+                ];
+            }
+        }
+        Log::info('we are abotring! at' . __METHOD__);
+        return UserSession::updateRedirect(
+            $request, 'admin/store/section', $errors
+        );
     }
 
     public function showDelete(Request $request)
     {
         // display 'ARE YOU SURE' PAGE...
+        //dd($request);
+        $is_admin = Functions::isAdminPath($request->path());
+        $section = Section::getNamed($request->section, $is_admin);
+        $path = $request->path();
+        $errors = [];
+        $tmpData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'sectionPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+        ];   
+        if (Functions::testVar($section)) {
+            $sh = $section->getSubHeading();
+            $content = [
+                'hasName' => 'true',
+                'name' => $section->name,
+                'hasTitle' => 'true',
+                'title' => $section->title,
+                'hasUrl' => 'true',
+                'url' => $section->url,
+                'hasDescription' => 'true',
+                'description' => $section->description,
+                'hasArticle' => 'true',
+                'article' => $section->getArticle(true),
+                'hasSubHeading' => !empty($sh) ? 'true' : '',
+                'subHeading' => !empty($sh) ? $sh : '',
+                'hasImage' => 'true',
+                'image' => $section->getImageArray(),
+                'thisURL' => $section->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl']),
+                'HttpVerb' => 'PATCH',
+                'cancelUrl' => 'admin/store/section',
+            ];
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            if ($is_admin) {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+            }
+            $bcLinks[] = Page::genBreadcrumb(
+                'Our Produce Sections', 
+                Section::genUrlFragment($tmpData['BaseUrl'], $tmpData['FullUrl'])
+            );
+            $breadcrumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb(
+                    'Section Deletion Confirmation Form', 
+                    $section->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl'])
+                ),
+                $bcLinks
+            );
+            return self::getView(
+                $request, 'cms.forms.delete.section', 'Delete Existing Store Section',
+                $content, false, $breadcrumbs, null, 
+                $is_admin ? CmsController::getAdminSidebar()
+                : null
+            );
+        }
+        Log::info('we are abotring! at' . __METHOD__);
+        return UserSession::updateRedirect(
+            $request, 'admin/store/section', $errors
+        );
     }
 
     //// Validation Rules and messages

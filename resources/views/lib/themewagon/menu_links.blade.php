@@ -45,6 +45,7 @@
     }
  
     //dd($submenus2);
+    //dd($listCSS2);
 
 @endphp
 
@@ -115,7 +116,7 @@
                 
                 $frameStack = new IterationStack($submenus2);
                 $bol = true;
-                dd($submenus2, $frameStack);
+                //dd($submenus2, $frameStack);
             @endphp
     
             {{-- 
@@ -135,7 +136,7 @@
                     $elem_listCssClass = '';
                     //dd($frameStack);
                     //dd($elem, $elem->current());
-                    dd($frameStack, $elem, $elem_type, $elem->current());
+                    //dd($frameStack, $elem, $elem_type, $elem->current());
 
                     if ($elem_type === 'url' || $elem_type === 'modal') {
                         $elem_listCssClass = '';

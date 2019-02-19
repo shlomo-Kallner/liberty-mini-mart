@@ -6,7 +6,8 @@
 
 use \App\Page,
     \App\Utilities\Functions\Functions,
-    \Darryldecode\Cart\Cart;
+    \Darryldecode\Cart\Cart,
+    Illuminate\Support\Facades\Log;
 
 
 $navbar2 = Functions::getUnBladedContent($navbar??'');
@@ -185,6 +186,9 @@ if (!$testing) {
 
                         Moving our "main level" items to the 'front'.. 
                     --}}
+                    @php
+                        Log::info('dumping in nav', $navbar2);
+                    @endphp
                     @foreach($navbar2 as $nav)
 
                         @if ($nav['type'] == 'url' || $nav['type'] == 'modal' || $nav['type'] == 'dropdown')

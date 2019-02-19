@@ -314,9 +314,10 @@ class Section extends Model implements TransformableContainer
 
     static public function createNew(
         string $name, string $url, string $title, $article,
-        string $description, $img, int $catalog_id = 1,
+        string $description, $img, $catalog = null,
         bool $retObj = false
     ) {
+        $catalog_id = 1;
         $tmp = self::withTrashed()
             ->where(
                 [
@@ -329,7 +330,7 @@ class Section extends Model implements TransformableContainer
                     ['catalog_id', '=', $catalog_id],
                 ]
             )->get();
-        if (!Functions::testVar($tmp) || count($tmp) === 0) {
+        if (!Functions::testVar($tmp) || !Functions::countHas($tmp)) {
             $tImg = Image::getImageToID($img);
             $tArt = Article::getToId($article);
             if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
@@ -344,6 +345,52 @@ class Section extends Model implements TransformableContainer
                 if ($data->save()) {
                     if (Functions::testVar(SectionImage::createNewFrom($data))) {
                         return $retObj ? $data : $data->id;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public function updateWith(
+        string $name, string $url, string $title, $article,
+        string $description, $img, $catalog = null,
+        bool $retObj = false
+    ) {
+        $catalog_id = 1;
+        $whereBy = [
+            ['id', '<>', $this->id]
+        ];
+        $orWhereBy = [
+            ['id', '<>', $this->id]
+        ];
+        if ($name !== $this->name) {
+            $whereBy[] = ['name', '=', $name];
+        } else {
+            $whereBy[] = ['name', '=', $this->name];
+        }
+        if ($url !== $this->url) {
+            $orWhereBy[] = ['url', '=', $url];
+        } else {
+            $orWhereBy[] = ['url', '=', $this->url];
+        }
+        $tmp = self::withTrashed()->where($whereBy)->orWhere($orWhereBy)->get();
+        //dd($this, $tmp);
+        if (!Functions::testVar($tmp) || !Functions::countHas($tmp)) {
+            $tImg = Image::getImageToID($img);
+            $tArt = Article::getToId($article);
+            //dd($this, $tmp, $tImg, $tArt);
+            if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
+                $this->name = $name;
+                $this->url = $url;
+                $this->image_id = $tImg;
+                $this->title = Functions::purifyContent($title);
+                $this->article_id = $tArt;
+                $this->description = Functions::purifyContent($description);
+                $this->catalog_id = $catalog_id;
+                if ($this->save()) {
+                    if (Functions::testVar(SectionImage::createNewFrom($this))) {
+                        return $retObj ? $this : $this->id;
                     }
                 }
             }
