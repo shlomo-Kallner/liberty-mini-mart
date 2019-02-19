@@ -21,6 +21,8 @@
     // $articleLegend2 = Functions::getBladedString($page['articleLegend']??'', 'Type Your Description Here.');
     $hasImage2 = Functions::getBladedString($page['hasImage']??'', '');
     $image2 = Functions::getContent($page['image']??'', '');
+    $hasSticker2 = Functions::getBladedString($page['hasSticker']??'', '');
+    $sticker2 = Functions::getContent($page['sticker']??'', old('sticker',''));
     $hasParent2 = Functions::getBladedString($page['hasParent']??'', '');
     $parentName2 = Functions::getBladedString($page['parentName']??'', 'Parent');
     $parentId2 = Functions::getBladedString($page['parentId']??'', 'parent');

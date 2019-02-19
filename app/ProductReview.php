@@ -165,7 +165,11 @@ class ProductReview extends Model implements TransformableContainer
 
     public function getParentUrl(string $baseUrl, bool $fullUrl = false)
     {
-        return $this->product->getFullUrl($baseUrl, $fullUrl);
+        $p = User::getIsAdmin() ? $this->product()->withTrashed()->first() : $this->product;
+        if (Functions::testVar($p)) {
+            return $p->getFullUrl($baseUrl, $fullUrl);
+        }
+        return $fullUrl ? url($baseUrl) : $baseUrl;
     }
 
     public function getImageArray()

@@ -424,56 +424,58 @@ class CategorieController extends MainController
         $sect = Section::getNamed($request->section, $catData['WithTrashed']);
         if (Functions::testVar($sect)) {
             $cat = Categorie::getNamed($request->category, $catData['WithTrashed']);
-            $sh = $cat->getSubHeading();
-            $content = [
-                'hasName' => 'true',
-                'name' => $cat->name,
-                'hasTitle' => 'true',
-                'title' => $cat->title,
-                'hasUrl' => 'true',
-                'url' => $cat->url,
-                'hasDescription' => 'true',
-                'description' => $cat->description,
-                'hasArticle' => 'true',
-                'article' => $cat->getArticle(true),
-                'hasSubHeading' => !empty($sh) ? 'true' : '',
-                'subHeading' => !empty($sh) ? $sh : '',
-                'hasSticker' => 'true',
-                'sticker'=> $cat->sticker??'',
-                'hasImage' => 'true',
-                'image' => $cat->getImageArray(),
-                'hasParent' => 'true',
-                'parentName' => 'Section',
-                'parentId' => 'secturl',
-                'parentList' => $slist,
-                'hasSelectedParent' => 'true',
-                'selectedParent' => $sect->toNameListing(),
-                'thisURL' => $cat->getFullUrl($catData['BaseUrl'], $catData['FullUrl']),
-                'HttpVerb' => 'PATCH',
-                'cancelUrl' => 'admin/store/category',
-            ];
-            $bcLinks = [];
-            $bcLinks[] = self::getHomeBreadcumb();
-            if ($is_admin) {
-                $bcLinks[] = CmsController::getAdminBreadcrumb();
-            }
-            $bcLinks[] = Page::genBreadcrumb(
-                'All Our Categories', 
-                Categorie::genUrlFragment($catData['BaseUrl'], $catData['FullUrl'])
-            );
-            $breadcrumbs = Page::getBreadcrumbs(
-                Page::genBreadcrumb(
-                    'Category Modification Form', 
+            if (Functions::testVar($cat)) {
+                $sh = $cat->getSubHeading();
+                $content = [
+                    'hasName' => 'true',
+                    'name' => $cat->name,
+                    'hasTitle' => 'true',
+                    'title' => $cat->title,
+                    'hasUrl' => 'true',
+                    'url' => $cat->url,
+                    'hasDescription' => 'true',
+                    'description' => $cat->description,
+                    'hasArticle' => 'true',
+                    'article' => $cat->getArticle(true),
+                    'hasSubHeading' => !empty($sh) ? 'true' : '',
+                    'subHeading' => !empty($sh) ? $sh : '',
+                    'hasSticker' => 'true',
+                    'sticker'=> $cat->sticker??'',
+                    'hasImage' => 'true',
+                    'image' => $cat->getImageArray(),
+                    'hasParent' => 'true',
+                    'parentName' => 'Section',
+                    'parentId' => 'secturl',
+                    'parentList' => $slist,
+                    'hasSelectedParent' => 'true',
+                    'selectedParent' => $sect->toNameListing(),
+                    'thisURL' => $cat->getFullUrl($catData['BaseUrl'], $catData['FullUrl']),
+                    'HttpVerb' => 'PATCH',
+                    'cancelUrl' => 'admin/store/category',
+                ];
+                $bcLinks = [];
+                $bcLinks[] = self::getHomeBreadcumb();
+                if ($is_admin) {
+                    $bcLinks[] = CmsController::getAdminBreadcrumb();
+                }
+                $bcLinks[] = Page::genBreadcrumb(
+                    'All Our Categories', 
                     Categorie::genUrlFragment($catData['BaseUrl'], $catData['FullUrl'])
-                ),
-                $bcLinks
-            );
-            return self::getView(
-                $request, 'cms.forms.edit.category', 'Modify Existing Store Category',
-                $content, false, $breadcrumbs, null, 
-                $is_admin ? CmsController::getAdminSidebar()
-                : null
-            );
+                );
+                $breadcrumbs = Page::getBreadcrumbs(
+                    Page::genBreadcrumb(
+                        'Category Modification Form', 
+                        Categorie::genUrlFragment($catData['BaseUrl'], $catData['FullUrl'])
+                    ),
+                    $bcLinks
+                );
+                return self::getView(
+                    $request, 'cms.forms.edit.category', 'Modify Existing Store Category',
+                    $content, false, $breadcrumbs, null, 
+                    $is_admin ? CmsController::getAdminSidebar()
+                    : null
+                );
+            }
         }
         UserSession::updateAndAbort($request, 404);
     }
@@ -583,7 +585,7 @@ class CategorieController extends MainController
         $path = $request->path();
         $errors = [];
         if (Functions::testVar($section)) {
-            $cat = $sect->getCategory($request->category, $is_admin);
+            $cat = $section->getCategory($request->category, $is_admin);
             if (Functions::testVar($cat)) {
                 $prods = $cat->products;
                 if (Functions::testVar($prods) && Functions::countHas($prods)) {
@@ -604,13 +606,94 @@ class CategorieController extends MainController
         }
         //Log::info('we are abotring! at' . __METHOD__);
         return UserSession::updateRedirect(
-            $request, 'admin/store/section', $errors
+            $request, 'admin/store/category', $errors
         );
     }
 
     public function showDelete(Request $request)
     {
         // display 'ARE YOU SURE' PAGE...
+        $is_admin = Functions::isAdminPath($request->path());
+        $section = Section::getNamed($request->section, $is_admin);
+        $path = $request->path();
+        $errors = [];
+        $catData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'categoriesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => !$is_admin 
+                ? Categorie::TO_MINI_TRANSFORM
+                : Categorie::TO_TABLE_ARRAY_TRANSFORM, 
+        ];  
+        if (Functions::testVar($section)) {
+            $cat = Categorie::getNamed($request->category, $catData['WithTrashed']);
+            if (Functions::testVar($cat)) {
+                $sh = $cat->getSubHeading();
+                $content = [
+                    'hasName' => 'true',
+                    'name' => $cat->name,
+                    'hasTitle' => 'true',
+                    'title' => $cat->title,
+                    'hasUrl' => 'true',
+                    'url' => $cat->url,
+                    'hasDescription' => 'true',
+                    'description' => $cat->description,
+                    'hasArticle' => 'true',
+                    'article' => $cat->getArticle(true),
+                    'hasSubHeading' => !empty($sh) ? 'true' : '',
+                    'subHeading' => !empty($sh) ? $sh : '',
+                    'hasSticker' => 'true',
+                    'sticker'=> $cat->sticker??'',
+                    'hasImage' => 'true',
+                    'image' => $cat->getImageArray(),
+                    'hasParent' => 'true',
+                    'parentName' => 'Section',
+                    'parentId' => 'secturl',
+                    'hasSelectedParent' => 'true',
+                    'selectedParent' => $section->toNameListing(),
+                    'thisURL' => $cat->getFullUrl($catData['BaseUrl'], $catData['FullUrl']),
+                    'HttpVerb' => 'PATCH',
+                    'cancelUrl' => 'admin/store/category',
+                ];
+                $bcLinks = [];
+                $bcLinks[] = self::getHomeBreadcumb();
+                if ($is_admin) {
+                    $bcLinks[] = CmsController::getAdminBreadcrumb();
+                }
+                $bcLinks[] = Page::genBreadcrumb(
+                    'All Our Categories', 
+                    Categorie::genUrlFragment($catData['BaseUrl'], $catData['FullUrl'])
+                );
+                $breadcrumbs = Page::getBreadcrumbs(
+                    Page::genBreadcrumb(
+                        'Category Deletion Form', 
+                        Categorie::genUrlFragment($catData['BaseUrl'], $catData['FullUrl'])
+                    ),
+                    $bcLinks
+                );
+                return self::getView(
+                    $request, 'cms.forms.delete.category', 'Delete Existing Store Category',
+                    $content, false, $breadcrumbs, null, 
+                    $is_admin ? CmsController::getAdminSidebar()
+                    : null
+                );
+            }
+        }
+        //Log::info('we are abotring! at' . __METHOD__);
+        return UserSession::updateRedirect(
+            $request, 'admin/store/category', $errors
+        );
     }
 
     //// Validation Rules and messages

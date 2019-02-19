@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Model,
     App\Product,
     App\Image,
     App\CategoryImage,
-    App\Page;
+    App\Page,
+    App\User;
 
 class Categorie extends Model implements TransformableContainer
 {
@@ -126,7 +127,11 @@ class Categorie extends Model implements TransformableContainer
 
     public function getParentUrl(string $baseUrl, bool $fullUrl = false)
     {
-        return $this->section->getFullUrl($baseUrl, $fullUrl);
+        $p = User::getIsAdmin() ? $this->section()->withTrashed()->first() : $this->section;
+        if (Functions::testVar($p)) {
+            return $p->getFullUrl($baseUrl, $fullUrl);
+        }
+        return $fullUrl ? url($baseUrl) : $baseUrl;
     }
 
     public function getSticker()

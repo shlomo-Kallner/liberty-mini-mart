@@ -665,7 +665,7 @@ class SectionController extends MainController
                 : null
             );
         }
-        Log::info('we are abotring! at' . __METHOD__);
+        //Log::info('we are abotring! at' . __METHOD__);
         return UserSession::updateRedirect(
             $request, 'admin/store/section', $errors
         );

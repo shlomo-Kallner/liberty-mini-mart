@@ -118,8 +118,12 @@ class Order extends Model implements TransformableContainer
     }
 
     public function getParentUrl(string $baseUrl, bool $fullUrl = false)
-    {
-        return $this->user->getFullUrl($baseUrl, $fullUrl);
+    { 
+        $p = User::getIsAdmin() ? $this->user()->withTrashed()->first() : $this->user;
+        if (Functions::testVar($p)) {
+            return $p->getFullUrl($baseUrl, $fullUrl);
+        }
+        return $fullUrl ? url($baseUrl) : $baseUrl;
     }
 
     static public function genUrlFragment(string $baseUrl, bool $fullUrl = false)
@@ -237,13 +241,14 @@ class Order extends Model implements TransformableContainer
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
         $img = $this->getImageArray();
+        $user = $withTrashed ? $this->user()->withTrashed()->first() : $this->user;
         return self::makeTableArray(
             $this->getPubName(), $url, 
             $useTitle ? $this->getPubTitle() : $img['alt'],
             $img, $this->getPubDescription(),
             $this->getSticker(), $this->getDatesArray(), $this->getPubId(),
             [], $this->getPrice(), $this->getSale(),
-            $this->user->toUrlListing($baseUrl, $fullUrl, false)
+            $user->toUrlListing($baseUrl, $fullUrl, false)
         );
     }
 

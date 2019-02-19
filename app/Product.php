@@ -12,7 +12,8 @@ use Illuminate\Database\Eloquent\Model,
     App\ProductImage,
     App\Article,
     App\Categorie,
-    App\ProductReview;
+    App\ProductReview,
+    App\User;
 use DB;
 
 class Product extends Model implements TransformableContainer
@@ -285,7 +286,11 @@ class Product extends Model implements TransformableContainer
 
     public function getParentUrl(string $baseUrl, bool $fullUrl = false)
     {
-        return $this->category->getFullUrl($baseUrl, $fullUrl);
+        $p = User::getIsAdmin() ? $this->category()->withTrashed()->first() : $this->category;
+        if (Functions::testVar($p)) {
+            return $p->getFullUrl($baseUrl, $fullUrl);
+        }
+        return $fullUrl ? url($baseUrl) : $baseUrl;
     }
 
     /* 
@@ -351,12 +356,13 @@ class Product extends Model implements TransformableContainer
         bool $fullUrl = false
     ) {
         $url = $this->getFullUrl($baseUrl, $fullUrl);
+        $cat = $withTrashed ? $this->category()->withTrashed()->first() : $this->category;
         return self::makeTableArray(
             $this->name, $url, $useTitle ? $this->title : $this->image->alt,
             $this->image, $this->description,
             $this->sticker, $this->getDatesArray(),  $this->id,
             $this->getPayload(), $this->price, $this->sale??'no sale',
-            $this->category->toUrlListing($baseUrl, $fullUrl, false)
+            $cat->toUrlListing($baseUrl, $fullUrl, false)
         );
     }
 
