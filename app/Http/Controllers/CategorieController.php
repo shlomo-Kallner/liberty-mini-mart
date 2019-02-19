@@ -578,7 +578,34 @@ class CategorieController extends MainController
      */
     public function destroy(Request $request)
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $section = Section::getNamed($request->section, $is_admin);
+        $path = $request->path();
+        $errors = [];
+        if (Functions::testVar($section)) {
+            $cat = $sect->getCategory($request->category, $is_admin);
+            if (Functions::testVar($cat)) {
+                $prods = $cat->products;
+                if (Functions::testVar($prods) && Functions::countHas($prods)) {
+                    foreach ($prods as $prod) {
+                        $prod->delete();
+                    }
+                }
+                $cat->delete();
+                if ($cat->trashed()) {
+                    self::addMsg('Category ' . $cat->name . ' , ' . $cat->title . ' Deleted Successfully!');
+                } else {
+                    $errors = [
+                        'error' => 'Category ' . $cat->name . ' , ' . $cat->title . ' Deletion failed!'
+                    ];
+                }
+
+            }
+        }
+        //Log::info('we are abotring! at' . __METHOD__);
+        return UserSession::updateRedirect(
+            $request, 'admin/store/section', $errors
+        );
     }
 
     public function showDelete(Request $request)
