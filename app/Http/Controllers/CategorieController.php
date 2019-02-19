@@ -386,7 +386,7 @@ class CategorieController extends MainController
                 : null
             );
         } 
-        abort(404);
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
@@ -397,7 +397,85 @@ class CategorieController extends MainController
      */
     public function edit(Request $request)
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $usePagination = !$is_admin; // false;
+        $catData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'categoriesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => $usePagination 
+                ? Categorie::TO_MINI_TRANSFORM
+                : Categorie::TO_TABLE_ARRAY_TRANSFORM, 
+        ];
+        $slist = Section::getNameListing(
+            $catData['WithTrashed'], $catData['Dir'], $catData['UseBaseMaker']
+        );
+        $sect = Section::getNamed($request->section, $catData['WithTrashed']);
+        if (Functions::testVar($sect)) {
+            $cat = Categorie::getNamed($request->category, $catData['WithTrashed']);
+            $sh = $cat->getSubHeading();
+            $content = [
+                'hasName' => 'true',
+                'name' => $cat->name,
+                'hasTitle' => 'true',
+                'title' => $cat->title,
+                'hasUrl' => 'true',
+                'url' => $cat->url,
+                'hasDescription' => 'true',
+                'description' => $cat->description,
+                'hasArticle' => 'true',
+                'article' => $cat->getArticle(true),
+                'hasSubHeading' => !empty($sh) ? 'true' : '',
+                'subHeading' => !empty($sh) ? $sh : '',
+                'hasSticker' => 'true',
+                'sticker'=> $cat->sticker??'',
+                'hasImage' => 'true',
+                'image' => $cat->getImageArray(),
+                'hasParent' => 'true',
+                'parentName' => 'Section',
+                'parentId' => 'secturl',
+                'parentList' => $slist,
+                'hasSelectedParent' => 'true',
+                'selectedParent' => $sect->toNameListing(),
+                'thisURL' => $cat->getFullUrl($catData['BaseUrl'], $catData['FullUrl']),
+                'HttpVerb' => 'PATCH',
+                'cancelUrl' => 'admin/store/category',
+            ];
+            $bcLinks = [];
+            $bcLinks[] = self::getHomeBreadcumb();
+            if ($is_admin) {
+                $bcLinks[] = CmsController::getAdminBreadcrumb();
+            }
+            $bcLinks[] = Page::genBreadcrumb(
+                'All Our Categories', 
+                Categorie::genUrlFragment($catData['BaseUrl'], $catData['FullUrl'])
+            );
+            $breadcrumbs = Page::getBreadcrumbs(
+                Page::genBreadcrumb(
+                    'Category Modification Form', 
+                    Categorie::genUrlFragment($catData['BaseUrl'], $catData['FullUrl'])
+                ),
+                $bcLinks
+            );
+            return self::getView(
+                $request, 'cms.forms.edit.category', 'Modify Existing Store Category',
+                $content, false, $breadcrumbs, null, 
+                $is_admin ? CmsController::getAdminSidebar()
+                : null
+            );
+        }
+        UserSession::updateAndAbort($request, 404);
     }
 
     /**
@@ -409,7 +487,87 @@ class CategorieController extends MainController
      */
     public function update(Request $request)
     {
-        //
+        $is_admin = Functions::isAdminPath($request->path());
+        $usePagination = !$is_admin; // false;
+        $catData = [
+            'PageNum' => 0,
+            'NumShown' => 12,
+            'PagingFor' => 'categoriesPanel',
+            'Dir' => 'asc',
+            'WithTrashed' => $is_admin,
+            'BaseUrl' => $is_admin ? 'admin/store' : 'store',
+            'ViewNum' => 0,
+            'UseBaseMaker' => $request->ajax(),
+            'Default' => [],
+            'Version' => 1,
+            'UseTitle' => true,
+            'FullUrl' => !$request->ajax(),
+            'ListUrl' => $request->path(),
+            'UseGetSelf' => false,
+            'Transform' => $usePagination 
+                ? Categorie::TO_MINI_TRANSFORM
+                : Categorie::TO_TABLE_ARRAY_TRANSFORM, 
+        ];
+        $path = $request->path();
+        $passes = $validator = null;
+        $catData['BaseUrl'] = $request->ajax() ? 'api/' . $catData['BaseUrl'] : $catData['BaseUrl'];
+        $sect = Section::getNamed($request->section, $catData['WithTrashed']);
+        if (Functions::testVar($sect)) {
+            $cat = $sect->getCategory($request->category, $catData['WithTrashed']);
+            if (Functions::testVar($cat)) {
+                $validator = Validator::make(
+                    $request->all(), 
+                    self::modificationValidationRules($cat->url, $cat->name), 
+                    self::modificationValidationMessages()
+                );
+                $passes = $validator->passes();
+                if ($passes) {
+                        
+                    if ($request->hasFile('image')) {
+                        
+                        $image_id = Image::storeAndCreateNewImage(
+                            $request->file('image'), 'categories', 
+                            $request->title, $request->description, 
+                            false, 0
+                        );
+                    } else {
+                        $image_id = $cat->image_id;
+                    }
+                    $newsect = Section::getNamed($request->secturl, $catData['WithTrashed']);
+                    if (Functions::testVar($newsect) && $newsect !== $sect) {
+                        $sect_id = $newsect;
+                    } else {
+                        $sect_id = $sect;
+                    }
+                    // Log::info("image_id: " . $image_id);
+                    $article_id = Article::createNew(
+                        $request->article, $request->title, 
+                        null, $request->subheading??'', false
+                    );
+                    $newCat = $cat->updateWith(
+                        $request->name, $request->url, $request->description, 
+                        $request->title, $article_id, $sect_id,
+                        $image_id, $request->sticker, true
+                    );
+                    if (Functions::testVar($newCat) && $newCat === $cat) {
+                        self::addMsg('Category ' . $cat->name . ' , ' . $cat->title . ' Modified Successfully!');
+                        $path = 'admin/store/category';
+                    } else {
+                        self::addMsg(
+                            'Attempt to Modify Category ' . $cat->name . ' , ' . $cat->title 
+                            . ' collided with another category on new Name or URL!'
+                            . ' Please Try again.'
+                        );
+                        $passes = null;
+                    }
+                }
+            }
+        }
+        $path = $passes || Str::contains($path, 'edit') ? $path : $path . '/edit';
+        return UserSession::updateRedirect(
+            $request, $path, $validator, 
+            $request->except('image')
+        );
     }
 
     /**

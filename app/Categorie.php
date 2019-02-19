@@ -35,7 +35,7 @@ class Categorie extends Model implements TransformableContainer
                     ['section_id', '=', $section_id],
                 ]
             )->get();
-        if ((!Functions::testVar($tmp) || count($tmp) === 0) 
+        if ((!Functions::testVar($tmp) || !Functions::countHas($tmp)) 
             && Section::existsId($section_id)
         ) {
             $tImg = Image::getImageToID($image);
@@ -54,6 +54,54 @@ class Categorie extends Model implements TransformableContainer
                     $ci = CategoryImage::createNewFrom($res);
                     if (Functions::testVar($ci)) {
                         return $retObj ? $res : $res->id;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public function updateWith(
+        string $name, string $url, string $description, 
+        string $title, $article, $section,
+        $image, string $sticker, bool $retObj = false
+    ) {
+        $section_id = Section::getIdFrom($section, false, 0);
+        $whereBy = [
+            ['id', '<>', $this->id]
+        ];
+        $orWhereBy = [
+            ['id', '<>', $this->id]
+        ];
+        if ($name !== $this->name) {
+            $whereBy[] = ['name', '=', $name];
+        } else {
+            $whereBy[] = ['name', '=', $this->name];
+        }
+        if ($url !== $this->url) {
+            $orWhereBy[] = ['url', '=', $url];
+        } else {
+            $orWhereBy[] = ['url', '=', $this->url];
+        }
+        $tmp = self::withTrashed()->where($whereBy)->orWhere($orWhereBy)->get();
+        if ((!Functions::testVar($tmp) || !Functions::countHas($tmp)) 
+            && Section::existsId($section_id)
+        ) {
+            $tImg = Image::getImageToID($image);
+            $tArt = Article::getToId($article);
+            if (Functions::testVar($tImg) && Functions::testVar($tArt)) {
+                $this->name = $name;
+                $this->image_id = $tImg;
+                $this->title = Functions::purifyContent($title);
+                $this->article_id = $tArt;
+                $this->url = $url;
+                $this->section_id = $section_id;
+                $this->sticker = $sticker;
+                $this->description = Functions::purifyContent($description);
+                if ($this->save()) {
+                    $ci = CategoryImage::createNewFrom($this);
+                    if (Functions::testVar($ci)) {
+                        return $retObj ? $this : $this->id;
                     }
                 }
             }

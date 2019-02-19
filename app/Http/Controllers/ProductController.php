@@ -438,6 +438,7 @@ class ProductController extends MainController
                             'UseGetSelf' => false,
                             'Transform' => Product::TO_TABLE_ARRAY_TRANSFORM
                         ];
+                        $sh = $product->getSubHeading();
                         $content = [
                             'lists' => [
                                 'sections' => Section::getNameListing(
@@ -463,12 +464,12 @@ class ProductController extends MainController
                             'title' => $product->title,
                             'url' => $product->url,
                             'description' => $product->description,
-                            'article' => $product->article->article,
+                            'article' => $product->getArticle(true),
                             'sticker'=> $product->sticker??'',
                             'price' => $product->price??'',
                             'sale' => $product->sale??'',
-                            'subHeading' => $product->article->subheading,
-                            'hasSubHeading' => Functions::testVar($product->article->subheading) ? 'true'  : '',
+                            'subHeading' => !empty($sh) ? $sh : '',
+                            'hasSubHeading' => !empty($sh) ? 'true' : '',
                             'image' => $product->getImageArray(),
                             'thisURL' => $product->getFullUrl($tmpData['BaseUrl'], $tmpData['FullUrl']),
                         ]; 
