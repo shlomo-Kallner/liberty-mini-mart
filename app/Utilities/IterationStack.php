@@ -146,9 +146,12 @@ class IterationFrame
         }
     }
 
-    private function testIndex($i) 
+    private function testIndex() 
     {
-        return $i >= 0 && $i < count($this->elems);
+        if (is_int($this->index)) {
+            return $this->index > -1 && $this->index < count($this->elems);
+        }
+        return false;
     }
 
     public function next(bool $wrap = false)
@@ -187,7 +190,7 @@ class IterationFrame
 
     public function current()
     {
-        if ($this->testIndex($this->index)) {
+        if ($this->testIndex()) {
             return $this->elems[$this->index];
         }
         return null;
@@ -206,7 +209,7 @@ class IterationFrame
     public function has($key)
     {
         //dd($this, $key);
-        if ($this->testIndex($this->index)) {
+        if ($this->testIndex()) {
             $cur = $this->current();
             //dd($this, $key, $cur, self::testKey($key), 'in ' . __METHOD__);
             if (self::testKey($key)) {
@@ -219,9 +222,9 @@ class IterationFrame
     public function get($key, $default = null)
     {
         //dd($key);
-        if ($this->testIndex($this->index) && self::testKey($key)) {
+        if ($this->testIndex() && self::testKey($key)) {
             $cur = $this->current();
-            dd($this, $key, $cur, self::testKey($key), 'in ' . __METHOD__);
+            //dd($this, $key, $cur, self::testKey($key), 'in ' . __METHOD__);
             return Functions::getPropKey($cur, $key, $default);
         } else {
             return $default;
@@ -230,16 +233,18 @@ class IterationFrame
 
     public function set($key, $value = null)
     {
-        if ($this->testIndex($this->index)) {
+        if ($this->testIndex()) {
             if (self::testKey($key) && !empty($value)) {
+                //$cur = $this->current();
                 Functions::setPropKey($this->current(), $key, $value);
                 // $this->elems[$this->index][$key] = $value;
             } elseif (is_array($key)) {
                 foreach ($key as $idx => $val) {
-                    if (self::testKey($idx) && !empty($val)) {
-                        //$this->elems[$this->index][$idx] = $val;
-                        Functions::setPropKey($this->current(), $idx, $val);
-                    }
+                    $this->set($idx, $val);
+                    // if (self::testKey($idx) && !empty($val)) {
+                    //     //$this->elems[$this->index][$idx] = $val;
+                    //     Functions::setPropKey($this->current(), $idx, $val);
+                    // }
                 }
             }
             return $this;
