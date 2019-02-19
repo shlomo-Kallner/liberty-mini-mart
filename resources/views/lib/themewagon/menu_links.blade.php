@@ -1,57 +1,58 @@
 
 @php
-/*
- * A template for a 'normal-link' or a 'modal-link' menu-item
- * .. and nothing else! (except dropdown-links..)
- * 
- * $templateItem = [
-  'icon' => '', // the Font Awesome 4 icon class without the 'fa'.
-  'name' => '', // the name to fill in the Link.
-  'url' => '', // the URL of the link.
-  'type' => 'url', // 'url' for a url link, 'modal' for a modal button link..  
-  'target' => '', // the data-target attribute's data value (of a modal)
-  'transform' => '', // Bootstrap 3 text-transform css class.
-  'cssExtraClasses' => '' // extra CSS classes for the a tag..
-  ];
- * 
-*/
- 
- $testing = false;
- use App\Utilities\Functions\Functions,
-    \App\Utilities\IterationStack\IterationStack,
-    \App\Utilities\IterationStack\IterationFrame;
- 
- $type2 = Functions::getBladedString($type??'','url');
- $target2 = Functions::getBladedString($target??'','');
- $cssExtraClasses2 = Functions::getBladedString($cssExtraClasses??'','');
- $url2 = Functions::getBladedString($url??'','#');
- $icon2 = Functions::getBladedString($icon??'','');
- $iconAfter2 = Functions::getBladedString($iconAfter??'','');
- $name2 = Functions::getBladedString($name??'','');
- $transform2 = Functions::getBladedString($transform??'','');
- $controls2 = Functions::getBladedString($controls??'','');
 
- if ($type2 == 'dropdown') {
-    $submenus2 = Functions::getUnBladedContent($submenus??'','');
-    $lc = Functions::getBladedString($listCSS??'','');
-    $listCSS2 = Functions::testVar($lc) ? "dropdown " . $lc : "dropdown" ;
-    $toggle2 = Functions::getBladedString($toggle??'dropdown','dropdown');
-    $role2 = Functions::getBladedString($role??'button','button');
- } else {
-    $submenus2 = Functions::getUnBladedContent($submenus??'','');
-    $toggle2 = Functions::getBladedString($toggle??'','');
-    $role2 = Functions::getBladedString($role??'','');
-    $listCSS2 = Functions::getBladedString($listCSS??'','');
- }
+    /*
+     * A template for a 'normal-link' or a 'modal-link' menu-item
+     * .. and nothing else! (except dropdown-links..)
+     * 
+     *   $templateItem = [
+            'icon' => '', // the Font Awesome 4 icon class without the 'fa'.
+            'name' => '', // the name to fill in the Link.
+            'url' => '', // the URL of the link.
+            'type' => 'url', // 'url' for a url link, 'modal' for a modal button link..  
+            'target' => '', // the data-target attribute's data value (of a modal)
+            'transform' => '', // Bootstrap 3 text-transform css class.
+            'cssExtraClasses' => '' // extra CSS classes for the a tag..
+        ];
+     * 
+     */
  
+    $testing = false;
+    use App\Utilities\Functions\Functions,
+        \App\Utilities\IterationStack\IterationStack,
+        \App\Utilities\IterationStack\IterationFrame;
+    
+    $type2 = Functions::getBladedString($type??'','url');
+    $target2 = Functions::getBladedString($target??'','');
+    $cssExtraClasses2 = Functions::getBladedString($cssExtraClasses??'','');
+    $url2 = Functions::getBladedString($url??'','#');
+    $icon2 = Functions::getBladedString($icon??'','');
+    $iconAfter2 = Functions::getBladedString($iconAfter??'','');
+    $name2 = Functions::getBladedString($name??'','');
+    $transform2 = Functions::getBladedString($transform??'','');
+    $controls2 = Functions::getBladedString($controls??'','');
+    $submenus2 = Functions::getUnBladedContent($submenus??'','');
+
+    if ($type2 == 'dropdown') {
+        $lc = Functions::getBladedString($listCSS??'','');
+        $listCSS2 = Functions::testVar($lc) ? "dropdown " . $lc : "dropdown" ;
+        $toggle2 = Functions::getBladedString($toggle??'dropdown','dropdown');
+        $role2 = Functions::getBladedString($role??'button','button');
+    } else {
+        $toggle2 = Functions::getBladedString($toggle??'','');
+        $role2 = Functions::getBladedString($role??'','');
+        $listCSS2 = Functions::getBladedString($listCSS??'','');
+    }
+ 
+    //dd($submenus2);
 
 @endphp
 
 {{-- begin menu top-level link --}}
 <li
-@if (Functions::testVar($listCSS2))
-    class="{!! $listCSS2 !!}"
-@endif
+    @if (Functions::testVar($listCSS2))
+        class="{!! $listCSS2 !!}"
+    @endif
 >
 
     @component('lib.themewagon.links')
@@ -114,6 +115,7 @@
                 
                 $frameStack = new IterationStack($submenus2);
                 $bol = true;
+                dd($submenus2, $frameStack);
             @endphp
     
             {{-- 
@@ -133,7 +135,7 @@
                     $elem_listCssClass = '';
                     //dd($frameStack);
                     //dd($elem, $elem->current());
-                    //dd($elem, $elem_type, $elem->current());
+                    dd($frameStack, $elem, $elem_type, $elem->current());
 
                     if ($elem_type === 'url' || $elem_type === 'modal') {
                         $elem_listCssClass = '';

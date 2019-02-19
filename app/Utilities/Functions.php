@@ -465,6 +465,22 @@ class Functions
         return $bol;
     }
 
+    static public function getPropKey($data, $name, $default = null) 
+    {
+        if (isset($data) && self::testVar($name)) {
+            if (self::isPropKeyIn($data, $name)) {
+                //$res = $default; // null;
+                if (is_array($data) || $data instanceof ArrayAccess) {
+                    return $data[$name];
+                } elseif (is_object($data)) {
+                    return $data->$name;
+                }
+            }
+            //return $res;
+        } 
+        return $default;
+    }
+
     static public function hasPropKeyIn($data, $name, $def = null)
     {
         $bol = $def;
@@ -474,31 +490,17 @@ class Functions
         return $bol;
     }
 
-    static public function getPropKey($data, $name, $default = null) 
-    {
-        $res = $default; // null;
-        if (isset($data) && self::testVar($name)) {
-            if (self::isPropKeyIn($data, $name)) {
-                if (is_array($data) || $data instanceof ArrayAccess) {
-                    $res = $data[$name];
-                } elseif (is_object($data)) {
-                    $res = $data->$name;
-                }
-            }
-        } 
-        return $res;
-    }
-
     static public function setPropKey(&$data, $name, $val = null)
     {
         //$res = self::isPropKeyIn($data, $name);
         if (isset($data) && self::testVar($name)) {
             if (is_array($data) || $data instanceof ArrayAccess) {
                 $data[$name] = $val;
+                return true;
             } elseif (is_object($data)) {
                 $data->$name = $val;
+                return true;
             }
-            return true;
         } 
         //dd($res, $data, $name, $val, is_array($data));
         //return $res;

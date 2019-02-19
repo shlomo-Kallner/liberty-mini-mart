@@ -2,7 +2,8 @@
 
 namespace App\Utilities\IterationStack;
 
-use App\Utilities\Functions\Functions;
+use App\Utilities\Functions\Functions, 
+    \Traversable;
 
 
 class IterationStack 
@@ -148,8 +149,9 @@ class IterationFrame
 
     private function testIndex() 
     {
-        if (is_int($this->index)) {
-            return $this->index > -1 && $this->index < count($this->elems);
+        $ind = $this->index;
+        if (is_int($ind)) {
+            return $ind > -1 && $ind < count($this->elems);
         }
         return false;
     }
@@ -238,7 +240,7 @@ class IterationFrame
                 //$cur = $this->current();
                 Functions::setPropKey($this->current(), $key, $value);
                 // $this->elems[$this->index][$key] = $value;
-            } elseif (is_array($key)) {
+            } elseif (is_array($key) || $key instanceof Traversable) {
                 foreach ($key as $idx => $val) {
                     $this->set($idx, $val);
                     // if (self::testKey($idx) && !empty($val)) {
