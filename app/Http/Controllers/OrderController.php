@@ -158,7 +158,7 @@ class OrderController extends MainController
                     ];
                     $order = Order::createNew(
                         $user, $cart->getTotal(), $content,
-                        [], '', true
+                        '', '', true
                     );
                     if (Functions::testVar($order)) {
                         $cart->clear();

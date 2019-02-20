@@ -219,7 +219,7 @@
                                     </div>
                                     <div class="checkbox">
                                         <label>
-                                        <input type="checkbox" id="privacy" name="privacy"> I have read and agree to the <a title="Privacy Policy" href="javascript:;">Privacy Policy</a> &nbsp;&nbsp;&nbsp; 
+                                        <input type="checkbox" id="privacy" name="privacy"> I have read and agree to the <a title="Privacy Policy" href="javascript:;">Privacy Policy</a> <span class="require">*</span> &nbsp;&nbsp;&nbsp; 
                                         </label>
                                     </div>
                                     <div class="checkbox">

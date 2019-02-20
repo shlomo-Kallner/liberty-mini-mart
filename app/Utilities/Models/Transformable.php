@@ -56,7 +56,12 @@ abstract class Transformable extends Named
      *
      * @return \Illuminate\Database\Query\Builder|null
      */
-    public function getChildrenQuery()
+    public function getChildrenQuery(bool $withTrashed = true)
+    {
+        return null;
+    }
+
+    public function getParentQuery(bool $withTrashed = true)
     {
         return null;
     }
@@ -89,7 +94,7 @@ abstract class Transformable extends Named
     ) {
         if ($this->hasChildren()) {
             $children = self::getOrderedFor(
-                $this->getChildrenQuery(), $dir, 
+                $this->getChildrenQuery($withTrashed), $dir, 
                 $withTrashed, self::getChildrenOrderByKey()
             );
             return self::getChildrenFor(
@@ -117,7 +122,7 @@ abstract class Transformable extends Named
                 $totalNum, $pageNum, $numItemsPerPage
             );
             $query = self::getOrderedByFor(
-                $this->getChildrenQuery(), $dir, 
+                $this->getChildrenQuery($withTrashed), $dir, 
                 $withTrashed, self::getChildrenOrderByKey()
             );
             if (Functions::testVar($query)) {
@@ -149,9 +154,10 @@ abstract class Transformable extends Named
     /// transforms...
 
     public function toUrlListing(
-        string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
+        string $baseUrl, bool $fullUrl = false, 
+        bool $useBaseMaker = false, bool $withTrashed = true
     ) {
-        $url = $this->getFullUrl($baseUrl, false);
+        $url = $this->getFullUrl($baseUrl, false, $withTrashed);
         $value = [
             'name' => $this->getPubName(),
             'url' =>  $fullUrl ? url($url) : $url, 
@@ -162,9 +168,10 @@ abstract class Transformable extends Named
     }
 
     public function toUrlFragrment(
-        string $baseUrl, bool $fullUrl = false, bool $useBaseMaker = false
+        string $baseUrl, bool $fullUrl = false, 
+        bool $useBaseMaker = false, bool $withTrashed = true
     ) {
-        $url = $this->getUrlFragment($baseUrl);
+        $url = $this->getUrlFragment($baseUrl, false, $withTrashed);
         $value = [
             'name' => $this->name,
             'url' =>  $fullUrl ? url($url) : $url, 
@@ -207,7 +214,7 @@ abstract class Transformable extends Named
         $img = $this->getImageArray();
         return self::makeMini(
             $img['img'], $useTitle ? $this->title : $img['alt'], 
-            $this->getFullUrl($baseUrl, $fullUrl),
+            $this->getFullUrl($baseUrl, $fullUrl, $withTrashed),
             $this->getPriceOrSale(), 
             $this->getPubId(), $this->getSticker()
         ); 
@@ -521,7 +528,7 @@ abstract class Transformable extends Named
         $paginator = null, string $pagingFor = '',
         array $otherImages = null
     ) {
-        $url = self::genUrlFragment($baseUrl, $fullUrl);
+        $url = self::genUrlFragment($baseUrl, $fullUrl, $withTrashed);
         $usePagingFor = !empty($pagingFor) ? true : false;
         $dates = Functions::genDefaultDates(true);
         if (Functions::countHas($children) 

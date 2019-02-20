@@ -456,17 +456,20 @@ class Categorie extends Model implements TransformableContainer
 
     public function products()
     {
+        //           hasMany (  other-model, f-Key-onOtherMOdel, p-Key-onThisModel )
         return $this->hasMany('App\Product', 'category_id', 'id');
     }
 
     public function article()
     {
+        //          hasOne ( other-model, f-Key-onOtherMOdel, p-Key-onThisModel )
         return $this->hasOne('App\Article', 'id', 'article_id');
     }
 
     public function section()
     {
-        return $this->belongsTo('App\Section', 'section_id');
+        //         belongsTo ( other-model, f-Key-onThisModel, p-Key-onOtherMOdel );
+        return $this->belongsTo('App\Section', 'section_id', 'id');
     }
 
     /// end of the Eloquent Relationship methods.

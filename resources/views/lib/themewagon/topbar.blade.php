@@ -1,44 +1,44 @@
 
 @php
-use \App\Page,
-    \App\Utilities\Functions\Functions;
+    use \App\Page,
+        \App\Utilities\Functions\Functions;
+    $testing = false;
+        
+    $preheader2 = Functions::getUnBladedContent($preheader??'');
+    //dd($preheader2);
+    if (Functions::testVar($preheader2)) {
+        $preheader2 = Page::getPreHeader();
+    }
 
-    
-$preheader2 = Functions::getUnBladedContent($preheader??'');
-//dd($preheader2);
-if (Functions::testVar($preheader2)) {
-    $preheader2 = Page::getPreHeader();
-}
-
-$currencies2 = Functions::getUnBladedContent($currencies??'','');
-if (!Functions::testVar($currencies2)) {
-    $currencies2 = [
-        'others' =>[
-            //Page::genURLMenuItem(string $url, string $name, string $icon = ''),
-            // Euro :
-            Page::genURLMenuItem('javascript:void(0);', '', 'fa-eur'),
-            // British Pounds :
-            Page::genURLMenuItem('javascript:void(0);', '', 'fa-gbp'),
-            // Israeli Shekels :
-            Page::genURLMenuItem('javascript:void(0);', '', 'fa-ils'),
-        ],
-        // USA Dollars - the default 
-        'current' => 'fa-usd',
-    ];
-}
-$langs2 = Functions::getUnBladedContent($langs??'','');
-if (!Functions::testVar($langs2)) {
-    $langs2 = [
-        'current' => 'English',
-        'others' => [
-            //Page::genURLMenuItem('javascript:void(0);', '', string $icon = ''),
-            Page::genURLMenuItem('javascript:void(0);', 'Hebrew'),
-            Page::genURLMenuItem('javascript:void(0);', 'French'),
-            Page::genURLMenuItem('javascript:void(0);', 'German'),
-            Page::genURLMenuItem('javascript:void(0);', 'Turkish'),
-        ]
-    ];
-}
+    $currencies2 = Functions::getUnBladedContent($currencies??'','');
+    if (!Functions::testVar($currencies2) && $testing) {
+        $currencies2 = [
+            'others' =>[
+                //Page::genURLMenuItem(string $url, string $name, string $icon = ''),
+                // Euro :
+                Page::genURLMenuItem('javascript:void(0);', '', 'fa-eur'),
+                // British Pounds :
+                Page::genURLMenuItem('javascript:void(0);', '', 'fa-gbp'),
+                // Israeli Shekels :
+                Page::genURLMenuItem('javascript:void(0);', '', 'fa-ils'),
+            ],
+            // USA Dollars - the default 
+            'current' => 'fa-usd',
+        ];
+    }
+    $langs2 = Functions::getUnBladedContent($langs??'','');
+    if (!Functions::testVar($langs2) && $testing) {
+        $langs2 = [
+            'current' => 'English',
+            'others' => [
+                //Page::genURLMenuItem('javascript:void(0);', '', string $icon = ''),
+                Page::genURLMenuItem('javascript:void(0);', 'Hebrew'),
+                Page::genURLMenuItem('javascript:void(0);', 'French'),
+                Page::genURLMenuItem('javascript:void(0);', 'German'),
+                Page::genURLMenuItem('javascript:void(0);', 'Turkish'),
+            ]
+        ];
+    }
 @endphp
 
 <!-- BEGIN TOP BAR -->
@@ -56,74 +56,79 @@ if (!Functions::testVar($langs2)) {
                 <ul class="list-unstyled list-inline">
                     {{-- REMOVED: the Phone link from 
                         the template was removed. --}}
-                    <!-- BEGIN CURRENCIES -->
-                    <li class="shop-currencies">
+                    @if (Functions::testVar($currencies2))
+                        <!-- BEGIN CURRENCIES -->
+                        <li class="shop-currencies">
+                            
+                            {{-- the component calling code for $currencies.. --}}
+                            @php
+                                //dd($currencies2);
+                            @endphp
                         
-                        {{-- the component calling code for $currencies.. --}}
-                        @php
-                            //dd($currencies2);
-                        @endphp
-                    
-                        @foreach ($currencies2['others'] as $item)
-                            @component('lib.themewagon.links')
-                                @foreach ($item as $key => $value)
-                                    @slot($key)
-                                        {!! $value !!}
-                                    @endslot
-                                @endforeach
-                            @endcomponent
-                        @endforeach
-                        <a href="javascript:void(0);" class="current">
-                            <i class="fa {{$currencies2['current']}}"></i>
-                        </a>
+                            @foreach ($currencies2['others'] as $item)
+                                @component('lib.themewagon.links')
+                                    @foreach ($item as $key => $value)
+                                        @slot($key)
+                                            {!! $value !!}
+                                        @endslot
+                                    @endforeach
+                                @endcomponent
+                            @endforeach
+                            <a href="javascript:void(0);" class="current">
+                                <i class="fa {{$currencies2['current']}}"></i>
+                            </a>
 
-                    </li>
-                    <!-- END CURRENCIES -->
-                    <!-- BEGIN LANGS -->
-                    <li class="langs-block">
-                        @php
-                            //dd($langs2);
-                        @endphp
-                        
-                        {{-- the component calling code for $langs.. 
-                            <a href="javascript:void(0);" class="current">{{$langs2['current']}}</a>
+                        </li>
+                        <!-- END CURRENCIES -->
+                    @endif
+                    
+                    @if (Functions::testVar($langs2))
+                        <!-- BEGIN LANGS -->
+                        <li class="langs-block">
+                            @php
+                                //dd($langs2);
+                            @endphp
+                            
+                            {{-- the component calling code for $langs.. 
+                                <a href="javascript:void(0);" class="current">{{$langs2['current']}}</a>
+                                <div class="langs-block-others-wrapper">
+                                    <div class="langs-block-others">
+                                        @foreach ($langs2['others'] as $item)
+                                            @component('lib.themewagon.links')
+                                                @slot('type')
+                                                    {{ 'url' }}
+                                                @endslot
+                                                @slot('url')
+                                                    {!! 'javascript:void(0);' !!}
+                                                @endslot
+                                                @slot('name')
+                                                    {{ $item }}
+                                                @endslot
+                                            @endcomponent
+                                        @endforeach
+                                    </div>
+                                </div>
+                                
+                            --}}
+                            <a href="javascript:void(0);" class="current">
+                                {!! $langs2['current'] !!}
+                            </a>
                             <div class="langs-block-others-wrapper">
                                 <div class="langs-block-others">
                                     @foreach ($langs2['others'] as $item)
                                         @component('lib.themewagon.links')
-                                            @slot('type')
-                                                {{ 'url' }}
-                                            @endslot
-                                            @slot('url')
-                                                {!! 'javascript:void(0);' !!}
-                                            @endslot
-                                            @slot('name')
-                                                {{ $item }}
-                                            @endslot
+                                            @foreach ($item as $key => $value)
+                                                @slot($key)
+                                                    {!! $value !!}
+                                                @endslot
+                                            @endforeach
                                         @endcomponent
                                     @endforeach
                                 </div>
                             </div>
-                            
-                        --}}
-                        <a href="javascript:void(0);" class="current">
-                            {!! $langs2['current'] !!}
-                        </a>
-                        <div class="langs-block-others-wrapper">
-                            <div class="langs-block-others">
-                                @foreach ($langs2['others'] as $item)
-                                    @component('lib.themewagon.links')
-                                        @foreach ($item as $key => $value)
-                                            @slot($key)
-                                                {!! $value !!}
-                                            @endslot
-                                        @endforeach
-                                    @endcomponent
-                                @endforeach
-                            </div>
-                        </div>
-                    </li>
-                    <!-- END LANGS -->
+                        </li>
+                        <!-- END LANGS -->
+                    @endif
                 </ul>
             </div>
             <!-- END TOP BAR LEFT PART -->

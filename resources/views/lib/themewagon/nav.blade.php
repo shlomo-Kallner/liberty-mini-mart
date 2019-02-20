@@ -1,43 +1,43 @@
 
-<?php
-/*
- *  404 and 503 page navbar retrieval code
- */
+@php
+    /*
+    *  404 and 503 page navbar retrieval code
+    */
 
-use \App\Page,
+    use \App\Page,
     \App\Utilities\Functions\Functions,
     \Darryldecode\Cart\Cart,
     Illuminate\Support\Facades\Log;
 
 
-$navbar2 = Functions::getUnBladedContent($navbar??'');
-//dd($navbar2);
-if (!Functions::testVar($navbar2)) {
+    $navbar2 = Functions::getUnBladedContent($navbar??'');
+    //dd($navbar2);
+    if (!Functions::testVar($navbar2)) {
     $navbar2 = Page::getNavBar();
-}
-//dd($navbar2);
+    }
+    //dd($navbar2);
 
 
-$preheader2 = Functions::getUnBladedContent($preheader??'');
-//dd($preheader2);
-if (!Functions::testVar($preheader2)) {
+    $preheader2 = Functions::getUnBladedContent($preheader??'');
+    //dd($preheader2);
+    if (!Functions::testVar($preheader2)) {
     $preheader2 = Page::getPreHeader();
-}
-$preheader2s = serialize($preheader2); // preserialized for component slots..
+    }
+    $preheader2s = serialize($preheader2); // preserialized for component slots..
 
-/// For testing, dump&die the $navbar variable.
-//dd($navbar);
-// And the $preheader variable.
-//dd($preheader);
+    /// For testing, dump&die the $navbar variable.
+    //dd($navbar);
+    // And the $preheader variable.
+    //dd($preheader);
 
 
-$testing = false;
+    $testing = false;
 
-if (!$testing) {
- // place some $cart initializing code here..
+    if (!$testing) {
+    // place some $cart initializing code here..
     $cart2 = Functions::getUnBladedContent($cart??'');
     $currency2 = Functions::getBladedString($currency??'fa-usd');
-} else{
+    } else{
     $fakeID = 'MyFAKESEssionID123';
     //$myCart = new Cart();
     \Cart::session($fakeID);
@@ -55,9 +55,10 @@ if (!$testing) {
         'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
     ];
     $currency2 = Functions::getBladedString($currency??'fa-usd');
-}
-//dd($cart, $cart2, $currency, $currency2);
-?>
+    }
+    $search2 = Functions::getBladedString($search??'', '');
+    //dd($cart, $cart2, $currency, $currency2);
+@endphp
 
 
 
@@ -222,13 +223,14 @@ if (!$testing) {
                         we got the Metronic Shop UI Template.. 
                         there stil are links to them in the footer..
                     --}}
-
-                    <!-- BEGIN TOP SEARCH -->
-                    <li class="menu-search">
-                        <span class="sep"></span>
-                        <i class="fa fa-search search-modal-trigger-btn"></i> 
-                    </li> 
-                    <!-- END TOP SEARCH -->
+                    @if ($search2)
+                        <!-- BEGIN TOP SEARCH -->
+                        <li class="menu-search">
+                            <span class="sep"></span>
+                            <i class="fa fa-search search-modal-trigger-btn"></i> 
+                        </li> 
+                        <!-- END TOP SEARCH -->
+                    @endif
 
                 </ul>
             </div>

@@ -258,12 +258,12 @@ class CmsController extends MainController
                         $sections['value']['url'], 
                         '', 0, ''
                     ),
-                    User::makeMini(
-                        $users['value']['img']['img'], 
-                        $users['value']['name'], 
-                        $users['value']['url'], 
-                        '', 0, ''
-                    ),
+                    // User::makeMini(
+                    //     $users['value']['img']['img'], 
+                    //     $users['value']['name'], 
+                    //     $users['value']['url'], 
+                    //     '', 0, ''
+                    // ),
                     Page::makeMini(
                         $pages['value']['img']['img'], 
                         $pages['value']['name'], 
@@ -358,11 +358,11 @@ class CmsController extends MainController
             $useIcons ? 'fa-shopping-bag' : '', 
             '', '', $iconAfter, 'button'
         );  
-        $sidebar[] = Page::genURLMenuItem(
-            'admin/user/create', 'Create a New User', 
-            $useIcons ? 'fa-address-book' : '', 
-            '', '', $iconAfter, 'button'
-        );  
+        // $sidebar[] = Page::genURLMenuItem(
+        //     'admin/user/create', 'Create a New User', 
+        //     $useIcons ? 'fa-address-book' : '', 
+        //     '', '', $iconAfter, 'button'
+        // );  
         $sidebar[] = Page::genURLMenuItem(
             'admin/page/create', 'Create a New Content Page', 
             $useIcons ? 'fa-newspaper-o' : '', 

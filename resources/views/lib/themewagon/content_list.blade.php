@@ -167,7 +167,6 @@
 <div class="col-md-9 col-sm-7">
 
     @if (Functions::testVar($sorting2))
-    @else
 
         <div class="row list-view-sorting clearfix">
             @if(false)

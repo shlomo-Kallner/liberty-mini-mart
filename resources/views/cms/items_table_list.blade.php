@@ -88,7 +88,6 @@
     <div class="{{ $containerCss2 }}">
 
         @if (Functions::testVar($sorting2))
-        @else
 
             <div class="row list-view-sorting clearfix">
                 @if(false)

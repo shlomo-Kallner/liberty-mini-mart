@@ -89,12 +89,17 @@ abstract class Named extends Basic
 
     public function getPubName()
     {
-        return $this->name;
+        return $this->name ?? '';
     }
 
     public function getUrl()
     {
-        return $this->url;
+        return $this->url ?? '';
+    }
+
+    public function getPubTitle()
+    {
+        return $this->title ?? '';
     }
 
     /** 

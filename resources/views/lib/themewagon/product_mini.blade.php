@@ -6,11 +6,12 @@
     $name2 = Functions::getBladedString($name??'','');
     $id2 = Functions::getBladedString($id??'','');
     $url2 = Functions::getBladedString($url??'','');
+    $apiGetURL = Functions::getBladedString($api??'','');
     $currency2 = Functions::getBladedString($currency??'fa-usd','fa-usd');
     $price2 = Functions::getBladedString($price??'','');
     $sticker2 = Functions::getBladedString($sticker??'','');
 
-    $apiGetURL = 'api/' . $url2;
+    //$apiGetURL = 'api/' . $url2;
     $apiURL = $apiGetURL . '/addtocart';
     
 @endphp

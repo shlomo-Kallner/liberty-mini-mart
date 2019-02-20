@@ -299,12 +299,20 @@ trait ContainerTransforms
         bool $useTitle = true, bool $withTrashed = true, 
         bool $fullUrl = false
     ) {
+        /* 
+            makeMini(
+                string $img, string $name, string $url,
+                $price, $id = 0, string $sticker = '', 
+                string $api = ''
+            )
+        */
         $img = $this->getImageArray();
         return self::makeMini(
             $img['img'], $useTitle ? $this->getPubTitle() : $img['alt'], 
             $this->getFullUrl($baseUrl, $fullUrl),
             $this->getPriceOrSale(), 
-            $this->getPubId(), $this->getSticker()
+            $this->getPubId(), $this->getSticker(),
+            $this->getFullUrl('api/' . $baseUrl, $fullUrl)
         ); 
     }
 
@@ -564,13 +572,15 @@ trait ContainerTransforms
 
     static public function makeMini(
         string $img, string $name, string $url,
-        $price, $id = 0, string $sticker = ''
+        $price, $id = 0, string $sticker = '', 
+        string $api = ''
     ) {
         return [
             'img' => $img,
             'name' => $name,
             'id' => $id,
             'url' => $url,
+            'api' => $api,
             'price' => $price,
             'sticker' => $sticker,
         ];
@@ -1333,12 +1343,12 @@ trait ContainerTransforms
         bool $useBaseMaker = true
     ) {
         $totalNum = count($args);
+        $pageIdx = self::genFirstAndLastItemsIdxes( 
+            $totalNum, $pageNum, $numShown
+        );
         if ($totalNum <= $numShown) {
             $argTmp = $args;
         } else {
-            $pageIdx = self::genFirstAndLastItemsIdxes( 
-                $totalNum, $pageNum, $numShown
-            );
             $paging = Functions::genRange(
                 $pageIdx['begin'], ($pageIdx['end'] - 1)
             );
