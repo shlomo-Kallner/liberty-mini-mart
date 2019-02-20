@@ -17,6 +17,12 @@ class Catalog extends Model
      */
     protected $dates = ['deleted_at'];
 
+    static public function getIdFrom(
+        $item, bool $usePublic = true, $def = 0
+    ) {
+        return $def; // ON IMPELENTING THIS CLASS USE THE TRAITS!
+    }
+
     static public function getFromId(int $id)
     {
         return self::where('id', $id)->first();

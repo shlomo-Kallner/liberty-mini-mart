@@ -14,7 +14,7 @@ class AddContentColumnToProducts extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->integer('availablity');
+            $table->integer('availablity')->nullable();
             $table->mediumText('payload');
             $table->string('verihash', 255)->nullable();
         });

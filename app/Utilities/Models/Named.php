@@ -52,22 +52,22 @@ abstract class Named extends Basic
         return $where;
     }
 
-    public function getParentUrl(string $baseUrl, bool $fullUrl = false)
+    public function getParentUrl(string $baseUrl, bool $fullUrl = false, bool $withTrashed = false)
     {
         return $fullUrl ? url($baseUrl) : $baseUrl;
     }
 
-    final public function getUrlFragment(string $baseUrl, bool $fullUrl = false)
+    final public function getUrlFragment(string $baseUrl, bool $fullUrl = false, bool $withTrashed = false)
     {
         // {$tmp[0]}/section/{section}/category/{category}/product/{product}
-        $surl = $this->getParentUrl($baseUrl, false);
+        $surl = $this->getParentUrl($baseUrl, false, $withTrashed);
         $url = self::genUrlFragment($surl, false);
         return $fullUrl ? url($url) : $url;
     }
 
-    final public function getFullUrl(string $baseUrl, bool $fullUrl = false)
+    final public function getFullUrl(string $baseUrl, bool $fullUrl = false, bool $withTrashed = false)
     {
-        $surl = $this->getUrlFragment($baseUrl);
+        $surl = $this->getUrlFragment($baseUrl, false, $withTrashed);
         $url = $surl . $this->getUrl();
         return $fullUrl ? url($url) : $url;
     }

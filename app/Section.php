@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model,
     App\Utilities\Functions\Functions,
     App\Utilities\ContainerTransforms,
     App\Utilities\TransformableContainer,
+    App\Catalog,
     App\Categorie,
     App\Page,
     App\Image,
@@ -317,7 +318,7 @@ class Section extends Model implements TransformableContainer
         string $description, $img, $catalog = null,
         bool $retObj = false
     ) {
-        $catalog_id = 1;
+        $catalog_id = Catalog::getIdFrom($catalog, false, 1);
         $tmp = self::withTrashed()
             ->where(
                 [
@@ -357,7 +358,7 @@ class Section extends Model implements TransformableContainer
         string $description, $img, $catalog = null,
         bool $retObj = false
     ) {
-        $catalog_id = 1;
+        $catalog_id = Catalog::getIdFrom($catalog, false, 1);
         $whereBy = [
             ['id', '<>', $this->id]
         ];
