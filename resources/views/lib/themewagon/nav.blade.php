@@ -5,9 +5,9 @@
     */
 
     use \App\Page,
-    \App\Utilities\Functions\Functions,
-    \Darryldecode\Cart\Cart,
-    Illuminate\Support\Facades\Log;
+        \App\Utilities\Functions\Functions,
+        \Darryldecode\Cart\Cart,
+        Illuminate\Support\Facades\Log;
 
 
     $navbar2 = Functions::getUnBladedContent($navbar??'');
@@ -34,28 +34,29 @@
     $testing = false;
 
     if (!$testing) {
-    // place some $cart initializing code here..
-    $cart2 = Functions::getUnBladedContent($cart??'');
-    $currency2 = Functions::getBladedString($currency??'fa-usd');
+        // place some $cart initializing code here..
+        $cart2 = Functions::getUnBladedContent($cart??'');
+        $currency2 = Functions::getBladedString($currency??'fa-usd');
     } else{
-    $fakeID = 'MyFAKESEssionID123';
-    //$myCart = new Cart();
-    \Cart::session($fakeID);
-    \Cart::session($fakeID)->add(
-        123, 'Rolex Classic Watch', 230.5, 5, [
-        'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
-        'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg',
-        'description' => 'Rolex Classic Watch',
-        ]
-    );
-    //$cartContent = \Cart::session($fakeID)->getContent();
-    $cart2 = [
-        'items' => \Cart::session($fakeID)->getContent(),
-        'sub-total' => \Cart::session($fakeID)->getSubTotal(),
-        'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
-    ];
-    $currency2 = Functions::getBladedString($currency??'fa-usd');
+        $fakeID = 'MyFAKESEssionID123';
+        //$myCart = new Cart();
+        \Cart::session($fakeID);
+        \Cart::session($fakeID)->add(
+            123, 'Rolex Classic Watch', 230.5, 5, [
+            'url' => 'lib/themewagon/metronicShopUI/theme/shop-item.html',
+            'img' => 'lib/themewagon/metronicShopUI/theme/assets/pages/img/cart-img.jpg',
+            'description' => 'Rolex Classic Watch',
+            ]
+        );
+        //$cartContent = \Cart::session($fakeID)->getContent();
+        $cart2 = [
+            'items' => \Cart::session($fakeID)->getContent(),
+            'sub-total' => \Cart::session($fakeID)->getSubTotal(),
+            'total-items' => \Cart::session($fakeID)->getTotalQuantity(), // or use count() ...
+        ];
+        $currency2 = Functions::getBladedString($currency??'fa-usd');
     }
+
     $search2 = Functions::getBladedString($search??'', '');
     //dd($cart, $cart2, $currency, $currency2);
 @endphp

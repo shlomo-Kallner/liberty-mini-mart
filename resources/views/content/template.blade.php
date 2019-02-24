@@ -3,8 +3,21 @@
 
 @section('footer-content')
     @parent
+
+    @php
+        use \App\Page,
+        \App\Product,
+        \App\Http\Controllers\MainController,
+        \App\Utilities\Functions\Functions,
+        Illuminate\Support\Facades\Log;
+
+        $siteName2 = Functions::getBladedString($cart['currencyIcon']??'', 'fa-usd');
+    @endphp
+
     @component('lib.themewagon.product_fast_view')
-        
+        @slot('currency')
+            {!! Functions::toBladableContent($siteName2) !!}
+        @endslot
     @endcomponent
 @endsection
 
