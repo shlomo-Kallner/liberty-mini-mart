@@ -37,6 +37,17 @@ require __DIR__.'/../vendor/autoload.php';
 
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
+if (false) {
+    // set the public path to this directory
+    /// discovered in the HackerU class videos.. 
+    ///  not currently in use, hence the if(false).
+    $app->bind(
+        'path.public', function () {
+            return __DIR__;
+        }
+    );
+}
+
 /*
 |--------------------------------------------------------------------------
 | Run The Application
