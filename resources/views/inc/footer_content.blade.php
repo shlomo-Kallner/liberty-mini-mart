@@ -10,7 +10,7 @@
         <div class="col-md-3">
             <a href="http://htmlpurifier.org/">
                 <img
-                    src="http://htmlpurifier.org/live/art/powered.png"
+                    src="{{ asset('images/site/poweredByHtmlPurifier.png') }}"
                     alt="Powered by HTML Purifier" border="0" />
             </a>
         </div>

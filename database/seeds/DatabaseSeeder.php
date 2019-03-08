@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Utilities\Functions\Functions;
-use Faker\Generator as Faker;
+use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Storage;
 use App\Image;
 use App\Article,
@@ -139,8 +139,9 @@ class DatabaseSeeder extends Seeder
 
     static protected function genFakeImage($faker)
     {
+        $url = str_replace_first('http://', 'https://', $faker->imageUrl());
         $tmp = Image::createNew(
-            $faker->imageUrl(), '', $faker->text(20), 
+            $url, '', $faker->text(20), 
             $faker->text(80)
         );
         return Functions::getVar($tmp, null);
@@ -185,7 +186,7 @@ class DatabaseSeeder extends Seeder
 
     static protected function genFakeStuff()
     {
-        $faker = \Faker\Factory::create();
+        $faker = Faker::create();
         $num_a = 20;
         self::genFakePages($faker, $num_a);
         $num_sect = 3; // $faker->numberBetween(3, 30);

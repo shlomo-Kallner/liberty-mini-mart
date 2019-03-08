@@ -16,7 +16,7 @@
                 <p class="powered">
                     Powered by: <br>
                     <a class="powered" href="http://htmlpurifier.org/">
-                        <img src="http://htmlpurifier.org/live/art/powered.png"
+                        <img src="{{ asset('images/site/poweredByHtmlPurifier.png') }}"
                             alt="Powered by HTML Purifier" border="0" />
                     </a> <br>
                     From: <a href="http://htmlpurifier.org/">HTML Purifier</a>
