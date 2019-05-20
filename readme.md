@@ -4,13 +4,18 @@
 
 ## Build Setup
 
-### Install PHP 7.1+
-
-### Install Node 10+
+### Install PHP 7.1+, MariaDB 10.1.29+/equivelent MySQL, and Node 10+
 
 ``` bash
-# install dependencies
+# install JavaScript dependencies
 npm install
+
+# create MySQL db with the name 'liberty' with the charset 'utf8' and collation 'utf8_unicode_ci'
+
+# run key generation and db seeding
+php artisan key:generate
+php artisan migrate:fresh
+php artisan db:seed
 
 # serve from localhost:8080 (or use '--port=<port>' to change the port number. )
 php artisan serve
@@ -22,10 +27,10 @@ npm run dev
 npm run watch
 
 # build for production with minification
-npm run build
+npm run prod
 
 # build for production and view the bundle analyzer report
-npm run build --report
+npm run prod --report
 
 # run unit tests (future feature)
 npm run unit
