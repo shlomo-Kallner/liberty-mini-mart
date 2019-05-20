@@ -4,6 +4,10 @@
 
 ## Build Setup
 
+### Install PHP 7.1+
+
+### Install Node 10+
+
 ``` bash
 # install dependencies
 npm install
