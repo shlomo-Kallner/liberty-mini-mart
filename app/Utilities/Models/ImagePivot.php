@@ -51,7 +51,7 @@ abstract class ImagePivot extends BasicPivot
         bool $retObj = false
     ) {
         return self::getForImage(
-            $img, $getAll, $withTrashed, $retObj
+            $image, $getAll, $withTrashed, $retObj
         );
     }
 
