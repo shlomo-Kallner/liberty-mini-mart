@@ -29,7 +29,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "beautify-scrollbar": "^1.0.8",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^3.4.1",
     "bootstrap-sass": "^3.3.7",
     "datatables": "^1.10.18",
     "fancybox": "^3.0.1",
